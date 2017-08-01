@@ -1,0 +1,72 @@
+{
+	"name": "fabric8-analytics-stack-report",
+	"displayName": "Preview stack analysis report",
+	"description": "Analyses stack for python, maven and npm ecosystem",
+	"version": "0.0.10",
+	"author": "Jaivardhan Kumar",
+	"publisher": "Redhat",
+    "contributors": [{
+        "name": "Jaivardhan Kumar",
+        "email": "jakumar@redhat.com"
+    }],
+	"galleryBanner": {
+		"color": "#5c2d91",
+		"theme": "dark"
+	},
+	"bugs": {
+		"url": "",
+		"email": "jakumar@redhat.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": ""
+	},
+	"homepage": "",
+	"categories": [
+		"Other"
+	],
+	"engines": {
+		"vscode": "^0.10.7"
+	},
+	"activationEvents": [
+		"onCommand:extension.showBayesianWidget"
+	],
+	"main": "./out/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.showBayesianWidget",
+				"title": "Show Bayesian stack report"
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "extension.showBayesianWidget",
+					"when": "resourceLangId == plaintext"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "extension.showBayesianWidget",
+					"when": "resourceLangId == plaintext",
+					"group": "9_cutcopypaste"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"tslint": "tslint -c tslint.json src/extension.ts"
+	},
+	"devDependencies": {
+		"typescript": "^2.1.4",
+		"vscode": "^1.0.0",
+		"@types/node": "*"
+	},
+	"dependencies": {
+		"request": "2.79.0"
+	}
+}

@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	let previewUri = vscode.Uri.parse('bayesian-widget://authority/bayesian-widget');
+	let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
 
 	const loader = `<html>
 <link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
@@ -269,7 +269,7 @@ kbd {
 </svg>
 <div id="loading_screen">
   <div style="text-align: center" id="caption">
-    <h1 style='color:rgba(100,100,100,0.2)'>Bayesian</h1>
+    <h1 style='color:rgba(100,100,100,0.2)'>fabric8-analytics</h1>
     <h1>Analysis In Progress</h1>
     <br />
     <br />
@@ -290,9 +290,7 @@ kbd {
   <script>
     var items = [
       "Don't forget to check out diagnostics result from our LSP server",
-      'Apply resolution to all diagnostics messages via <kbd>CTRL</kbd>+<kbd>ALT</kbd>+<kbd>B</kbd>',
-      'Click on items in Stack Similarity to discover more information',
-      'Configure your license governance settings in <pre>~/.bayesian_rc</pre> or by pressing <kbd>CTRL</kbd>+<kbd>ALT</kbd>+<kbd>S</kbd>'
+      'Click on items in Stack Report to discover more information'
     ];
     var x = 0;
     $(document).ready(function() {
@@ -582,7 +580,7 @@ let render_stack_iframe = (sa) => {
       if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
         let data = JSON.parse(body);
         if (!data.hasOwnProperty("error")) {
-			      vscode.window.showInformationMessage('Succsfully analysed you stack!!');
+			      vscode.window.showInformationMessage('Succsfully analysed your stack!!');
             stack_analysis_responses.set(file_uri, data);
             cb(data);
         }
@@ -605,6 +603,7 @@ let render_stack_iframe = (sa) => {
     // }
     console.log("in here");
     let manifest_array: any = ["requirements.txt","package.json","pom.xml"];
+    let manifest_mime_type: any = {"requirements.txt" : "text/plain","package.json" : "application/json" ,"pom.xml" : "text/xml"};
 
     let file_uri_formatted: string = file_uri._formatted;
     let file_uri_split = file_uri_formatted.split("/");
@@ -617,7 +616,7 @@ let render_stack_iframe = (sa) => {
                 value: context.manifest,
                 options: {
                     filename: file_name,
-                    contentType: 'text/plain'
+                    contentType: manifest_mime_type[file_name]
                 }
             }],
             origin: context.origin || 'lsp'
@@ -632,9 +631,9 @@ let render_stack_iframe = (sa) => {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
-                vscode.window.showInformationMessage(`processing stack analysis with id ${resp.id}`);
-				        //resp.id
-                setTimeout(() => { stack_collector(file_uri,"88a169f7c2364dc89cf10c26a274af3a" , cb); }, 10000);
+                vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
+				        //88a169f7c2364dc89cf10c26a274af3a resp.id
+                setTimeout(() => { stack_collector(file_uri, resp.id , cb); }, 25000);
             } else {
                 vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
                 cb(null);
@@ -655,15 +654,15 @@ let render_stack_iframe = (sa) => {
 
 
 	let provider = new TextDocumentContentProvider();
-	let registration = vscode.workspace.registerTextDocumentContentProvider('bayesian-widget', provider);
+	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
-	let disposable = vscode.commands.registerCommand('extension.showBayesianWidget', () => {
+	let disposable = vscode.commands.registerCommand('extension.fabric8AnalyticsWidget', () => {
 		let editor = vscode.window.activeTextEditor;
     let text = editor.document.getText();
 
 		get_stack_metadata(editor.document.uri, {manifest: text, origin: 'lsp'}, (data) => { provider.signal(previewUri, data) });
     provider.signalInit(previewUri,null);
-		return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Bayesian stack report').then((success) => {}, (reason) => {
+		return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {}, (reason) => {
 			vscode.window.showErrorMessage(reason);
 		});
 

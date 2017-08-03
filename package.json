@@ -1,10 +1,10 @@
 {
-	"name": "fabric8-analytics-stack-report",
+	"name": "sample-report-1234",
 	"displayName": "Preview stack analysis report",
 	"description": "Analyses stack for python, maven and npm ecosystem",
-	"version": "0.0.10",
+	"version": "0.0.20",
 	"author": "Jaivardhan Kumar",
-	"publisher": "Redhat",
+	"publisher": "jaivardhan",
     "contributors": [{
         "name": "Jaivardhan Kumar",
         "email": "jakumar@redhat.com"
@@ -14,14 +14,14 @@
 		"theme": "dark"
 	},
 	"bugs": {
-		"url": "",
+		"url": "https://github.com/invincibleJai/fabric8-analytics-vsc-stackreports/issues",
 		"email": "jakumar@redhat.com"
 	},
 	"repository": {
 		"type": "git",
-		"url": ""
+		"url": "https://github.com/invincibleJai/fabric8-analytics-vsc-stackreports"
 	},
-	"homepage": "",
+	"homepage": "https://github.com/invincibleJai/fabric8-analytics-vsc-stackreports/blob/master/README.md",
 	"categories": [
 		"Other"
 	],
@@ -29,28 +29,21 @@
 		"vscode": "^0.10.7"
 	},
 	"activationEvents": [
-		"onCommand:extension.showBayesianWidget"
+		"onCommand:extension.fabric8AnalyticsWidget"
 	],
 	"main": "./out/extension",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.showBayesianWidget",
-				"title": "Show Bayesian stack report"
+				"command": "extension.fabric8AnalyticsWidget",
+				"title": "Show fabric8-Analytics stack report"
 			}
 		],
 		"menus": {
 			"editor/title": [
 				{
-					"command": "extension.showBayesianWidget",
+					"command": "extension.fabric8AnalyticsWidget",
 					"when": "resourceLangId == plaintext"
-				}
-			],
-			"explorer/context": [
-				{
-					"command": "extension.showBayesianWidget",
-					"when": "resourceLangId == plaintext",
-					"group": "9_cutcopypaste"
 				}
 			]
 		}

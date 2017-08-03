@@ -6,7 +6,6 @@ The purpose of the extension is to show stack analysis report. To play with the 
 - Open a manifest file i.e (`requirements.txt`, `pom.xml`, `package.json`)
 - Use `Show stack report`
 
-![Navigation](images/stackreport.png)
 
 # How it works
 

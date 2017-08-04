@@ -571,10 +571,12 @@ let render_stack_iframe = (sa) => {
 	let stack_analysis_responses = new Map<String, String>();
   const STACK_API_TOKEN: string = '';
 
+  const STACK_API_URL: string = "https://recommender.api.openshift.io/api/v1/stack-analyses-v2"
+
 	let stack_collector = (file_uri, id, cb) => {
 	
 	const options = {};
-    options['uri'] = `http://bayesian-api-bayesian-preview.b6ff.rh-idev.openshiftapps.com/api/v1/stack-analyses-v2/${id}`;
+    options['uri'] = `${STACK_API_URL}/${id}`;
     options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
     request.get(options, (err, httpResponse, body) => {
       if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
@@ -622,7 +624,7 @@ let render_stack_iframe = (sa) => {
             origin: context.origin || 'lsp'
           };
           const options = {};
-          options['uri'] = "http://bayesian-api-bayesian-preview.b6ff.rh-idev.openshiftapps.com/api/v1/stack-analyses-v2";
+          options['uri'] = `${STACK_API_URL}`;
           options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
 	        options['formData'] = form_data;
     
@@ -662,9 +664,26 @@ let render_stack_iframe = (sa) => {
 
 		get_stack_metadata(editor.document.uri, {manifest: text, origin: 'lsp'}, (data) => { provider.signal(previewUri, data) });
     provider.signalInit(previewUri,null);
-		return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {}, (reason) => {
-			vscode.window.showErrorMessage(reason);
-		});
+
+    let answer1: string;
+    let options = {
+      prompt: "Label: ",
+      placeHolder: "Please provide your auth token"
+    }
+
+    vscode.window.showInputBox(options).then(value => {
+      if (!value) return;
+      answer1 = value;
+      //vscode.window.showInformationMessage("i got u "+ answer1);
+      return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {}, (reason) => {
+		 	  vscode.window.showErrorMessage(reason);
+		  });
+      // show the next dialog, etc.
+    });
+
+		// return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {}, (reason) => {
+		// 	vscode.window.showErrorMessage(reason);
+		// });
 
 	});
 

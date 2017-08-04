@@ -2,9 +2,9 @@
 	"name": "sample-report-1234",
 	"displayName": "Preview stack analysis report",
 	"description": "Analyses stack for python, maven and npm ecosystem",
-	"version": "0.0.20",
+	"version": "0.0.30",
 	"author": "Jaivardhan Kumar",
-	"publisher": "jaivardhan",
+	"publisher": "redhat",
     "contributors": [{
         "name": "Jaivardhan Kumar",
         "email": "jakumar@redhat.com"
@@ -44,6 +44,14 @@
 				{
 					"command": "extension.fabric8AnalyticsWidget",
 					"when": "resourceLangId == plaintext"
+				},
+				{
+					"command": "extension.fabric8AnalyticsWidget",
+					"when": "resourceLangId == xml"
+				},
+				{
+					"command": "extension.fabric8AnalyticsWidget",
+					"when": "resourceLangId == json"
 				}
 			]
 		}

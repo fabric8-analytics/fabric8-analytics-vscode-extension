@@ -2,8 +2,46 @@
 
 import * as vscode from 'vscode';
 
+import * as path from 'path';
+import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 
 export function activate(context: vscode.ExtensionContext) {
+
+  /******************* START::  LSP client ***********************/
+
+  // The server is implemented in node
+	let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
+	// The debug options for the server
+	let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
+
+  let lastTagged = context.globalState.get('lastTagged', '');
+    if(lastTagged) {
+       process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
+    }
+	
+	// If the extension is launched in debug mode then the debug server options are used
+	// Otherwise the run options are used
+	let serverOptions: ServerOptions = {
+		run : { module: serverModule, transport: TransportKind.ipc },
+		debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
+	}
+	
+	// Options to control the language client
+	let clientOptions: LanguageClientOptions = {
+		// Register the server for plain text documents 'plaintext','xml','json'
+		documentSelector: [],
+		synchronize: {
+			// Synchronize the setting section 'languageServerExample' to the server
+			configurationSection: 'languageServerExample',
+			// Notify the server about file changes to '.clientrc files contain in the workspace
+			fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
+		}
+	}
+	
+	// Create the language client and start the client.
+	let disposableLSp = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions).start();
+	
+  /******************* END ::  LSP client ***********************/
 
 	let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
 
@@ -645,7 +683,7 @@ let render_stack_iframe = (sa) => {
               thatContext.globalState.update('lastTagged', '');
               vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re-run stack analysis`);
               cb(null);
-          }else {   
+          } else {   
             vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);
             cb(null);
           }
@@ -667,7 +705,7 @@ let render_stack_iframe = (sa) => {
 		let editor = vscode.window.activeTextEditor;
     let text = editor.document.getText();
 
-		//get_stack_metadata(editor.document.uri, {manifest: text, origin: 'lsp'}, (data) => { provider.signal(previewUri, data) });
+		// get_stack_metadata(editor.document.uri, {manifest: text, origin: 'lsp'}, (data) => { provider.signal(previewUri, data) });
     provider.signalInit(previewUri,null);
 
     let answer1: string;
@@ -677,10 +715,11 @@ let render_stack_iframe = (sa) => {
     }
 
     let lastTagged = context.globalState.get('lastTagged', '');
-        if(!lastTagged) {
+    if(!lastTagged) {
       vscode.window.showInputBox(options).then(value => {
         if (!value) return;
         STACK_API_TOKEN = value;
+        process.env['RECOMMENDER_API_TOKEN'] = STACK_API_TOKEN;
         context.globalState.update('lastTagged', STACK_API_TOKEN);
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
           get_stack_metadata(editor.document.uri, {manifest: text, origin: 'lsp'}, (data) => { provider.signal(previewUri, data) });
@@ -691,6 +730,7 @@ let render_stack_iframe = (sa) => {
       });
   } else {
        STACK_API_TOKEN = lastTagged;
+       process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
         get_stack_metadata(editor.document.uri, {manifest: text, origin: 'lsp'}, (data) => { provider.signal(previewUri, data) });
         provider.signalInit(previewUri,null);
@@ -698,10 +738,8 @@ let render_stack_iframe = (sa) => {
 		 	  vscode.window.showErrorMessage(reason);
 		  });
     }
-    
-
 	});
 
 	let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
-	context.subscriptions.push(disposable, registration);
+	context.subscriptions.push(disposable, registration, disposableLSp);
 }

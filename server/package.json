@@ -1,0 +1,32 @@
+{
+  "name": "component-analysis-lsp-server",
+  "description": "LSP Server for Component Analysis",
+  "version": "0.0.4",
+  "author": "Pavel Odvody",
+  "contributors": [
+    {
+      "name": "Michal Srb",
+      "email": "michal@redhat.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "vscode-languageserver": "^3.3.0",
+    "stream-json": "0.4.2",
+    "request": "^2.79.0",
+    "xml2object": "0.1.2",
+    "winston": "2.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.8",
+    "typescript": "^2.1.4"
+  },
+  "scripts": {
+    "build": "node node_modules/typescript/bin/tsc -p .",
+    "dist": "cp -r node_modules output/ && node -p -e \"require('./package.json').version\" > output/VERSION && rm -rf output/node_modules/typescript/ && tar cvjf ca-lsp-server.tar -C output/ .",
+    "watch": "installServerIntoExtension ../client ./package.json ./tsconfig.json && tsc --watch -p ."
+  }
+}

@@ -1,9 +1,10 @@
 'use strict';
 
 import * as vscode from 'vscode';
-
-import * as path from 'path';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
+import * as path from 'path';
+
+import { Commands } from './commands';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -701,7 +702,7 @@ let render_stack_iframe = (sa) => {
 	let provider = new TextDocumentContentProvider();
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
-	let disposable = vscode.commands.registerCommand('extension.fabric8AnalyticsWidget', () => {
+	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
 		let editor = vscode.window.activeTextEditor;
     let text = editor.document.getText();
 

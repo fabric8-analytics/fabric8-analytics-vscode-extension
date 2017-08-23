@@ -5,121 +5,15 @@ import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, T
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { Templates } from './template';
+//import { Templates } from './template';
+import { lspmodule } from './lspmodule';
+import { contentprovidermodule } from './contentprovidermodule';
 
 export function activate(context: vscode.ExtensionContext) {
-
-  /******************* START::  LSP client ***********************/
-
-  // The server is implemented in node
-	let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
-	// The debug options for the server
-	let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
-
-  let lastTagged = context.globalState.get('lastTagged', '');
-    if(lastTagged) {
-       process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
-    }
-	
-	// If the extension is launched in debug mode then the debug server options are used
-	// Otherwise the run options are used
-	let serverOptions: ServerOptions = {
-		run : { module: serverModule, transport: TransportKind.ipc },
-		debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
-	}
-	
-	// Options to control the language client
-	let clientOptions: LanguageClientOptions = {
-		// Register the server for plain text documents 'plaintext','xml','json'
-		documentSelector: [],
-		synchronize: {
-			// Synchronize the setting section 'languageServerExample' to the server
-			configurationSection: 'languageServerExample',
-			// Notify the server about file changes to '.clientrc files contain in the workspace
-			fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
-		}
-	}
-	
-	// Create the language client and start the client.
-	let disposableLSp = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions).start();
-	
-  /******************* END ::  LSP client ***********************/
+  
+  let disposableLSp = lspmodule.invoke_f8_lsp(context);
 
 	let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
-
-	const loader = Templates.LOADER_TEMPLATE;
-  const header = Templates.HEADER_TEMPLATE;
-  const footer = Templates.FOOTER_TEMPLATE;
-
-let render_project_info = (sa) => {
-  const result = sa.result[0];
-  return `<div class='item-list'>
-            <div class='item'><div class='item-key'>Analysis finished</div><div class='item-value'>${sa.finished_at}</div></div>
-            <div class='item'><div class='item-key'>Distinct Licenses</div><div class='item-value'>${result.user_stack_info.distinct_licenses}</div></div>
-            <div class='item'><div class='item-key'>Ecosystem</div><div class='item-value'>${result.user_stack_info.ecosystem}</div></div>
-          </div>
-          <div>
-	          <p>To view detail report <a href="index.html" target="_self">Click here</a> use ID as ${sa.request_id}</p>
-          </div>`;
-};
-
-let render_project_failure = () => {
-  //const result = sa.result[0];
-  return `<div>
-	          <p>Analysis failed!!</p>
-          </div>`;
-};
-
-let render_stack_iframe = (sa) => {
-  const result = sa.result[0];
-  return ` <iframe width="100%" height="100%" frameborder="0" src="http://ops-portal-v2-ops-portal-ide.dev.rdu2c.fabric8.io/#/analyze/${sa.request_id}?interframe=true" id="frame2" name="frame2"></iframe>`
-}
-
-	class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
-		private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-		private _loading = true;
-		private _output = null;
-
-		public provideTextDocumentContent(uri: vscode.Uri): string {
-			if (this._loading) {
-      			return loader;
-    		} else {
-            if(this._output){
-              let r = header;
-      			  //r += render_project_info(this._output);
-              r += render_stack_iframe(this._output)
-      			  r += footer;
-      			  return r;
-            } else {
-              let r = header;
-      			  r += render_project_failure();
-      			  r += footer;
-      			  return r;
-            }
-      			
-    		}
-		}
-
-		get onDidChange(): vscode.Event<vscode.Uri> {
-			return this._onDidChange.event;
-		}
-
-		public update(uri: vscode.Uri) {
-			this._onDidChange.fire(uri);
-		}
-
-		public signal(uri: vscode.Uri, data: string) {
-    		this._loading = false;
-    		this._output = data;
-    		this.update(uri);
-  		}
-
-      public signalInit(uri: vscode.Uri, data: string) {
-    		this._loading = true;
-    		this._output = data;
-    		this.update(uri);
-  		}
-	}
 
 	/**************** START :: Stack analysis call *******************/
 
@@ -150,7 +44,7 @@ let render_stack_iframe = (sa) => {
             }
         }
       } else {
-           vscode.window.showErrorMessage(`Failed to trigger stack analysis , Status:  ${httpResponse.statusCode} `);
+           vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status:  ${httpResponse.statusCode} `);
            cb(null);
       }
     });
@@ -178,6 +72,7 @@ let render_stack_iframe = (sa) => {
                     contentType: manifest_mime_type[file_name]
                 }
             }],
+            'filePath[]': [file_uri_formatted],
             origin: contextData.origin || 'lsp'
           };
           const options = {};
@@ -203,7 +98,7 @@ let render_stack_iframe = (sa) => {
               vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re-run stack analysis`);
               cb(null);
           } else {   
-            vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);
+            vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse}`);
             cb(null);
           }
           });
@@ -217,7 +112,7 @@ let render_stack_iframe = (sa) => {
 	/**************** END :: Stack analysis call *******************/
 
 
-	let provider = new TextDocumentContentProvider();
+	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
@@ -262,3 +157,4 @@ let render_stack_iframe = (sa) => {
 	let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
 	context.subscriptions.push(disposable, registration, disposableLSp);
 }
+

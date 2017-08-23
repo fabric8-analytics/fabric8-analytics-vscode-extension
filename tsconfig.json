@@ -6,11 +6,13 @@
 		"lib": [
 			"es6"
 		],
-		"sourceMap": true
+		"sourceMap": true,
+		"rootDir": "src"
 	},
 	"exclude": [
 		"node_modules",
 		"server",
+		"test",
 		".vscode-test"
 	]
 }

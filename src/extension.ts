@@ -72,7 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
                     contentType: manifest_mime_type[file_name]
                 }
             }],
-            'filePath[]': ["jai/ram/pom.xml"],
+            'filePath[]': [file_uri_formatted],
             origin: contextData.origin || 'lsp'
           };
           const options = {};
@@ -128,7 +128,6 @@ export function activate(context: vscode.ExtensionContext) {
       placeHolder: "Please provide your auth token"
     }
 
-    vscode.window.showInformationMessage(`Analyzing your stack, id`);
     let lastTagged = context.globalState.get('lastTagged', '');
     if(!lastTagged) {
       vscode.window.showInputBox(options).then(value => {

@@ -44,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }
       } else {
-           vscode.window.showErrorMessage(`Failed to trigger stack analysis , 78 Status:  ${httpResponse.statusCode} `);
+           vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status:  ${httpResponse.statusCode} `);
            cb(null);
       }
     });
@@ -98,7 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
               vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re-run stack analysis`);
               cb(null);
           } else {   
-            vscode.window.showErrorMessage(`Failed to trigger stack analysis, yay Status: ${httpResponse}`);
+            vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse}`);
             cb(null);
           }
           });

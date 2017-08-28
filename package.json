@@ -30,6 +30,7 @@
 	},
 	"activationEvents": [
 		"onCommand:extension.fabric8AnalyticsWidget",
+		"onCommand:extension.fabric8AnalyticsWidgetFullStack",
 		"onLanguage:plaintext",
     	"onLanguage:xml",
     	"onLanguage:json"
@@ -40,6 +41,10 @@
 			{
 				"command": "extension.fabric8AnalyticsWidget",
 				"title": "Show fabric8-Analytics stack report"
+			},
+			{
+				"command": "extension.fabric8AnalyticsWidgetFullStack",
+				"title": "Show fabric8-Analytics stack report on Workspace"
 			}
 		],
 		"menus": {
@@ -55,6 +60,9 @@
 				{
 					"command": "extension.fabric8AnalyticsWidget",
 					"when": "resourceLangId == json"
+				},
+				{
+					"command": "extension.fabric8AnalyticsWidgetFullStack"
 				}
 			]
 		},

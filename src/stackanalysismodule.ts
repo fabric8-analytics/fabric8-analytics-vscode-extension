@@ -9,9 +9,8 @@ export module stackanalysismodule {
     const request = require('request');
     let stack_analysis_requests = new Map<String, String>();
 	let stack_analysis_responses = new Map<String, String>();
-    //let STACK_API_TOKEN: string = '';
-
-    const STACK_API_URL: string = "https://recommender.api.openshift.io/api/v1/stack-analyses-v2"
+    let STACK_API_TOKEN: string = '';
+    const STACK_API_URL: string = "https://recommender.api.openshift.io/api/v1/stack-analyses-v2";
 
     export let stack_collector: any;
     export let get_stack_metadata: any;
@@ -31,7 +30,7 @@ export module stackanalysismodule {
             else {
                 if (httpResponse.statusCode == 202) {
                     vscode.window.showInformationMessage('Analysis in progress ...');
-                    setTimeout(() => { stack_collector(file_uri, id, cb); }, 10000);
+                    setTimeout(() => { stack_collector(file_uri, id, STACK_API_TOKEN, cb); }, 10000);
                 }
             }
         } else {
@@ -71,7 +70,7 @@ export module stackanalysismodule {
           options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
 	      options['formData'] = form_data;
           thatContext = context;
-    
+
           request.post(options, (err, httpResponse, body) => {
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);

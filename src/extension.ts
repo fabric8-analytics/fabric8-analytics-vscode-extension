@@ -8,6 +8,7 @@ import { Commands } from './commands';
 import { lspmodule } from './lspmodule';
 import { contentprovidermodule } from './contentprovidermodule';
 import { stackanalysismodule } from './stackanalysismodule';
+import { multimanifestmodule } from './multimanifestmodule';
 
 export function activate(context: vscode.ExtensionContext) {
   
@@ -58,7 +59,21 @@ export function activate(context: vscode.ExtensionContext) {
     }
 	});
 
+  let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => {
+    //vscode.window.showInformationMessage("am in full stack analysis!!");
+    //multimanifestmodule.find_manifests_workspace();
+    let lastTagged = context.globalState.get('lastTagged', '');
+    STACK_API_TOKEN = lastTagged;
+    process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
+    return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+          multimanifestmodule.find_manifests_workspace(context, provider, STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
+          provider.signalInit(previewUri,null);
+           }, (reason) => {
+		 	    vscode.window.showErrorMessage(reason);
+        });
+  });
+
 	let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
-	context.subscriptions.push(disposable, registration, disposableLSp);
+	context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack);
 }
 

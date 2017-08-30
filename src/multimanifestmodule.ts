@@ -5,14 +5,13 @@ import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, T
 import * as path from 'path';
 
 import { stackanalysismodule } from './stackanalysismodule';
+import { Apiendpoint } from './apiendpoint';
 
 export module multimanifestmodule {
 
     const request = require('request');
     let stack_analysis_requests = new Map<String, String>();
 	let stack_analysis_responses = new Map<String, String>();
-    let STACK_API_TOKEN: string = '';
-    const STACK_API_URL: string = "https://recommender.api.openshift.io/api/v1/stack-analyses-v2";
 
     export let find_manifests_workspace: any;
     export let form_manifests_payload: any;
@@ -21,43 +20,20 @@ export module multimanifestmodule {
 
         let payloadData : any;
         vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json}').then(
-            // all good
             (result: vscode.Uri[]) => {
-                //TODO for stack analysis payload
                 if(result.length){
                     form_manifests_payload(result, (data) => {
                         if(data){
                             payloadData = data;
-                            //payloadData = form_manifests_payload(result);
                             const options = {};
                             let thatContext: any;
                             let file_uri: string;
-                            options['uri'] = `${STACK_API_URL}`;
+                            options['uri'] = `${Apiendpoint.STACK_API_URL}`;
                             options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
                             options['formData'] = payloadData;
                             thatContext = context;
+                            stackanalysismodule.post_stack_analysis(options,file_uri, STACK_API_TOKEN,thatContext, cb);
 
-                            request.post(options, (err, httpResponse, body) => {
-                            if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
-                                let resp = JSON.parse(body);
-                                if (resp.error === undefined && resp.status == 'success') {
-                                    file_uri = payloadData['filePath[]'][0];
-                                    stack_analysis_requests[file_uri] = resp.id;
-                                    vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
-                                    setTimeout(() => { stackanalysismodule.stack_collector(file_uri, resp.id, STACK_API_TOKEN, cb); }, 25000);
-                                } else {
-                                    vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
-                                    cb(null);
-                                }
-                            } else if(httpResponse.statusCode == 401){
-                                thatContext.globalState.update('lastTagged', '');
-                                vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re-run stack analysis`);
-                                cb(null);
-                            } else {   
-                                vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse}`);
-                                cb(null);
-                            }
-                        });
                     } else {
                         vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
                         cb(null);
@@ -86,10 +62,15 @@ export module multimanifestmodule {
             origin: 'lsp'
         };
         let manifestObj: any;
+        let manifest_array: any = ["requirements.txt","package.json","pom.xml"];
+        let manifest_mime_type: any = {"requirements.txt" : "text/plain","package.json" : "application/json" ,"pom.xml" : "text/xml"};
 
         for(var i=0;i<resultList.length;i++){
              let filePath: string = '';
              let filePathList: any = [];
+             let projRootPath: string = vscode.workspace.rootPath;
+             let projRootPathSplit: any = projRootPath.split('/');
+             let projName: string = projRootPathSplit[projRootPathSplit.length-1];
              (function(i) {
                 vscode.workspace.openTextDocument(resultList[i]).then(
                     (result: any) => {
@@ -101,10 +82,13 @@ export module multimanifestmodule {
                                 }
                         };
                         //console.log(result.getText());
-                        filePath = result.uri._fsPath;
-                        filePathList = filePath.split('/');
+                        if(result.uri._fsPath){
+                            filePath = result.uri._fsPath.split(projName)[1];
+                            filePathList = filePath.split('/');
+                            manifestObj.options.filename = filePathList[filePathList.length-1];
+                            manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];
+                        }
                         manifestObj.value = result.getText();
-                        manifestObj.options.filename = filePathList[filePathList.length-1];
 
                         form_data['manifest[]'].push(manifestObj);
                         form_data['filePath[]'].push(filePath);

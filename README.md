@@ -4,7 +4,8 @@ This is an sample extension that illustrates the use of virtual documents or `Te
 
 The purpose of the extension is to show stack analysis report. To play with the extension:
 - Open a manifest file i.e (`requirements.txt`, `pom.xml`, `package.json`)
-- Use `Show stack report`
+- Use command `Show fabric8-analytics stack report` to view stack analysis report on one manifest file
+- Use command `Show fabric8-analytics stack report on Workspace` to view stack analysis report on entire workspace/project
 
 
 # How it works

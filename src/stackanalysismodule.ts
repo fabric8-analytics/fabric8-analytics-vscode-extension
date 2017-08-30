@@ -53,8 +53,11 @@ export module stackanalysismodule {
     let file_uri_split = file_uri_formatted.split("/");
     let file_uri_split_len: number = file_uri_split.length;
     if(file_uri_split_len > 0){
-      let file_name:string = file_uri_split[file_uri_split_len - 1];
-      if(manifest_array.indexOf(file_name) > -1){
+        let projRootPath: string = vscode.workspace.rootPath;
+        let projRootPathSplit: any = projRootPath.split('/');
+        let projName: string = projRootPathSplit[projRootPathSplit.length-1];  
+        let file_name:string = file_uri_split[file_uri_split_len - 1];
+        if(manifest_array.indexOf(file_name) > -1){
          let form_data = {
           'manifest[]': [{
                 value: contextData.manifest,
@@ -63,7 +66,7 @@ export module stackanalysismodule {
                     contentType: manifest_mime_type[file_name]
                 }
             }],
-            'filePath[]': [file_uri_formatted],
+            'filePath[]': [file_uri_formatted.split(projName)[1]],
             origin: contextData.origin || 'lsp'
           };
           const options = {};
@@ -99,7 +102,7 @@ export module stackanalysismodule {
               vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re-run stack analysis`);
               cb(null);
           } else {   
-            vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse}`);
+            vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);
             cb(null);
           }
         });

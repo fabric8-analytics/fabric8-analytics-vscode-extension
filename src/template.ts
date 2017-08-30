@@ -318,7 +318,10 @@ export namespace Templates {
     </html>`;
 
     export const HEADER_TEMPLATE = 
-    `<link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
+    `<!DOCTYPE html>
+    <html>
+    <head>
+    <link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
     <style>
     html,body {
     width: 100%;
@@ -491,11 +494,12 @@ export namespace Templates {
     }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    </head>
     <body>
     <div class='top-caption'>
     <h1 class='caption'>Stack Analysis Report</h1>
     </div>`;
 
-    export const FOOTER_TEMPLATE = '</body>';
+    export const FOOTER_TEMPLATE = '</body></html>';
 
 }

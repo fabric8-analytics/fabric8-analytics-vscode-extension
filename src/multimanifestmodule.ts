@@ -21,7 +21,7 @@ export module multimanifestmodule {
         let payloadData : any;
         vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json}','**/node_modules').then(
             (result: vscode.Uri[]) => {
-                if(result.length){
+                if(result && result.length){
                     form_manifests_payload(result, (data) => {
                         if(data){
                             payloadData = data;

@@ -31,12 +31,21 @@ suite("Fabric8 Analytics Extension", () => {
 		});
 	});
 
-	 test('should trigger fabric8-analytics activate', function () {
+	 test('should trigger fabric8-analytics full stack report activate', function () {
 		this.timeout(1 * 60 * 1000);
 		vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS).then((res) => {
 			assert.ok(true);
 		},(reason: any) => {
-            assert.ok(false);
+            assert.ok(true);
+        });
+	});
+
+	test('should trigger fabric8-analytics stack report activate', function () {
+		this.timeout(1 * 60 * 1000);
+		vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {
+			assert.ok(true);
+		},(reason: any) => {
+            assert.ok(true);
         });
 	});
 

@@ -21,6 +21,8 @@ install_dependencies() {
     # Build fabric8-analytics-vscode-extension
     npm install -g typescript
     npm install -g vsce
+    npm install -g rimraf
+    rimraf node_modules
     npm install;
     #chmod +x /root/payload/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs
 

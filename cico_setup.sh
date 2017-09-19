@@ -15,8 +15,22 @@ prep() {
     yum -y install git gcc-c++ bzip2 fontconfig initscripts
     yum -y install gtk2 libXtst libXScrnSaver libXScrnSaver-devel GConf2
     export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
-    cat -v /etc/init.d/xvfb;
-    sh  /etc/init.d/xvfb start;
+    # cat -v /etc/init.d/xvfb;
+    # sh  /etc/init.d/xvfb start;
+    if [ -z "$1" ]; then
+    echo "`basename $0` {start|stop}"
+        exit
+    fi
+
+    case "$1" in
+    start)
+        /usr/bin/Xvfb :99 -screen 0 1280x1024x24 &
+    ;;
+
+    stop)
+       killall Xvfb
+    ;;
+    esac
     sleep 3
     curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -
     yum -y install nodejs

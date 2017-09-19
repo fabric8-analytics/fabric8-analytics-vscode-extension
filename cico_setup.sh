@@ -15,6 +15,7 @@ prep() {
     yum -y install git gcc-c++ bzip2 fontconfig
     yum -y install gtk2 libXtst libXScrnSaver libXScrnSaver-devel GConf2
     export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
+    cat -v /etc/init.d/xvfb;
     sh  /etc/init.d/xvfb start;
     sleep 3
     curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -

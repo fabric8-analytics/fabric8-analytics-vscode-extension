@@ -52,8 +52,9 @@ export module stackanalysismodule {
     let file_uri_formatted: string = file_uri._formatted;
     let file_uri_split = file_uri_formatted.split("/");
     let file_uri_split_len: number = file_uri_split.length;
-    if(file_uri_split_len > 0){
-        let projRootPath: string = vscode.workspace.rootPath;
+    let projRootPath: string = vscode.workspace.rootPath;
+    if(file_uri_split_len > 0 && projRootPath){
+        //let projRootPath: string = vscode.workspace.rootPath;
         let projRootPathSplit: any = projRootPath.split('/');
         let projName: string = projRootPathSplit[projRootPathSplit.length-1];  
         let file_name:string = file_uri_split[file_uri_split_len - 1];

@@ -16,7 +16,7 @@ prep() {
     yum -y install gtk2 libXtst libXScrnSaver libXScrnSaver-devel GConf2
     export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
     # cat -v /etc/init.d/xvfb;
-    sh  /usr/bin/Xvfb start;
+    Xvfb :99 -screen 0 1024x768x16 &
     # if [ -z "$1" ]; then
     # echo "`basename $0` {start|stop}"
     #     exit

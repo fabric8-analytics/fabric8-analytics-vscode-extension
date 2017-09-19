@@ -13,7 +13,7 @@ load_jenkins_vars() {
 prep() {
     yum -y update
     yum -y install git gcc-c++ bzip2 fontconfig
-    yum -y install gtk2
+    yum -y install gtk2 libXtst
     curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -
     yum -y install nodejs
 }

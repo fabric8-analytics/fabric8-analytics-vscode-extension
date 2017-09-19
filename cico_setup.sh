@@ -47,6 +47,7 @@ install_dependencies() {
 # }
 
 build_project() {
+    npm run postinstall
     npm run vscode:prepublish
     vsce package
 

@@ -27,3 +27,5 @@ The purpose of the extension is to show stack analysis report. To play with the 
 * make changes to `test/extension.test.ts` or create new test files inside the `test` folder
     * by convention, the test runner will only consider files matching the name pattern `**.test.ts`
     * you can create folders inside the `test` folder to structure your tests any way you want
+
+    

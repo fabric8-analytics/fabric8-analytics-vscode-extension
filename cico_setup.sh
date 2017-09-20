@@ -16,7 +16,7 @@ prep() {
     yum -y install gtk2 libXtst libXScrnSaver libXScrnSaver-devel GConf2
     yum -y install firefox Xvfb libXfont
     export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
-    /usr/bin/Xvfb :99 -screen 0 1280x1024x24 &;
+    /usr/bin/Xvfb :99 -screen 0 1280x1024x24 &
     sleep 3;
     curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -
     yum -y install nodejs

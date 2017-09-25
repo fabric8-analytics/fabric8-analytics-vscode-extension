@@ -321,6 +321,7 @@ export namespace Templates {
     `<!DOCTYPE html>
     <html>
     <head>
+    <meta charset="utf-8"/>
     <link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
     <style>
     html,body {

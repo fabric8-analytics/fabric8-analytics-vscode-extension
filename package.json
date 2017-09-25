@@ -31,6 +31,8 @@
 	"activationEvents": [
 		"onCommand:extension.fabric8AnalyticsWidget",
 		"onCommand:extension.fabric8AnalyticsWidgetFullStack",
+		"onCommand:extension.fabric8AnalyticsWidgetAutorize",
+		"onCommand:extension.fabric8AnalyticsWidgetUnautorize",
 		"onLanguage:plaintext",
     	"onLanguage:xml",
     	"onLanguage:json"
@@ -38,6 +40,14 @@
 	"main": "./out/src/extension",
 	"contributes": {
 		"commands": [
+			{
+				"command": "extension.fabric8AnalyticsWidgetAutorize",
+				"title": "Authorize fabric8-Analytics"
+			},
+			{
+				"command": "extension.fabric8AnalyticsWidgetUnautorize",
+				"title": "Unauthorize fabric8-Analytics"
+			},
 			{
 				"command": "extension.fabric8AnalyticsWidget",
 				"title": "Show fabric8-Analytics stack report"

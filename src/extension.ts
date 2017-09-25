@@ -21,12 +21,12 @@ export function activate(context: vscode.ExtensionContext) {
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
-  let _teamServicesStatusBarItem: vscode.StatusBarItem;
-  _teamServicesStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
-  _teamServicesStatusBarItem.command = Commands.TRIGGER_F8_AUTHORIZE;
-  _teamServicesStatusBarItem.text = 'Authorize fabric8-analytics';
-  _teamServicesStatusBarItem.tooltip = 'Authorize fabric8-analytics';
-  _teamServicesStatusBarItem.show();
+  let f8AnalyticsStatusBarItem: vscode.StatusBarItem;
+  f8AnalyticsStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
+  f8AnalyticsStatusBarItem.command = Commands.TRIGGER_F8_AUTHORIZE;
+  f8AnalyticsStatusBarItem.text = 'Authorize fabric8-analytics';
+  f8AnalyticsStatusBarItem.tooltip = 'Authorize fabric8-analytics';
+  f8AnalyticsStatusBarItem.show();
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
 		let editor = vscode.window.activeTextEditor;

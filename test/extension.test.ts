@@ -22,7 +22,9 @@ suite("Fabric8 Analytics Extension", () => {
 		{
 			const FABRIC8_COMMANDS:string[] = [
 				Commands.TRIGGER_STACK_ANALYSIS,
-				Commands.TRIGGER_FULL_STACK_ANALYSIS
+				Commands.TRIGGER_FULL_STACK_ANALYSIS,
+				Commands.TRIGGER_F8_AUTHORIZE,
+				Commands.TRIGGER_F8_UNAUTHORIZE
 			];
 			let foundFabric8Commands = commands.filter(function(value){
 				return FABRIC8_COMMANDS.indexOf(value)>=0 || value.startsWith('extension.');
@@ -50,4 +52,25 @@ suite("Fabric8 Analytics Extension", () => {
 			done();
         });
 	}).timeout(1 * 60 * 1000);
+
+	test('should trigger fabric8-analytics Authorize activate', (done) => {
+		vscode.commands.executeCommand(Commands.TRIGGER_F8_AUTHORIZE).then((res) => {
+			assert.ok(true);
+			done();
+		},(reason: any) => {
+            assert.ok(true);
+			done();
+        });
+	}).timeout(5 * 60 * 1000);
+
+	test('should trigger fabric8-analytics Unauthorize activate', (done) => {
+		vscode.commands.executeCommand(Commands.TRIGGER_F8_UNAUTHORIZE).then((res) => {
+			assert.ok(true);
+			done();
+		},(reason: any) => {
+            assert.ok(true);
+			done();
+        });
+	}).timeout(5 * 60 * 1000);
+
 });

@@ -10,6 +10,7 @@ import { contentprovidermodule } from './contentprovidermodule';
 import { stackanalysismodule } from './stackanalysismodule';
 import { multimanifestmodule } from './multimanifestmodule';
 import { Apiendpoint } from './apiendpoint';
+import { authextension } from './authextension';
 
 export function activate(context: vscode.ExtensionContext) {
   
@@ -71,7 +72,30 @@ export function activate(context: vscode.ExtensionContext) {
         });
   });
 
+  let disposableF8Authorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_AUTHORIZE, () => {
+    authextension.authorize_f8_analytics((data) => {
+      if(data){
+        vscode.window.showInformationMessage('Successfully authorized');
+      }
+    });
+  });
+
+  let disposableF8UnAuthorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_UNAUTHORIZE, () => {
+    context.globalState.update('lastTagged', '');
+    vscode.window.showInformationMessage('You have been unauthorized from fabric8 analytics','Authorize').then((selection) => {
+      console.log(selection);
+      if(selection == 'Authorize'){
+        authextension.authorize_f8_analytics((data) => {
+          if(data){
+            vscode.window.showInformationMessage('Successfully authorized');
+          }
+        });
+      }
+
+    });
+  });
+
 	let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
-	context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack);
+	context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack, disposableF8Authorize, disposableF8UnAuthorize);
 }
 

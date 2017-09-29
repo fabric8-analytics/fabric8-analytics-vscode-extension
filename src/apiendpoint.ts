@@ -5,6 +5,8 @@
  */
 export namespace Apiendpoint {
     export let STACK_API_TOKEN = '';
+    export let OSIO_REFRESH_TOKEN = '';
     export const STACK_API_URL: string = "https://recommender.api.openshift.io/api/v1/stack-analyses";
+    export const OSIO_AUTH_URL: string = "https://auth.openshift.io/api/token/refresh";
 
 }

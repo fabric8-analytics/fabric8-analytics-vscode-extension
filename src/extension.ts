@@ -34,35 +34,28 @@ export function activate(context: vscode.ExtensionContext) {
 
     provider.signalInit(previewUri,null);
 
-    let answer1: string;
-    let options = {
-      prompt: "Action: Enter openshift.io auth token",
-      placeHolder: "Please provide your auth token, can be retrieved from OSIO"
-    }
+    // let answer1: string;
+    // let options = {
+    //   prompt: "Action: Enter openshift.io auth token",
+    //   placeHolder: "Please provide your auth token, can be retrieved from OSIO"
+    // }
 
+    let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
+    let importedApi = osioTokenExt.exports;
+    context.globalState.update('lastTagged', importedApi);
     let lastTagged = context.globalState.get('lastTagged', '');
-    if(!lastTagged) {
-      vscode.window.showInputBox(options).then(value => {
-        if (!value) return;
-        Apiendpoint.STACK_API_TOKEN = value;
-        process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.STACK_API_TOKEN;
-        context.globalState.update('lastTagged', Apiendpoint.STACK_API_TOKEN);
+
+    if(lastTagged) {
+        Apiendpoint.STACK_API_TOKEN = lastTagged;
+        process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
           stackanalysismodule.get_stack_metadata(context, editor.document.uri, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
           provider.signalInit(previewUri,null);
-           }, (reason) => {
-		 	    vscode.window.showErrorMessage(reason);
+        }, (reason) => {
+          vscode.window.showErrorMessage(reason);
         });
-      });
-  } else {
-       Apiendpoint.STACK_API_TOKEN = lastTagged;
-       process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
-       return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-        stackanalysismodule.get_stack_metadata(context, editor.document.uri, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
-        provider.signalInit(previewUri,null);
-      }, (reason) => {
-		 	  vscode.window.showErrorMessage(reason);
-		  });
+    } else {
+        vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
     }
 	});
 
@@ -80,7 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   let disposableF8Authorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_AUTHORIZE, () => {
-    authextension.authorize_f8_analytics((data) => {
+    authextension.authorize_f8_analytics(context, (data) => {
       if(data){
         vscode.window.showInformationMessage('Successfully authorized');
       }
@@ -92,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.showInformationMessage('You have been unauthorized from fabric8 analytics','Authorize').then((selection) => {
       console.log(selection);
       if(selection == 'Authorize'){
-        authextension.authorize_f8_analytics((data) => {
+        authextension.authorize_f8_analytics(context, (data) => {
           if(data){
             vscode.window.showInformationMessage('Successfully authorized');
           }

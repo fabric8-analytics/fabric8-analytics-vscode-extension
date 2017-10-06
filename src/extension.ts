@@ -42,18 +42,23 @@ export function activate(context: vscode.ExtensionContext) {
 
     let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
     let importedApi = osioTokenExt.exports;
-    context.globalState.update('lastTagged', importedApi);
-    let lastTagged = context.globalState.get('lastTagged', '');
-
-    if(lastTagged) {
-        Apiendpoint.STACK_API_TOKEN = lastTagged;
-        process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
-        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-          stackanalysismodule.get_stack_metadata(context, editor.document.uri, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
-          provider.signalInit(previewUri,null);
-        }, (reason) => {
-          vscode.window.showErrorMessage(reason);
+    //context.globalState.update('lastTagged', importedApi);
+    //let lastTagged = context.globalState.get('lastTagged', '');
+    if(importedApi) {
+        //TODO :: make auth call to get access token
+        Apiendpoint.OSIO_REFRESH_TOKEN = importedApi;
+        authextension.get_access_token_osio(Apiendpoint, context, (data) => {
+          vscode.window.showInformationMessage("get access token"+ data);
+          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+            stackanalysismodule.get_stack_metadata(context, editor.document.uri, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
+            provider.signalInit(previewUri,null);
+          }, (reason) => {
+            vscode.window.showErrorMessage(reason);
+          });
         });
+
+        // Apiendpoint.STACK_API_TOKEN = lastTagged;
+        // process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
     } else {
         vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
     }

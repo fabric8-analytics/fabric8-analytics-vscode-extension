@@ -21,8 +21,9 @@ export module contentprovidermodule {
     		} else {
             if(this._output){
               let r = this.header;
+              let token_uri = process.env['RECOMMENDER_API_TOKEN'];
       			  //r += render_project_info(this._output);
-              r += render_stack_iframe(this._output)
+              r += render_stack_iframe(this._output, token_uri)
       			  r += this.footer;
       			  return r;
             } else {
@@ -74,9 +75,10 @@ export module contentprovidermodule {
             </div>`;
   };
 
-  let render_stack_iframe = (sa) => {
+  let render_stack_iframe = (sa, tokenuri) => {
     const result = sa.result[0];
-    return `<iframe width="100%" height="100%" frameborder="0" src="http://ops-portal-v2-ops-portal-ide.dev.rdu2c.fabric8.io/#/analyze/${sa.request_id}?interframe=true" id="frame2" name="frame2"></iframe>`;
+    return `<p>To view detail report <a href="index.html" target="_self">Click here</a></p>
+      <iframe width="100%" height="100%" frameborder="0" src='http://ops-portal-v2-new-portal-ide.dev.rdu2c.fabric8.io/#/analyze/${sa.request_id}?interframe=true&api_data={"access_token":"${tokenuri}"}' id="frame2" name="frame2"></iframe>`;
   }
 
 }

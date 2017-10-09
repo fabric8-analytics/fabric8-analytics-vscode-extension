@@ -12,13 +12,18 @@ export module authextension {
 
     authorize_f8_analytics = (context, cb) => {
         let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
-        let importedApi = osioTokenExt.exports;
-        if(importedApi) {
-            Apiendpoint.OSIO_REFRESH_TOKEN = importedApi;
-            get_access_token_osio(Apiendpoint, context, cb);
+        if(osioTokenExt){
+            let importedApi = osioTokenExt.exports;
+            if(importedApi) {
+                Apiendpoint.OSIO_REFRESH_TOKEN = importedApi;
+                get_access_token_osio(Apiendpoint, context, cb);
+            } else {
+                cb(null);
+            }
         } else {
             cb(null);
         }
+        
   }
 
 

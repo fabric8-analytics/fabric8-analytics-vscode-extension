@@ -65,29 +65,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   });
 
-  // let disposableF8Authorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_AUTHORIZE, () => {
-  //   authextension.authorize_f8_analytics(context, (data) => {
-  //     if(data){
-  //       vscode.window.showInformationMessage('Successfully authorized');
-  //     }
-  //   });
-  // });
-
-  // let disposableF8UnAuthorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_UNAUTHORIZE, () => {
-  //   context.globalState.update('lastTagged', '');
-  //   vscode.window.showInformationMessage('You have been unauthorized from fabric8 analytics','Authorize').then((selection) => {
-  //     console.log(selection);
-  //     if(selection == 'Authorize'){
-  //       authextension.authorize_f8_analytics(context, (data) => {
-  //         if(data){
-  //           vscode.window.showInformationMessage('Successfully authorized');
-  //         }
-  //       });
-  //     }
-
-  //   });
-  // });
-
 	let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
 	context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack);
 }

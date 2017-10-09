@@ -78,7 +78,7 @@ export module contentprovidermodule {
   let render_stack_iframe = (sa, tokenuri) => {
     const result = sa.result[0];
     return `<p>To view detail report <a href="index.html" target="_self">Click here</a></p>
-      <iframe width="100%" height="100%" frameborder="0" src='http://ops-portal-v2-new-portal-ide.dev.rdu2c.fabric8.io/#/analyze/${sa.request_id}?interframe=true&api_data={"access_token":"${tokenuri}"}' id="frame2" name="frame2"></iframe>`;
+      <iframe width="100%" height="100%" frameborder="0" src=' http://fabric8-analytics-stack-report-ui-bayesian-preview.b6ff.rh-idev.openshiftapps.com/#/analyze/${sa.request_id}?interframe=true&api_data={"access_token":"${tokenuri}"}' id="frame2" name="frame2"></iframe>`;
   }
 
 }

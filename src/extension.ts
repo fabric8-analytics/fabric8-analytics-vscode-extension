@@ -21,86 +21,74 @@ export function activate(context: vscode.ExtensionContext) {
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
-  let f8AnalyticsStatusBarItem: vscode.StatusBarItem;
-  f8AnalyticsStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
-  f8AnalyticsStatusBarItem.command = Commands.TRIGGER_F8_AUTHORIZE;
-  f8AnalyticsStatusBarItem.text = 'Authorize fabric8-analytics';
-  f8AnalyticsStatusBarItem.tooltip = 'Authorize fabric8-analytics';
-  f8AnalyticsStatusBarItem.show();
+  // let f8AnalyticsStatusBarItem: vscode.StatusBarItem;
+  // f8AnalyticsStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
+  // f8AnalyticsStatusBarItem.command = Commands.TRIGGER_F8_AUTHORIZE;
+  // f8AnalyticsStatusBarItem.text = 'Authorize fabric8-analytics';
+  // f8AnalyticsStatusBarItem.tooltip = 'Authorize fabric8-analytics';
+  // f8AnalyticsStatusBarItem.show();
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
 		let editor = vscode.window.activeTextEditor;
     let text = editor.document.getText();
 
     provider.signalInit(previewUri,null);
-
-    // let answer1: string;
-    // let options = {
-    //   prompt: "Action: Enter openshift.io auth token",
-    //   placeHolder: "Please provide your auth token, can be retrieved from OSIO"
-    // }
-
-    let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
-    let importedApi = osioTokenExt.exports;
-    //context.globalState.update('lastTagged', importedApi);
-    //let lastTagged = context.globalState.get('lastTagged', '');
-    if(importedApi) {
-        //TODO :: make auth call to get access token
-        Apiendpoint.OSIO_REFRESH_TOKEN = importedApi;
-        authextension.get_access_token_osio(Apiendpoint, context, (data) => {
-          vscode.window.showInformationMessage("get access token"+ data);
-          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+    authextension.authorize_f8_analytics(context, (data) => {
+      if(data){
+        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
             stackanalysismodule.get_stack_metadata(context, editor.document.uri, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
             provider.signalInit(previewUri,null);
           }, (reason) => {
             vscode.window.showErrorMessage(reason);
           });
-        });
-
-        // Apiendpoint.STACK_API_TOKEN = lastTagged;
-        // process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
-    } else {
+      } else {
         vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
-    }
+      }
+    });
+
 	});
 
   let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => {
     provider.signalInit(previewUri,null);
-    let lastTagged = context.globalState.get('lastTagged', '');
-    Apiendpoint.STACK_API_TOKEN = lastTagged;
-    process.env['RECOMMENDER_API_TOKEN'] = lastTagged;
-    return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+    authextension.authorize_f8_analytics(context, (data) => {
+      if(data){
+        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
           multimanifestmodule.find_manifests_workspace(context, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
           provider.signalInit(previewUri,null);
            }, (reason) => {
 		 	    vscode.window.showErrorMessage(reason);
         });
-  });
-
-  let disposableF8Authorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_AUTHORIZE, () => {
-    authextension.authorize_f8_analytics(context, (data) => {
-      if(data){
-        vscode.window.showInformationMessage('Successfully authorized');
+      } else {
+        vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
       }
     });
+
   });
 
-  let disposableF8UnAuthorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_UNAUTHORIZE, () => {
-    context.globalState.update('lastTagged', '');
-    vscode.window.showInformationMessage('You have been unauthorized from fabric8 analytics','Authorize').then((selection) => {
-      console.log(selection);
-      if(selection == 'Authorize'){
-        authextension.authorize_f8_analytics(context, (data) => {
-          if(data){
-            vscode.window.showInformationMessage('Successfully authorized');
-          }
-        });
-      }
+  // let disposableF8Authorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_AUTHORIZE, () => {
+  //   authextension.authorize_f8_analytics(context, (data) => {
+  //     if(data){
+  //       vscode.window.showInformationMessage('Successfully authorized');
+  //     }
+  //   });
+  // });
 
-    });
-  });
+  // let disposableF8UnAuthorize = vscode.commands.registerCommand(Commands.TRIGGER_F8_UNAUTHORIZE, () => {
+  //   context.globalState.update('lastTagged', '');
+  //   vscode.window.showInformationMessage('You have been unauthorized from fabric8 analytics','Authorize').then((selection) => {
+  //     console.log(selection);
+  //     if(selection == 'Authorize'){
+  //       authextension.authorize_f8_analytics(context, (data) => {
+  //         if(data){
+  //           vscode.window.showInformationMessage('Successfully authorized');
+  //         }
+  //       });
+  //     }
+
+  //   });
+  // });
 
 	let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
-	context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack, disposableF8Authorize, disposableF8UnAuthorize);
+	context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack);
 }
 

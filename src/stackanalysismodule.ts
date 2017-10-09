@@ -99,7 +99,8 @@ export module stackanalysismodule {
                 cb(null);
             }
           } else if(httpResponse.statusCode == 401){
-              thatContext.globalState.update('lastTagged', '');
+              thatContext.globalState.update('f8_access_token', '');
+              thatContext.globalState.update('f8_refresh_token', '');
               vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re-run stack analysis`);
               cb(null);
           } else {   

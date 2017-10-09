@@ -24,7 +24,7 @@ export module authextension {
             cb(null);
         }
         
-  }
+    }
 
 
     get_access_token_osio = (Apiendpoint, context, cb) => {
@@ -39,8 +39,10 @@ export module authextension {
             let resp = JSON.parse(body);
             if (resp && resp.token) {
                 Apiendpoint.STACK_API_TOKEN = resp.token.access_token;
+                Apiendpoint.OSIO_REFRESH_TOKEN = resp.token.refresh_token;
                 process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.STACK_API_TOKEN;
-                context.globalState.update('lastTagged', Apiendpoint.STACK_API_TOKEN);
+                context.globalState.update('f8_access_token', Apiendpoint.STACK_API_TOKEN);
+                context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
                 cb(true);
             } else {
                 vscode.window.showErrorMessage(`Failed with Status code : ${httpResponse.statusCode}`);

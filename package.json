@@ -2,7 +2,7 @@
 	"name": "fabric8-analytics",
 	"displayName": "Preview stack analysis report",
 	"description": "Analyses stack for python, maven and npm ecosystem",
-	"version": "0.0.10",
+	"version": "0.0.20",
 	"author": "Red Hat",
 	"publisher": "redhat",
     "contributors": [{
@@ -66,18 +66,6 @@
 				}
 			],
 			"explorer/context": [
-				{
-					"command": "extension.fabric8AnalyticsWidget",
-					"when": "resourceLangId == plaintext"
-				},
-				{
-					"command": "extension.fabric8AnalyticsWidget",
-					"when": "resourceLangId == xml"
-				},
-				{
-					"command": "extension.fabric8AnalyticsWidget",
-					"when": "resourceLangId == json"
-				},
 				{
 					"command": "extension.fabric8AnalyticsWidgetFullStack"
 				}

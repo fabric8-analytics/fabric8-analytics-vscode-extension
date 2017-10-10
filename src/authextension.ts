@@ -14,13 +14,21 @@ export module authextension {
         let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
         if(osioTokenExt){
             let importedApi = osioTokenExt.exports;
-            if(importedApi) {
-                Apiendpoint.OSIO_REFRESH_TOKEN = importedApi;
-                get_access_token_osio(Apiendpoint, context, cb);
+            if(importedApi && importedApi.hasOwnProperty("refresh_token")) {
+                Apiendpoint.OSIO_REFRESH_TOKEN = importedApi["refresh_token"];
+                //get_access_token_osio(Apiendpoint, context, cb);
+                Apiendpoint.STACK_API_TOKEN = importedApi["access_token"];
+                //Apiendpoint.OSIO_REFRESH_TOKEN = resp.token.refresh_token;
+                process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.STACK_API_TOKEN;
+                context.globalState.update('f8_access_token', Apiendpoint.STACK_API_TOKEN);
+                context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
+                cb(true);
             } else {
+                vscode.window.showErrorMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
                 cb(null);
             }
         } else {
+            vscode.window.showErrorMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
             cb(null);
         }
         

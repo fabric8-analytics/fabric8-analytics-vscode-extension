@@ -52,4 +52,4 @@ This is an open source project open to anyone. Contributions are extremely welco
 
 Feedback
 ===============
-* File a bug in [GitHub Issues](https://github.com/fabric8-analytics/vscode-osio-auth/issues).
+* File a bug in [GitHub Issues](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues).

@@ -12,7 +12,7 @@ Features
 
 * This extension helps to analyze your application stack.
 
-![ screencast ](images/stackreport.png)
+![ screencast ](images/stackanalysis.png)
 
 * This extension helps to analyze your components of application stack as and when you type.
 

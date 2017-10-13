@@ -1,8 +1,8 @@
 {
 	"name": "fabric8-analytics",
-	"displayName": "Preview stack analysis report",
+	"displayName": "Openshift.io services",
 	"description": "Analyses stack for python, maven and npm ecosystem",
-	"version": "0.0.20",
+	"version": "0.0.30",
 	"author": "Red Hat",
 	"publisher": "redhat",
     "contributors": [{

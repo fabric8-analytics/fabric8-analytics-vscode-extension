@@ -24,13 +24,13 @@ export module stackanalysismodule {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
             let data = JSON.parse(body);
             if (!data.hasOwnProperty("error")) {
-                vscode.window.showInformationMessage('Succsfully analysed your stack!!');
+                //vscode.window.showInformationMessage('Succsfully analysed your stack!!');
                 stack_analysis_responses.set(file_uri, data);
                 cb(data);
             }
             else {
                 if (httpResponse.statusCode == 202) {
-                    vscode.window.showInformationMessage('Analysis in progress ...');
+                    //vscode.window.showInformationMessage('Analysis in progress ...');
                     setTimeout(() => { stack_collector(file_uri, id, STACK_API_TOKEN, cb); }, 10000);
                 }
             }
@@ -92,7 +92,7 @@ export module stackanalysismodule {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
-                vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
+                //vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
                 setTimeout(() => { stack_collector(file_uri, resp.id, STACK_API_TOKEN, cb); }, 15000);
             } else {
                 vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);

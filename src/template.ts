@@ -498,7 +498,6 @@ export namespace Templates {
     </head>
     <body>
     <div class='top-caption'>
-    <h1 class='caption'>Stack Analysis Report</h1>
     </div>`;
 
     export const FOOTER_TEMPLATE = '</body></html>';

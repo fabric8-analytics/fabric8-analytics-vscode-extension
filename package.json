@@ -40,11 +40,11 @@
 		"commands": [
 			{
 				"command": "extension.fabric8AnalyticsWidget",
-				"title": "Show fabric8-Analytics stack report"
+				"title": "Generate fabric8-Analytics stack report"
 			},
 			{
 				"command": "extension.fabric8AnalyticsWidgetFullStack",
-				"title": "Show fabric8-Analytics stack report on Workspace"
+				"title": "Generate fabric8-Analytics stack report on Workspace"
 			}
 		],
 		"menus": {

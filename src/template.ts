@@ -26,10 +26,6 @@ export namespace Templates {
             font-weight: 100;
         }
 
-        #tip > #text {
-            color: #666
-        }
-
         .blob {
             width: 2rem;
             height: 2rem;
@@ -289,30 +285,6 @@ export namespace Templates {
             <div class="blob blob-5"></div>
         </div>
         <br />
-        <div style="text-align: center" id="tip">
-            TIP: <span id="text">TIP</span>
-        </div>
-        <script>
-            var items = [
-            "Don't forget to check out diagnostics result from our LSP server",
-            'Click on items in Stack Report to discover more information'
-            ];
-            var x = 0;
-            $(document).ready(function() {
-                // rotate more tips here
-                var tip_setter = function() {
-                    $("#tip").fadeOut(500, function() {
-                    $("#tip > #text").html(items[x]);
-                    $("#tip").fadeIn(500);
-                    x = (x+1) % items.length;
-                    setTimeout(tip_setter, 10000);
-                    });
-                };
-                
-                tip_setter();
-            }
-            );
-        </script>
         </div>
     </body>
     </html>`;

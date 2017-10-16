@@ -24,7 +24,7 @@ export module stackanalysismodule {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
             let data = JSON.parse(body);
             if (!data.hasOwnProperty("error")) {
-                //vscode.window.showInformationMessage('Succsfully analysed your stack!!');
+                vscode.window.showInformationMessage('Succsfully analysed your stack!!');
                 stack_analysis_responses.set(file_uri, data);
                 cb(data);
             }

@@ -58,7 +58,8 @@ export module stackanalysismodule {
         let file_name:string = file_uri_split[file_uri_split_len - 1];
         let file_path: string;
         if(projRootPath){
-            let projRootPathSplit: any = projRootPath.split('/');
+            let encodedProjRootPath: any = projRootPath.replace(/ /g,"%20");
+            let projRootPathSplit: any = encodedProjRootPath.split('/');
             let projName: string = projRootPathSplit[projRootPathSplit.length-1];  
             file_path = file_uri_formatted.split(projName)[1];
         } else{

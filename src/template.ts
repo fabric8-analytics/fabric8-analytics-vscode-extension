@@ -8,7 +8,11 @@ export namespace Templates {
      * Template for loaders
      */
     export const LOADER_TEMPLATE = 
-    `<html>
+    `<!DOCTYPE html>
+    <html>
+    <head>
+        <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+        <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
         <link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
         <style>
         html, body {
@@ -258,6 +262,7 @@ export namespace Templates {
         }
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        </head>
     <body>
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
             <defs>
@@ -294,6 +299,8 @@ export namespace Templates {
     <html>
     <head>
     <meta charset="utf-8"/>
+    <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
     <link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
     <style>
     html,body {

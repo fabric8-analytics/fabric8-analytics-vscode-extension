@@ -53,11 +53,17 @@ export module stackanalysismodule {
     let file_uri_split = file_uri_formatted.split("/");
     let file_uri_split_len: number = file_uri_split.length;
     let projRootPath: string = vscode.workspace.rootPath;
-    if(file_uri_split_len > 0 && projRootPath){
+    if(file_uri_split_len > 0){
         //let projRootPath: string = vscode.workspace.rootPath;
-        let projRootPathSplit: any = projRootPath.split('/');
-        let projName: string = projRootPathSplit[projRootPathSplit.length-1];  
         let file_name:string = file_uri_split[file_uri_split_len - 1];
+        let file_path: string;
+        if(projRootPath){
+            let projRootPathSplit: any = projRootPath.split('/');
+            let projName: string = projRootPathSplit[projRootPathSplit.length-1];  
+            file_path = file_uri_formatted.split(projName)[1];
+        } else{
+            file_path = file_name;
+        }
         if(manifest_array.indexOf(file_name) > -1){
          let form_data = {
           'manifest[]': [{
@@ -67,7 +73,7 @@ export module stackanalysismodule {
                     contentType: manifest_mime_type[file_name]
                 }
             }],
-            'filePath[]': [file_uri_formatted.split(projName)[1]],
+            'filePath[]': [file_path],
             origin: contextData.origin || 'lsp'
           };
           const options = {};

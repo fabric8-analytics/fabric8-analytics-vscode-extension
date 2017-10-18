@@ -23,7 +23,7 @@ export module contentprovidermodule {
                 if(this._output){
                   let r = this.header;
                   let token_uri = process.env['RECOMMENDER_API_TOKEN'];
-                  this.portal_uri = `http://fabric8-analytics-stack-report-ui-bayesian-preview.b6ff.rh-idev.openshiftapps.com/#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}"}`
+                  this.portal_uri = `https://stack-analytics-report.openshift.io/#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}"}`
                   r += render_stack_iframe(this.portal_uri)
                   r += this.footer;
                   return r;

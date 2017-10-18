@@ -11,7 +11,7 @@ export module lspmodule {
 
     invoke_f8_lsp = (context: vscode.ExtensionContext) : any => {
     // The server is implemented in node
-	let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
+	let serverModule = context.asAbsolutePath(path.join('ca-lsp-server', 'server.js'));
 	// The debug options for the server
 	let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
 

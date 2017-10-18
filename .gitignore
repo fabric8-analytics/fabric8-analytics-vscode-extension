@@ -1,2 +1,7 @@
 out
 node_modules
+ca-lsp-server.tar
+ca-lsp-server/
+*.vsix
+.vscode-test/
+.DS_Store

@@ -29,6 +29,9 @@ install_dependencies() {
     npm install -g rimraf
     rimraf node_modules
     npm install;
+
+    # fetch lsp latest release
+    . fetch_lsp.sh
     #chmod +x /root/payload/node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs
 
     if [ $? -eq 0 ]; then

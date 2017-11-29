@@ -5,6 +5,8 @@ import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, T
 import * as path from 'path';
 import { Templates } from './template';
 
+import { Apiendpoint } from './apiendpoint';
+
 export module contentprovidermodule {
 
     export class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
@@ -23,7 +25,7 @@ export module contentprovidermodule {
                 if(this._output){
                   let r = this.header;
                   let token_uri = process.env['RECOMMENDER_API_TOKEN'];
-                  this.portal_uri = `https://stack-analytics-report.openshift.io/#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}"}`
+                  this.portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${Apiendpoint.OSIO_ROUTE_URL}"}}`;
                   r += render_stack_iframe(this.portal_uri)
                   r += this.footer;
                   return r;

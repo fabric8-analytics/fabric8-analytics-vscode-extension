@@ -12,11 +12,11 @@ Features
 
 * This extension helps to analyze your application stack.
 
-![ screencast ](images/stackanalysis.png)
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.png)
 
 * This extension helps to analyze your components of application stack as and when you type.
 
-![ screencast ](images/compAnalysis.png)
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.png)
 
 
 Available commands

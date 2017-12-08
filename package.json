@@ -12,18 +12,18 @@
     }
   ],
   "galleryBanner": {
-    "color": "#5c2d91",
+    "color": "#000000",
     "theme": "dark"
   },
   "bugs": {
-    "url": "https://github.com/invincibleJai/fabric8-analytics-vsc/issues",
+    "url": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues",
     "email": "jakumar@redhat.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/invincibleJai/fabric8-analytics-vsc"
+    "url": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension"
   },
-  "homepage": "https://github.com/invincibleJai/fabric8-analytics-vsc-stackreports/blob/master/README.md",
+  "homepage": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md",
   "categories": [
     "Other"
   ],

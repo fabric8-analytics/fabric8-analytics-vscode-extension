@@ -28,7 +28,7 @@ export module multimanifestmodule {
                             const options = {};
                             let thatContext: any;
                             let file_uri: string;
-                            options['uri'] = `${Apiendpoint.STACK_API_URL}`;
+                            options['uri'] = `${Apiendpoint.STACK_API_URL}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                             options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
                             options['formData'] = payloadData;
                             thatContext = context;

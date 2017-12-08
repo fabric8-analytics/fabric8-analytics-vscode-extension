@@ -9,6 +9,7 @@ export module authextension {
     const request = require('request');
     export let authorize_f8_analytics: any;
     export let get_access_token_osio: any;
+    export let get_3scale_routes: any;
 
     authorize_f8_analytics = (context, cb) => {
         let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
@@ -17,6 +18,7 @@ export module authextension {
             if(importedApi && importedApi.hasOwnProperty("refresh_token")) {
                 Apiendpoint.OSIO_REFRESH_TOKEN = importedApi["refresh_token"];
                 //get_access_token_osio(Apiendpoint, context, cb);
+                get_3scale_routes(Apiendpoint, context);
                 Apiendpoint.STACK_API_TOKEN = importedApi["access_token"];
                 //Apiendpoint.OSIO_REFRESH_TOKEN = resp.token.refresh_token;
                 process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.STACK_API_TOKEN;
@@ -34,6 +36,35 @@ export module authextension {
         
     }
 
+    get_3scale_routes = (Apiendpoint, context) => {
+        let access_token = context.globalState.get('f8_access_token')
+        let bodyData: any = {'auth_token': `${access_token}`, 'service_id': '2555417754383'};
+        let options = {};
+        options['url'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL}` + 'get-route';
+        options['method'] = 'POST';
+        options['headers'] = {'Content-Type': 'application/json'};
+        options['body'] = JSON.stringify(bodyData);
+        request(options, (err, httpResponse, body) => {
+          if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
+            let resp = JSON.parse(body);
+            if (resp && resp.endpoints) {
+                //Apiendpoint.STACK_API_TOKEN = resp.token.access_token;
+                //process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.STACK_API_TOKEN;
+                context.globalState.update('f8_access_routes', resp.endpoints);
+                Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/stack-analyses';
+                Apiendpoint.STACK_API_USER_KEY = resp.user_key;
+                //context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
+                //cb(true);
+            } else {
+                vscode.window.showErrorMessage(`Failed to fetch route, Status: ${httpResponse.statusCode}`);
+                //cb(null);
+            }
+          } else {   
+            vscode.window.showErrorMessage(`Failed to fetch route, Status: ${httpResponse.statusCode}`);
+            //cb(null);
+          }
+        });
+    }
 
     get_access_token_osio = (Apiendpoint, context, cb) => {
         let bodyData: any = {'refresh_token': `${Apiendpoint.OSIO_REFRESH_TOKEN}`};

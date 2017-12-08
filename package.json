@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Openshift.io services",
   "description": "Analyses stack for python, maven and npm ecosystem",
-  "version": "0.0.40",
+  "version": "0.0.50",
   "author": "Red Hat",
   "publisher": "redhat",
   "contributors": [
@@ -27,6 +27,7 @@
   "categories": [
     "Other"
   ],
+  "icon": "icon/openshift_logo.png",
   "engines": {
     "vscode": "^1.8.0"
   },

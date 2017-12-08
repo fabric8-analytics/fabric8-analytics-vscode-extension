@@ -18,7 +18,7 @@ export module stackanalysismodule {
 
     stack_collector = (file_uri, id, STACK_API_TOKEN, cb) => {
         const options = {};
-        options['uri'] = `${Apiendpoint.STACK_API_URL}/${id}`;
+        options['uri'] = `${Apiendpoint.STACK_API_URL}/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
         options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
         request.get(options, (err, httpResponse, body) => {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
@@ -78,7 +78,7 @@ export module stackanalysismodule {
             origin: contextData.origin || 'lsp'
           };
           const options = {};
-          options['uri'] = `${Apiendpoint.STACK_API_URL}`;
+          options['uri'] = `${Apiendpoint.STACK_API_URL}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
           options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
 	      options['formData'] = form_data;
           thatContext = context;
@@ -99,7 +99,7 @@ export module stackanalysismodule {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
-                //vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
+                vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
                 setTimeout(() => { stack_collector(file_uri, resp.id, STACK_API_TOKEN, cb); }, 15000);
             } else {
                 vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);

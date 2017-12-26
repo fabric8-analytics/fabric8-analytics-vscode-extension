@@ -12,7 +12,7 @@
 	},
 	"exclude": [
 		"node_modules",
-		"server",
+		"ca-lsp-server",
 		".vscode-test"
 	]
 }

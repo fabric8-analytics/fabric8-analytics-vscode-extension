@@ -50,7 +50,7 @@ export module authextension {
                 context.globalState.update('f8_access_routes', resp.endpoints);
                 Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/stack-analyses';
                 Apiendpoint.STACK_API_USER_KEY = resp.user_key;
-                process.env['RECOMMENDER_API_URL_TEST'] = resp.endpoints.prod+'/api/v1';
+                process.env['RECOMMENDER_API_URL'] = resp.endpoints.prod+'/api/v1';
                 process.env['THREE_SCALE_USER_TOKEN'] = resp.user_key;
                 cb(true);
             } else {

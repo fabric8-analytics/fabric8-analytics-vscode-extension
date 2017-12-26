@@ -5,3 +5,4 @@ ca-lsp-server/
 *.vsix
 .vscode-test/
 .DS_Store
+*.tar.*

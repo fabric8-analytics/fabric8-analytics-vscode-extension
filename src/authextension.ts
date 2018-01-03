@@ -37,7 +37,7 @@ export module authextension {
 
     get_3scale_routes = (Apiendpoint, context,cb) => {
         let access_token = context.globalState.get('f8_access_token')
-        let bodyData: any = {'auth_token': `${access_token}`, 'service_id': '2555417754383'};
+        let bodyData: any = {'auth_token': `${access_token}`, 'service_id': '2555417754822'};
         let options = {};
         options['url'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL}` + 'get-route';
         options['method'] = 'POST';

@@ -6,4 +6,4 @@ wget https://github.com/invincibleJai/sampleBootstrapTemplate/releases/download/
 
 archive=ca-lsp-server.tar
 mkdir ${archive%.tar*} 
-tar --extract --file=${archive} --strip-components=1 --directory=${archive%.tar*}
+tar --extract --file=${archive} --strip-components=1 --directory=${archive%.tar*} 

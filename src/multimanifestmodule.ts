@@ -16,7 +16,7 @@ export module multimanifestmodule {
     export let find_manifests_workspace: any;
     export let form_manifests_payload: any;
 
-    find_manifests_workspace = (context, provider, STACK_API_TOKEN, cb) => {
+    find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
 
         let payloadData : any;
         vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json}','**/node_modules').then(
@@ -29,10 +29,10 @@ export module multimanifestmodule {
                             let thatContext: any;
                             let file_uri: string;
                             options['uri'] = `${Apiendpoint.STACK_API_URL}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-                            options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
+                            options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
                             options['formData'] = payloadData;
                             thatContext = context;
-                            stackanalysismodule.post_stack_analysis(options,file_uri, STACK_API_TOKEN,thatContext, cb);
+                            stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
                     } else {
                         vscode.window.showErrorMessage(`Failed to trigger stack analysis`);

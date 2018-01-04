@@ -40,9 +40,10 @@ export module lspmodule {
 
         return disposableLSp;
 
-      } else {
-        vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
-      }
+      } 
+    //   else {
+    //     vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
+    //   }
     });
 
     }

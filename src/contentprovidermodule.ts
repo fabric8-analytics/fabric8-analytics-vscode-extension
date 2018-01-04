@@ -25,9 +25,11 @@ export module contentprovidermodule {
                 if(this._output){
                   let r = this.header;
                   let token_uri = process.env['RECOMMENDER_API_TOKEN'];
-                  this.portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${Apiendpoint.OSIO_ROUTE_URL}"}}`;
+                  this.portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${Apiendpoint.OSIO_ROUTE_URL}"},"user_key": "${Apiendpoint.STACK_API_USER_KEY}"}`;
                   r += render_stack_iframe(this.portal_uri)
                   r += this.footer;
+                  console.log("------------------");
+                  console.log(this.portal_uri);
                   return r;
                 } else {
                   let r = this.header;

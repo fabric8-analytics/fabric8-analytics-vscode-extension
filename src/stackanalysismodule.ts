@@ -16,10 +16,10 @@ export module stackanalysismodule {
     export let get_stack_metadata: any;
     export let post_stack_analysis: any;
 
-    stack_collector = (file_uri, id, STACK_API_TOKEN, cb) => {
+    stack_collector = (file_uri, id, OSIO_ACCESS_TOKEN, cb) => {
         const options = {};
         options['uri'] = `${Apiendpoint.STACK_API_URL}/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-        options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
+        options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
         request.get(options, (err, httpResponse, body) => {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
             let data = JSON.parse(body);
@@ -31,7 +31,7 @@ export module stackanalysismodule {
             else {
                 if (httpResponse.statusCode == 202) {
                     //vscode.window.showInformationMessage('Analysis in progress ...');
-                    setTimeout(() => { stack_collector(file_uri, id, STACK_API_TOKEN, cb); }, 10000);
+                    setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 10000);
                 }
             }
         } else {
@@ -41,7 +41,7 @@ export module stackanalysismodule {
         });
 	};
 
-	get_stack_metadata = (context, file_uri, contextData, provider, STACK_API_TOKEN, cb) => {
+	get_stack_metadata = (context, file_uri, contextData, provider, OSIO_ACCESS_TOKEN, cb) => {
     // if (file_uri in stack_analysis_requests) {
     //     return;
     // }
@@ -79,11 +79,11 @@ export module stackanalysismodule {
           };
           const options = {};
           options['uri'] = `${Apiendpoint.STACK_API_URL}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-          options['headers'] = {'Authorization': 'Bearer ' + STACK_API_TOKEN};
+          options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
 	      options['formData'] = form_data;
           thatContext = context;
 
-          post_stack_analysis(options,file_uri, STACK_API_TOKEN,thatContext, cb);
+          post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
         } else {
           vscode.window.showErrorMessage(`Failed to trigger stack analysis as file :  ${file_name} is not a valid manifest file`);
@@ -93,14 +93,14 @@ export module stackanalysismodule {
 	};
 
 
-    post_stack_analysis = (options,file_uri, STACK_API_TOKEN,thatContext, cb) => {
+    post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
         request.post(options, (err, httpResponse, body) => {
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
                 vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
-                setTimeout(() => { stack_collector(file_uri, resp.id, STACK_API_TOKEN, cb); }, 15000);
+                setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 15000);
             } else {
                 vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
                 cb(null);

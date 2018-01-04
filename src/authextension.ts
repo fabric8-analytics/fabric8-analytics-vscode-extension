@@ -19,17 +19,17 @@ export module authextension {
                 Apiendpoint.OSIO_REFRESH_TOKEN = importedApi["refresh_token"];
                 //get_access_token_osio(Apiendpoint, context, cb);
                 get_3scale_routes(Apiendpoint, context, cb);
-                Apiendpoint.STACK_API_TOKEN = importedApi["access_token"];
+                Apiendpoint.OSIO_ACCESS_TOKEN = importedApi["access_token"];
                 //Apiendpoint.OSIO_REFRESH_TOKEN = resp.token.refresh_token;
-                process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.STACK_API_TOKEN;
-                context.globalState.update('f8_access_token', Apiendpoint.STACK_API_TOKEN);
+                process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.OSIO_ACCESS_TOKEN;
+                context.globalState.update('f8_access_token', Apiendpoint.OSIO_ACCESS_TOKEN);
                 context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
             } else {
-                vscode.window.showErrorMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
+                vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
                 cb(null);
             }
         } else {
-            vscode.window.showErrorMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
+            vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
             cb(null);
         }
         
@@ -50,6 +50,7 @@ export module authextension {
                 context.globalState.update('f8_access_routes', resp.endpoints);
                 Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/stack-analyses';
                 Apiendpoint.STACK_API_USER_KEY = resp.user_key;
+                Apiendpoint.OSIO_ROUTE_URL = resp.endpoints.prod;
                 process.env['RECOMMENDER_API_URL'] = resp.endpoints.prod+'/api/v1';
                 process.env['THREE_SCALE_USER_TOKEN'] = resp.user_key;
                 cb(true);
@@ -75,10 +76,10 @@ export module authextension {
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);
             if (resp && resp.token) {
-                Apiendpoint.STACK_API_TOKEN = resp.token.access_token;
+                Apiendpoint.OSIO_ACCESS_TOKEN = resp.token.access_token;
                 Apiendpoint.OSIO_REFRESH_TOKEN = resp.token.refresh_token;
-                process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.STACK_API_TOKEN;
-                context.globalState.update('f8_access_token', Apiendpoint.STACK_API_TOKEN);
+                process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.OSIO_ACCESS_TOKEN;
+                context.globalState.update('f8_access_token', Apiendpoint.OSIO_ACCESS_TOKEN);
                 context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
                 cb(true);
             } else {

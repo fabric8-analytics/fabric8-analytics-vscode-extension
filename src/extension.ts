@@ -36,13 +36,13 @@ export function activate(context: vscode.ExtensionContext) {
     authextension.authorize_f8_analytics(context, (data) => {
       if(data){
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-            stackanalysismodule.get_stack_metadata(context, editor.document.uri, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
+            stackanalysismodule.get_stack_metadata(context, editor.document.uri, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { provider.signal(previewUri, data) });
             provider.signalInit(previewUri,null);
           }, (reason) => {
             vscode.window.showErrorMessage(reason);
           });
       } else {
-        vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
+        vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
       }
     });
 
@@ -53,13 +53,13 @@ export function activate(context: vscode.ExtensionContext) {
     authextension.authorize_f8_analytics(context, (data) => {
       if(data){
         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-          multimanifestmodule.find_manifests_workspace(context, provider, Apiendpoint.STACK_API_TOKEN, (data) => { provider.signal(previewUri, data) });
+          multimanifestmodule.find_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { provider.signal(previewUri, data) });
           provider.signalInit(previewUri,null);
            }, (reason) => {
 		 	    vscode.window.showErrorMessage(reason);
         });
       } else {
-        vscode.window.showErrorMessage("Looks like you are not authorized, Trigger OSIO-AUTH to authorize");
+        vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
       }
     });
 

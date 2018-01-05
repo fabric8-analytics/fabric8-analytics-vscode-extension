@@ -9,7 +9,7 @@ export module lspmodule {
 
     export let invoke_f8_lsp: any;
 
-    invoke_f8_lsp = (context: vscode.ExtensionContext) : any => {
+    invoke_f8_lsp = (context: vscode.ExtensionContext, clb) : any => {
     // The server is implemented in node
 	let serverModule = context.asAbsolutePath(path.join('ca-lsp-server', 'server.js'));
 	// The debug options for the server
@@ -37,8 +37,8 @@ export module lspmodule {
 
         // Create the language client and start the client.
         let disposableLSp = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions).start();
-
-        return disposableLSp;
+        clb(disposableLSp);
+        //return disposableLSp;
 
       } 
     //   else {

@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Openshift.io services",
   "description": "Analyses stack for python, maven and npm ecosystem",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "author": "Red Hat",
   "publisher": "redhat",
   "contributors": [
@@ -36,18 +36,33 @@
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "onLanguage:plaintext",
     "onLanguage:xml",
-    "onLanguage:json"
+    "onLanguage:json",
+    "onCommand:extension.effectivePom"
   ],
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
       {
+        "key": "ctrl+j",
         "command": "extension.fabric8AnalyticsWidget",
         "title": "Generate fabric8-Analytics stack report"
       },
       {
+        "key": "ctrl+k",
         "command": "extension.fabric8AnalyticsWidgetFullStack",
         "title": "Generate fabric8-Analytics stack report on Workspace"
+      },
+      {
+        "key": "ctrl+f5",
+        "command": "workbench.action.reloadWindow",
+        "title": "Reload window",
+        "when": "editorTextFocus"
+      },
+      {
+        "key": "ctrl+l",
+        "command": "extension.effectivePom",
+        "title": "Effective POM",
+        "category": "Maven"
       }
     ],
     "menus": {
@@ -80,6 +95,10 @@
         },
         {
           "command": "extension.fabric8AnalyticsWidget",
+          "when": "resourceLangId == xml"
+        },
+        {
+          "command": "extension.effectivePom",
           "when": "resourceLangId == xml"
         },
         {
@@ -122,12 +141,12 @@
   "devDependencies": {
     "@types/mocha": "^2.2.33",
     "@types/node": "^6.0.52",
-    "typescript": "^2.1.5",
-    "vscode": "1.1.4",
+    "typescript": "^2.6.1",
+    "vscode": "^1.1.4",
     "mocha": "^2.3.3"
   },
   "dependencies": {
     "request": "2.79.0",
-    "vscode-languageclient": "3.3.0"
+    "vscode-languageclient": "3.1.0"
   }
 }

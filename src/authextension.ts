@@ -1,7 +1,6 @@
 'use strict';
 
 import * as vscode from 'vscode';
-
 import { Apiendpoint } from './apiendpoint';
 
 export module authextension {
@@ -48,7 +47,7 @@ export module authextension {
             let resp = JSON.parse(body);
             if (resp && resp.endpoints) {
                 context.globalState.update('f8_access_routes', resp.endpoints);
-                Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/stack-analyses';
+                Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/';
                 Apiendpoint.STACK_API_USER_KEY = resp.user_key;
                 Apiendpoint.OSIO_ROUTE_URL = resp.endpoints.prod;
                 process.env['RECOMMENDER_API_URL'] = resp.endpoints.prod+'/api/v1';

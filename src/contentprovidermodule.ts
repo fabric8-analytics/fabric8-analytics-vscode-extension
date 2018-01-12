@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
+import { LanguageClient, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 import * as path from 'path';
 import { Templates } from './template';
 
@@ -28,8 +28,6 @@ export module contentprovidermodule {
                   this.portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${Apiendpoint.OSIO_ROUTE_URL}"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
                   r += render_stack_iframe(this.portal_uri)
                   r += this.footer;
-                  console.log("------------------");
-                  console.log(this.portal_uri);
                   return r;
                 } else {
                   let r = this.header;

@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
+import { LanguageClient, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 import * as path from 'path';
 
 import { stackanalysismodule } from './stackanalysismodule';
@@ -15,11 +15,12 @@ export module multimanifestmodule {
 
     export let find_manifests_workspace: any;
     export let form_manifests_payload: any;
+    export let find_epom_manifests_workspace: any;
 
-    find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
+    find_epom_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
 
         let payloadData : any;
-        vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json}','**/node_modules').then(
+        vscode.workspace.findFiles('{target/**/pom.xml}','**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
                     form_manifests_payload(result, (data) => {
@@ -28,7 +29,7 @@ export module multimanifestmodule {
                             const options = {};
                             let thatContext: any;
                             let file_uri: string;
-                            options['uri'] = `${Apiendpoint.STACK_API_URL}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                            options['uri'] = `${Apiendpoint.STACK_API_URL}analyse?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                             options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
                             options['formData'] = payloadData;
                             thatContext = context;
@@ -45,7 +46,43 @@ export module multimanifestmodule {
                      cb(null);
                 }
                 
-                //vscode.commands.executeCommand('edit.findAndReplace');
+            },
+            // rejected
+            (reason: any) => {
+                vscode.window.showErrorMessage(reason);
+                cb(null);
+            });
+    }
+
+    find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
+
+        let payloadData : any;
+        vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json}','**/node_modules').then(
+            (result: vscode.Uri[]) => {
+                if(result && result.length){
+                    form_manifests_payload(result, (data) => {
+                        if(data){
+                            payloadData = data;
+                            const options = {};
+                            let thatContext: any;
+                            let file_uri: string;
+                            options['uri'] = `${Apiendpoint.STACK_API_URL}analyse?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                            options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
+                            options['formData'] = payloadData;
+                            thatContext = context;
+                            stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
+
+                    } else {
+                        vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
+                        cb(null);
+                    }
+                
+                });
+                } else {
+                     vscode.window.showErrorMessage("No manifest file found to be analysed");
+                     cb(null);
+                }
+                
             },
             // rejected
             (reason: any) => {
@@ -105,7 +142,5 @@ export module multimanifestmodule {
         }
 
     }
-
-
 
 }

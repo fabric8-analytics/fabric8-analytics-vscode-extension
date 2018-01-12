@@ -18,12 +18,13 @@ export module stackanalysismodule {
 
     stack_collector = (file_uri, id, OSIO_ACCESS_TOKEN, cb) => {
         const options = {};
-        options['uri'] = `${Apiendpoint.STACK_API_URL}/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+        options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
         options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
         request.get(options, (err, httpResponse, body) => {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
             let data = JSON.parse(body);
             if (!data.hasOwnProperty("error")) {
+                console.log("ts for get stack analysis"+ new Date());
                 vscode.window.showInformationMessage('Succsfully analysed your stack!!');
                 stack_analysis_responses.set(file_uri, data);
                 cb(data);
@@ -31,7 +32,7 @@ export module stackanalysismodule {
             else {
                 if (httpResponse.statusCode == 202) {
                     //vscode.window.showInformationMessage('Analysis in progress ...');
-                    setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 10000);
+                    setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 1000);
                 }
             }
         } else {
@@ -49,7 +50,9 @@ export module stackanalysismodule {
     let manifest_mime_type: any = {"requirements.txt" : "text/plain","package.json" : "application/json" ,"pom.xml" : "text/xml"};
     let thatContext: any;
 
-    let file_uri_formatted: string = file_uri._formatted;
+    //let file_uri_formatted: string = file_uri._formatted;
+    let file_uri_formatted: string = file_uri.replace(/ /g,"%20");
+
     let file_uri_split = file_uri_formatted.split("/");
     let file_uri_split_len: number = file_uri_split.length;
     let projRootPath: string = vscode.workspace.rootPath;
@@ -78,7 +81,7 @@ export module stackanalysismodule {
             origin: contextData.origin || 'lsp'
           };
           const options = {};
-          options['uri'] = `${Apiendpoint.STACK_API_URL}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+          options['uri'] = `${Apiendpoint.STACK_API_URL}analyse?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
           options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
 	      options['formData'] = form_data;
           thatContext = context;
@@ -99,8 +102,9 @@ export module stackanalysismodule {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
+                console.log("ts for successful Post analysis"+ new Date());
                 vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
-                setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 15000);
+                setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 1000);
             } else {
                 vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
                 cb(null);

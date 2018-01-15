@@ -25,12 +25,15 @@
   },
   "homepage": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md",
   "categories": [
-    "Other"
+    "Extension Packs"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
-    "vscode": "^1.8.0"
+    "vscode": "^1.12.0"
   },
+  "extensionDependencies": [
+      "redhat.osio-auth-service"
+  ],
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidget",
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
@@ -57,12 +60,6 @@
         "command": "workbench.action.reloadWindow",
         "title": "Reload window",
         "when": "editorTextFocus"
-      },
-      {
-        "key": "ctrl+l",
-        "command": "extension.effectivePom",
-        "title": "Effective POM",
-        "category": "Maven"
       }
     ],
     "menus": {
@@ -95,10 +92,6 @@
         },
         {
           "command": "extension.fabric8AnalyticsWidget",
-          "when": "resourceLangId == xml"
-        },
-        {
-          "command": "extension.effectivePom",
           "when": "resourceLangId == xml"
         },
         {

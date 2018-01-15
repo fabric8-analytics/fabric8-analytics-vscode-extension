@@ -25,7 +25,7 @@ export module stackanalysismodule {
             let data = JSON.parse(body);
             if (!data.hasOwnProperty("error")) {
                 console.log("ts for get stack analysis"+ new Date());
-                vscode.window.showInformationMessage('Succsfully analysed your stack!!');
+                //vscode.window.showInformationMessage('Succsfully analysed your stack!!');
                 stack_analysis_responses.set(file_uri, data);
                 cb(data);
             }
@@ -64,7 +64,7 @@ export module stackanalysismodule {
             let encodedProjRootPath: any = projRootPath.replace(/ /g,"%20");
             let projRootPathSplit: any = encodedProjRootPath.split('/');
             let projName: string = projRootPathSplit[projRootPathSplit.length-1];  
-            file_path = file_uri_formatted.split(projName)[1];
+            file_path = file_uri_formatted.split(projName)[1].replace(/(target[/]|stackinfo[/]|poms[/]|)/g, '');
         } else{
             file_path = file_name;
         }
@@ -97,13 +97,15 @@ export module stackanalysismodule {
 
 
     post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
+        debugger
+
         request.post(options, (err, httpResponse, body) => {
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
                 console.log("ts for successful Post analysis"+ new Date());
-                vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
+                //vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
                 setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 1000);
             } else {
                 vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
@@ -112,7 +114,7 @@ export module stackanalysismodule {
           } else if(httpResponse.statusCode == 401){
               thatContext.globalState.update('f8_access_token', '');
               thatContext.globalState.update('f8_refresh_token', '');
-              vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re-run stack analysis`);
+              vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
               cb(null);
           } else {   
             vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);

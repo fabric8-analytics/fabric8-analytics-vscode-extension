@@ -19,12 +19,12 @@ export module  ProjectDataProvider {
         ].join(" ");
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if (error) {
-                window.showErrorMessage(`Error occurred in generating effective pom.\n${error}`);
+                //window.showErrorMessage(`Error occurred in generating effective pom.\n${error}`);
                 cb(false);
             } else {
                 console.log("effe pom generation TS ");
                 console.log(new Date());
-                window.showInformationMessage(`Successfully generated effective pom.\n`);
+                //window.showInformationMessage(`Successfully generated effective pom.\n`);
                 cb(true);
             }
         });
@@ -43,10 +43,10 @@ export module  ProjectDataProvider {
         ].join(" ");
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if (error) {
-                window.showErrorMessage(`Error occurred in generating effective pom.\n${error}`);
+                //window.showErrorMessage(`Error occurred in generating effective pom.\n${error}`);
                 cb(false);
             } else {
-                window.showInformationMessage(`Successfully generated effective pom.\n`);
+               // window.showInformationMessage(`Successfully generated effective pom.\n`);
                 let ePomPathList: any = pomXmlFilePath.toLowerCase().split("pom.xml");
                 if(ePomPathList.length>0){
                     let ePomPath: string = ePomPathList[0] + filepath;

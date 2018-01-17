@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
     let text = editor.document.getText();
     let fileUri: string = editor.document.fileName;
 
-    vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Stack analysis ...'}, p => {
+    vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
       return new Promise((resolve, reject) => {       
         if(fileUri.toLowerCase().indexOf("pom.xml")!= -1){
           p.report({message: 'Generating effective pom ...' });
@@ -60,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
               }
           });
         } else {
-            p.report({message: 'Analysing your stack ...' });
+            p.report({message: 'Analyzing your stack ...' });
             provider.signalInit(previewUri,null);
             authextension.authorize_f8_analytics(context, (data) => {
               if(data){
@@ -88,7 +88,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => {
     provider.signalInit(previewUri,null);
-    vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Stack analysis ...'}, p => {
+    vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
       return new Promise((resolve, reject) => { 
 
         vscode.workspace.findFiles('{pom.xml}','**/node_modules').then(
@@ -97,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
                 p.report({message: 'Generating effective pom ...' });
                 ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, (dataEpom) => {
                   if(dataEpom){
-                    p.report({message: 'Analysing your stack ...' });
+                    p.report({message: 'Analyzing your stack ...' });
                     // effective pom generated
                     authextension.authorize_f8_analytics(context, (data) => {
                       if(data){

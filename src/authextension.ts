@@ -28,7 +28,7 @@ export module authextension {
                 cb(null);
             }
         } else {
-            vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
+            vscode.window.showInformationMessage(`Looks like there is some issue with auth extension, kindly authorize with OSIO`);
             cb(null);
         }
         

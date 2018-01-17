@@ -36,13 +36,13 @@ export module multimanifestmodule {
                             stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
                     } else {
-                        vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
+                        vscode.window.showErrorMessage(`Failed to trigger stack analyses`);
                         cb(null);
                     }
                 
                 });
                 } else {
-                     vscode.window.showErrorMessage("No manifest file found to be analysed");
+                     vscode.window.showErrorMessage("No manifest file found to be analyzed");
                      cb(null);
                 }
                 
@@ -73,7 +73,7 @@ export module multimanifestmodule {
                             stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
                     } else {
-                        vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
+                        vscode.window.showErrorMessage(`Failed to trigger stack analyses`);
                         cb(null);
                     }
                 

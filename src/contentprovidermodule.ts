@@ -73,7 +73,7 @@ export module contentprovidermodule {
 
     let render_project_failure = () => {
       return `<div>
-                <p>Analysis failed!!</p>
+                <p>failed to analyze!!</p>
               </div>`;
     };
 

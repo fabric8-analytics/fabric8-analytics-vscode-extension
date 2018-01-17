@@ -23,10 +23,10 @@ Available commands
 ==========================
 The following commands are available:
 
-The purpose of the extension is to show stack analysis report. To play with the extension:
+The purpose of the extension is to show stack analyses report. To play with the extension:
 - Open a manifest file i.e (`requirements.txt`, `pom.xml`, `package.json`)
-- Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report` to view stack analysis report on one manifest file
-- Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report on Workspace` to view stack analysis report on entire workspace/project
+- Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report` to view stack analyses report on one manifest file
+- Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report on Workspace` to view stack analyses report on entire workspace/project
 
 
 Contributing

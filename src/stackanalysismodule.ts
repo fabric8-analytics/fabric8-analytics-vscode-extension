@@ -24,7 +24,7 @@ export module stackanalysismodule {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
             let data = JSON.parse(body);
             if (!data.hasOwnProperty("error")) {
-                console.log("ts for get stack analysis"+ new Date());
+                console.log("ts for get stack analyses"+ new Date());
                 //vscode.window.showInformationMessage('Succsfully analysed your stack!!');
                 stack_analysis_responses.set(file_uri, data);
                 cb(data);
@@ -36,7 +36,7 @@ export module stackanalysismodule {
                 }
             }
         } else {
-            vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status:  ${httpResponse.statusCode} `);
+            vscode.window.showErrorMessage(`Failed to trigger stack analyses, Status:  ${httpResponse.statusCode} `);
             cb(null);
         }
         });
@@ -89,22 +89,21 @@ export module stackanalysismodule {
           post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
         } else {
-          vscode.window.showErrorMessage(`Failed to trigger stack analysis as file :  ${file_name} is not a valid manifest file`);
+          vscode.window.showErrorMessage(`Failed to trigger stack analyses as file :  ${file_name} is not a valid manifest file`);
           provider.signalInit(file_uri,null);
         }
     }
 	};
 
 
-    post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
-        debugger
+    post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {  
 
         request.post(options, (err, httpResponse, body) => {
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
-                console.log("ts for successful Post analysis"+ new Date());
+                console.log("ts for successful Post analyses"+ new Date());
                 //vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
                 setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 1000);
             } else {
@@ -117,7 +116,7 @@ export module stackanalysismodule {
               vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
               cb(null);
           } else {   
-            vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);
+            vscode.window.showErrorMessage(`Failed to trigger stack analyses, Status: ${httpResponse.statusCode}`);
             cb(null);
           }
         });

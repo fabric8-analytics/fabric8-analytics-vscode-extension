@@ -276,7 +276,7 @@ export namespace Templates {
         <div id="loading_screen">
         <div style="text-align: center" id="caption">
             <h1 style='color:rgba(100,100,100,0.2)'>fabric8-analytics</h1>
-            <h1>Analysis In Progress</h1>
+            <h1>Analyses In Progress</h1>
             <br />
             <br />
             <br />

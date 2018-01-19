@@ -7,6 +7,8 @@ Quick Start
 1. Install the Extension
 2. It has vscode-osio-auth extension as dependency as enables authorization of OSIO services from VSCode
 2. Extension is activated when you first access a manifest file i.e `pom.xml`(Make sure you have maven installed in your system)
+
+
 Features
 =========
 

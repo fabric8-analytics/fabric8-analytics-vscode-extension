@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
           p.report({message: 'Generating effective pom ...' });
           ProjectDataProvider.effectivef8Pom(editor.document.uri, (dataEpom) => {
               if(dataEpom){
-                p.report({message: 'Analysing your stack ...' });
+                p.report({message: 'Analyzing your stack ...' });
                   provider.signalInit(previewUri,null);
                     authextension.authorize_f8_analytics(context, (data) => {
                       if(data){

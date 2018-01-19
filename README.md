@@ -5,6 +5,7 @@ This extension analyses application stack for maven, npm and pypi ecosystem.
 Quick Start
 ============
 1. Install the Extension
+2. It has vscode-osio-auth extension as dependency as enables authorization of OSIO services from VSCode
 2. Extension is activated when you first access a manifest file i.e `pom.xml`, `package.json` or `requirements.txt`
 
 Features

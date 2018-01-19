@@ -1,13 +1,12 @@
 # fabric8-analytics stack report
 
-This extension analyses application stack for maven, npm and pypi ecosystem.
+This extension analyses application stack for maven to start with going forward would be supporting npm and pypi ecosystem.
 
 Quick Start
 ============
 1. Install the Extension
 2. It has vscode-osio-auth extension as dependency as enables authorization of OSIO services from VSCode
-2. Extension is activated when you first access a manifest file i.e `pom.xml`, `package.json` or `requirements.txt`
-
+2. Extension is activated when you first access a manifest file i.e `pom.xml`(Make sure you have maven installed in your system)
 Features
 =========
 
@@ -25,7 +24,7 @@ Available commands
 The following commands are available:
 
 The purpose of the extension is to show stack analyses report. To play with the extension:
-- Open a manifest file i.e (`requirements.txt`, `pom.xml`, `package.json`)
+- Open a manifest file i.e (`pom.xml`)
 - Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report` to view stack analyses report on one manifest file
 - Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report on Workspace` to view stack analyses report on entire workspace/project
 

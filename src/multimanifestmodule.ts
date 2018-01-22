@@ -29,7 +29,7 @@ export module multimanifestmodule {
                             const options = {};
                             let thatContext: any;
                             let file_uri: string;
-                            options['uri'] = `${Apiendpoint.STACK_API_URL}analyse?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                            options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                             options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
                             options['formData'] = payloadData;
                             thatContext = context;
@@ -66,7 +66,7 @@ export module multimanifestmodule {
                             const options = {};
                             let thatContext: any;
                             let file_uri: string;
-                            options['uri'] = `${Apiendpoint.STACK_API_URL}analyse?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                            options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                             options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
                             options['formData'] = payloadData;
                             thatContext = context;

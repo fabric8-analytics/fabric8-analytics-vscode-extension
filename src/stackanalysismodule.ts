@@ -35,8 +35,11 @@ export module stackanalysismodule {
                     setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 1000);
                 }
             }
+        } else if(httpResponse.statusCode == 403){
+            vscode.window.showInformationMessage(`Looks like rate limit is reached, try in a while. Status:  ${httpResponse.statusCode} `);
+            cb(null);
         } else {
-            vscode.window.showErrorMessage(`Failed to trigger stack analyses, Status:  ${httpResponse.statusCode} `);
+            vscode.window.showErrorMessage(`Failed to get stack analyzed, Status:  ${httpResponse.statusCode} `);
             cb(null);
         }
         });
@@ -81,7 +84,7 @@ export module stackanalysismodule {
             origin: contextData.origin || 'lsp'
           };
           const options = {};
-          options['uri'] = `${Apiendpoint.STACK_API_URL}analyse?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+          options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
           options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
 	      options['formData'] = form_data;
           thatContext = context;
@@ -89,8 +92,8 @@ export module stackanalysismodule {
           post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
         } else {
-          vscode.window.showErrorMessage(`Failed to trigger stack analyses as file :  ${file_name} is not a valid manifest file`);
-          provider.signalInit(file_uri,null);
+            vscode.window.showErrorMessage(`Failed to trigger stack analyses as file :  ${file_name} is not a valid manifest file`);
+            provider.signalInit(file_uri,null);
         }
     }
 	};
@@ -103,20 +106,23 @@ export module stackanalysismodule {
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
                 console.log("ts for successful Post analyses"+ new Date());
-                //vscode.window.showInformationMessage(`Analyzing your stack, id ${resp.id}`);
+                console.log(`Analyzing your stack, id ${resp.id}`);
                 setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 1000);
             } else {
                 vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
                 cb(null);
             }
           } else if(httpResponse.statusCode == 401){
-              thatContext.globalState.update('f8_access_token', '');
-              thatContext.globalState.update('f8_refresh_token', '');
-              vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
-              cb(null);
+                thatContext.globalState.update('f8_access_token', '');
+                thatContext.globalState.update('f8_refresh_token', '');
+                vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
+                cb(null);
+          } else if(httpResponse.statusCode == 403){
+                vscode.window.showInformationMessage(`Looks like rate limit is reached, try in a while. Status:  ${httpResponse.statusCode} `);
+                cb(null);
           } else {   
-            vscode.window.showErrorMessage(`Failed to trigger stack analyses, Status: ${httpResponse.statusCode}`);
-            cb(null);
+                vscode.window.showErrorMessage(`Failed to trigger stack analyses, Status: ${httpResponse.statusCode}`);
+                cb(null);
           }
         });
     }

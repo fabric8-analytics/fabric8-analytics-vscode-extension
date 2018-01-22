@@ -7,7 +7,6 @@ export module authextension {
 
     const request = require('request');
     export let authorize_f8_analytics: any;
-    export let get_access_token_osio: any;
     export let get_3scale_routes: any;
 
     authorize_f8_analytics = (context, cb) => {
@@ -20,7 +19,19 @@ export module authextension {
                 process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.OSIO_ACCESS_TOKEN;
                 context.globalState.update('f8_access_token', Apiendpoint.OSIO_ACCESS_TOKEN);
                 context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
-                get_3scale_routes(Apiendpoint, context, cb);
+                let context_f8_access_token = context.globalState.get('f8_access_token');
+                let context_f8_access_routes = context.globalState.get('f8_access_routes');
+                let context_f8_3scale_user_key = context.globalState.get('f8_3scale_user_key');
+                if(context_f8_access_token && context_f8_access_routes && context_f8_3scale_user_key){
+                    Apiendpoint.STACK_API_URL = context_f8_access_routes.prod+'/api/v1/';
+                    Apiendpoint.STACK_API_USER_KEY = context_f8_3scale_user_key;
+                    Apiendpoint.OSIO_ROUTE_URL = context_f8_access_routes.prod;
+                    process.env['RECOMMENDER_API_URL'] = context_f8_access_routes.prod+'/api/v1';
+                    process.env['THREE_SCALE_USER_TOKEN'] = context_f8_3scale_user_key;
+                    cb(true);
+                } else {
+                    get_3scale_routes(Apiendpoint, context, cb);
+                }
             } else {
                 vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with Openshift.io`);
                 cb(null);
@@ -45,6 +56,7 @@ export module authextension {
             let resp = JSON.parse(body);
             if (resp && resp.endpoints) {
                 context.globalState.update('f8_access_routes', resp.endpoints);
+                context.globalState.update('f8_3scale_user_key', resp.user_key);
                 Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/';
                 Apiendpoint.STACK_API_USER_KEY = resp.user_key;
                 Apiendpoint.OSIO_ROUTE_URL = resp.endpoints.prod;
@@ -62,34 +74,4 @@ export module authextension {
         });
     }
 
-    get_access_token_osio = (Apiendpoint, context, cb) => {
-        let bodyData: any = {'refresh_token': `${Apiendpoint.OSIO_REFRESH_TOKEN}`};
-        let options = {};
-        options['url'] = `${Apiendpoint.OSIO_AUTH_URL}`;
-        options['method'] = 'POST';
-        options['headers'] = {'Content-Type': 'application/json'};
-        options['body'] = JSON.stringify(bodyData);
-        request(options, (err, httpResponse, body) => {
-          if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
-            let resp = JSON.parse(body);
-            if (resp && resp.token) {
-                Apiendpoint.OSIO_ACCESS_TOKEN = resp.token.access_token;
-                Apiendpoint.OSIO_REFRESH_TOKEN = resp.token.refresh_token;
-                process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.OSIO_ACCESS_TOKEN;
-                context.globalState.update('f8_access_token', Apiendpoint.OSIO_ACCESS_TOKEN);
-                context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
-                cb(true);
-            } else {
-                vscode.window.showErrorMessage(`Failed with Status code : ${httpResponse.statusCode}`);
-                cb(null);
-            }
-          } else if(httpResponse.statusCode == 401){
-              vscode.window.showErrorMessage(`Looks like your token is not proper, kindly authorize again`);
-              cb(null);
-          } else {   
-            vscode.window.showErrorMessage(`Looks like your token is not proper, kindly authorize again, Status: ${httpResponse.statusCode}`);
-            cb(null);
-          }
-        });
-    }
 }

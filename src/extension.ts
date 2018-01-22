@@ -38,10 +38,12 @@ export function activate(context: vscode.ExtensionContext) {
                     authextension.authorize_f8_analytics(context, (data) => {
                       if(data){
                         return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-                          stackanalysismodule.get_stack_metadata(context, dataEpom, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
-                            p.report({message: 'Successfully generated stack report ...' });
-                            resolve();
-                            provider.signal(previewUri, data) 
+                          stackanalysismodule.get_stack_metadata(context, dataEpom, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
+                            if(data){
+                              p.report({message: 'Successfully generated stack report ...' });
+                              resolve();
+                              provider.signal(previewUri, data) 
+                            }
                           });
                           provider.signalInit(previewUri,null);
                         }, (reason) => {

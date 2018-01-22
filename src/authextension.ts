@@ -14,28 +14,26 @@ export module authextension {
         let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
         if(osioTokenExt){
             let importedApi = osioTokenExt.exports;
-            if(importedApi && importedApi.hasOwnProperty("refresh_token")) {
+            if(importedApi && importedApi.hasOwnProperty("refresh_token") && importedApi.hasOwnProperty("access_token")) {
                 Apiendpoint.OSIO_REFRESH_TOKEN = importedApi["refresh_token"];
-                //get_access_token_osio(Apiendpoint, context, cb);
-                get_3scale_routes(Apiendpoint, context, cb);
                 Apiendpoint.OSIO_ACCESS_TOKEN = importedApi["access_token"];
-                //Apiendpoint.OSIO_REFRESH_TOKEN = resp.token.refresh_token;
                 process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.OSIO_ACCESS_TOKEN;
                 context.globalState.update('f8_access_token', Apiendpoint.OSIO_ACCESS_TOKEN);
                 context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
+                get_3scale_routes(Apiendpoint, context, cb);
             } else {
-                vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with OSIO`);
+                vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with Openshift.io`);
                 cb(null);
             }
         } else {
-            vscode.window.showInformationMessage(`Looks like there is some issue with auth extension, kindly authorize with OSIO`);
+            vscode.window.showInformationMessage(`Looks like there is some issue with auth extension, kindly authorize with Openshift.io`);
             cb(null);
         }
         
     }
 
     get_3scale_routes = (Apiendpoint, context,cb) => {
-        let access_token = context.globalState.get('f8_access_token')
+        let access_token = Apiendpoint.OSIO_ACCESS_TOKEN;
         let bodyData: any = {'auth_token': `${access_token}`, 'service_id': '2555417754949'};
         let options = {};
         options['url'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL}` + 'get-route';
@@ -54,11 +52,11 @@ export module authextension {
                 process.env['THREE_SCALE_USER_TOKEN'] = resp.user_key;
                 cb(true);
             } else {
-                vscode.window.showErrorMessage(`Failed to fetch route, Status: ${httpResponse.statusCode}`);
+                vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
                 cb(null);
             }
           } else {   
-            vscode.window.showErrorMessage(`Failed to fetch route, Status: ${httpResponse.statusCode}`);
+            vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
             cb(null);
           }
         });

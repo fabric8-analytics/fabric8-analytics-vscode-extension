@@ -16,6 +16,16 @@ Features
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.png)
 
+
+* It analyzes the stack at workspace level.
+
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
+
+
+* It analyzes the stack at individual file level i.e `pom.xml`.
+
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysisManifest.gif)
+
 * This extension helps to analyze your components of application stack as and when you type.
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.png)

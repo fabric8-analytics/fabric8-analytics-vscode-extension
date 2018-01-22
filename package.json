@@ -1,7 +1,7 @@
 {
   "name": "fabric8-analytics",
   "displayName": "Openshift.io services",
-  "description": "Analyses stack for python, maven and npm ecosystem",
+  "description": "Analysis stack for maven ecosystem, flags CVEs associated",
   "version": "0.0.19",
   "author": "Red Hat",
   "publisher": "redhat",
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md",
   "categories": [
-    "Extension Packs"
+    "Other"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
@@ -39,8 +39,7 @@
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "onLanguage:plaintext",
     "onLanguage:xml",
-    "onLanguage:json",
-    "onCommand:extension.effectivePom"
+    "onLanguage:json"
   ],
   "main": "./out/src/extension",
   "contributes": {

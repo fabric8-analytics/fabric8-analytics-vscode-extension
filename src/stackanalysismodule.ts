@@ -94,6 +94,7 @@ export module stackanalysismodule {
         } else {
             vscode.window.showErrorMessage(`Failed to trigger stack analyses as file :  ${file_name} is not a valid manifest file`);
             provider.signalInit(file_uri,null);
+            cb(null);
         }
     }
 	};

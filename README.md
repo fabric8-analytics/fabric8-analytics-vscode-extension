@@ -24,7 +24,7 @@ Features
 
 * It analyzes the stack at individual file level i.e `pom.xml`.
 
-![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysisManifest.gif)
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackAnalysisManifest.gif)
 
 * This extension helps to analyze your components of application stack as and when you type.
 

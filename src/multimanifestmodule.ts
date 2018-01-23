@@ -156,8 +156,8 @@ export module multimanifestmodule {
                     form_data['filePath'] = filePath;
                     resolve(form_data);
                 } else {
-                    vscode.window.showErrorMessage(err);
-                    reject(err);
+                    vscode.window.showErrorMessage(err.message);
+                    reject(err.message);
                 }
 
             });

@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { LanguageClient, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
 import * as path from 'path';
+import * as fs from "fs";
 
 import { stackanalysismodule } from './stackanalysismodule';
 import { Apiendpoint } from './apiendpoint';
@@ -134,33 +135,32 @@ export module multimanifestmodule {
         let projRootPathSplit: any = projRootPath.split('/');
         let projName: string = projRootPathSplit[projRootPathSplit.length-1];
         return new Promise((resolve, reject) => {
-            vscode.workspace.openTextDocument(fileContent).then(
-                (result: any) => {
-                     manifestObj = {
-                            value: '',
-                            options: {
-                                filename: '',
-                                contentType: 'text/plain'
-                            }
+            fs.readFile(fileContent._fsPath, function(err, data) {
+                if(data){
+                    manifestObj = {
+                        value: '',
+                        options: {
+                            filename: '',
+                            contentType: 'text/plain'
+                        }
                     };
-                    //console.log(result.getText());
-                    if(result.uri._fsPath){
-                        filePath = result.uri._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
+                    if(fileContent._fsPath){
+                        filePath = fileContent._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
                         filePathList = filePath.split('/');
                         manifestObj.options.filename = filePathList[filePathList.length-1];
                         manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];
                     }
-                    manifestObj.value = result.getText();
+                    manifestObj.value = data.toString();
 
                     form_data['manifest'] = manifestObj;
                     form_data['filePath'] = filePath;
                     resolve(form_data);
-                },
-                (reason: any) => {
-                    vscode.window.showErrorMessage(reason);
-                    reject(reason);
+                } else {
+                    vscode.window.showErrorMessage(err);
+                    reject(err);
                 }
-            )
+
+            });
         });
      }
 

@@ -120,7 +120,7 @@ export module multimanifestmodule {
                         };
                         //console.log(result.getText());
                         if(result.uri._fsPath){
-                            filePath = result.uri._fsPath.split(projName)[1].replace(/(target[/]|stackinfo[/]|poms[/]|)/g, '');
+                            filePath = result.uri._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
                             filePathList = filePath.split('/');
                             manifestObj.options.filename = filePathList[filePathList.length-1];
                             manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];

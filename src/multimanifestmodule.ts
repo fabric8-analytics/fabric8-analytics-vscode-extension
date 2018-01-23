@@ -93,54 +93,75 @@ export module multimanifestmodule {
 
 
     form_manifests_payload = (resultList, callbacknew) : any => {
+        let fileReadPromises: Array<any> = [];
+        for(var i=0;i<resultList.length;i++){
+            let fileReadPromise = manifestFileRead(resultList[i]);
+            fileReadPromises.push(fileReadPromise);
+        }
+
+        Promise.all(fileReadPromises)
+        .then((datas) => {
+            let form_data = {
+                'manifest[]': [],
+                'filePath[]': [],
+                origin: 'lsp'
+            };
+            datas.forEach((item) => {
+                form_data['manifest[]'].push(item.manifest);
+                form_data['filePath[]'].push(item.filePath); 
+            });
+            callbacknew(form_data);
+        })
+        .catch(() => {
+            callbacknew(null);
+        });
+
+    }
+
+
+    let manifestFileRead = (fileContent) => {
         let form_data = {
-            'manifest[]': [],
-            'filePath[]': [],
-            origin: 'lsp'
+            'manifest': '',
+            'filePath': ''
         };
         let manifestObj: any;
         let manifest_array: any = ["requirements.txt","package.json","pom.xml"];
         let manifest_mime_type: any = {"requirements.txt" : "text/plain","package.json" : "application/json" ,"pom.xml" : "text/xml"};
 
-        for(var i=0;i<resultList.length;i++){
-             let filePath: string = '';
-             let filePathList: any = [];
-             let projRootPath: string = vscode.workspace.rootPath;
-             let projRootPathSplit: any = projRootPath.split('/');
-             let projName: string = projRootPathSplit[projRootPathSplit.length-1];
-             (function(i) {
-                vscode.workspace.openTextDocument(resultList[i]).then(
-                    (result: any) => {
-                         manifestObj = {
-                                value: '',
-                                options: {
-                                    filename: '',
-                                    contentType: 'text/plain'
-                                }
-                        };
-                        //console.log(result.getText());
-                        if(result.uri._fsPath){
-                            filePath = result.uri._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
-                            filePathList = filePath.split('/');
-                            manifestObj.options.filename = filePathList[filePathList.length-1];
-                            manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];
-                        }
-                        manifestObj.value = result.getText();
-
-                        form_data['manifest[]'].push(manifestObj);
-                        form_data['filePath[]'].push(filePath);
-                        if(i == resultList.length-1){
-                            callbacknew(form_data);
-                        }
-                    },
-                    (reason: any) => {
-                        vscode.window.showErrorMessage(reason);
-                        callbacknew(null);
+        let filePath: string = '';
+        let filePathList: any = [];
+        let projRootPath: string = vscode.workspace.rootPath;
+        let projRootPathSplit: any = projRootPath.split('/');
+        let projName: string = projRootPathSplit[projRootPathSplit.length-1];
+        return new Promise((resolve, reject) => {
+            vscode.workspace.openTextDocument(fileContent).then(
+                (result: any) => {
+                     manifestObj = {
+                            value: '',
+                            options: {
+                                filename: '',
+                                contentType: 'text/plain'
+                            }
+                    };
+                    //console.log(result.getText());
+                    if(result.uri._fsPath){
+                        filePath = result.uri._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
+                        filePathList = filePath.split('/');
+                        manifestObj.options.filename = filePathList[filePathList.length-1];
+                        manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];
                     }
-                )
-             })(i);
-        }
+                    manifestObj.value = result.getText();
 
-    }
+                    form_data['manifest'] = manifestObj;
+                    form_data['filePath'] = filePath;
+                    resolve(form_data);
+                },
+                (reason: any) => {
+                    vscode.window.showErrorMessage(reason);
+                    reject(reason);
+                }
+            )
+        });
+     }
 
 }

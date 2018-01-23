@@ -19,7 +19,7 @@ This extension helps analyze:
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
 
 
-* The stack at individual component level (`pom.xml`).
+* The stack at individual manifest file level (`pom.xml`).
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackAnalysisManifest.gif)
 
@@ -51,11 +51,3 @@ This is an open source project, contributions and questions are welcome. If you 
 2. Start the compiler in watch mode:
 `npm run compile`.
 3. Open this folder in VS Code and press `F5`.
-
-### Run tests
-
-1. Press `Ctrl+Shift+D` in Linux or `Cmd+Shift+D` on Mac OS to open the debug viewlet and from the **launch configuration** drop-down select **Launch Tests**.
-2. Press `F5` to run the tests in a new window with the loaded extension. You can see the output of the test result in the debug console.
-3. Make changes to `test/extension.test.ts` or create new test files inside the `test` folder.
-
- NOTE: Conventionally, the test runner will only consider files matching the name pattern `**.test.ts`. You can create folders inside the `test` folder to structure your tests the way you want.

@@ -100,7 +100,8 @@ export module stackanalysismodule {
 	};
 
 
-    post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {  
+    post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
+        console.log(options);
         request.post(options, (err, httpResponse, body) => {
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);

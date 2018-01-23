@@ -138,7 +138,7 @@
     "mocha": "^2.3.3"
   },
   "dependencies": {
-    "component-analysis-lsp-server": "0.0.8",
+    "component-analysis-lsp-server": "0.0.9",
     "request": "2.79.0",
     "vscode-languageclient": "3.1.0"
   }

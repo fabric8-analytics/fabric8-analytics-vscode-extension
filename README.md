@@ -1,67 +1,61 @@
-# fabric8-analytics stack report
+# Fabric8-Analytics stack report
 
-This extension analyses application stack for maven to start with going forward would be supporting npm and pypi ecosystem.
+Fabric8-Analytics stack report extension analyzes application stacks for Maven and the components comprising the application stack. Going forward, npm and PyPI ecosystems will be supported too.
 
-Quick Start
-============
-1. Install the Extension
-2. It has vscode-osio-auth extension as dependency as enables authorization of OSIO services from VSCode
-2. Extension is activated when you first access a manifest file i.e `pom.xml`(Make sure you have maven installed in your system)
+## Prerequisites
+1. Make sure you have Maven installed in your operating system.
 
-
-Features
-=========
-
-* This extension helps to analyze your application stack.
-
-![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.png)
+## Quick Start
+1. Install the extension. It automatically enables authorization of [OpenShift.io](https://openshift.io/) services from VS Code by using the VSCode-osio-auth extension.
+2. The extension is activated when you first access a manifest file such as a `pom.xml`.
 
 
-* It analyzes the stack at workspace level.
+## Features
+
+This extension helps analyze:
+
+* The stack at workspace level.
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
 
 
-* It analyzes the stack at individual file level i.e `pom.xml`.
+* The stack at individual component level (`pom.xml`).
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackAnalysisManifest.gif)
 
-* This extension helps to analyze your components of application stack as and when you type.
+* The individual components of application stack as and when you type.
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.png)
 
+## Usage
 
-Available commands
-==========================
-The following commands are available:
+You can use this extension to see the analysis report for your manifest file and for the entire workspace.
 
-The purpose of the extension is to show stack analyses report. To play with the extension:
-- Open a manifest file i.e (`pom.xml`)
-- Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report` to view stack analyses report on one manifest file
-- Use command (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) `Show fabric8-analytics stack report on Workspace` to view stack analyses report on entire workspace/project
+To view the stack analysis report for the manifest file:
+1. Open a manifest file (`pom.xml`).
+2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Show fabric8-analytics stack report** to see the stack analysis report for the manifest file.
 
+To view the stack analysis report for the entire workspace:
+* Use command `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Show fabric8-analytics stack report on Workspace** to view the stack analysis report for the entire workspace/project.
 
-Contributing
-===============
-This is an open source project open to anyone. Contributions are extremely welcome!
+## Contributing
 
+This is an open source project, contributions and questions are welcome. If you have any feedback, suggestions, or ideas, reach us on:
+* Chat: [fabric8-analytics mattermost  channel](https://chat.openshift.io/developers/channels/fabric8-analytics).
+* Log issues:  [GitHub Repository](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues).
 
-# How to run locally
+### Develop this extension
 
-* `npm install`
-* `npm run compile` to start the compiler in watch mode
-* open this folder in VS Code and press `F5`
+1. Install the dependencies:
+`npm install`.
+2. Start the compiler in watch mode:
+`npm run compile`.
+3. Open this folder in VS Code and press `F5`.
 
+### Run tests
 
-# Run tests
-* open the debug viewlet (`Ctrl+Shift+D` or `Cmd+Shift+D` on Mac) and from the launch configuration dropdown pick `Launch Tests`
-* press `F5` to run the tests in a new window with your extension loaded
-* see the output of the test result in the debug console
-* make changes to `test/extension.test.ts` or create new test files inside the `test` folder
-    * by convention, the test runner will only consider files matching the name pattern `**.test.ts`
-    * you can create folders inside the `test` folder to structure your tests any way you want
+1. Press `Ctrl+Shift+D` in Linux or `Cmd+Shift+D` on Mac OS to open the debug viewlet and from the **launch configuration** drop-down select **Launch Tests**.
+2. Press `F5` to run the tests in a new window with the loaded extension. You can see the output of the test result in the debug console.
+3. Make changes to `test/extension.test.ts` or create new test files inside the `test` folder.
 
-
-Feedback
-===============
-* File a bug in [GitHub Issues](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues).
+ NOTE: Conventionally, the test runner will only consider files matching the name pattern `**.test.ts`. You can create folders inside the `test` folder to structure your tests the way you want.

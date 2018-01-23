@@ -106,12 +106,12 @@
       "type": "object",
       "title": "Example configuration",
       "properties": {
-        "languageServerExample.maxNumberOfProblems": {
+        "componentAnalysisServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
           "description": "Controls the maximum number of problems produced by the server."
         },
-        "languageServerExample.trace.server": {
+        "componentAnalysisServer.trace.server": {
           "type": "string",
           "enum": [
             "off",
@@ -119,7 +119,7 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the languageServerExample service."
+          "description": "Traces the communication between VSCode and the componentAnalysisServer service."
         }
       }
     }

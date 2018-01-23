@@ -29,15 +29,15 @@ export module lspmodule {
             // Register the server for plain text documents 'plaintext','xml','json'
             documentSelector: ['*','xml','xsd'],
                 synchronize: {
-                    // Synchronize the setting section 'languageServerExample' to the server
-                    configurationSection: 'languageServerExample',
+                    // Synchronize the setting section 'componentAnalysisServer' to the server
+                    configurationSection: 'componentAnalysisServer',
                     // Notify the server about file changes to '.clientrc files contain in the workspace
                     fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
                 }
         }
 
         // Create the language client and start the client.
-        let disposableLSp = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions).start();
+        let disposableLSp = new LanguageClient('componentAnalysisServer', 'Component Analysis Language Server', serverOptions, clientOptions).start();
         clb(disposableLSp);
         //return disposableLSp;
 

@@ -1,6 +1,6 @@
 {
   "name": "fabric8-analytics",
-  "displayName": "Openshift.io services",
+  "displayName": "Openshift.io Services",
   "description": "Analyzes stack for maven ecosystem, flags CVEs associated",
   "version": "0.0.19",
   "author": "Red Hat",

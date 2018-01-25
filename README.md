@@ -7,9 +7,19 @@ Red Hat OpenShift.io services extension allows developers using more traditional
 Today OpenShift.io analytics is limited to Java projects using Maven. Going forward additional builders for Java, NPM and PyPI ecosystems will be supported.
 
 ## Prerequisites
-Maven must be installed on your machine.
+
+Provide Maven executable filepath.
+* By default, `mvn` command is executed directly in the terminal, which requires `mvn` can be found in system envronment `PATH`.
+* If you do not want to add it into `PATH`, you can specify maven executable path in settings:
+    ```
+    {
+        "maven.executable.path": "/path-to-maven-home/bin/mvn"
+    }
+    ```
+
 
 ## Quick Start
+
 1. Install the extension. It automatically enables authorization of [OpenShift.io](https://openshift.io/) services from VSCode by using the VSCode-osio-auth extension (included).
 2. The analytcis are activated when you first access a manifest file in your project (e.g. `pom.xml`).
 

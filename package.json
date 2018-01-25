@@ -27,6 +27,12 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "OpenShift.io",
+    "fabric8-analytucs",
+    "analytucs",
+    "Stack"
+  ],
   "icon": "icon/openshift_logo.png",
   "engines": {
     "vscode": "^1.12.0"

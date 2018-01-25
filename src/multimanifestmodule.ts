@@ -21,7 +21,7 @@ export module multimanifestmodule {
     find_epom_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
 
         let payloadData : any;
-        vscode.workspace.findFiles('{target/stackinfo/**/pom.xml}','**/node_modules').then(
+        vscode.workspace.findFiles('{target/stackinfo/**/pom.xml,LICENSE}','**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
                     form_manifests_payload(result, (data) => {
@@ -58,7 +58,7 @@ export module multimanifestmodule {
     find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
 
         let payloadData : any;
-        vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json}','**/node_modules').then(
+        vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json,LICENSE}','**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
                     form_manifests_payload(result, (data) => {
@@ -105,11 +105,17 @@ export module multimanifestmodule {
             let form_data = {
                 'manifest[]': [],
                 'filePath[]': [],
+                'license[]': [],
                 origin: 'lsp'
             };
             datas.forEach((item) => {
-                form_data['manifest[]'].push(item.manifest);
-                form_data['filePath[]'].push(item.filePath); 
+                if(item.manifest && item.filePath){
+                    form_data['manifest[]'].push(item.manifest);
+                    form_data['filePath[]'].push(item.filePath);
+                }
+                if(item.hasOwnProperty('license') &&  item.license.value){ 
+                    form_data['license[]'].push(item.license);
+                }
             });
             callbacknew(form_data);
         })
@@ -123,11 +129,13 @@ export module multimanifestmodule {
     let manifestFileRead = (fileContent) => {
         let form_data = {
             'manifest': '',
-            'filePath': ''
+            'filePath': '',
+            'license': ''
         };
         let manifestObj: any;
         let manifest_array: any = ["requirements.txt","package.json","pom.xml"];
         let manifest_mime_type: any = {"requirements.txt" : "text/plain","package.json" : "application/json" ,"pom.xml" : "text/xml"};
+        let licenseObj: any;
 
         let filePath: string = '';
         let filePathList: any = [];
@@ -144,16 +152,27 @@ export module multimanifestmodule {
                             contentType: 'text/plain'
                         }
                     };
-                    if(fileContent._fsPath){
+                    licenseObj = {
+                        value: '',
+                        options: {
+                            filename: '',
+                            contentType: 'text/plain'
+                        }
+                    };
+                    if(!fileContent._fsPath.endsWith('LICENSE')){
                         filePath = fileContent._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
                         filePathList = filePath.split('/');
                         manifestObj.options.filename = filePathList[filePathList.length-1];
                         manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];
+                        manifestObj.value = data.toString();
+                        form_data['manifest'] = manifestObj;
+                        form_data['filePath'] = filePath;
+                    } else {
+                        licenseObj.options.filename = 'LICENSE';
+                        licenseObj.options.contentType = 'text/plain';
+                        licenseObj.value = data.toString();
+                        form_data['license'] = licenseObj;
                     }
-                    manifestObj.value = data.toString();
-
-                    form_data['manifest'] = manifestObj;
-                    form_data['filePath'] = filePath;
                     resolve(form_data);
                 } else {
                     vscode.window.showErrorMessage(err.message);

@@ -5,6 +5,7 @@ import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, T
 import * as path from 'path';
 
 import { Apiendpoint } from './apiendpoint';
+import { multimanifestmodule } from './multimanifestmodule'
 
 export module stackanalysismodule {
 
@@ -46,57 +47,50 @@ export module stackanalysismodule {
 	};
 
 	get_stack_metadata = (context, file_uri, contextData, provider, OSIO_ACCESS_TOKEN, cb) => {
-    // if (file_uri in stack_analysis_requests) {
-    //     return;
-    // }
-    let manifest_array: any = ["requirements.txt","package.json","pom.xml"];
-    let manifest_mime_type: any = {"requirements.txt" : "text/plain","package.json" : "application/json" ,"pom.xml" : "text/xml"};
-    let thatContext: any;
 
-    //let file_uri_formatted: string = file_uri._formatted;
-    let file_uri_formatted: string = file_uri.replace(/ /g,"%20");
-
-    let file_uri_split = file_uri_formatted.split("/");
-    let file_uri_split_len: number = file_uri_split.length;
-    let projRootPath: string = vscode.workspace.rootPath;
-    if(file_uri_split_len > 0){
-        //let projRootPath: string = vscode.workspace.rootPath;
-        let file_name:string = file_uri_split[file_uri_split_len - 1];
-        let file_path: string;
+        let payloadData : any;
+        let projRootPath: string = vscode.workspace.rootPath;
         if(projRootPath){
             let encodedProjRootPath: any = projRootPath.replace(/ /g,"%20");
             let projRootPathSplit: any = encodedProjRootPath.split('/');
-            let projName: string = projRootPathSplit[projRootPathSplit.length-1];  
-            file_path = file_uri_formatted.split(projName)[1].replace(/(target[/]|stackinfo[/]|poms[/]|)/g, '');
-        } else{
-            file_path = file_name;
-        }
-        if(manifest_array.indexOf(file_name) > -1){
-         let form_data = {
-          'manifest[]': [{
-                value: contextData.manifest,
-                options: {
-                    filename: file_name,
-                    contentType: manifest_mime_type[file_name]
-                }
-            }],
-            'filePath[]': [file_path],
-            origin: contextData.origin || 'lsp'
-          };
-          const options = {};
-          options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-          options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
-	      options['formData'] = form_data;
-          thatContext = context;
+            let projName: string = projRootPathSplit[projRootPathSplit.length-1];
+            let filePathList = file_uri.split(projName+'/');
 
-          post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
-
+            vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,'**/node_modules').then(
+                (result: vscode.Uri[]) => {
+                    if(result && result.length){
+                        multimanifestmodule.form_manifests_payload(result, (data) => {
+                            if(data){
+                                payloadData = data;
+                                const options = {};
+                                let thatContext: any;
+                                let file_uri: string;
+                                options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                                options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
+                                options['formData'] = payloadData;
+                                thatContext = context;
+                                post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
+        
+                        } else {
+                            vscode.window.showErrorMessage(`Failed to trigger stack analyses`);
+                            cb(null);
+                        }
+                    
+                    });
+                    } else {
+                        vscode.window.showErrorMessage("No manifest file found to be analyzed");
+                        cb(null);
+                    }
+                    
+                },
+                // rejected
+                (reason: any) => {
+                    vscode.window.showErrorMessage(reason);
+                    cb(null);
+                });
         } else {
-            vscode.window.showErrorMessage(`Failed to trigger stack analyses as file :  ${file_name} is not a valid manifest file`);
-            provider.signalInit(file_uri,null);
-            cb(null);
+            vscode.window.showErrorMessage('Please reopen the Project, unable to get workspace details');
         }
-    }
 	};
 
 

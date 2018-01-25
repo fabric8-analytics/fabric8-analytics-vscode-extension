@@ -110,7 +110,7 @@
     },
     "configuration": {
       "type": "object",
-      "title": "Example configuration",
+      "title": "Openshift.io configuration",
       "properties": {
         "componentAnalysisServer.maxNumberOfProblems": {
           "type": "number",
@@ -126,6 +126,12 @@
           ],
           "default": "off",
           "description": "Traces the communication between VSCode and the componentAnalysisServer service."
+        },
+        "maven.executable.path": {
+            "type": "string",
+            "default": "",
+            "description": "Specifies absolute path of mvn executable.",
+            "scope": "window"
         }
       }
     }

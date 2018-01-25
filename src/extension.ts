@@ -58,7 +58,6 @@ export function activate(context: vscode.ExtensionContext) {
             } else {
                 p.report({message: 'Unable to generate effective pom ...' });
                 reject();
-                vscode.window.showInformationMessage("Looks like there either are some problem with manifest file or mvn is not set in path");
               }
           });
         } else {
@@ -124,7 +123,6 @@ export function activate(context: vscode.ExtensionContext) {
                     // effective pom not generated
                     p.report({message: 'Unable to generate effective pom ...' });
                     reject();
-                    vscode.window.showInformationMessage("Looks like there either are some problem with manifest file or mvn is not set in path");
                   }
                 });
     

@@ -1,10 +1,11 @@
 {
   "name": "fabric8-analytics",
   "displayName": "OpenShift.io Services",
-  "description": "Analyzes stack for maven ecosystem, flags CVEs associated",
+  "description": "Analyzes stack for maven ecosystem, flags associated CVEs",
   "version": "0.0.19",
   "author": "Red Hat",
   "publisher": "redhat",
+  "preview": true,
   "contributors": [
     {
       "name": "Jaivardhan Kumar",
@@ -29,9 +30,11 @@
   ],
   "keywords": [
     "OpenShift.io",
-    "fabric8-analytucs",
-    "analytucs",
-    "Stack"
+    "fabric8-analytics",
+    "analytics",
+    "security",
+    "license",
+    "stack"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {

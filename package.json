@@ -33,8 +33,7 @@
     "fabric8-analytics",
     "analytics",
     "security",
-    "license",
-    "stack"
+    "license"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {

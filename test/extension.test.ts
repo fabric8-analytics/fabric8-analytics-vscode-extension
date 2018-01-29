@@ -20,7 +20,7 @@ suite("Fabric8 Analytics Extension", () => {
 	test('should register all fabric8 commands', function () {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
-			const FABRIC8_COMMANDS:string[] = [
+			const FABRIC8_COMMANDS = [
 				Commands.TRIGGER_STACK_ANALYSIS,
 				Commands.TRIGGER_FULL_STACK_ANALYSIS
 			];

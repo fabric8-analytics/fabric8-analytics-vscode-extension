@@ -2,7 +2,8 @@
 
 Red Hat OpenShift.io services extension allows developers using more traditional development tools to benefit from the package, security and license analytics that [OpenShift.io](https://openshift.io/) provides:
 - Common Vulnerabilities and Exposures (CVE) analysis highlights code dependencies that have open CVEs against them.
-- License analysis determines the license used by the project and its dependencies. If the project already has a license the analysis will show any conflicts between that license and dependency licenses that may be more restrictive. If the project does not have a license, OpenShift.io will recommend a license for the project that is sufficiently permissive to match the license restrictions of the dependencies.
+- License analysis determines the license used by the project and its dependencies. If the project already has a license the analysis will show any conflicts between that license and dependency licenses that may be more restrictive. If the project does not have a license, OpenShift.io will suggest a license for the project that is sufficiently permissive to match the license restrictions of the dependencies.
+- Insights are provided on the dependencies used - flagging dependencies that are rarely used together and suggesting similar alternatives that are more commonly used
 
 Today OpenShift.io services extension is limited to Vert.x and Spring Boot projects using Maven. Going forward, additional builders for Java, npm and PyPI ecosystems will be supported.
 
@@ -27,7 +28,7 @@ Today OpenShift.io services extension is limited to Vert.x and Spring Boot proje
 
 ## Features
 
-Analytics recommendations are presented as part of a report covering CVEs, license issues, and insights provided on the dependencies used - flagging dependencies that are rarely used together and suggesting similar alternatives that are more commonly used:
+Analytics Insights are presented as part of a report covering CVEs, license issues, and insights provided on the dependencies used - flagging dependencies that are rarely used together and suggesting similar alternatives that are more commonly used:
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
 

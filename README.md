@@ -3,7 +3,7 @@
 Red Hat OpenShift.io services extension allows developers using more traditional development tools to benefit from the package, security and license analytics that [OpenShift.io](https://openshift.io/) provides:
 - Common Vulnerabilities and Exposures (CVE) analysis highlights code dependencies that have open CVEs against them.
 - License analysis determines the license used by the project and its dependencies. If the project already has a license the analysis will show any conflicts between that license and dependency licenses that may be more restrictive. If the project does not have a license, OpenShift.io will suggest a license for the project that is sufficiently permissive to match the license restrictions of the dependencies.
-- Insights are provided on the dependencies used - flagging dependencies that are rarely used together and suggesting similar alternatives that are more commonly used
+- Suggesting dependencies that can be added to your application stack, alternative packages to currently used dependencies if any of the currently used dependencies are not typically used together in an application stack
 
 Today OpenShift.io services extension is limited to Vert.x and Spring Boot projects using Maven. Going forward, additional builders for Java, npm and PyPI ecosystems will be supported.
 
@@ -41,12 +41,12 @@ Alerts for CVEs are also presented in the **PROBLEMS** tab when you open the `po
 
 You can use this extension to see the analysis report for your project as well as address problems shown in the manifest file editor.
 
-To view the stack analysis report for a specific module:
+To view the application's stack analysis report for a specific module:
 1. Open a manifest file (`pom.xml`).
-2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate fabric8-analytics stack report** to see the stack analysis report for the manifest file.
+2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate fabric8-analytics stack report** to see the application's stack analysis report for the manifest file.
 
-To view the stack analysis report for the entire project (including multiple sub-modules):
-* Use command `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate fabric8-analytics stack report on Workspace** to view the stack analysis report for the entire workspace/project.
+To view the application's stack analysis report for the entire project (including multiple sub-modules):
+* Use command `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate fabric8-analytics stack report on Workspace** to view the application's stack analysis report for the entire workspace/project.
 
 ## Contributing
 

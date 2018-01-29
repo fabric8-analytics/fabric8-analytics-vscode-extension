@@ -12,6 +12,7 @@
       "email": "jakumar@redhat.com"
     }
   ],
+  "license": "Apache-2.0",
   "galleryBanner": {
     "color": "#000000",
     "theme": "dark"

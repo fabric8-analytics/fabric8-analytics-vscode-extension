@@ -37,7 +37,7 @@ export module stackanalysismodule {
                 }
             }
         } else if(httpResponse.statusCode == 403){
-            vscode.window.showInformationMessage(`Looks like rate limit is reached, try in a while. Status:  ${httpResponse.statusCode} `);
+            vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
             cb(null);
         } else {
             vscode.window.showErrorMessage(`Failed to get stack analyzed, Status:  ${httpResponse.statusCode} `);
@@ -95,7 +95,6 @@ export module stackanalysismodule {
 
 
     post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
-        console.log(options);
         request.post(options, (err, httpResponse, body) => {
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);
@@ -114,7 +113,7 @@ export module stackanalysismodule {
                 vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
                 cb(null);
           } else if(httpResponse.statusCode == 403){
-                vscode.window.showInformationMessage(`Looks like rate limit is reached, try in a while. Status:  ${httpResponse.statusCode} `);
+                vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
                 cb(null);
           } else {   
                 vscode.window.showErrorMessage(`Failed to trigger stack analyses, Status: ${httpResponse.statusCode}`);

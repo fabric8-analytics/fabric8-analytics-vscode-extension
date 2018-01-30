@@ -25,7 +25,7 @@ export module stackanalysismodule {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
             let data = JSON.parse(body);
             if (!data.hasOwnProperty("error")) {
-                console.log("ts for get stack analyses"+ new Date());
+                console.log("ts for get stack analysis"+ new Date());
                 //vscode.window.showInformationMessage('Succsfully analysed your stack!!');
                 stack_analysis_responses.set(file_uri, data);
                 cb(data);
@@ -72,7 +72,7 @@ export module stackanalysismodule {
                                 post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
         
                         } else {
-                            vscode.window.showErrorMessage(`Failed to trigger stack analyses`);
+                            vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
                             cb(null);
                         }
                     
@@ -100,7 +100,7 @@ export module stackanalysismodule {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
-                console.log("ts for successful Post analyses"+ new Date());
+                console.log("ts for successful Post analysis"+ new Date());
                 console.log(`Analyzing your stack, id ${resp.id}`);
                 setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 1000);
             } else {
@@ -116,7 +116,7 @@ export module stackanalysismodule {
                 vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
                 cb(null);
           } else {   
-                vscode.window.showErrorMessage(`Failed to trigger stack analyses, Status: ${httpResponse.statusCode}`);
+                vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);
                 cb(null);
           }
         });

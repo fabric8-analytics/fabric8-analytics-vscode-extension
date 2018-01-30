@@ -37,7 +37,7 @@ export module multimanifestmodule {
                             stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
                     } else {
-                        vscode.window.showErrorMessage(`Failed to trigger stack analyses`);
+                        vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
                         cb(null);
                     }
                 
@@ -74,7 +74,7 @@ export module multimanifestmodule {
                             stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
 
                     } else {
-                        vscode.window.showErrorMessage(`Failed to trigger stack analyses`);
+                        vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
                         cb(null);
                     }
                 

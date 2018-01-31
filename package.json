@@ -62,12 +62,6 @@
         "key": "ctrl+k",
         "command": "extension.fabric8AnalyticsWidgetFullStack",
         "title": "Generate fabric8-Analytics stack report on Workspace"
-      },
-      {
-        "key": "ctrl+f5",
-        "command": "workbench.action.reloadWindow",
-        "title": "Reload window",
-        "when": "editorTextFocus"
       }
     ],
     "menus": {

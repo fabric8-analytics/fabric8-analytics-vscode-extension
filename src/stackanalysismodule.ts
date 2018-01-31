@@ -121,7 +121,7 @@ export module stackanalysismodule {
                 vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
                 cb(null);
           } else {   
-                vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);
+                vscode.window.showErrorMessage(`Failed to trigger stack analysis, try in a while. Status: ${httpResponse.statusCode}`);
                 cb(null);
           }
         });

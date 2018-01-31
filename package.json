@@ -74,15 +74,7 @@
       "editor/title": [
         {
           "command": "extension.fabric8AnalyticsWidget",
-          "when": "resourceLangId == plaintext"
-        },
-        {
-          "command": "extension.fabric8AnalyticsWidget",
           "when": "resourceLangId == xml"
-        },
-        {
-          "command": "extension.fabric8AnalyticsWidget",
-          "when": "resourceLangId == json"
         },
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack"
@@ -96,15 +88,7 @@
       "editor/context": [
         {
           "command": "extension.fabric8AnalyticsWidget",
-          "when": "resourceLangId == plaintext"
-        },
-        {
-          "command": "extension.fabric8AnalyticsWidget",
           "when": "resourceLangId == xml"
-        },
-        {
-          "command": "extension.fabric8AnalyticsWidget",
-          "when": "resourceLangId == json"
         },
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack"

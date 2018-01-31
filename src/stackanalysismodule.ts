@@ -53,7 +53,7 @@ export module stackanalysismodule {
         if(projRootPath){
             let encodedProjRootPath: any = projRootPath.replace(/ /g,"%20");
             let projRootPathSplit: any = encodedProjRootPath.split('/');
-            let projName: string = projRootPathSplit[projRootPathSplit.length-1];
+            let projName: string = projRootPathSplit[projRootPathSplit.length-1].toLowerCase();
             let filePathList = file_uri.split(projName+'/');
 
             vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,'**/node_modules').then(
@@ -114,6 +114,9 @@ export module stackanalysismodule {
                 cb(null);
           } else if(httpResponse.statusCode == 403){
                 vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
+                cb(null);
+          } else if(httpResponse.statusCode == 400){
+                vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
                 cb(null);
           } else {   
                 vscode.window.showErrorMessage(`Failed to trigger stack analysis, Status: ${httpResponse.statusCode}`);

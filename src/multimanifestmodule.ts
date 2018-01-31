@@ -58,7 +58,7 @@ export module multimanifestmodule {
     find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
 
         let payloadData : any;
-        vscode.workspace.findFiles('{**/pom.xml,**/requirements.txt,**/package.json,LICENSE}','**/node_modules').then(
+        vscode.workspace.findFiles('{**/requirements.txt,**/package.json,LICENSE}','**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
                     form_manifests_payload(result, (data) => {

@@ -23,137 +23,171 @@ export function activate(context: vscode.ExtensionContext) {
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
-    let editor = vscode.window.activeTextEditor;
-    let text = editor.document.getText();
-    let fileUri: string = editor.document.fileName;
+    if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
+      vscode.window.showInformationMessage("Multi-root Workspaces are not supported currently");
+    } else {
+      let editor = vscode.window.activeTextEditor;
+      let text = editor.document.getText();
+      let fileUri: string = editor.document.fileName;
 
-    vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
-      return new Promise((resolve, reject) => {       
-        if(fileUri.toLowerCase().indexOf("pom.xml")!= -1){
-          p.report({message: 'Generating effective pom ...' });
-          ProjectDataProvider.effectivef8Pom(editor.document.uri, (dataEpom) => {
-              if(dataEpom){
-                p.report({message: 'Analyzing your stack ...' });
-                  provider.signalInit(previewUri,null);
-                    authextension.authorize_f8_analytics(context, (data) => {
-                      if(data){
-                        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-                          stackanalysismodule.get_stack_metadata(context, dataEpom, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
-                            if(data){
-                              p.report({message: 'Successfully generated stack report ...' });
-                              resolve();
-                              provider.signal(previewUri, data) 
-                            }
+      vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
+        return new Promise((resolve, reject) => {       
+          if(fileUri.toLowerCase().indexOf("pom.xml")!= -1){
+            p.report({message: 'Generating effective pom ...' });
+            ProjectDataProvider.effectivef8Pom(editor.document.uri, (dataEpom) => {
+                if(dataEpom){
+                  p.report({message: 'Analyzing your stack ...' });
+                    provider.signalInit(previewUri,null);
+                      authextension.authorize_f8_analytics(context, (data) => {
+                        if(data){
+                          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+                            stackanalysismodule.get_stack_metadata(context, dataEpom, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
+                              if(data){
+                                p.report({message: 'Successfully generated stack report ...' });
+                                resolve();
+                                provider.signal(previewUri, data) 
+                              } else {
+                                provider.signal(previewUri,null);
+                                reject();
+                              }
+                            });
+                            provider.signalInit(previewUri,null);
+                          }, (reason) => {
+                                reject();
+                                vscode.window.showErrorMessage(reason);
                           });
-                          provider.signalInit(previewUri,null);
-                        }, (reason) => {
-                              reject();
-                              vscode.window.showErrorMessage(reason);
-                        });
-                      } else {
-                        vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
-                        reject();
-                      }
-                  });
-            } else {
-                p.report({message: 'Unable to generate effective pom ...' });
-                reject();
-              }
-          });
-        } else {
-            p.report({message: 'Analyzing your stack ...' });
-            provider.signalInit(previewUri,null);
-            authextension.authorize_f8_analytics(context, (data) => {
-              if(data){
-                return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-                  stackanalysismodule.get_stack_metadata(context, editor.document.fileName, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
-                    p.report({message: 'Successfully generated stack report ...' });
-                    resolve();
-                    provider.signal(previewUri, data) 
-                  });
-                  provider.signalInit(previewUri,null);
-                }, (reason) => {
-                  reject();
-                  vscode.window.showErrorMessage(reason);
-                });
+                        } else {
+                          vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
+                          reject();
+                        }
+                    });
               } else {
-                  vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
+                  p.report({message: 'Unable to generate effective pom ...' });
                   reject();
                 }
             });
-        }
-
-      });
-    });    
-	});
-
-  let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => {
-    provider.signalInit(previewUri,null);
-    vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
-      return new Promise((resolve, reject) => { 
-
-        vscode.workspace.findFiles('{pom.xml}','**/node_modules').then(
-          (result: vscode.Uri[]) => {
-              if(result && result.length){
-                p.report({message: 'Generating effective pom ...' });
-                ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, (dataEpom) => {
-                  if(dataEpom){
-                    p.report({message: 'Analyzing your stack ...' });
-                    // effective pom generated
-                    authextension.authorize_f8_analytics(context, (data) => {
-                      if(data){
-                        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-                          multimanifestmodule.find_epom_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
-                            provider.signal(previewUri, data);
-                            p.report({message: 'Successfully generated stack report ...' });
-                            resolve();
-                          });
-                          provider.signalInit(previewUri,null);
-                           }, (reason) => {
-                           vscode.window.showErrorMessage(reason);
-                           reject();
-                        });
-                      } else {
-                        vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
-                        reject();
-                      }
-                    });
-                    
-                  } else {
-                    // effective pom not generated
-                    p.report({message: 'Unable to generate effective pom ...' });
-                    reject();
-                  }
-                });
-    
-              } 
-          },
-          // Other ecosystem flow
-          (reason: any) => {
+          } else {
+              p.report({message: 'Analyzing your stack ...' });
+              provider.signalInit(previewUri,null);
               authextension.authorize_f8_analytics(context, (data) => {
                 if(data){
                   return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
-                    multimanifestmodule.find_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
-                      provider.signal(previewUri, data);
-                      p.report({message: 'Successfully generated stack report ...' });
-                      resolve();
+                    stackanalysismodule.get_stack_metadata(context, editor.document.fileName, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
+                      if(data){
+                        p.report({message: 'Successfully generated stack report ...' });
+                        resolve();
+                        provider.signal(previewUri, data);
+                      } else {
+                        provider.signal(previewUri,null);
+                        reject();
+                      }
                     });
                     provider.signalInit(previewUri,null);
-                     }, (reason) => {
-                     vscode.window.showErrorMessage(reason);
-                     reject();
+                  }, (reason) => {
+                    reject();
+                    vscode.window.showErrorMessage(reason);
                   });
                 } else {
-                  vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
+                    vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
+                    reject();
+                  }
+              });
+          }
+
+        });
+      });
+    }
+	});
+
+  let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => {
+    if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
+      vscode.window.showInformationMessage("Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level");
+    } else {
+      provider.signalInit(previewUri,null);
+      vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
+        return new Promise((resolve, reject) => { 
+
+          vscode.workspace.findFiles('{pom.xml}','**/node_modules').then(
+            (result: vscode.Uri[]) => {
+                if(result && result.length){
+                  console.log("maven project"+ result);
+                  p.report({message: 'Generating effective pom ...' });
+                  ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, (dataEpom) => {
+                    if(dataEpom){
+                      console.log("effective pom generated"+ dataEpom);
+                      p.report({message: 'Analyzing your stack ...' });
+                      // effective pom generated
+                      authextension.authorize_f8_analytics(context, (data) => {
+                        if(data){
+                          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+                            multimanifestmodule.find_epom_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
+                              if(data){
+                                console.log("in find_epom_manifests_workspace"+ data);
+                                provider.signal(previewUri, data);
+                                p.report({message: 'Successfully generated stack report ...' });
+                                resolve();
+                              }else {
+                                console.log("in find_epom_manifests_workspace"+ data);
+                                provider.signal(previewUri,null);
+                                reject();
+                              }
+                            });
+                            provider.signalInit(previewUri,null);
+                            }, (reason) => {
+                            vscode.window.showErrorMessage(reason);
+                            reject();
+                          });
+                        } else {
+                          vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
+                          reject();
+                        }
+                      });
+                      
+                    } else {
+                      // effective pom not generated
+                      p.report({message: 'Unable to generate effective pom ...' });
+                      reject();
+                    }
+                  });
+      
+                } else {
+                  vscode.window.showInformationMessage("Coudn't find Pom.xml at root workspace level");
                   reject();
                 }
-              });
-    
-          });
+            },
+            // Other ecosystem flow
+            (reason: any) => {
+                console.log("Other ecosystem flow"+ reason);
+                authextension.authorize_f8_analytics(context, (data) => {
+                  if(data){
+                    return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+                      multimanifestmodule.find_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
+                        if(data){
+                          provider.signal(previewUri, data);
+                          p.report({message: 'Successfully generated stack report ...' });
+                          resolve();
+                        } else {
+                          provider.signal(previewUri,null);
+                          reject();
+                        }
+                      });
+                      provider.signalInit(previewUri,null);
+                      }, (reason) => {
+                      vscode.window.showErrorMessage(reason);
+                      reject();
+                    });
+                  } else {
+                    vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
+                    reject();
+                  }
+                });
+      
+            });
 
 
+        });
       });
-    });
+    }
   });
 
   lspmodule.invoke_f8_lsp(context, (disposableLSp) => {

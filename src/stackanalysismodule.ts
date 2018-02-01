@@ -25,8 +25,6 @@ export module stackanalysismodule {
         if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
             let data = JSON.parse(body);
             if (!data.hasOwnProperty("error")) {
-                console.log("ts for get stack analysis"+ new Date());
-                //vscode.window.showInformationMessage('Succsfully analysed your stack!!');
                 stack_analysis_responses.set(file_uri, data);
                 cb(data);
             }
@@ -95,14 +93,12 @@ export module stackanalysismodule {
 
 
     post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
-        console.log('post data '+JSON.stringify(options.formData));
         request.post(options, (err, httpResponse, body) => {
           console.log('response Post '+body);
           if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
             let resp = JSON.parse(body);
             if (resp.error === undefined && resp.status == 'success') {
                 stack_analysis_requests[file_uri] = resp.id;
-                console.log("ts for successful Post analysis"+ new Date());
                 console.log(`Analyzing your stack, id ${resp.id}`);
                 setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 6000);
             } else {

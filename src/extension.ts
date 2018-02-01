@@ -110,11 +110,9 @@ export function activate(context: vscode.ExtensionContext) {
           vscode.workspace.findFiles('{pom.xml}','**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
-                  console.log("maven project"+ result);
                   p.report({message: 'Generating effective pom ...' });
                   ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, (dataEpom) => {
                     if(dataEpom){
-                      console.log("effective pom generated"+ dataEpom);
                       p.report({message: 'Analyzing your stack ...' });
                       // effective pom generated
                       authextension.authorize_f8_analytics(context, (data) => {
@@ -122,12 +120,10 @@ export function activate(context: vscode.ExtensionContext) {
                           return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
                             multimanifestmodule.find_epom_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
                               if(data){
-                                console.log("in find_epom_manifests_workspace"+ data);
                                 provider.signal(previewUri, data);
                                 p.report({message: 'Successfully generated stack report ...' });
                                 resolve();
                               }else {
-                                console.log("in find_epom_manifests_workspace"+ data);
                                 provider.signal(previewUri,null);
                                 reject();
                               }
@@ -157,7 +153,6 @@ export function activate(context: vscode.ExtensionContext) {
             },
             // Other ecosystem flow
             (reason: any) => {
-                console.log("Other ecosystem flow"+ reason);
                 authextension.authorize_f8_analytics(context, (data) => {
                   if(data){
                     return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {

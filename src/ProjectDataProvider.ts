@@ -23,7 +23,6 @@ export module  ProjectDataProvider {
                 vscode.window.showErrorMessage(error.message);
                 cb(false);
             } else {
-                console.log("effe pom gen in effectivef8PomWs");
                 cb(true);
             }
         });

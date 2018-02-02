@@ -15,8 +15,8 @@ export namespace Templates {
         <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
         <style>
         html, body {
-            width: 97%;
-            height: 97%;
+            width: 100%;
+            height: 100%;
             font-size: 16px;
         }
 
@@ -277,8 +277,8 @@ export namespace Templates {
     <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
     <style>
     html,body {
-    width: 97%;
-    height: 97%;
+    width: 100%;
+    height: 100%;
     font-size: 16px;
     }
 

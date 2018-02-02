@@ -116,7 +116,7 @@ export module stackanalysismodule {
                 } else if(httpResponse.statusCode == 401){
                     thatContext.globalState.update('f8_access_token', '');
                     thatContext.globalState.update('f8_refresh_token', '');
-                    vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
+                    vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with OpenShift.io`);
                     cb(null);
                 } else if(httpResponse.statusCode == 403){
                     vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);

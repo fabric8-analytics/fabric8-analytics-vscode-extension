@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
                     provider.signalInit(previewUri,null);
                       authextension.authorize_f8_analytics(context, (data) => {
                         if(data){
-                          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+                          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
                             stackanalysismodule.get_stack_metadata(context, dataEpom, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
                               if(data){
                                 p.report({message: 'Successfully generated stack report ...' });
@@ -71,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
               provider.signalInit(previewUri,null);
               authextension.authorize_f8_analytics(context, (data) => {
                 if(data){
-                  return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+                  return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
                     stackanalysismodule.get_stack_metadata(context, editor.document.fileName, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
                       if(data){
                         p.report({message: 'Successfully generated stack report ...' });
@@ -117,7 +117,7 @@ export function activate(context: vscode.ExtensionContext) {
                       // effective pom generated
                       authextension.authorize_f8_analytics(context, (data) => {
                         if(data){
-                          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+                          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
                             multimanifestmodule.find_epom_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
                               if(data){
                                 provider.signal(previewUri, data);
@@ -155,7 +155,7 @@ export function activate(context: vscode.ExtensionContext) {
             (reason: any) => {
                 authextension.authorize_f8_analytics(context, (data) => {
                   if(data){
-                    return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'fabric8-analytics stack report').then((success) => {
+                    return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
                       multimanifestmodule.find_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
                         if(data){
                           provider.signal(previewUri, data);

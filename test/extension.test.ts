@@ -40,7 +40,7 @@ suite("Fabric8 Analytics Extension", () => {
         });
 	});
 
-	test('should trigger fabric8-analytics stack report activate', (done) => {
+	test('should trigger application stack report activate', (done) => {
 		//this.timeout(90000);
 		vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {
 			assert.ok(true);

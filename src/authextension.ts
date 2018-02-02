@@ -33,11 +33,11 @@ export module authextension {
                     get_3scale_routes(Apiendpoint, context, cb);
                 }
             } else {
-                vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with Openshift.io`);
+                vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with OpenShift.io`);
                 cb(null);
             }
         } else {
-            vscode.window.showInformationMessage(`Looks like there is some issue with auth extension, kindly authorize with Openshift.io`);
+            vscode.window.showInformationMessage(`Looks like there is some issue with auth extension, kindly authorize with OpenShift.io`);
             cb(null);
         }
         
@@ -71,7 +71,7 @@ export module authextension {
                         cb(null);
                     }
                 } else {   
-                    vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
+                    vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with OpenShift.io, Status: ${httpResponse.statusCode}`);
                     cb(null);
                 }
             }

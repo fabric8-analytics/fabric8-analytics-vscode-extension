@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "OpenShift.io Services",
   "description": "Analyzes stack for maven ecosystem, flags associated CVEs",
-  "version": "0.0.19",
+  "version": "0.0.1",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -56,12 +56,12 @@
       {
         "key": "ctrl+j",
         "command": "extension.fabric8AnalyticsWidget",
-        "title": "Generate fabric8-Analytics stack report"
+        "title": "Generate application stack report"
       },
       {
         "key": "ctrl+k",
         "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "title": "Generate fabric8-Analytics stack report on Workspace"
+        "title": "Generate application stack report on Workspace"
       }
     ],
     "menus": {

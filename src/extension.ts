@@ -57,8 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
                                 vscode.window.showErrorMessage(reason);
                           });
                         } else {
-                          vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
-                          reject();
+                            reject();
                         }
                     });
               } else {
@@ -88,7 +87,6 @@ export function activate(context: vscode.ExtensionContext) {
                     vscode.window.showErrorMessage(reason);
                   });
                 } else {
-                    vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
                     reject();
                   }
               });
@@ -134,8 +132,7 @@ export function activate(context: vscode.ExtensionContext) {
                             reject();
                           });
                         } else {
-                          vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
-                          reject();
+                            reject();
                         }
                       });
                       
@@ -172,8 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
                       reject();
                     });
                   } else {
-                    vscode.window.showInformationMessage("Looks like your extension is not authorized, kindly authorize with OSIO");
-                    reject();
+                      reject();
                   }
                 });
       

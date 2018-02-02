@@ -73,7 +73,7 @@ export module contentprovidermodule {
 
     let render_project_failure = () => {
       return `<div>
-                <p>failed to analyze!!</p>
+                <p style='color:#ffffff;text-align: center;'>Unable to anlyze your stack, please verify your network connectivity and try again.</p>
               </div>`;
     };
 

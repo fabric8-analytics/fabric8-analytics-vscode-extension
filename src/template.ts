@@ -13,11 +13,10 @@ export namespace Templates {
     <head>
         <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
         <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-        <link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
         <style>
         html, body {
-            width: 100%;
-            height: 100%;
+            width: 97%;
+            height: 97%;
             font-size: 16px;
         }
 
@@ -26,7 +25,7 @@ export namespace Templates {
         }
 
         #caption {
-            font-family: 'Exo 2', sans-serif;
+            font-family: sans-serif;
             font-weight: 100;
         }
 
@@ -245,38 +244,13 @@ export namespace Templates {
                         transform: translateX(0rem) scale(1);
             }
         }
-        kbd {
-            display: inline-block;
-            margin: 0 .1em;
-            padding: .1em .6em;
-            font-family: Arial,"Helvetica Neue",Helvetica,sans-serif;
-            font-size: 11px;
-            line-height: 1.4;
-            color: #242729;
-            text-shadow: 0 1px 0 #FFF;
-            background-color: #e1e3e5;
-            border: 1px solid #adb3b9;
-            border-radius: 3px;
-            box-shadow: 0 1px 0 rgba(12,13,14,0.2),0 0 0 2px #FFF inset;
-            white-space: nowrap;
-        }
         </style>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         </head>
     <body>
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-            <defs>
-                <filter id="gooey">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo"></feColorMatrix>
-                <feBlend in="SourceGraphic" in2="goo"></feBlend>
-                </filter>
-            </defs>
-        </svg>
         <div id="loading_screen">
-        <div style="text-align: center" id="caption">
-            <h1 style='color:rgba(100,100,100,0.2)'>fabric8-analytics</h1>
-            <h1>Analysis In Progress</h1>
+        <div style="text-align: center;margin-top:130px;" id="caption">
+            <h1 style='color:#ffffff'>OpenShift.io</h1>
+            <h1 style='color:#ffffff'>Application stack analysis in progress</h1>
             <br />
             <br />
             <br />
@@ -301,11 +275,10 @@ export namespace Templates {
     <meta charset="utf-8"/>
     <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
     <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-    <link href="https://fonts.googleapis.com/css?family=Exo+2:100,400" rel="stylesheet"> 
     <style>
     html,body {
-    width: 100%;
-    height: 100%;
+    width: 97%;
+    height: 97%;
     font-size: 16px;
     }
 
@@ -314,7 +287,7 @@ export namespace Templates {
     }
 
     .caption {
-    font-family: 'Exo 2', sans-serif;
+    font-family: sans-serif;
     font-weight: 100;
     padding-left: 4px;
     }
@@ -324,156 +297,7 @@ export namespace Templates {
     width: 95%;
     }
 
-    .font {
-        font-family: 'Exo 2', sans-serif;
-    }
-
-    .item {
-    padding: 4px 0px;
-    width: 95%;
-    }
-
-    .item-key {
-    font-weight: 100;
-    display: inline-block;
-    width: 40%;
-    padding-left: 4px;
-    }
-
-    .item-value {
-    font-weight: 600;
-    display: inline-block;
-    width: 59%;
-    }
-
-    .item-value-2 {
-    text-align: center;
-    font-weight: 600;
-    display: inline-block;
-    width: 59%;
-    }
-
-    .item:nth-child(even) {background-color: rgba(255,255,255,0.05)}
-    /*.item-value:nth-child(even) {background-color: rgba(255,255,255,0.05)}*/
-
-    .grid {
-    font-family: 'Exo 2', sans-serif;
-    height: 70px;
-    }
-
-    .grid-left {
-    width: 35%;
-    font-weight: 600;
-    line-height: 0.9em;
-    padding: 1.5em;
-    display: inline-block;
-    float: left;
-    background-color: rgba(255,0,0,0.075);
-    }
-
-    .grid-right {
-    width: 35%;
-    font-weight: 600;
-    line-height: 0.9em;
-    padding: 1.5em;
-    display: inline-block;
-    float: right;
-    background-color: rgba(100,100,100,0.1);
-    margin-right: 5%;
-    }
-
-    .rm {
-    width: 95%;
-    background-color: rgba(100, 100, 100, 0.1);
-    font-family: 'Exo 2', sans-serif;
-    cursor: pointer;
-    }
-    /*
-    .rm:nth-child(even) {
-    background-color: #fff;
-    }*/
-    .rm-even {
-    background-color: rgba(100, 100, 100, 0.3);
-    }
-
-    .rm-origin {
-    padding: 4px 0px;
-    padding-left: 4px;
-    display: inline-block;
-    width: 30%;
-    }
-    .rm-name {
-    width: 30%;
-    padding: 4px 0px;
-    display: inline-block;
-    font-weight: bold;
-    }
-    .rm-score {
-    float: right;
-    padding: 4px 0px;
-    padding-right: 4px;
-    display: inline-block;
-    }
-
-    .high {
-    font-weight: bold;
-    color: #00aa00;
-    }
-
-    .medium {
-    }
-
-    .low {
-    color: #aa2222;
-    }
-
-    .extra {
-    width: 95%;
-    background-color: rgba(0,100,0,0.1);
-    }
-    .extra-op {
-    padding: 4px 0px;
-    padding-left: 4px;
-    display: inline-block;
-    font-weight: 800;
-    width: 5%;
-    }
-    .extra-name {
-    padding: 4px 0px;
-    padding-left: 4px;
-    display: inline-block;
-    }
-    .extra:nth-child(odd) {background-color: rgba(0,150,0,0.1);}
-
-    .missing {
-    width: 95%;
-    background-color: rgba(100,0,0,0.1);
-    }
-    .missing-op {
-    padding: 4px 0px;
-    padding-left: 4px;
-    display: inline-block;
-    font-weight: 800;
-    width: 5%;
-    }
-    .missing-name {
-    padding: 4px 0px;
-    padding-left: 4px;
-    display: inline-block;
-    }
-    .missing:nth-child(odd) {background-color: rgba(150,0,0,0.1);}
-
-    .resolve {
-    width: 91%;
-    background-color: rgba(60, 200, 60, 0.3);
-    font-family: 'Exo 2', sans-serif;
-    cursor: pointer;
-    text-align: center;
-    font-size: 18px;
-    padding: 2%;
-    }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     </head>
     <body>
     <div class='top-caption'>

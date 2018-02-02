@@ -22,25 +22,30 @@ export module stackanalysismodule {
         options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
         options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
         request.get(options, (err, httpResponse, body) => {
-        if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
-            let data = JSON.parse(body);
-            if (!data.hasOwnProperty("error")) {
-                stack_analysis_responses.set(file_uri, data);
-                cb(data);
-            }
-            else {
-                if (httpResponse.statusCode == 202) {
-                    //vscode.window.showInformationMessage('Analysis in progress ...');
-                    setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 6000);
+            if(err){
+                cb(null);
+            } else {
+                if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
+                    let data = JSON.parse(body);
+                    if (!data.hasOwnProperty("error")) {
+                        stack_analysis_responses.set(file_uri, data);
+                        cb(data);
+                    }
+                    else {
+                        if (httpResponse.statusCode == 202) {
+                            //vscode.window.showInformationMessage('Analysis in progress ...');
+                            setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 6000);
+                        }
+                    }
+                } else if(httpResponse.statusCode == 403){
+                    vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
+                    cb(null);
+                } else {
+                    vscode.window.showErrorMessage(`Failed to get stack analyzed, Status:  ${httpResponse.statusCode} `);
+                    cb(null);
                 }
             }
-        } else if(httpResponse.statusCode == 403){
-            vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
-            cb(null);
-        } else {
-            vscode.window.showErrorMessage(`Failed to get stack analyzed, Status:  ${httpResponse.statusCode} `);
-            cb(null);
-        }
+
         });
 	};
 
@@ -94,32 +99,37 @@ export module stackanalysismodule {
 
     post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
         request.post(options, (err, httpResponse, body) => {
-          console.log('response Post '+body);
-          if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
-            let resp = JSON.parse(body);
-            if (resp.error === undefined && resp.status == 'success') {
-                stack_analysis_requests[file_uri] = resp.id;
-                console.log(`Analyzing your stack, id ${resp.id}`);
-                setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 6000);
-            } else {
-                vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
+            if(err){
                 cb(null);
+            }else {
+                console.log('response Post '+body);
+                if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
+                    let resp = JSON.parse(body);
+                    if (resp.error === undefined && resp.status == 'success') {
+                        stack_analysis_requests[file_uri] = resp.id;
+                        console.log(`Analyzing your stack, id ${resp.id}`);
+                        setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 6000);
+                    } else {
+                        vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
+                        cb(null);
+                    }
+                } else if(httpResponse.statusCode == 401){
+                    thatContext.globalState.update('f8_access_token', '');
+                    thatContext.globalState.update('f8_refresh_token', '');
+                    vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
+                    cb(null);
+                } else if(httpResponse.statusCode == 403){
+                    vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
+                    cb(null);
+                } else if(httpResponse.statusCode == 400){
+                    vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
+                    cb(null);
+                } else {   
+                    vscode.window.showErrorMessage(`Failed to trigger stack analysis, try in a while. Status: ${httpResponse.statusCode}`);
+                    cb(null);
+                }
             }
-          } else if(httpResponse.statusCode == 401){
-                thatContext.globalState.update('f8_access_token', '');
-                thatContext.globalState.update('f8_refresh_token', '');
-                vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with Openshift.io`);
-                cb(null);
-          } else if(httpResponse.statusCode == 403){
-                vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
-                cb(null);
-          } else if(httpResponse.statusCode == 400){
-                vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
-                cb(null);
-          } else {   
-                vscode.window.showErrorMessage(`Failed to trigger stack analysis, try in a while. Status: ${httpResponse.statusCode}`);
-                cb(null);
-          }
+
         });
     }
 

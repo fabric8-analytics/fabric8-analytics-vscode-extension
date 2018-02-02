@@ -52,25 +52,30 @@ export module authextension {
         options['headers'] = {'Content-Type': 'application/json'};
         options['body'] = JSON.stringify(bodyData);
         request(options, (err, httpResponse, body) => {
-          if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
-            let resp = JSON.parse(body);
-            if (resp && resp.endpoints) {
-                context.globalState.update('f8_access_routes', resp.endpoints);
-                context.globalState.update('f8_3scale_user_key', resp.user_key);
-                Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/';
-                Apiendpoint.STACK_API_USER_KEY = resp.user_key;
-                Apiendpoint.OSIO_ROUTE_URL = resp.endpoints.prod;
-                process.env['RECOMMENDER_API_URL'] = resp.endpoints.prod+'/api/v1';
-                process.env['THREE_SCALE_USER_TOKEN'] = resp.user_key;
-                cb(true);
-            } else {
-                vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
+            if(err){
                 cb(null);
+            } else {
+                if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
+                    let resp = JSON.parse(body);
+                    if (resp && resp.endpoints) {
+                        context.globalState.update('f8_access_routes', resp.endpoints);
+                        context.globalState.update('f8_3scale_user_key', resp.user_key);
+                        Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/';
+                        Apiendpoint.STACK_API_USER_KEY = resp.user_key;
+                        Apiendpoint.OSIO_ROUTE_URL = resp.endpoints.prod;
+                        process.env['RECOMMENDER_API_URL'] = resp.endpoints.prod+'/api/v1';
+                        process.env['THREE_SCALE_USER_TOKEN'] = resp.user_key;
+                        cb(true);
+                    } else {
+                        vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
+                        cb(null);
+                    }
+                } else {   
+                    vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
+                    cb(null);
+                }
             }
-          } else {   
-            vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
-            cb(null);
-          }
+
         });
     }
 

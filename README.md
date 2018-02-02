@@ -61,3 +61,4 @@ This is an open source project, contributions and questions are welcome. If you 
 2. Start the compiler in watch mode:
 `npm run compile`.
 3. Open this folder in VS Code and press `F5`.
+

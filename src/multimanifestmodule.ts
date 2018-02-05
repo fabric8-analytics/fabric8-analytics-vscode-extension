@@ -116,6 +116,13 @@ export module multimanifestmodule {
                 if(item.hasOwnProperty('license') &&  item.license.value){ 
                     form_data['license[]'].push(item.license);
                 }
+                //TODO : for logging 400 issue
+                if (!item.manifest) {
+                    console.log('Manifest is missed', item);
+                }
+                if (!item.filePath) {
+                    console.log('filePath is missed', item);
+                }
             });
             callbacknew(form_data);
         })

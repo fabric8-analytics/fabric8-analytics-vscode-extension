@@ -56,7 +56,7 @@
       {
         "key": "ctrl+j",
         "command": "extension.fabric8AnalyticsWidget",
-        "title": "Generate application stack report"
+        "title": "Generate application stack report on manifest"
       },
       {
         "key": "ctrl+k",

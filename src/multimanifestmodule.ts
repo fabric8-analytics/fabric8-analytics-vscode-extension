@@ -117,10 +117,10 @@ export module multimanifestmodule {
                     form_data['license[]'].push(item.license);
                 }
                 //TODO : for logging 400 issue
-                if (!item.manifest) {
+                if (!item.manifest && !item.license) {
                     console.log('Manifest is missed', item);
                 }
-                if (!item.filePath) {
+                if (!item.filePath && !item.license) {
                     console.log('filePath is missed', item);
                 }
             });

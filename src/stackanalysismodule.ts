@@ -98,6 +98,7 @@ export module stackanalysismodule {
 
 
     post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
+        console.log("Options", options && options.formData);
         request.post(options, (err, httpResponse, body) => {
             if(err){
                 cb(null);

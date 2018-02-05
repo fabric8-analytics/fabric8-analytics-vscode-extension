@@ -43,7 +43,7 @@ You can use this extension to see the analysis report for your project as well a
 
 To view the application's stack analysis report for a specific module:
 1. Open a manifest file (`pom.xml`).
-2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report** to see the application's stack analysis report for the manifest file.
+2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on manifest file** to see the application's stack analysis report for the manifest file.
 
 To view the application's stack analysis report for the entire project (including multiple sub-modules):
 * Use command `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on Workspace** to view the application's stack analysis report for the entire workspace/project.

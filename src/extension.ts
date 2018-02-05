@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
     if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
       vscode.window.showInformationMessage("Multi-root Workspaces are not supported currently");
-    } else {
+    } else if(vscode.window.activeTextEditor){
       let editor = vscode.window.activeTextEditor;
       let text = editor.document.getText();
       let fileUri: string = editor.document.fileName;
@@ -94,6 +94,8 @@ export function activate(context: vscode.ExtensionContext) {
 
         });
       });
+    } else {
+      vscode.window.showInformationMessage("No manifest file is active in editor");
     }
 	});
 

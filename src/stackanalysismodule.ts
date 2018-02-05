@@ -11,7 +11,8 @@ export module stackanalysismodule {
 
     const request = require('request');
     let stack_analysis_requests = new Map<String, String>();
-	let stack_analysis_responses = new Map<String, String>();
+    let stack_analysis_responses = new Map<String, String>();
+    let stack_collector_count = 0;
 
     export let stack_collector: any;
     export let get_stack_metadata: any;
@@ -22,6 +23,7 @@ export module stackanalysismodule {
         options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
         options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
         request.get(options, (err, httpResponse, body) => {
+            stack_collector_count++;
             if(err){
                 cb(null);
             } else {
@@ -32,9 +34,14 @@ export module stackanalysismodule {
                         cb(data);
                     }
                     else {
-                        if (httpResponse.statusCode == 202) {
+                        if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
                             //vscode.window.showInformationMessage('Analysis in progress ...');
-                            setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 6000);
+                            if(stack_collector_count <= 10){
+                                setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 6000);
+                            } else{
+                                vscode.window.showErrorMessage(`Unable to get stack analyzed, try again`);
+                                cb(null);
+                            }
                         }
                     }
                 } else if(httpResponse.statusCode == 403){
@@ -109,6 +116,7 @@ export module stackanalysismodule {
                     if (resp.error === undefined && resp.status == 'success') {
                         stack_analysis_requests[file_uri] = resp.id;
                         console.log(`Analyzing your stack, id ${resp.id}`);
+                        stack_collector_count = 0;
                         setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 6000);
                     } else {
                         vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);

@@ -45,13 +45,11 @@ export module authextension {
 
     get_3scale_routes = (Apiendpoint, context,cb) => {
         let access_token = Apiendpoint.OSIO_ACCESS_TOKEN;
-        let bodyData: any = {'auth_token': `${access_token}`, 'service_id': '2555417754949'};
         let options = {};
-        options['url'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL}` + 'get-route';
-        options['method'] = 'POST';
+        options['uri'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL}get-endpoints?user_key=${Apiendpoint.THREE_SCALE_CONNECT_KEY}`;
         options['headers'] = {'Content-Type': 'application/json'};
-        options['body'] = JSON.stringify(bodyData);
-        request(options, (err, httpResponse, body) => {
+        options['headers'] = {'Authorization': `${access_token}`};
+        request.get(options, (err, httpResponse, body) => {
             if(err){
                 cb(null);
             } else {

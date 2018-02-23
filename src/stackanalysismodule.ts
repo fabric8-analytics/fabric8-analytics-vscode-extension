@@ -45,7 +45,7 @@ export module stackanalysismodule {
                         }
                     }
                 } else if(httpResponse.statusCode == 403){
-                    vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
+                    vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
                     cb(null);
                 } else {
                     vscode.window.showErrorMessage(`Failed to get stack analyzed, Status:  ${httpResponse.statusCode} `);
@@ -128,7 +128,7 @@ export module stackanalysismodule {
                     vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with OpenShift.io`);
                     cb(null);
                 } else if(httpResponse.statusCode == 403){
-                    vscode.window.showInformationMessage(`Maximum number of API calls has been reached, please retry in a while. Status:  ${httpResponse.statusCode} `);
+                    vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
                     cb(null);
                 } else if(httpResponse.statusCode == 400){
                     vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);

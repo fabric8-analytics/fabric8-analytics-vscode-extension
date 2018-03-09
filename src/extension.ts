@@ -185,6 +185,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   lspmodule.invoke_f8_lsp(context, (disposableLSp) => {
     let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
+    stackanalysismodule.clearContextInfo(context);
 	  context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack);
   })
 

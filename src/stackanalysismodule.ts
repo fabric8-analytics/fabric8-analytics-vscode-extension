@@ -17,6 +17,7 @@ export module stackanalysismodule {
     export let stack_collector: any;
     export let get_stack_metadata: any;
     export let post_stack_analysis: any;
+    export let clearContextInfo: any;
 
     stack_collector = (file_uri, id, OSIO_ACCESS_TOKEN, cb) => {
         const options = {};
@@ -108,6 +109,8 @@ export module stackanalysismodule {
         console.log("Options", options && options.formData);
         request.post(options, (err, httpResponse, body) => {
             if(err){
+                clearContextInfo(thatContext);
+                console.log('error', err);
                 cb(null);
             }else {
                 console.log('response Post '+body);
@@ -123,11 +126,10 @@ export module stackanalysismodule {
                         cb(null);
                     }
                 } else if(httpResponse.statusCode == 401){
-                    thatContext.globalState.update('f8_access_token', '');
-                    thatContext.globalState.update('f8_refresh_token', '');
+                    clearContextInfo(thatContext);
                     vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with OpenShift.io`);
                     cb(null);
-                } else if(httpResponse.statusCode == 403){
+                } else if(httpResponse.statusCode == 429 || httpResponse.statusCode == 403){
                     vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
                     cb(null);
                 } else if(httpResponse.statusCode == 400){
@@ -140,6 +142,13 @@ export module stackanalysismodule {
             }
 
         });
+    }
+
+    clearContextInfo = (context) => {
+        context.globalState.update('f8_access_token', '');
+        context.globalState.update('f8_refresh_token', '');
+        context.globalState.update('f8_3scale_user_key', '');
+        context.globalState.update('f8_access_routes', '');
     }
 
 }

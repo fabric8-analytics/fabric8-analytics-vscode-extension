@@ -1,8 +1,6 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { LanguageClient, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
-import * as path from 'path';
 import { Templates } from './template';
 
 import { Apiendpoint } from './apiendpoint';
@@ -59,17 +57,6 @@ export module contentprovidermodule {
   		}
 	}
 
-    let render_project_info = (sa) => {
-        const result = sa.result[0];
-        return `<div class='item-list'>
-                <div class='item'><div class='item-key'>Analysis finished</div><div class='item-value'>${sa.finished_at}</div></div>
-                <div class='item'><div class='item-key'>Distinct Licenses</div><div class='item-value'>${result.user_stack_info.distinct_licenses}</div></div>
-                <div class='item'><div class='item-key'>Ecosystem</div><div class='item-value'>${result.user_stack_info.ecosystem}</div></div>
-                </div>
-                <div>
-                <p>To view detail report <a href="index.html" target="_self">Click here</a> use ID as ${sa.request_id}</p>
-                </div>`;
-    };
 
     let render_project_failure = () => {
       return `<div>
@@ -80,6 +67,6 @@ export module contentprovidermodule {
     let render_stack_iframe = (portaluri) => {
       //const result = sa.result[0];
       return `<iframe width="100%" height="100%" frameborder="0" src=${portaluri} id="frame2" name="frame2"></iframe>`;
-    }
+    };
 
 }

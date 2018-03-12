@@ -126,9 +126,10 @@
   "devDependencies": {
     "@types/mocha": "^2.2.33",
     "@types/node": "^6.0.52",
+    "mocha": "^2.3.3",
+    "tslint": "^4.3.1",
     "typescript": "^2.6.1",
-    "vscode": "^1.1.4",
-    "mocha": "^2.3.3"
+    "vscode": "^1.1.4"
   },
   "dependencies": {
     "component-analysis-lsp-server": "0.0.11",

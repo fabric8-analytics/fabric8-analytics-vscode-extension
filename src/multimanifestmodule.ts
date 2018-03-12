@@ -1,18 +1,12 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { LanguageClient, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
-import * as path from 'path';
-import * as fs from "fs";
+import * as fs from 'fs';
 
 import { stackanalysismodule } from './stackanalysismodule';
 import { Apiendpoint } from './apiendpoint';
 
 export module multimanifestmodule {
-
-    const request = require('request');
-    let stack_analysis_requests = new Map<String, String>();
-	let stack_analysis_responses = new Map<String, String>();
 
     export let find_manifests_workspace: any;
     export let form_manifests_payload: any;
@@ -43,7 +37,7 @@ export module multimanifestmodule {
                 
                 });
                 } else {
-                     vscode.window.showErrorMessage("No manifest file found to be analyzed");
+                     vscode.window.showErrorMessage('No manifest file found to be analyzed');
                      cb(null);
                 }
                 
@@ -80,7 +74,7 @@ export module multimanifestmodule {
                 
                 });
                 } else {
-                     vscode.window.showErrorMessage("No manifest file found to be analysed");
+                     vscode.window.showErrorMessage('No manifest file found to be analysed');
                      cb(null);
                 }
                 
@@ -95,7 +89,7 @@ export module multimanifestmodule {
 
     form_manifests_payload = (resultList, callbacknew) : any => {
         let fileReadPromises: Array<any> = [];
-        for(var i=0;i<resultList.length;i++){
+        for(let i=0;i<resultList.length;i++){
             let fileReadPromise = manifestFileRead(resultList[i]);
             fileReadPromises.push(fileReadPromise);
         }
@@ -140,8 +134,8 @@ export module multimanifestmodule {
             'license': ''
         };
         let manifestObj: any;
-        let manifest_array: any = ["requirements.txt","package.json","pom.xml"];
-        let manifest_mime_type: any = {"requirements.txt" : "text/plain","package.json" : "application/json" ,"pom.xml" : "text/xml"};
+        //let manifest_array: any = ['requirements.txt','package.json','pom.xml'];
+        let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json' , 'pom.xml' : 'text/xml'};
         let licenseObj: any;
 
         let filePath: string = '';
@@ -188,6 +182,6 @@ export module multimanifestmodule {
 
             });
         });
-     }
+     };
 
 }

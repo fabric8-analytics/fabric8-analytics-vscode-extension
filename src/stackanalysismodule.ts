@@ -1,8 +1,6 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
-import * as path from 'path';
 
 import { Apiendpoint } from './apiendpoint';
 import { multimanifestmodule } from './multimanifestmodule'
@@ -30,7 +28,7 @@ export module stackanalysismodule {
             } else {
                 if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
                     let data = JSON.parse(body);
-                    if (!data.hasOwnProperty("error")) {
+                    if (!data.hasOwnProperty('error')) {
                         stack_analysis_responses.set(file_uri, data);
                         cb(data);
                     }
@@ -62,7 +60,7 @@ export module stackanalysismodule {
         let payloadData : any;
         let projRootPath: string = vscode.workspace.rootPath;
         if(projRootPath){
-            let encodedProjRootPath: any = projRootPath.replace(/ /g,"%20");
+            let encodedProjRootPath: any = projRootPath.replace(/ /g,'%20');
             let projRootPathSplit: any = encodedProjRootPath.split('/');
             let projName: string = projRootPathSplit[projRootPathSplit.length-1].toLowerCase();
             let filePathList = file_uri.split(projName+'/');
@@ -89,7 +87,7 @@ export module stackanalysismodule {
                     
                     });
                     } else {
-                        vscode.window.showErrorMessage("No manifest file found to be analyzed");
+                        vscode.window.showErrorMessage('No manifest file found to be analyzed');
                         cb(null);
                     }
                     
@@ -106,7 +104,7 @@ export module stackanalysismodule {
 
 
     post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
-        console.log("Options", options && options.formData);
+        console.log('Options', options && options.formData);
         request.post(options, (err, httpResponse, body) => {
             if(err){
                 clearContextInfo(thatContext);
@@ -142,13 +140,13 @@ export module stackanalysismodule {
             }
 
         });
-    }
+    };
 
     clearContextInfo = (context) => {
         context.globalState.update('f8_access_token', '');
         context.globalState.update('f8_refresh_token', '');
         context.globalState.update('f8_3scale_user_key', '');
         context.globalState.update('f8_access_routes', '');
-    }
+    };
 
 }

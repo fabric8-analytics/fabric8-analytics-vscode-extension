@@ -1,9 +1,6 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { workspace } from "vscode";
-import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
-import * as path from 'path';
 
 import { Commands } from './commands';
 import { lspmodule } from './lspmodule';
@@ -13,10 +10,9 @@ import { multimanifestmodule } from './multimanifestmodule';
 import { Apiendpoint } from './apiendpoint';
 import { authextension } from './authextension';
 
-import { ProjectDataProvider } from "./ProjectDataProvider";
+import { ProjectDataProvider } from './ProjectDataProvider';
 
 export function activate(context: vscode.ExtensionContext) {
-  
 	let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
 
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
@@ -24,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
     if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-      vscode.window.showInformationMessage("Multi-root Workspaces are not supported currently");
+      vscode.window.showInformationMessage('Multi-root Workspaces are not supported currently');
     } else if(vscode.window.activeTextEditor){
       let editor = vscode.window.activeTextEditor;
       let text = editor.document.getText();
@@ -32,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
         return new Promise((resolve, reject) => {       
-          if(fileUri.toLowerCase().indexOf("pom.xml")!= -1){
+          if(fileUri.toLowerCase().indexOf('pom.xml')!= -1){
             p.report({message: 'Generating effective pom ...' });
             ProjectDataProvider.effectivef8Pom(editor.document.uri, (dataEpom) => {
                 if(dataEpom){
@@ -95,13 +91,13 @@ export function activate(context: vscode.ExtensionContext) {
         });
       });
     } else {
-      vscode.window.showInformationMessage("No manifest file is active in editor");
+      vscode.window.showInformationMessage('No manifest file is active in editor');
     }
 	});
 
   let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => {
     if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-      vscode.window.showInformationMessage("Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level");
+      vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level`);
     } else {
       provider.signalInit(previewUri,null);
       vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
@@ -146,7 +142,7 @@ export function activate(context: vscode.ExtensionContext) {
                   });
       
                 } else {
-                  vscode.window.showInformationMessage("Coudn't find Pom.xml at root workspace level");
+                  vscode.window.showInformationMessage(`Coudn't find Pom.xml at root workspace level`);
                   reject();
                 }
             },
@@ -184,10 +180,10 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   lspmodule.invoke_f8_lsp(context, (disposableLSp) => {
-    let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
+    // let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });
     stackanalysismodule.clearContextInfo(context);
 	  context.subscriptions.push(disposable, registration, disposableLSp, disposableFullStack);
-  })
+  });
 
 }
 

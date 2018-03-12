@@ -1,7 +1,6 @@
-import * as http from "http";
-import * as os from "os";
-import * as path from "path";
-import { ExtensionContext, extensions, workspace } from 'vscode';
+import * as os from 'os';
+import * as path from 'path';
+import { extensions, workspace } from 'vscode';
 
 export namespace Utils {
     let EXTENSION_PUBLISHER: string;
@@ -38,7 +37,7 @@ export namespace Utils {
     }
 
     export function getMavenExecutable(): string {
-        const mavenPath: string = workspace.getConfiguration("maven.executable").get<string>("path");
-        return mavenPath ? `"${mavenPath}"` : "mvn";
+        const mavenPath: string = workspace.getConfiguration('maven.executable').get<string>('path');
+        return mavenPath ? `"${mavenPath}"` : 'mvn';
     }
 }

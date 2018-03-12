@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, TransportKind } from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
 import * as path from 'path';
 import { authextension } from './authextension';
 
@@ -13,7 +13,7 @@ export module lspmodule {
     // The server is implemented in node
 	let serverModule = context.asAbsolutePath(path.join('node_modules/component-analysis-lsp-server', 'server.js'));
 	// The debug options for the server
-	let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
+	let debugOptions = { execArgv: ['--nolazy', '--debug=6009'] };
 
     authextension.authorize_f8_analytics(context, (data) => {
       if(data){
@@ -34,7 +34,7 @@ export module lspmodule {
                     // Notify the server about file changes to '.clientrc files contain in the workspace
                     fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
                 }
-        }
+        };
 
         // Create the language client and start the client.
         let disposableLSp = new LanguageClient('componentAnalysisServer', 'Component Analysis Language Server', serverOptions, clientOptions).start();
@@ -45,6 +45,6 @@ export module lspmodule {
 
     });
 
-    }
+    };
 
 }

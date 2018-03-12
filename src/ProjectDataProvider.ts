@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
-import { exec } from "child_process";
-import * as path from "path";
-import { window } from "vscode";
-import { Utils } from "./Utils";
+import { exec } from 'child_process';
+import { Utils } from './Utils';
 
 export module  ProjectDataProvider {
 
@@ -14,10 +12,10 @@ export module  ProjectDataProvider {
         pomXmlFilePath = item.fsPath;
         const cmd: string = [
             Utils.getMavenExecutable(),
-            "io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare",
-            "-f",
+            'io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare',
+            '-f',
             `"${item}"`
-        ].join(" ");
+        ].join(' ');
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if (error) {
                 vscode.window.showErrorMessage(error.message);
@@ -30,30 +28,30 @@ export module  ProjectDataProvider {
 
     effectivef8Pom = (item,cb) => {
         let pomXmlFilePath: string = null;
-        let filepath: string = "target/pom.xml";
+        let filepath: string = 'target/pom.xml';
         pomXmlFilePath = item.fsPath;
         const cmd: string = [
             Utils.getMavenExecutable(),
-            "help:effective-pom",
-            "-f",
+            'help:effective-pom',
+            '-f',
             `"${pomXmlFilePath}"`,
             `-Doutput="${filepath}"`
-        ].join(" ");
+        ].join(' ');
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if (error) {
                 vscode.window.showErrorMessage(error.message);
                 cb(false);
             } else {
-                let ePomPathList: any = pomXmlFilePath.toLowerCase().split("pom.xml");
+                let ePomPathList: any = pomXmlFilePath.toLowerCase().split('pom.xml');
                 if(ePomPathList.length>0){
                     let ePomPath: string = ePomPathList[0] + filepath;
                     cb(ePomPath);
                 }else{
-                    vscode.window.showInformationMessage("Looks like there either are some problem with manifest file or mvn is not set in path");
+                    vscode.window.showInformationMessage('Looks like there either are some problem with manifest file or mvn is not set in path');
                     cb(false);
                 }
             }
         });
-    }
+    };
     
 }

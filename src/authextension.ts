@@ -13,9 +13,9 @@ export module authextension {
         let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
         if(osioTokenExt){
             let importedApi = osioTokenExt.exports;
-            if(importedApi && importedApi.hasOwnProperty("refresh_token") && importedApi.hasOwnProperty("access_token")) {
-                Apiendpoint.OSIO_REFRESH_TOKEN = importedApi["refresh_token"];
-                Apiendpoint.OSIO_ACCESS_TOKEN = importedApi["access_token"];
+            if(importedApi && importedApi.hasOwnProperty('refresh_token') && importedApi.hasOwnProperty('access_token')) {
+                Apiendpoint.OSIO_REFRESH_TOKEN = importedApi['refresh_token'];
+                Apiendpoint.OSIO_ACCESS_TOKEN = importedApi['access_token'];
                 process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.OSIO_ACCESS_TOKEN;
                 context.globalState.update('f8_access_token', Apiendpoint.OSIO_ACCESS_TOKEN);
                 context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
@@ -41,7 +41,7 @@ export module authextension {
             cb(null);
         }
         
-    }
+    };
 
     get_3scale_routes = (Apiendpoint, context,cb) => {
         let access_token = Apiendpoint.OSIO_ACCESS_TOKEN;
@@ -53,7 +53,7 @@ export module authextension {
             if(err){
                 cb(null);
             } else {
-                if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
+                if ((httpResponse.statusCode === 200 || httpResponse.statusCode === 202)) {
                     let resp = JSON.parse(body);
                     if (resp && resp.endpoints) {
                         context.globalState.update('f8_access_routes', resp.endpoints);
@@ -75,6 +75,6 @@ export module authextension {
             }
 
         });
-    }
+    };
 
 }

@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
         return new Promise((resolve, reject) => {       
-          if(fileUri.toLowerCase().indexOf('pom.xml')!= -1){
+          if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
             p.report({message: 'Generating effective pom ...' });
             ProjectDataProvider.effectivef8Pom(editor.document.uri, (dataEpom) => {
                 if(dataEpom){
@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
                               if(data){
                                 p.report({message: 'Successfully generated stack report ...' });
                                 resolve();
-                                provider.signal(previewUri, data) 
+                                provider.signal(previewUri, data); 
                               } else {
                                 provider.signal(previewUri,null);
                                 reject();

@@ -24,7 +24,7 @@ export module  ProjectDataProvider {
                 cb(true);
             }
         });
-    }
+    };
 
     effectivef8Pom = (item,cb) => {
         let pomXmlFilePath: string = null;

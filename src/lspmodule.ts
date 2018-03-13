@@ -23,7 +23,7 @@ export module lspmodule {
         let serverOptions: ServerOptions = {
             run : { module: serverModule, transport: TransportKind.ipc },
             debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
-        }
+        };
         // Options to control the language client
         let clientOptions: LanguageClientOptions = {
             // Register the server for plain text documents 'plaintext','xml','json'

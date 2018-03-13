@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 
 import { Apiendpoint } from './apiendpoint';
-import { multimanifestmodule } from './multimanifestmodule'
+import { multimanifestmodule } from './multimanifestmodule';
 
 export module stackanalysismodule {
 
@@ -26,14 +26,14 @@ export module stackanalysismodule {
             if(err){
                 cb(null);
             } else {
-                if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
+                if (httpResponse.statusCode === 200 || httpResponse.statusCode === 202) {
                     let data = JSON.parse(body);
                     if (!data.hasOwnProperty('error')) {
                         stack_analysis_responses.set(file_uri, data);
                         cb(data);
                     }
                     else {
-                        if (httpResponse.statusCode == 200 || httpResponse.statusCode == 202) {
+                        if (httpResponse.statusCode === 200 || httpResponse.statusCode === 202) {
                             //vscode.window.showInformationMessage('Analysis in progress ...');
                             if(stack_collector_count <= 10){
                                 setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 6000);
@@ -43,7 +43,7 @@ export module stackanalysismodule {
                             }
                         }
                     }
-                } else if(httpResponse.statusCode == 403){
+                } else if(httpResponse.statusCode === 403){
                     vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
                     cb(null);
                 } else {
@@ -112,9 +112,9 @@ export module stackanalysismodule {
                 cb(null);
             }else {
                 console.log('response Post '+body);
-                if ((httpResponse.statusCode == 200 || httpResponse.statusCode == 202)) {
+                if ((httpResponse.statusCode === 200 || httpResponse.statusCode === 202)) {
                     let resp = JSON.parse(body);
-                    if (resp.error === undefined && resp.status == 'success') {
+                    if (resp.error === undefined && resp.status === 'success') {
                         stack_analysis_requests[file_uri] = resp.id;
                         console.log(`Analyzing your stack, id ${resp.id}`);
                         stack_collector_count = 0;
@@ -123,14 +123,14 @@ export module stackanalysismodule {
                         vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
                         cb(null);
                     }
-                } else if(httpResponse.statusCode == 401){
+                } else if(httpResponse.statusCode === 401){
                     clearContextInfo(thatContext);
                     vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with OpenShift.io`);
                     cb(null);
-                } else if(httpResponse.statusCode == 429 || httpResponse.statusCode == 403){
+                } else if(httpResponse.statusCode === 429 || httpResponse.statusCode === 403){
                     vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
                     cb(null);
-                } else if(httpResponse.statusCode == 400){
+                } else if(httpResponse.statusCode === 400){
                     vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
                     cb(null);
                 } else {   

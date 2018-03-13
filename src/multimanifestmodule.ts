@@ -47,7 +47,7 @@ export module multimanifestmodule {
                 vscode.window.showErrorMessage(reason);
                 cb(null);
             });
-    }
+    };
 
     find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
 
@@ -84,7 +84,7 @@ export module multimanifestmodule {
                 vscode.window.showErrorMessage(reason);
                 cb(null);
             });
-    }
+    };
 
 
     form_manifests_payload = (resultList, callbacknew) : any => {
@@ -124,7 +124,7 @@ export module multimanifestmodule {
             callbacknew(null);
         });
 
-    }
+    };
 
 
     let manifestFileRead = (fileContent) => {

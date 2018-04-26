@@ -89,6 +89,7 @@ export module multimanifestmodule {
 
     form_manifests_payload = (resultList, callbacknew) : any => {
         let fileReadPromises: Array<any> = [];
+        // let projRootPath: string = vscode.workspace.rootPath;
         for(let i=0;i<resultList.length;i++){
             let fileReadPromise = manifestFileRead(resultList[i]);
             fileReadPromises.push(fileReadPromise);
@@ -118,6 +119,12 @@ export module multimanifestmodule {
                     console.log('filePath is missed', item);
                 }
             });
+            // fs.rmdir(`${projRootPath}/target`, (err) => {
+            //     if (err) {
+            //         vscode.window.showErrorMessage(err.message);
+            //     }
+            //     console.log(`successfully deleted ${projRootPath}/target`);
+            // });
             callbacknew(form_data);
         })
         .catch(() => {
@@ -134,7 +141,7 @@ export module multimanifestmodule {
             'license': ''
         };
         let manifestObj: any;
-        let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json' , 'pom.xml' : 'text/xml'};
+        let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json' , 'pom.xml' : 'text/xml', 'packageVersion.json' : 'application/json'};
         let licenseObj: any;
 
         let filePath: string = '';

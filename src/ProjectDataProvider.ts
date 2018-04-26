@@ -7,7 +7,13 @@ export module  ProjectDataProvider {
     export let effectivef8PomWs: any;
     export let effectivef8Pom: any;
 
-    effectivef8PomWs = (item, cb) => {
+    effectivef8PomWs = (item, skip, cb) => {
+        // Directly call the callback if no effective POM generation is required,
+        // as is the case where there is no POM.
+        if (skip) {
+            cb(true);
+            return;
+        }
         let pomXmlFilePath: string = null;
         pomXmlFilePath = item.fsPath;
         const cmd: string = [
@@ -26,7 +32,7 @@ export module  ProjectDataProvider {
         });
     };
 
-    effectivef8Pom = (item,cb) => {
+    effectivef8Pom = (item, cb) => {
         let pomXmlFilePath: string = null;
         let filepath: string = 'target/pom.xml';
         pomXmlFilePath = item.fsPath;

@@ -10,9 +10,9 @@ export module multimanifestmodule {
 
     export let find_manifests_workspace: any;
     export let form_manifests_payload: any;
-    export let find_epom_manifests_workspace: any;
+    export let find_epom_workspace: any;
 
-    find_epom_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
+    find_epom_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
 
         let payloadData : any;
         vscode.workspace.findFiles('{target/stackinfo/**/pom.xml,LICENSE}','**/node_modules').then(

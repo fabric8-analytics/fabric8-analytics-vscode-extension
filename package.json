@@ -86,6 +86,10 @@
         },
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidget",
+          "when": "resourceFilename == package.json"
         }
       ]
     },

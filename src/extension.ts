@@ -103,18 +103,36 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
         return new Promise((resolve, reject) => { 
 
-          vscode.workspace.findFiles('{pom.xml}','**/node_modules').then(
+          vscode.workspace.findFiles('{pom.xml,**/package.json}','**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
+                  // Do not create an effective pom if no pom.xml is present
+                  let effective_pom_skip = true;
+                  let pom_count = 0;
+                  result.forEach((item) => {
+                    if (item.fsPath.indexOf('pom.xml') >= 0) {
+                      effective_pom_skip = false;
+                      pom_count += 1;
+                    }
+                  });
+
+                  if (!effective_pom_skip && pom_count !== result.length) {
+                    vscode.window.showInformationMessage('Multi ecosystem support is not yet available.');
+                    return;
+                  }
                   p.report({message: 'Generating effective pom ...' });
-                  ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, (dataEpom) => {
+                  ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, effective_pom_skip, (dataEpom) => {
                     if(dataEpom){
                       p.report({message: 'Analyzing your stack ...' });
                       // effective pom generated
                       authextension.authorize_f8_analytics(context, (data) => {
                         if(data){
                           return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
-                            multimanifestmodule.find_epom_manifests_workspace(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
+                            let manifest_finder = multimanifestmodule.find_manifests_workspace;
+                            if (effective_pom_skip === false) {
+                              manifest_finder = multimanifestmodule.find_epom_workspace;
+                            }
+                            manifest_finder(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
                               if(data){
                                 provider.signal(previewUri, data);
                                 p.report({message: 'Successfully generated stack report ...' });
@@ -142,7 +160,7 @@ export function activate(context: vscode.ExtensionContext) {
                   });
       
                 } else {
-                  vscode.window.showInformationMessage(`Coudn't find Pom.xml at root workspace level`);
+                  vscode.window.showInformationMessage(`Coudn't find manifest at root workspace level`);
                   reject();
                 }
             },

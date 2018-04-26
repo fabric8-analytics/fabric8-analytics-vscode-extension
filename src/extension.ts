@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
       let text = editor.document.getText();
       let fileUri: string = editor.document.fileName;
 
-      vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
+      vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
         return new Promise((resolve, reject) => {       
           if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
             p.report({message: 'Generating effective pom ...' });
@@ -62,12 +62,14 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             });
           } else {
+            ProjectDataProvider.effectivef8Package(editor.document.uri, (ePkgPath) => {
+            if(ePkgPath){
               p.report({message: 'Analyzing your stack ...' });
               provider.signalInit(previewUri,null);
               authextension.authorize_f8_analytics(context, (data) => {
                 if(data){
                   return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
-                    stackanalysismodule.get_stack_metadata(context, editor.document.fileName, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
+                    stackanalysismodule.get_stack_metadata(context, ePkgPath, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
                       if(data){
                         p.report({message: 'Successfully generated stack report ...' });
                         resolve();
@@ -86,6 +88,13 @@ export function activate(context: vscode.ExtensionContext) {
                     reject();
                   }
               });
+            }
+            else {
+              p.report({message: 'Unable to resolve dependencies in package.json ...' });
+              reject();
+            }
+            });
+
           }
 
         });

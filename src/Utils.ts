@@ -40,4 +40,9 @@ export namespace Utils {
         const mavenPath: string = workspace.getConfiguration('maven.executable').get<string>('path');
         return mavenPath ? `"${mavenPath}"` : 'mvn';
     }
+
+    export function getNodeExecutable(): string {
+        const nodePath: string = workspace.getConfiguration('node.executable').get<string>('path');
+        return nodePath ? `"${nodePath}"` : 'npm';
+    }
 }

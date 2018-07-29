@@ -109,10 +109,10 @@
           "description": "Traces the communication between VSCode and the componentAnalysisServer service."
         },
         "maven.executable.path": {
-            "type": "string",
-            "default": "",
-            "description": "Specifies absolute path of mvn executable.",
-            "scope": "window"
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of mvn executable.",
+          "scope": "window"
         }
       }
     }

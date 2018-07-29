@@ -134,7 +134,6 @@ export module multimanifestmodule {
             'license': ''
         };
         let manifestObj: any;
-        //let manifest_array: any = ['requirements.txt','package.json','pom.xml'];
         let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json' , 'pom.xml' : 'text/xml'};
         let licenseObj: any;
 
@@ -144,7 +143,8 @@ export module multimanifestmodule {
         let projRootPathSplit: any = projRootPath.split('/');
         let projName: string = projRootPathSplit[projRootPathSplit.length-1];
         return new Promise((resolve, reject) => {
-            fs.readFile(fileContent._fsPath, function(err, data) {
+            let fsPath : string = fileContent.fsPath ? fileContent.fsPath : '';
+            fs.readFile(fsPath, function(err, data) {
                 if(data){
                     manifestObj = {
                         value: '',

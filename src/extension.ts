@@ -100,7 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level`);
     } else {
       provider.signalInit(previewUri,null);
-      vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Analyzing your stack ...'}, p => {
+      vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
         return new Promise((resolve, reject) => { 
 
           vscode.workspace.findFiles('{pom.xml}','**/node_modules').then(

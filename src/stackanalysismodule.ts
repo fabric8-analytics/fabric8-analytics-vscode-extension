@@ -65,7 +65,7 @@ export module stackanalysismodule {
             let projName: string = projRootPathSplit[projRootPathSplit.length-1].toLowerCase();
             let filePathList = file_uri.split(projName+'/');
 
-            vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,'**/node_modules').then(
+            vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`).then(
                 (result: vscode.Uri[]) => {
                     if(result && result.length){
                         multimanifestmodule.form_manifests_payload(result, (data) => {

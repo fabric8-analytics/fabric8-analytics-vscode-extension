@@ -9,6 +9,8 @@ export module  ProjectDataProvider {
     export let effectivef8Pom: any;
     export let effectivef8Package: any;
     let getDependencyVersion: any;
+    let triggerNpmInstall : any;
+    let formPackagedependency: any;
 
     effectivef8PomWs = (item, skip, cb) => {
         // Directly call the callback if no effective POM generation is required,
@@ -65,51 +67,73 @@ export module  ProjectDataProvider {
 
     effectivef8Package = (item, cb) => {
         let manifestRootFolderPath: string = null;
-        // let filepath: string = 'target/pom.xml';
-        manifestRootFolderPath = item.fsPath.toLowerCase().split('package.json')[0];
+        manifestRootFolderPath = item.toLowerCase().split('package.json')[0];
         getDependencyVersion(manifestRootFolderPath, (depResp) => {
-            // count++;
             if(depResp){
-             // packageDependencies.dependencies[dependenciesKeys[i]] = depResp;
-                fs.readFile(item.fsPath, {encoding: 'utf-8'}, function(err, data) {
-                    console.log(data);
-                    if(data){
-                        let packageDependencies = JSON.parse(data);
-
-                        fs.readFile(manifestRootFolderPath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
-                            console.log(data);
-                            if(data){
-                                let packageListDependencies = JSON.parse(data);
-                                let packageDepKeys = Object.keys(packageDependencies.dependencies);
-                                for(let i =0; i<packageDepKeys.length;i++) {
-                                    if(packageListDependencies.dependencies[packageDepKeys[i]]) {
-                                        packageDependencies.dependencies[packageDepKeys[i]] = packageListDependencies.dependencies[packageDepKeys[i]].version;
-                                    }
-                                }
-                                //cb(JSON.stringify(packageListDependencies));
-                                fs.writeFile(manifestRootFolderPath+'target/package.json',JSON.stringify(packageDependencies), function(err) {
-                                    if(err) {
-                                        cb(false);
-                                    } else {
-                                        let ePkgPath: any = manifestRootFolderPath+'target/package.json';
-                                        cb(ePkgPath);
-                                    }  
-
-                                });
-                            } else {
-                                cb(false);
-                            }
-                        });
-                        
-                        //cb(JSON.stringify(packageDependencies));
-                    } else {
-                        cb(false);
-                    }
-                });
-                
+                let formPackagedependencyPromise = formPackagedependency(item);
+                formPackagedependencyPromise.then((data) => {
+                    return cb(data);
+                })
+                .catch(() => {
+                    triggerNpmInstall(manifestRootFolderPath, (npmInstallResp) => {
+                        console.log('npm install Completed!!');
+                        effectivef8Package(item, cb);
+                    });
+                });  
             }else {
                 cb(false);
             }
+        });
+    };
+
+    formPackagedependency= (item) => {
+        let manifestRootFolderPath: string = null;
+        manifestRootFolderPath = item.toLowerCase().split('package.json')[0];
+        return new Promise((resolve, reject) => {
+            let isMissing = false;
+            fs.readFile(manifestRootFolderPath+'package.json', {encoding: 'utf-8'}, function(err, data) {
+                console.log(data);
+                if(data){
+                    let packageDependencies = JSON.parse(data);
+
+                    fs.readFile(manifestRootFolderPath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
+                        console.log(data);
+                        if(data){
+                            let packageListDependencies = JSON.parse(data);
+                            let packageDepKeys = Object.keys(packageDependencies.dependencies);
+                            for(let i =0; i<packageDepKeys.length;i++) {
+                                if(packageListDependencies.dependencies[packageDepKeys[i]] && !packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing')) {
+                                    packageDependencies.dependencies[packageDepKeys[i]] = packageListDependencies.dependencies[packageDepKeys[i]].version;
+                                } else if(packageListDependencies.dependencies[packageDepKeys[i]] && packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') &&
+                                packageListDependencies.dependencies[packageDepKeys[i]]['missing']) {
+                                    console.log('trigger npm install');
+                                    isMissing = true;
+                                    break;
+                                }
+                            }
+                            if(isMissing){
+                                reject(false);
+                            } else{
+                                fs.writeFile(manifestRootFolderPath+'target/package.json',JSON.stringify(packageDependencies), function(err) {
+                                    if(err) {
+                                        vscode.window.showErrorMessage(`Unable to create ${manifestRootFolderPath}target/package.json`);
+                                        reject(err);
+                                    } else {
+                                        let ePkgPath: any = manifestRootFolderPath+'target/package.json';
+                                        resolve(ePkgPath);
+                                    }  
+                                });
+                            }
+                        } else {
+                            vscode.window.showErrorMessage(`Unable to parse ${manifestRootFolderPath}target/npmlist.json`);
+                            reject(err);
+                        }
+                    });
+                } else {
+                    vscode.window.showErrorMessage(`Unable to parse ${item}`);
+                    reject(err);
+                }
+            });
         });
     };
 
@@ -118,6 +142,7 @@ export module  ProjectDataProvider {
         if (!fs.existsSync(dir)){
             fs.mkdirSync(dir);
         }
+
         const cmd: string = [
             Utils.getNodeExecutable(),
             'list',
@@ -131,16 +156,26 @@ export module  ProjectDataProvider {
                 // Do something
                 cb(true);
             } else {
+                vscode.window.showErrorMessage(`Failed to resolve dependencies for ${manifestRootFolderPath}package.json`);
                 cb(false);
             }
-            // if (error) {
-            //     vscode.window.showErrorMessage(error.message);
-            //     cb(false);
-            // } else {
-            //     // console.log(_stdout);
-            //     // let depInfo = JSON.parse(_stdout);
-            //     cb(true);
-            // }
+        });
+    };
+
+    triggerNpmInstall = (manifestRootFolderPath, cb) => {
+        const cmd: string = [
+            Utils.getNodeExecutable(),
+            'install',
+            `--prefix="${manifestRootFolderPath}"`
+        ].join(' ');
+        exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
+            if(_stdout){
+                // Do something
+                cb(true);
+            } else {
+                vscode.window.showErrorMessage(`Failed to resolve dependencies for ${manifestRootFolderPath}package.json`);
+                cb(false);
+            }
         });
     };
     

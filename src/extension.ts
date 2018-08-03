@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
 
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
-	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
+  let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => {
     if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             });
           } else {
-            ProjectDataProvider.effectivef8Package(editor.document.uri, (ePkgPath) => {
+            ProjectDataProvider.effectivef8Package(editor.document.uri.fsPath, (ePkgPath) => {
             if(ePkgPath){
               p.report({message: 'Analyzing your stack ...' });
               provider.signalInit(previewUri,null);
@@ -130,44 +130,43 @@ export function activate(context: vscode.ExtensionContext) {
                     return;
                   }
                   p.report({message: 'Generating effective pom ...' });
-                  ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, effective_pom_skip, (dataEpom) => {
-                    if(dataEpom){
-                      p.report({message: 'Analyzing your stack ...' });
-                      // effective pom generated
-                      authextension.authorize_f8_analytics(context, (data) => {
-                        if(data){
-                          return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
-                            let manifest_finder = multimanifestmodule.find_manifests_workspace;
-                            if (effective_pom_skip === false) {
-                              manifest_finder = multimanifestmodule.find_epom_workspace;
-                            }
-                            manifest_finder(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => { 
-                              if(data){
-                                provider.signal(previewUri, data);
-                                p.report({message: 'Successfully generated stack report ...' });
-                                resolve();
-                              }else {
-                                provider.signal(previewUri,null);
-                                reject();
-                              }
-                            });
-                            provider.signalInit(previewUri,null);
-                            }, (reason) => {
-                            vscode.window.showErrorMessage(reason);
-                            reject();
-                          });
+                  if(effective_pom_skip) {
+                    ProjectDataProvider.effectivef8Package(vscode.workspace.rootPath+'/', (ePkgPath) => {
+                      if(ePkgPath){
+                        p.report({message: 'Analyzing your stack ...' });
+                        // effective package generated
+                        let filesRegex = 'target/package.json';
+                        if(triggerManifestWs(authextension, filesRegex)){
+                          p.report({message: 'Successfully generated stack report ...' });
+                          resolve();
                         } else {
-                            reject();
-                        }
-                      });
-                      
-                    } else {
-                      // effective pom not generated
-                      p.report({message: 'Unable to generate effective pom ...' });
-                      reject();
-                    }
-                  });
-      
+                          reject();
+                        } 
+                      } else {
+                        // effective package not generated
+                        p.report({message: 'Unable to resolve dependencies in package.json ...' });
+                        reject();
+                      }
+                    });
+                  } else {
+                    ProjectDataProvider.effectivef8PomWs(vscode.workspace.rootPath, effective_pom_skip, (dataEpom) => {
+                      if(dataEpom){
+                        p.report({message: 'Analyzing your stack ...' });
+                        // effective pom generated
+                        let filesRegex = 'target/stackinfo/**/pom.xml';
+                        if(triggerManifestWs(authextension, filesRegex)){
+                          p.report({message: 'Successfully generated stack report ...' });
+                          resolve();
+                        } else {
+                          reject();
+                        } 
+                      } else {
+                        // effective pom not generated
+                        p.report({message: 'Unable to generate effective pom ...' });
+                        reject();
+                      }
+                    });
+                  }
                 } else {
                   vscode.window.showInformationMessage(`Coudn't find manifest at root workspace level`);
                   reject();
@@ -205,6 +204,31 @@ export function activate(context: vscode.ExtensionContext) {
       });
     }
   });
+
+  function triggerManifestWs(authextension, filesRegex) {
+    authextension.authorize_f8_analytics(context, (data) => {
+      if(data){
+        return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
+          let manifest_finder = multimanifestmodule.find_manifests_workspace;
+          manifest_finder(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, filesRegex, (data) => { 
+            if(data){
+              provider.signal(previewUri, data);
+              return true;
+            }else {
+              provider.signal(previewUri,null);
+              return false;
+            }
+          });
+          provider.signalInit(previewUri,null);
+          }, (reason) => {
+          vscode.window.showErrorMessage(reason);
+          return false;
+        });
+      } else {
+          return false;
+      }
+    });
+  };
 
   lspmodule.invoke_f8_lsp(context, (disposableLSp) => {
     // let highlight = vscode.window.createTextEditorDecorationType({ backgroundColor: 'rgba(0,0,0,.35)' });

@@ -10,49 +10,11 @@ export module multimanifestmodule {
 
     export let find_manifests_workspace: any;
     export let form_manifests_payload: any;
-    export let find_epom_workspace: any;
 
-    find_epom_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
-
-        let payloadData : any;
-        vscode.workspace.findFiles('{target/stackinfo/**/pom.xml,LICENSE}','**/node_modules').then(
-            (result: vscode.Uri[]) => {
-                if(result && result.length){
-                    form_manifests_payload(result, (data) => {
-                        if(data){
-                            payloadData = data;
-                            const options = {};
-                            let thatContext: any;
-                            let file_uri: string;
-                            options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-                            options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
-                            options['formData'] = payloadData;
-                            thatContext = context;
-                            stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
-
-                    } else {
-                        vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
-                        cb(null);
-                    }
-                
-                });
-                } else {
-                     vscode.window.showErrorMessage('No manifest file found to be analyzed');
-                     cb(null);
-                }
-                
-            },
-            // rejected
-            (reason: any) => {
-                vscode.window.showErrorMessage(reason);
-                cb(null);
-            });
-    };
-
-    find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, cb) => {
+    find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, filesRegex, cb) => {
 
         let payloadData : any;
-        vscode.workspace.findFiles('{**/requirements.txt,**/package.json,LICENSE}','**/node_modules').then(
+        vscode.workspace.findFiles(`{${filesRegex},LICENSE}`,'**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
                     form_manifests_payload(result, (data) => {
@@ -89,7 +51,6 @@ export module multimanifestmodule {
 
     form_manifests_payload = (resultList, callbacknew) : any => {
         let fileReadPromises: Array<any> = [];
-        // let projRootPath: string = vscode.workspace.rootPath;
         for(let i=0;i<resultList.length;i++){
             let fileReadPromise = manifestFileRead(resultList[i]);
             fileReadPromises.push(fileReadPromise);
@@ -119,12 +80,6 @@ export module multimanifestmodule {
                     console.log('filePath is missed', item);
                 }
             });
-            // fs.rmdir(`${projRootPath}/target`, (err) => {
-            //     if (err) {
-            //         vscode.window.showErrorMessage(err.message);
-            //     }
-            //     console.log(`successfully deleted ${projRootPath}/target`);
-            // });
             callbacknew(form_data);
         })
         .catch(() => {

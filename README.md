@@ -5,7 +5,7 @@ Red Hat OpenShift.io services extension allows developers using more traditional
 - License analysis determines the license used by the project and its dependencies. If the project already has a license the analysis will show any conflicts between that license and dependency licenses that may be more restrictive. If the project does not have a license, OpenShift.io will suggest a license for the project that is sufficiently permissive to match the license restrictions of the dependencies.
 - Suggested dependencies that can be added to your application stack, alternative dependencies to currently used dependencies if any of the currently used dependencies are not typically used together in an application stack
 
-Today OpenShift.io services extension is limited to Vert.x and Spring Boot projects using Maven. Going forward, additional builders for Java, npm and PyPI ecosystems will be supported.
+Today OpenShift.io services extension is limited to Vert.x and Spring Boot projects using Maven and projects build on npm (Node ecosystem). Going forward, additional builders for Java, go and PyPI ecosystems will be supported.
 
 ## Prerequisites
 * Maven must be installed on your machine. Provide the Maven executable filepath.
@@ -42,7 +42,7 @@ Alerts for CVEs are also presented in the **PROBLEMS** tab when you open the `po
 You can use this extension to see the analysis report for your project as well as address problems shown in the manifest file editor.
 
 To view the application's stack analysis report for a specific module:
-1. Open a manifest file (`pom.xml`).
+1. Open a manifest file (`pom.xml`, `package.json`).
 2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on manifest file** to see the application's stack analysis report for the manifest file.
 
 To view the application's stack analysis report for the entire project (including multiple sub-modules):
@@ -53,6 +53,10 @@ To view the application's stack analysis report for the entire project (includin
 This is an open source project, contributions and questions are welcome. If you have any feedback, suggestions, or ideas, reach us on:
 * Chat: [#openshiftio  ](https://chat.openshift.io/developers/channels/town-square).
 * Log issues:  [GitHub Repository](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues).
+
+## Note
+
+It creates a folder `target` in workspace which is used for processing of manifest files, needed for generating stack report. So kindly add `target` in `.gitignore`.
 
 ### Develop this extension
 

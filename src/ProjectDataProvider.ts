@@ -102,10 +102,13 @@ export module  ProjectDataProvider {
                             let packageListDependencies = JSON.parse(data);
                             let packageDepKeys = Object.keys(packageDependencies.dependencies);
                             for(let i =0; i<packageDepKeys.length;i++) {
-                                if(packageListDependencies.dependencies[packageDepKeys[i]] && !packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing')) {
+                                if(packageListDependencies.dependencies[packageDepKeys[i]] && 
+                                    !packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') && 
+                                    packageListDependencies.dependencies[packageDepKeys[i]].version) {
                                     packageDependencies.dependencies[packageDepKeys[i]] = packageListDependencies.dependencies[packageDepKeys[i]].version;
-                                } else if(packageListDependencies.dependencies[packageDepKeys[i]] && packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') &&
-                                packageListDependencies.dependencies[packageDepKeys[i]]['missing']) {
+                                } else if(packageListDependencies.dependencies[packageDepKeys[i]] && 
+                                    packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') &&
+                                    packageListDependencies.dependencies[packageDepKeys[i]]['missing']) {
                                     console.log('trigger npm install');
                                     isMissing = true;
                                     break;
@@ -151,12 +154,15 @@ export module  ProjectDataProvider {
             `-json >`,
             `${manifestRootFolderPath}target/npmlist.json`
         ].join(' ');
+        console.log('npm list cmd '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if(fs.existsSync(`${manifestRootFolderPath}target/npmlist.json`)){
                 // Do something
                 cb(true);
             } else {
                 vscode.window.showErrorMessage(`Failed to resolve dependencies for ${manifestRootFolderPath}package.json`);
+                console.log('_stderr'+ _stderr);
+                console.log('error'+ error);
                 cb(false);
             }
         });
@@ -168,12 +174,15 @@ export module  ProjectDataProvider {
             'install',
             `--prefix="${manifestRootFolderPath}"`
         ].join(' ');
+        console.log('npm install cmd '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if(_stdout){
                 // Do something
                 cb(true);
             } else {
-                vscode.window.showErrorMessage(`Failed to resolve dependencies for ${manifestRootFolderPath}package.json`);
+                vscode.window.showErrorMessage(`Failed to trigger npm install for ${manifestRootFolderPath}package.json`);
+                console.log('_stderr'+ _stderr);
+                console.log('error'+ error);
                 cb(false);
             }
         });

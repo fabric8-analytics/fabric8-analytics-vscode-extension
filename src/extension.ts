@@ -129,7 +129,6 @@ export function activate(context: vscode.ExtensionContext) {
                     vscode.window.showInformationMessage('Multi ecosystem support is not yet available.');
                     return;
                   }
-                  p.report({message: 'Generating effective pom ...' });
                   if(effective_pom_skip) {
                     ProjectDataProvider.effectivef8Package(vscode.workspace.rootPath+'/', (ePkgPath) => {
                       if(ePkgPath){

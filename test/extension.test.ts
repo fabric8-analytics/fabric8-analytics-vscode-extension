@@ -16,7 +16,7 @@ suite('Fabric8 Analytics Extension', () => {
 		});
 	});
 
-	test('should register all fabric8 commands', function () {
+	  test('should register all fabric8 commands', function () {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			const FABRIC8_COMMANDS:string[] = [
@@ -28,26 +28,24 @@ suite('Fabric8 Analytics Extension', () => {
 			});
 			assert.equal(foundFabric8Commands.length ,FABRIC8_COMMANDS.length, 'Some fabric8 commands are not registered properly or a new command is not added to the test');
 		});
-	}); */
+	}); 
 
-	 test('should trigger fabric8-analytics full stack report activate', function () {
+	test('should trigger application stack report activate', () => {
+		this.timeout(1 * 60 * 1000);
+		vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {
+			assert.ok(true);
+		},(reason: any) => {
+			assert.ok(true);
+		});
+	});
+
+	test('should trigger fabric8-analytics full stack report activate', function () {
 		this.timeout(1 * 60 * 1000);
 		vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS).then((res) => {
 			assert.ok(true);
 		},(reason: any) => {
-            assert.ok(true);
-        });
-	});
-
-	test('should trigger application stack report activate', (done) => {
-		//this.timeout(90000);
-		vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {
 			assert.ok(true);
-			done();
-		},(reason: any) => {
-            assert.ok(true);
-			done();
-        });
-	}).timeout(1 * 60 * 1000);
+		});
+	}); */
 
 });

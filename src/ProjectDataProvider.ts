@@ -27,6 +27,7 @@ export module  ProjectDataProvider {
             '-f',
             `"${item}"`
         ].join(' ');
+        console.log('effectivef8PomWs '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if (error) {
                 vscode.window.showErrorMessage(error.message);
@@ -48,6 +49,7 @@ export module  ProjectDataProvider {
             `"${pomXmlFilePath}"`,
             `-Doutput="${filepath}"`
         ].join(' ');
+        console.log('effectivef8Pom '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if (error) {
                 vscode.window.showErrorMessage(error.message);

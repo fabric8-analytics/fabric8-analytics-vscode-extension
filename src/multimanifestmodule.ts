@@ -102,8 +102,8 @@ export module multimanifestmodule {
         let filePath: string = '';
         let filePathList: any = [];
         let projRootPath: string = vscode.workspace.rootPath;
-        let projRootPathSplit: any = projRootPath.split('/');
-        let projName: string = projRootPathSplit[projRootPathSplit.length-1];
+        // let projRootPathSplit: any = projRootPath.split('/');
+        // let projName: string = projRootPathSplit[projRootPathSplit.length-1];
         return new Promise((resolve, reject) => {
             let fsPath : string = fileContent.fsPath ? fileContent.fsPath : '';
             fs.readFile(fsPath, function(err, data) {
@@ -123,7 +123,8 @@ export module multimanifestmodule {
                         }
                     };
                     if(!fileContent._fsPath.endsWith('LICENSE')){
-                        filePath = fileContent._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
+                        // filePath = fileContent._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
+                        filePath = fileContent._fsPath.split(projRootPath)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
                         filePathList = filePath.split('/');
                         manifestObj.options.filename = filePathList[filePathList.length-1];
                         manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];

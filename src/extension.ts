@@ -125,8 +125,9 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                   });
 
-                  if (!effective_pom_skip && pom_count !== result.length) {
+                  if (!effective_pom_skip && pom_count === 0) {
                     vscode.window.showInformationMessage('Multi ecosystem support is not yet available.');
+                    reject();
                     return;
                   }
                   if(effective_pom_skip) {

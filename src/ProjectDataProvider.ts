@@ -154,7 +154,7 @@ export module  ProjectDataProvider {
             `--prefix="${manifestRootFolderPath}"`,
             '--depth=0',
             `-json >`,
-            `${manifestRootFolderPath}target/npmlist.json`
+            `"${manifestRootFolderPath}target/npmlist.json"`
         ].join(' ');
         console.log('npm list cmd '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {

@@ -78,8 +78,12 @@ export module  ProjectDataProvider {
                 })
                 .catch(() => {
                     triggerNpmInstall(manifestRootFolderPath, (npmInstallResp) => {
-                        console.log('npm install Completed!!');
-                        effectivef8Package(item, cb);
+                        if(npmInstallResp) {
+                            console.log('npm install Completed!!');
+                            effectivef8Package(item, cb);
+                        } else {
+                            cb(false);
+                        }
                     });
                 });  
             }else {
@@ -182,7 +186,7 @@ export module  ProjectDataProvider {
                 // Do something
                 cb(true);
             } else {
-                vscode.window.showErrorMessage(`Failed to trigger npm install for ${manifestRootFolderPath}package.json`);
+                vscode.window.showErrorMessage(`Failed to trigger npm install for ${manifestRootFolderPath}package.json, ERR: ${_stderr}`);
                 console.log('_stderr'+ _stderr);
                 console.log('error'+ error);
                 cb(false);

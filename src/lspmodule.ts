@@ -27,7 +27,7 @@ export module lspmodule {
         // Options to control the language client
         let clientOptions: LanguageClientOptions = {
             // Register the server for plain text documents 'plaintext','xml','json'
-            documentSelector: ['*','xml','xsd'],
+            documentSelector: ['json','xml','xsd'],
                 synchronize: {
                     // Synchronize the setting section 'componentAnalysisServer' to the server
                     configurationSection: 'componentAnalysisServer',

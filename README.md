@@ -5,16 +5,20 @@ Red Hat OpenShift.io services extension allows developers using more traditional
 - License analysis determines the license used by the project and its dependencies. If the project already has a license the analysis will show any conflicts between that license and dependency licenses that may be more restrictive. If the project does not have a license, OpenShift.io will suggest a license for the project that is sufficiently permissive to match the license restrictions of the dependencies.
 - Suggested dependencies that can be added to your application stack, alternative dependencies to currently used dependencies if any of the currently used dependencies are not typically used together in an application stack
 
-Today OpenShift.io services extension is limited to Vert.x and Spring Boot projects using Maven and projects build on npm (Node ecosystem). Going forward, additional builders for Java, go and PyPI ecosystems will be supported.
+Today OpenShift.io services extension supports projects using Maven and projects build on npm (Node ecosystem). Going forward, additional builders for go and PyPI ecosystems will be supported.
 
 ## Prerequisites
 * Maven must be installed on your machine. Provide the Maven executable filepath.
+* Node and npm must be installed on your machine. Provide the npm executable filepath.
 
  **Note:** By default, the `mvn` command is executed directly in the terminal, which requires that  `mvn` is found in your system environment `PATH`.
+ By default, the `npm` command is executed directly in the terminal, which requires that  `npm` is found in your system environment `PATH`.           
  If you do not want to add it into your system environment `PATH`, you can specify the maven executable path in settings:
+
 ```
 {
-    "maven.executable.path": "/path-to-maven-home/bin/mvn"
+    "maven.executable.path": "/path-to-maven-home/bin/mvn",
+    "npm.executable.path": "/path-to-npm-home/bin/npm"
 }
 ```
 

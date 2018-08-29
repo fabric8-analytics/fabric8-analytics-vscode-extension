@@ -117,6 +117,12 @@
           "default": "",
           "description": "Specifies absolute path of mvn executable.",
           "scope": "window"
+        },
+        "npm.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of npm executable.",
+          "scope": "window"
         }
       }
     }

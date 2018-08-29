@@ -42,7 +42,7 @@ export namespace Utils {
     }
 
     export function getNodeExecutable(): string {
-        const nodePath: string = workspace.getConfiguration('node.executable').get<string>('path');
-        return nodePath ? `"${nodePath}"` : 'npm';
+        const npmPath: string = workspace.getConfiguration('npm.executable').get<string>('path');
+        return npmPath ? `"${npmPath}"` : 'npm';
     }
 }

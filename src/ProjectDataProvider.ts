@@ -69,7 +69,7 @@ export module  ProjectDataProvider {
 
     effectivef8Package = (item, cb) => {
         let manifestRootFolderPath: string = null;
-        manifestRootFolderPath = item.toLowerCase().split('package.json')[0];
+        manifestRootFolderPath = item.split('package.json')[0];
         getDependencyVersion(manifestRootFolderPath, (depResp) => {
             if(depResp){
                 let formPackagedependencyPromise = formPackagedependency(item);

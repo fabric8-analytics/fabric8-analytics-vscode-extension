@@ -160,7 +160,8 @@
     "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test",
-    "reinstall": "npm cache verify && npm install"
+    "reinstall": "npm cache verify && npm install",
+    "update-deps": "node_modules/.bin/ncu --upgrade --loglevel verbose --packageFile package.json && npm update"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.0",

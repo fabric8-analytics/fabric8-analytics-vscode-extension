@@ -6,3 +6,4 @@ ca-lsp-server/
 .vscode-test/
 .DS_Store
 *.tar.*
+.history

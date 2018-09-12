@@ -9,3 +9,4 @@ ca-lsp-server/
 coverage/
 .history
 target/
+coverage/

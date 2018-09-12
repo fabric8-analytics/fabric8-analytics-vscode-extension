@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-import {Commands} from '../src/commands';
+import { Commands } from '../src/commands';
 
 suite('Fabric8 Analytics Extension', () => {
 

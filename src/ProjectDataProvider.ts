@@ -106,7 +106,10 @@ export module  ProjectDataProvider {
                         console.log(data);
                         if(data){
                             let packageListDependencies = JSON.parse(data);
-                            let packageDepKeys = Object.keys(packageDependencies.dependencies);
+                            let packageDepKeys = [];
+                            if(packageDependencies && packageDependencies.hasOwnProperty('dependencies')) {
+                                packageDepKeys = Object.keys(packageDependencies.dependencies);
+                            }
                             for(let i =0; i<packageDepKeys.length;i++) {
                                 if(packageListDependencies.dependencies[packageDepKeys[i]] && 
                                     !packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') && 

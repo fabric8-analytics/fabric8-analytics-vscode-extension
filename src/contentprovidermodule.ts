@@ -60,7 +60,7 @@ export module contentprovidermodule {
 
     let render_project_failure = () => {
       return `<div>
-                <p style='color:#ffffff;text-align: center;'>Unable to anlyze your stack.</p>
+                <p style='color:#ffffff;text-align: center;'>Unable to analyze your stack.</p>
               </div>`;
     };
 

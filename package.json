@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md",
   "categories": [
+<<<<<<< HEAD
     "Programming Languages",
     "Other"
   ],
@@ -36,6 +37,17 @@
     "License",
     "AI",
     "Node"
+=======
+    "Programming Languages"
+  ],
+  "keywords": [
+    "OpenShift.io",
+    "maven",
+    "node",
+    "analytics",
+    "security",
+    "license"
+>>>>>>> fix(keywords): updates categories and keywords
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {

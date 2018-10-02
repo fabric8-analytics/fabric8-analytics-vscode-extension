@@ -174,7 +174,7 @@
     "vscode": "^1.1.21"
   },
   "dependencies": {
-    "fabric8-analytics-lsp-server": "0.1.35",
+    "fabric8-analytics-lsp-server": "0.1.37",
     "request": "2.88.0",
     "vscode-languageclient": "3.1.0"
   }

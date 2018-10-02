@@ -98,12 +98,10 @@ export module  ProjectDataProvider {
         return new Promise((resolve, reject) => {
             let isMissing = false;
             fs.readFile(manifestRootFolderPath+'package.json', {encoding: 'utf-8'}, function(err, data) {
-                console.log(data);
                 if(data){
                     let packageDependencies = JSON.parse(data);
 
                     fs.readFile(manifestRootFolderPath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
-                        console.log(data);
                         if(data){
                             let packageListDependencies = JSON.parse(data);
                             let packageDepKeys = [];

@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "OpenShift.io Services",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -69,6 +69,7 @@
       {
         "id": "Insights",
         "aliases": [
+          "AI",
           "suggest dependencies"
         ]
       },

@@ -123,9 +123,15 @@ export module multimanifestmodule {
                         }
                     };
                     if(!fileContent._fsPath.endsWith('LICENSE')){
-                        // filePath = fileContent._fsPath.split('/'+projName)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
-                        filePath = fileContent._fsPath.split(projRootPath)[1].replace(/(\/target|\/stackinfo|\/poms|)/g, '');
-                        filePathList = filePath.split('/');
+                        let filePathSplit = /(\/target|\/stackinfo|\/poms|)/g;
+                        let strSplit = '/';
+                        if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+                            filePathSplit = /(\\target|\\stackinfo|\\poms|)/g;
+                            strSplit = '\\';
+                        }
+                        filePath = fileContent._fsPath.split(projRootPath)[1].replace(filePathSplit, '');
+                        filePathList = filePath.split(strSplit);
+
                         manifestObj.options.filename = filePathList[filePathList.length-1];
                         manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];
                         manifestObj.value = data.toString();

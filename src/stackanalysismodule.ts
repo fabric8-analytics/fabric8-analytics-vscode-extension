@@ -61,9 +61,13 @@ export module stackanalysismodule {
         let projRootPath: string = vscode.workspace.rootPath;
         if(projRootPath){
             let encodedProjRootPath: any = projRootPath.replace(/ /g,'%20');
-            let projRootPathSplit: any = encodedProjRootPath.split('/');
+            let strSplit = '/';
+            if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+                strSplit = '\\';
+            }
+            let projRootPathSplit: any = encodedProjRootPath.split(strSplit);
             let projName: string = projRootPathSplit[projRootPathSplit.length-1].toLowerCase();
-            let filePathList = file_uri.split(projName+'/');
+            let filePathList = file_uri.split(projName+strSplit);
 
             vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`).then(
                 (result: vscode.Uri[]) => {

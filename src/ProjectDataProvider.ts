@@ -202,5 +202,4 @@ export module  ProjectDataProvider {
         let result = s.replace(/\\+$/, "");
         return result;
     }
-    
 }

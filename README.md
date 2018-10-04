@@ -40,7 +40,7 @@ Today OpenShift.io services extension supports projects using Maven and projects
 
 > Click on 'OpenShift.io' in the VSCode footer and then click on 'Authorize' as shown below:
 
-> ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/authOsio.png)
+ ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/authOsio.png)
 
 
 3. How to use ?

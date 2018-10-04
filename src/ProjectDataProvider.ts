@@ -11,6 +11,7 @@ export module  ProjectDataProvider {
     let getDependencyVersion: any;
     let triggerNpmInstall : any;
     let formPackagedependency: any;
+    let trimTrailingChars: any;
 
     effectivef8PomWs = (item, skip, cb) => {
         // Directly call the callback if no effective POM generation is required,
@@ -149,6 +150,7 @@ export module  ProjectDataProvider {
 
     getDependencyVersion = (manifestRootFolderPath, cb) => {
         let dir = manifestRootFolderPath+'target';
+        let prefixPath = trimTrailingChars(manifestRootFolderPath);
         if (!fs.existsSync(dir)){
             fs.mkdirSync(dir);
         }
@@ -156,7 +158,7 @@ export module  ProjectDataProvider {
         const cmd: string = [
             Utils.getNodeExecutable(),
             'list',
-            `--prefix="${manifestRootFolderPath}"`,
+            `--prefix="${prefixPath}"`,
             '--depth=0',
             `-json >`,
             `"${manifestRootFolderPath}target/npmlist.json"`
@@ -176,10 +178,11 @@ export module  ProjectDataProvider {
     };
 
     triggerNpmInstall = (manifestRootFolderPath, cb) => {
+        let prefixPath = trimTrailingChars(manifestRootFolderPath);
         const cmd: string = [
             Utils.getNodeExecutable(),
             'install',
-            `--prefix="${manifestRootFolderPath}"`
+            `--prefix="${prefixPath}"`
         ].join(' ');
         console.log('npm install cmd '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
@@ -194,5 +197,10 @@ export module  ProjectDataProvider {
             }
         });
     };
+
+    trimTrailingChars = (s)  => {
+        let result = s.replace(/\\+$/, "");
+        return result;
+    }
     
 }

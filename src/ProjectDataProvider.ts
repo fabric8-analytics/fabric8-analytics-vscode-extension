@@ -7,19 +7,14 @@ export module  ProjectDataProvider {
 
     export let effectivef8PomWs: any;
     export let effectivef8Pom: any;
+    export let effectivef8PackageWS: any;
     export let effectivef8Package: any;
     let getDependencyVersion: any;
     let triggerNpmInstall : any;
     let formPackagedependency: any;
     let trimTrailingChars: any;
 
-    effectivef8PomWs = (item, skip, cb) => {
-        // Directly call the callback if no effective POM generation is required,
-        // as is the case where there is no POM.
-        if (skip) {
-            cb(true);
-            return;
-        }
+    effectivef8PomWs = (item, cb) => {
         let pomXmlFilePath: string = null;
         pomXmlFilePath = item.fsPath;
         const cmd: string = [

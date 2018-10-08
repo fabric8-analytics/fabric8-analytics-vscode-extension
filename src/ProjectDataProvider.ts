@@ -42,7 +42,7 @@ export module  ProjectDataProvider {
     effectivef8Pom = (item, cb) => {
         let pomXmlFilePath: string = null;
         let filepath: string = 'target/pom.xml';
-        pomXmlFilePath = item.fsPath;
+        pomXmlFilePath = item;
         const cmd: string = [
             Utils.getMavenExecutable(),
             'help:effective-pom',

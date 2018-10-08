@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 
 import { Apiendpoint } from './apiendpoint';
 import { multimanifestmodule } from './multimanifestmodule';
+import { ProjectDataProvider } from './ProjectDataProvider';
+import { authextension } from './authextension';
 
 export module stackanalysismodule {
 
@@ -16,6 +18,7 @@ export module stackanalysismodule {
     export let get_stack_metadata: any;
     export let post_stack_analysis: any;
     export let clearContextInfo: any;
+    export let triggerStackAnalyses: any;
 
     stack_collector = (file_uri, id, OSIO_ACCESS_TOKEN, cb) => {
         const options = {};
@@ -152,5 +155,61 @@ export module stackanalysismodule {
         context.globalState.update('f8_3scale_user_key', '');
         context.globalState.update('f8_access_routes', '');
     };
+
+    function processStackAnalyses (context, provider, previewUri, editor, text, fileUri) {
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
+            return new Promise((resolve, reject) => {
+                let effectiveF8Var = 'effectivef8Package';
+                if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
+                    effectiveF8Var = 'effectivef8Pom';
+                }
+
+                ProjectDataProvider[effectiveF8Var](editor.document.uri.fsPath, (dataEpom) => {
+                    if(dataEpom){
+                        p.report({message: 'Analyzing your stack ...' });
+                        provider.signalInit(previewUri,null);
+                        authextension.authorize_f8_analytics(context, (data) => {
+                            if(data){
+                              return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
+                                stackanalysismodule.get_stack_metadata(context, dataEpom, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
+                                  if(data){
+                                    p.report({message: 'Successfully generated stack report ...' });
+                                    resolve();
+                                    provider.signal(previewUri, data); 
+                                  } else {
+                                    provider.signal(previewUri,null);
+                                    reject();
+                                  }
+                                });
+                                provider.signalInit(previewUri,null);
+                              }, (reason) => {
+                                    reject();
+                                    vscode.window.showErrorMessage(reason);
+                              });
+                            } else {
+                                reject();
+                            }
+                        });
+                    } else {
+                      p.report({message: 'Unable to resolve dependencies ...' });
+                      reject();
+                    }
+                });
+            });
+          });
+    }
+
+    triggerStackAnalyses = (context, provider, previewUri) => {
+        if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
+          vscode.window.showInformationMessage('Multi-root Workspaces are not supported currently');
+        } else if(vscode.window.activeTextEditor){
+          let editor = vscode.window.activeTextEditor;
+          let text = editor.document.getText();
+          let fileUri: string = editor.document.fileName;
+          processStackAnalyses(context, provider, previewUri, editor, text, fileUri);
+        } else {
+          vscode.window.showInformationMessage('No manifest file is active in editor');
+        }
+    }
 
 }

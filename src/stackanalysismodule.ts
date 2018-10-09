@@ -201,14 +201,14 @@ export module stackanalysismodule {
 
     triggerStackAnalyses = (context, provider, previewUri) => {
         if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-          vscode.window.showInformationMessage('Multi-root Workspaces are not supported currently');
+            vscode.window.showInformationMessage('Multi-root Workspaces are not supported currently');
         } else if(vscode.window.activeTextEditor){
-          let editor = vscode.window.activeTextEditor;
-          let text = editor.document.getText();
-          let fileUri: string = editor.document.fileName;
-          processStackAnalyses(context, provider, previewUri, editor, text, fileUri);
+            let editor = vscode.window.activeTextEditor;
+            let text = editor.document.getText();
+            let fileUri: string = editor.document.fileName;
+            processStackAnalyses(context, provider, previewUri, editor, text, fileUri);
         } else {
-          vscode.window.showInformationMessage('No manifest file is active in editor');
+            vscode.window.showInformationMessage('No manifest file is active in editor');
         }
     }
 

@@ -9,8 +9,8 @@ export module  ProjectDataProvider {
     export let effectivef8Pom: any;
     export let effectivef8PackageWS: any;
     export let effectivef8Package: any;
+
     let getDependencyVersion: any;
-    let triggerNpmInstall : any;
     let formPackagedependency: any;
     let trimTrailingChars: any;
 

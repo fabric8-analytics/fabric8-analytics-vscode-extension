@@ -15,7 +15,7 @@ export module multimanifestmodule {
     export let form_manifests_payload: any;
     export let triggerFullStackAnalyses: any;
 
-    find_manifests_workspace = (context, provider, OSIO_ACCESS_TOKEN, filesRegex, cb) => {
+    find_manifests_workspace = (context, OSIO_ACCESS_TOKEN, filesRegex, cb) => {
 
         let payloadData : any;
         vscode.workspace.findFiles(`{${filesRegex},LICENSE}`,'**/node_modules').then(
@@ -223,7 +223,7 @@ export module multimanifestmodule {
           if(data){
             return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
               let manifest_finder = multimanifestmodule.find_manifests_workspace;
-              manifest_finder(context, provider, Apiendpoint.OSIO_ACCESS_TOKEN, filesRegex, (data) => { 
+              manifest_finder(context, Apiendpoint.OSIO_ACCESS_TOKEN, filesRegex, (data) => { 
                 if(data){
                   provider.signal(previewUri, data);
                   return true;

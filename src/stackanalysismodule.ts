@@ -58,7 +58,7 @@ export module stackanalysismodule {
         });
 	};
 
-	get_stack_metadata = (context, file_uri, contextData, provider, OSIO_ACCESS_TOKEN, cb) => {
+	get_stack_metadata = (context, file_uri, OSIO_ACCESS_TOKEN, cb) => {
 
         let payloadData : any;
         let projRootPath: string = vscode.workspace.rootPath;
@@ -171,7 +171,7 @@ export module stackanalysismodule {
                         authextension.authorize_f8_analytics(context, (data) => {
                             if(data){
                               return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
-                                stackanalysismodule.get_stack_metadata(context, dataEpom, {manifest: text, origin: 'lsp'}, provider, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
+                                stackanalysismodule.get_stack_metadata(context, dataEpom, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
                                   if(data){
                                     p.report({message: 'Successfully generated stack report ...' });
                                     resolve();

@@ -144,8 +144,9 @@ export module  ProjectDataProvider {
 
         const cmd: string = [
             Utils.getNodeExecutable(),
+            `--prefix="${manifestRootFolderPath}node_modules"`,
             'install',
-            `--prefix="${prefixPath}"`,
+            `"${prefixPath}"`,
             '&&',
             Utils.getNodeExecutable(),
             'list',

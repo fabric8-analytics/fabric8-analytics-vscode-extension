@@ -171,7 +171,12 @@ export module multimanifestmodule {
                         // Do not create an effective pom if no pom.xml is present
                         let effective_pom_skip = true;
                         let effectiveF8WsVar = 'effectivef8Package';
-                        let vscodeRootpath = vscode.workspace.rootPath +'/';
+                        let vscodeRootpath = vscode.workspace.rootPath;
+                        if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+                            vscodeRootpath += '\\';
+                        } else {
+                            vscodeRootpath += '/'; 
+                        }
                         let filesRegex = 'target/package.json';
                         let pom_count = 0;
                         result.forEach((item) => {

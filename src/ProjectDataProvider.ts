@@ -73,14 +73,7 @@ export module  ProjectDataProvider {
                     return cb(data);
                 })
                 .catch(() => {
-                    triggerNpmInstall(manifestRootFolderPath, (npmInstallResp) => {
-                        if(npmInstallResp) {
-                            console.log('npm install Completed!!');
-                            effectivef8Package(item, cb);
-                        } else {
-                            cb(false);
-                        }
-                    });
+                    cb(false);
                 });  
             }else {
                 cb(false);
@@ -112,7 +105,6 @@ export module  ProjectDataProvider {
                                 } else if(packageListDependencies.dependencies[packageDepKeys[i]] && 
                                     packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') &&
                                     packageListDependencies.dependencies[packageDepKeys[i]]['missing']) {
-                                    console.log('trigger npm install');
                                     isMissing = true;
                                     break;
                                 }
@@ -152,13 +144,17 @@ export module  ProjectDataProvider {
 
         const cmd: string = [
             Utils.getNodeExecutable(),
+            'install',
+            `--prefix="${prefixPath}"`,
+            '&&',
+            Utils.getNodeExecutable(),
             'list',
             `--prefix="${prefixPath}"`,
-            '--depth=0',
+            '--prod',
             `-json >`,
             `"${manifestRootFolderPath}target/npmlist.json"`
         ].join(' ');
-        console.log('npm list cmd '+ cmd);
+        console.log('npm cmd :: '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
             if(fs.existsSync(`${manifestRootFolderPath}target/npmlist.json`)){
                 // Do something
@@ -172,26 +168,6 @@ export module  ProjectDataProvider {
         });
     };
 
-    triggerNpmInstall = (manifestRootFolderPath, cb) => {
-        let prefixPath = trimTrailingChars(manifestRootFolderPath);
-        const cmd: string = [
-            Utils.getNodeExecutable(),
-            'install',
-            `--prefix="${prefixPath}"`
-        ].join(' ');
-        console.log('npm install cmd '+ cmd);
-        exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
-            if(_stdout){
-                // Do something
-                cb(true);
-            } else {
-                vscode.window.showErrorMessage(`Failed to trigger npm install for ${manifestRootFolderPath}package.json, ERR: ${_stderr}`);
-                console.log('_stderr'+ _stderr);
-                console.log('error'+ error);
-                cb(false);
-            }
-        });
-    };
 
     trimTrailingChars = (s)  => {
         let result = s.replace(/\\+$/, "");

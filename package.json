@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "OpenShift.io Services",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -41,9 +41,6 @@
   "engines": {
     "vscode": "^1.12.0"
   },
-  "extensionDependencies": [
-    "redhat.osio-auth-service"
-  ],
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidget",
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",

@@ -8,47 +8,31 @@ export module authextension {
     const request = require('request');
     export let authorize_f8_analytics: any;
     export let get_3scale_routes: any;
+    let setContextData: any;
+
+    setContextData = (context_f8_access_routes, context_f8_3scale_user_key) => {
+        Apiendpoint.STACK_API_URL = context_f8_access_routes.prod+'/api/v1/';
+        Apiendpoint.STACK_API_USER_KEY = context_f8_3scale_user_key;
+        Apiendpoint.OSIO_ROUTE_URL = context_f8_access_routes.prod;
+        process.env['RECOMMENDER_API_URL'] = context_f8_access_routes.prod+'/api/v1';
+        process.env['THREE_SCALE_USER_TOKEN'] = context_f8_3scale_user_key;
+    }
 
     authorize_f8_analytics = (context, cb) => {
-        let osioTokenExt = vscode.extensions.getExtension('redhat.osio-auth-service');
-        if(osioTokenExt){
-            let importedApi = osioTokenExt.exports;
-            if(importedApi && importedApi.hasOwnProperty('refresh_token') && importedApi.hasOwnProperty('access_token')) {
-                Apiendpoint.OSIO_REFRESH_TOKEN = importedApi['refresh_token'];
-                Apiendpoint.OSIO_ACCESS_TOKEN = importedApi['access_token'];
-                process.env['RECOMMENDER_API_TOKEN'] = Apiendpoint.OSIO_ACCESS_TOKEN;
-                context.globalState.update('f8_access_token', Apiendpoint.OSIO_ACCESS_TOKEN);
-                context.globalState.update('f8_refresh_token', Apiendpoint.OSIO_REFRESH_TOKEN);
-                let context_f8_access_token = context.globalState.get('f8_access_token');
-                let context_f8_access_routes = context.globalState.get('f8_access_routes');
-                let context_f8_3scale_user_key = context.globalState.get('f8_3scale_user_key');
-                if(context_f8_access_token && context_f8_access_routes && context_f8_3scale_user_key){
-                    Apiendpoint.STACK_API_URL = context_f8_access_routes.prod+'/api/v1/';
-                    Apiendpoint.STACK_API_USER_KEY = context_f8_3scale_user_key;
-                    Apiendpoint.OSIO_ROUTE_URL = context_f8_access_routes.prod;
-                    process.env['RECOMMENDER_API_URL'] = context_f8_access_routes.prod+'/api/v1';
-                    process.env['THREE_SCALE_USER_TOKEN'] = context_f8_3scale_user_key;
-                    cb(true);
-                } else {
-                    get_3scale_routes(Apiendpoint, context, cb);
-                }
-            } else {
-                vscode.window.showInformationMessage(`Looks like your extension is not authorized, kindly authorize with OpenShift.io`);
-                cb(null);
-            }
+        let context_f8_access_routes = context.globalState.get('f8_access_routes');
+        let context_f8_3scale_user_key = context.globalState.get('f8_3scale_user_key');
+        if(context_f8_access_routes && context_f8_3scale_user_key){
+            setContextData(context_f8_access_routes, context_f8_3scale_user_key);
+            cb(true);
         } else {
-            vscode.window.showInformationMessage(`Looks like there is some issue with auth extension, kindly authorize with OpenShift.io`);
-            cb(null);
+            get_3scale_routes(context, cb);
         }
-        
     };
 
-    get_3scale_routes = (Apiendpoint, context,cb) => {
-        let access_token = Apiendpoint.OSIO_ACCESS_TOKEN;
+    get_3scale_routes = (context,cb) => {
         let options = {};
         options['uri'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL}get-endpoints?user_key=${Apiendpoint.THREE_SCALE_CONNECT_KEY}`;
         options['headers'] = {'Content-Type': 'application/json'};
-        options['headers'] = {'Authorization': `${access_token}`};
         request.get(options, (err, httpResponse, body) => {
             if(err){
                 cb(null);
@@ -58,18 +42,16 @@ export module authextension {
                     if (resp && resp.endpoints) {
                         context.globalState.update('f8_access_routes', resp.endpoints);
                         context.globalState.update('f8_3scale_user_key', resp.user_key);
-                        Apiendpoint.STACK_API_URL = resp.endpoints.prod+'/api/v1/';
-                        Apiendpoint.STACK_API_USER_KEY = resp.user_key;
-                        Apiendpoint.OSIO_ROUTE_URL = resp.endpoints.prod;
-                        process.env['RECOMMENDER_API_URL'] = resp.endpoints.prod+'/api/v1';
-                        process.env['THREE_SCALE_USER_TOKEN'] = resp.user_key;
+                        let context_f8_access_routes = context.globalState.get('f8_access_routes');
+                        let context_f8_3scale_user_key = context.globalState.get('f8_3scale_user_key');
+                        setContextData(context_f8_access_routes, context_f8_3scale_user_key);
                         cb(true);
                     } else {
-                        vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with Openshift.io, Status: ${httpResponse.statusCode}`);
+                        vscode.window.showErrorMessage(`Looks like there is some intermittent issue while communicating with services, please try again. Status: ${httpResponse.statusCode}`);
                         cb(null);
                     }
                 } else {   
-                    vscode.window.showErrorMessage(`Looks like there is some issue with authization, kindly authorize with OpenShift.io, Status: ${httpResponse.statusCode}`);
+                    vscode.window.showErrorMessage(`Looks like there is some intermittent issue while communicating with services, please try again. Status: ${httpResponse.statusCode}`);
                     cb(null);
                 }
             }

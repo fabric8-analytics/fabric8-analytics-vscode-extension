@@ -22,7 +22,7 @@ export module contentprovidermodule {
               } else {
                 if(this._output){
                   let r = this.header;
-                  let token_uri = process.env['RECOMMENDER_API_TOKEN'];
+                  let token_uri = undefined;
                   this.portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${this._output.request_id}?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${Apiendpoint.OSIO_ROUTE_URL}"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
                   r += render_stack_iframe(this.portal_uri);
                   r += this.footer;

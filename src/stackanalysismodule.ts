@@ -20,10 +20,9 @@ export module stackanalysismodule {
     export let clearContextInfo: any;
     export let triggerStackAnalyses: any;
 
-    stack_collector = (file_uri, id, OSIO_ACCESS_TOKEN, cb) => {
+    stack_collector = (file_uri, id, cb) => {
         const options = {};
         options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-        options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
         request.get(options, (err, httpResponse, body) => {
             stack_collector_count++;
             if(err){
@@ -37,9 +36,8 @@ export module stackanalysismodule {
                     }
                     else {
                         if (httpResponse.statusCode === 200 || httpResponse.statusCode === 202) {
-                            //vscode.window.showInformationMessage('Analysis in progress ...');
                             if(stack_collector_count <= 10){
-                                setTimeout(() => { stack_collector(file_uri, id, OSIO_ACCESS_TOKEN, cb); }, 6000);
+                                setTimeout(() => { stack_collector(file_uri, id, cb); }, 6000);
                             } else{
                                 vscode.window.showErrorMessage(`Unable to get stack analyzed, try again`);
                                 cb(null);
@@ -58,7 +56,7 @@ export module stackanalysismodule {
         });
 	};
 
-	get_stack_metadata = (context, file_uri, OSIO_ACCESS_TOKEN, cb) => {
+	get_stack_metadata = (context, file_uri, cb) => {
 
         let payloadData : any;
         let projRootPath: string = vscode.workspace.rootPath;
@@ -82,10 +80,9 @@ export module stackanalysismodule {
                                 let thatContext: any;
                                 let file_uri: string;
                                 options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-                                options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
                                 options['formData'] = payloadData;
                                 thatContext = context;
-                                post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
+                                post_stack_analysis(options, file_uri, thatContext, cb);
         
                         } else {
                             vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
@@ -110,7 +107,7 @@ export module stackanalysismodule {
 	};
 
 
-    post_stack_analysis = (options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb) => {
+    post_stack_analysis = (options, file_uri, thatContext, cb) => {
         console.log('Options', options && options.formData);
         request.post(options, (err, httpResponse, body) => {
             if(err){
@@ -125,14 +122,14 @@ export module stackanalysismodule {
                         stack_analysis_requests[file_uri] = resp.id;
                         console.log(`Analyzing your stack, id ${resp.id}`);
                         stack_collector_count = 0;
-                        setTimeout(() => { stack_collector(file_uri, resp.id, OSIO_ACCESS_TOKEN, cb); }, 6000);
+                        setTimeout(() => { stack_collector(file_uri, resp.id, cb); }, 6000);
                     } else {
                         vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
                         cb(null);
                     }
                 } else if(httpResponse.statusCode === 401){
                     clearContextInfo(thatContext);
-                    vscode.window.showErrorMessage(`Looks like your token is not proper, kindly re authorize with OpenShift.io`);
+                    vscode.window.showErrorMessage(`Looks like there is some intermittent issue while communicating with services, please try again. Status: ${httpResponse.statusCode}`);
                     cb(null);
                 } else if(httpResponse.statusCode === 429 || httpResponse.statusCode === 403){
                     vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
@@ -171,7 +168,7 @@ export module stackanalysismodule {
                         authextension.authorize_f8_analytics(context, (data) => {
                             if(data){
                               return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
-                                stackanalysismodule.get_stack_metadata(context, dataEpom, Apiendpoint.OSIO_ACCESS_TOKEN, (data) => {
+                                stackanalysismodule.get_stack_metadata(context, dataEpom, (data) => {
                                   if(data){
                                     p.report({message: 'Successfully generated stack report ...' });
                                     resolve();

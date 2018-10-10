@@ -34,16 +34,7 @@ Today OpenShift.io services extension supports projects using Maven and projects
 
 1. Install the 'OpenShift.io Services' extension.
 
-> **Note:** This extension bundles 'OpenShift.io service authorization' extension for the required OpenShift.io authentication.
-
-2. Get authorized with OpenShift.io
-
-> Click on 'OpenShift.io' in the VSCode footer and then click on 'Authorize' as shown below:
-
- ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/authOsio.png)
-
-
-3. How to use ?
+2. How to use ?
 
 > Open or edit a manifest file (`pom.xml` / `package.json`) to flag any CVEs present in your application and right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or  'Vscode File editor' to display a detailed report for your application.
 

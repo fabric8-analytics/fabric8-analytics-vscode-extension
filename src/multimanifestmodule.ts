@@ -15,7 +15,7 @@ export module multimanifestmodule {
     export let form_manifests_payload: any;
     export let triggerFullStackAnalyses: any;
 
-    find_manifests_workspace = (context, OSIO_ACCESS_TOKEN, filesRegex, cb) => {
+    find_manifests_workspace = (context, filesRegex, cb) => {
 
         let payloadData : any;
         vscode.workspace.findFiles(`{${filesRegex},LICENSE}`,'**/node_modules').then(
@@ -28,10 +28,9 @@ export module multimanifestmodule {
                             let thatContext: any;
                             let file_uri: string;
                             options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-                            options['headers'] = {'Authorization': 'Bearer ' + OSIO_ACCESS_TOKEN};
                             options['formData'] = payloadData;
                             thatContext = context;
-                            stackanalysismodule.post_stack_analysis(options,file_uri, OSIO_ACCESS_TOKEN,thatContext, cb);
+                            stackanalysismodule.post_stack_analysis(options, file_uri, thatContext, cb);
 
                     } else {
                         vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
@@ -228,7 +227,7 @@ export module multimanifestmodule {
           if(data){
             return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
               let manifest_finder = multimanifestmodule.find_manifests_workspace;
-              manifest_finder(context, Apiendpoint.OSIO_ACCESS_TOKEN, filesRegex, (data) => { 
+              manifest_finder(context, filesRegex, (data) => { 
                 if(data){
                   provider.signal(previewUri, data);
                   return true;

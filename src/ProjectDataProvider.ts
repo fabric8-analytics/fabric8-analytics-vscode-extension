@@ -85,11 +85,9 @@ export module  ProjectDataProvider {
         let manifestRootFolderPath: string = null;
         manifestRootFolderPath = item.toLowerCase().split('package.json')[0];
         return new Promise((resolve, reject) => {
-            let isMissing = false;
             fs.readFile(manifestRootFolderPath+'package.json', {encoding: 'utf-8'}, function(err, data) {
                 if(data){
                     let packageDependencies = JSON.parse(data);
-
                     fs.readFile(manifestRootFolderPath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
                         if(data){
                             let packageListDependencies = JSON.parse(data);
@@ -99,29 +97,19 @@ export module  ProjectDataProvider {
                             }
                             for(let i =0; i<packageDepKeys.length;i++) {
                                 if(packageListDependencies.dependencies[packageDepKeys[i]] && 
-                                    !packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') && 
                                     packageListDependencies.dependencies[packageDepKeys[i]].version) {
                                     packageDependencies.dependencies[packageDepKeys[i]] = packageListDependencies.dependencies[packageDepKeys[i]].version;
-                                } else if(packageListDependencies.dependencies[packageDepKeys[i]] && 
-                                    packageListDependencies.dependencies[packageDepKeys[i]].hasOwnProperty('missing') &&
-                                    packageListDependencies.dependencies[packageDepKeys[i]]['missing']) {
-                                    isMissing = true;
-                                    break;
-                                }
+                                } 
                             }
-                            if(isMissing){
-                                reject(false);
-                            } else{
-                                fs.writeFile(manifestRootFolderPath+'target/package.json',JSON.stringify(packageDependencies), function(err) {
-                                    if(err) {
-                                        vscode.window.showErrorMessage(`Unable to create ${manifestRootFolderPath}target/package.json`);
-                                        reject(err);
-                                    } else {
-                                        let ePkgPath: any = manifestRootFolderPath+'target/package.json';
-                                        resolve(ePkgPath);
-                                    }  
-                                });
-                            }
+                            fs.writeFile(manifestRootFolderPath+'target/package.json',JSON.stringify(packageDependencies), function(err) {
+                                if(err) {
+                                    vscode.window.showErrorMessage(`Unable to create ${manifestRootFolderPath}target/package.json`);
+                                    reject(err);
+                                } else {
+                                    let ePkgPath: any = manifestRootFolderPath+'target/package.json';
+                                    resolve(ePkgPath);
+                                }  
+                            });
                         } else {
                             vscode.window.showErrorMessage(`Unable to parse ${manifestRootFolderPath}target/npmlist.json`);
                             reject(err);

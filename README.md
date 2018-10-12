@@ -1,11 +1,16 @@
 # OpenShift.io Services
 
-Red Hat OpenShift.io services extension allows developers using more traditional development tools to benefit from the security, license analysis and AI based suggested dependencies that [OpenShift.io](https://openshift.io/) provides:
-- Common Vulnerabilities and Exposures (CVE) analysis highlights code dependencies that have open CVEs against them.
-- License analysis determines the license used by the project and its dependencies. If the project already has a license the analysis will show any conflicts between that license and dependency licenses that may be more restrictive. If the project does not have a license, OpenShift.io will suggest a license for the project that is sufficiently permissive to match the license restrictions of the dependencies.
-- AI based suggested dependencies that can be added to your application stack, alternative dependencies to currently used dependencies if any of the currently used dependencies are not typically used together in an application stack
+Insights about your application dependencies:
+- Flags a security vulnerability and suggests a remedial version
+- Shows Github popularity metrics along with latest version
+- Suggests a project level license, check for conflicts between dependency licences
+- AI based guidance for alternative dependencies
+- AI based guidance for additional dependencies 
 
-Today OpenShift.io services extension supports projects using Maven and projects build on npm (Node ecosystem). Extending support for Python and Go languages is currently under progress.
+## Supported Languages
+
+Today OpenShift.io services extension supports projects using Maven and projects build on npm (Node ecosystem). 
+Extending support for Python and Go languages is currently under progress.
 
 ## Prerequisites
 * [For analyzing Java applications] Maven must be installed on your machine. Provide the Maven executable filepath.

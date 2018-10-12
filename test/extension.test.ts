@@ -9,14 +9,14 @@ suite('Fabric8 Analytics Extension', () => {
 		assert.ok(vscode.extensions.getExtension('redhat.fabric8-analytics'));
 	});
 
-    /* test('should activate', function () {
+    test('should activate', function () {
 		this.timeout(1 * 60 * 1000);
 		return vscode.extensions.getExtension('redhat.fabric8-analytics').activate().then((api) => {
 			assert.ok(true);
 		});
 	});
 
-	  test('should register all fabric8 commands', function () {
+	test('should register all fabric8 commands', function () {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			const FABRIC8_COMMANDS:string[] = [
@@ -30,6 +30,7 @@ suite('Fabric8 Analytics Extension', () => {
 		});
 	}); 
 
+	/* 
 	test('should trigger application stack report activate', () => {
 		this.timeout(1 * 60 * 1000);
 		vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {

@@ -126,13 +126,20 @@ export module  ProjectDataProvider {
     getDependencyVersion = (manifestRootFolderPath, cb) => {
         let dir = manifestRootFolderPath+'target';
         let prefixPath = trimTrailingChars(manifestRootFolderPath);
+        let npmPrefixPath = manifestRootFolderPath;
         if (!fs.existsSync(dir)){
             fs.mkdirSync(dir);
+        }
+        if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+            npmPrefixPath += 'node_modules';
+            if (!fs.existsSync(npmPrefixPath)){
+                fs.mkdirSync(npmPrefixPath);
+            }
         }
 
         const cmd: string = [
             Utils.getNodeExecutable(),
-            `--prefix="${manifestRootFolderPath}node_modules"`,
+            `--prefix="${npmPrefixPath}"`,
             'install',
             `"${prefixPath}"`,
             '&&',

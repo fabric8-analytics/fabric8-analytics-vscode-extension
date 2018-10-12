@@ -59,14 +59,13 @@
       {
         "id": "application-license",
         "aliases": [
-          "license conflict",
-          "suggest license"
+          "license conflict"
         ]
       },
       {
         "id": "Insights",
         "aliases": [
-          "AI",
+          "Artificial-Intelligence",
           "suggest dependencies"
         ]
       },

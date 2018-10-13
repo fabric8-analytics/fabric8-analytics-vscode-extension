@@ -1,8 +1,8 @@
 {
   "name": "fabric8-analytics",
-  "displayName": "OpenShift.io Services",
-  "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.0.4",
+  "displayName": "Dependency Analytics",
+  "description": "Dependency Analytics by Red Hat",
+  "version": "0.0.5",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,

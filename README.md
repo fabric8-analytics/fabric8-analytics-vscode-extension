@@ -37,7 +37,7 @@ Extending support for Python and Go languages is currently under progress.
 
 ## Quick Start
 
-1. Install the 'Dependency Analytics' extension.
+1. Install the extension.
 
 2. How to use ?
 

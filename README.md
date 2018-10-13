@@ -70,7 +70,7 @@ To view the 'Application's stack analysis report' for a specific module:
 2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on manifest file** to see the application's stack analysis report for the manifest file.
 
 
-To view the application's stack analysis report for the entire project (including multiple sub-modules):
+To view the 'Application's stack analysis report' for the entire project (including multiple sub-modules):
 * Use command `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on Workspace** to view the application's stack analysis report for the entire workspace/project.
 
 ## Contributing

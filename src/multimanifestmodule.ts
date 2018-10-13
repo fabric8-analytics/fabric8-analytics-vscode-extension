@@ -33,7 +33,7 @@ export module multimanifestmodule {
                             stackanalysismodule.post_stack_analysis(options, file_uri, thatContext, cb);
 
                     } else {
-                        vscode.window.showErrorMessage(`Failed to trigger stack analysis`);
+                        vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
                         cb(null);
                     }
                 

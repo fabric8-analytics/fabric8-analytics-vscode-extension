@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Dependency Analytics",
   "description": "Dependency Analytics by Red Hat",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,

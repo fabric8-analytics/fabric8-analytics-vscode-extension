@@ -41,7 +41,7 @@ Extending support for Python and Go languages is currently under progress.
 
 2. How to use ?
 
-> - Open or edit a manifest file (`pom.xml` / `package.json`) to flag any CVEs present in your application
+  - Open or edit a manifest file (`pom.xml` / `package.json`) to flag any CVEs present in your application
   - Right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or  'Vscode File editor' to display 'Application stack analysis report' for your application.
 
 

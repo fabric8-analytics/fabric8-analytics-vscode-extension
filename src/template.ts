@@ -249,7 +249,7 @@ export namespace Templates {
     <body>
         <div id="loading_screen">
         <div style="text-align: center;margin-top:130px;" id="caption">
-            <h1 style='color:#ffffff'>OpenShift.io</h1>
+            <h1 style='color:#ffffff'>Dependency Analytics</h1>
             <h1 style='color:#ffffff'>Application stack analysis in progress</h1>
             <br />
             <br />

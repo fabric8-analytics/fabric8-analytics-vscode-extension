@@ -1,7 +1,7 @@
-# OpenShift.io Services
+# Dependency Analytics
 
-Insights about your application dependencies:
-- Flags a security vulnerability and suggests a remedial version
+ Application stack analysis report with Insights about your application dependencies:
+- Flags a security vulnerability(CVE) and suggests a remedial version
 - Shows Github popularity metrics along with latest version
 - Suggests a project level license, check for conflicts between dependency licences
 - AI based guidance for alternative dependencies
@@ -9,7 +9,7 @@ Insights about your application dependencies:
 
 ## Supported Languages
 
-Today OpenShift.io services extension supports projects using Maven and projects build on npm (Node ecosystem). 
+ 'Dependency Analytics' extension supports projects using Maven and projects build on npm (Node ecosystem). 
 Extending support for Python and Go languages is currently under progress.
 
 ## Prerequisites
@@ -37,32 +37,38 @@ Extending support for Python and Go languages is currently under progress.
 
 ## Quick Start
 
-1. Install the 'OpenShift.io Services' extension.
+1. Install the 'Dependency Analytics' extension.
 
 2. How to use ?
 
-> Open or edit a manifest file (`pom.xml` / `package.json`) to flag any CVEs present in your application and right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or  'Vscode File editor' to display a detailed report for your application.
-
+> - Open or edit a manifest file (`pom.xml` / `package.json`) to flag any CVEs present in your application
+  - Right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or  'Vscode File editor' to display 'Application stack analysis report' for your application.
 
 
 ## Features
 
- Detailed report for your application covering CVEs, license issues, and AI based insights provided on the application dependencies used - flagging dependencies that are rarely used together and suggesting similar alternatives that are more commonly used:
+Application stack analysis report with Insights about your application dependencies:
+- Flags a security vulnerability(CVE) and suggests a remedial version
+- Shows Github popularity metrics along with latest version
+- Suggests a project level license, check for conflicts between dependency licences
+- AI based guidance for alternative dependencies
+- AI based guidance for additional dependencies 
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
 
-Alerts for CVEs are also presented in the **PROBLEMS** tab when you open the `pom.xml` manifest file.
+Alerts for any CVEs are shown in the **PROBLEMS** tab when you open the `pom.xml / package.json` manifest file.
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.png)
 
 
 ## Usage
 
-You can use this extension to see the analysis report for your project as well as address problems shown in the manifest file editor.
+You can get 'Application stack analysis report' with Insights (Security, License and guidance for additional/alternative) about your application dependencies
 
-To view the application's stack analysis report for a specific module:
+To view the 'Application's stack analysis report' for a specific module:
 1. Open a manifest file (`pom.xml`, `package.json`).
 2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on manifest file** to see the application's stack analysis report for the manifest file.
+
 
 To view the application's stack analysis report for the entire project (including multiple sub-modules):
 * Use command `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on Workspace** to view the application's stack analysis report for the entire workspace/project.

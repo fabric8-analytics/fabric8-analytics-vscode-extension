@@ -70,7 +70,7 @@ export module stackanalysismodule {
             let projName: string = projRootPathSplit[projRootPathSplit.length-1].toLowerCase();
             let filePathList = file_uri.split(projName+strSplit);
 
-            vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`).then(
+            vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,null).then(
                 (result: vscode.Uri[]) => {
                     if(result && result.length){
                         multimanifestmodule.form_manifests_payload(result, (data) => {
@@ -83,18 +83,18 @@ export module stackanalysismodule {
                                 options['formData'] = payloadData;
                                 thatContext = context;
                                 post_stack_analysis(options, file_uri, thatContext, cb);
-        
+
                         } else {
                             vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
                             cb(null);
                         }
-                    
+
                     });
                     } else {
                         vscode.window.showErrorMessage('No manifest file found to be analyzed');
                         cb(null);
                     }
-                    
+
                 },
                 // rejected
                 (reason: any) => {
@@ -137,7 +137,7 @@ export module stackanalysismodule {
                 } else if(httpResponse.statusCode === 400){
                     vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
                     cb(null);
-                } else {   
+                } else {
                     vscode.window.showErrorMessage(`Failed to trigger application's stack analysis, try in a while. Status: ${httpResponse.statusCode}`);
                     cb(null);
                 }
@@ -172,7 +172,7 @@ export module stackanalysismodule {
                                   if(data){
                                     p.report({message: 'Successfully generated stack report ...' });
                                     resolve();
-                                    provider.signal(previewUri, data); 
+                                    provider.signal(previewUri, data);
                                   } else {
                                     provider.signal(previewUri,null);
                                     reject();

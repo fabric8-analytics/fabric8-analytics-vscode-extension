@@ -19,6 +19,7 @@ export module stackanalysismodule {
     export let post_stack_analysis: any;
     export let clearContextInfo: any;
     export let triggerStackAnalyses: any;
+    export let  processStackAnalyses: any;
 
     stack_collector = (file_uri, id, cb) => {
         const options = {};
@@ -153,7 +154,7 @@ export module stackanalysismodule {
         context.globalState.update('f8_access_routes', '');
     };
 
-    function processStackAnalyses (context, provider, previewUri, editor, text, fileUri) {
+    processStackAnalyses = (context, provider, previewUri, editor, text, fileUri) => {
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
             return new Promise((resolve, reject) => {
                 let effectiveF8Var = 'effectivef8Package';
@@ -197,7 +198,8 @@ export module stackanalysismodule {
     }
 
     triggerStackAnalyses = (context, provider, previewUri) => {
-        if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
+        if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace.hasOwnProperty['workspaceFolders'] &&
+        vscode.workspace['workspaceFolders'] && vscode.workspace['workspaceFolders'].length>1){
             vscode.window.showInformationMessage('Multi-root Workspaces are not supported currently');
         } else if(vscode.window.activeTextEditor){
             let editor = vscode.window.activeTextEditor;

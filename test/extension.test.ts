@@ -30,23 +30,23 @@ suite('Fabric8 Analytics Extension', () => {
 		});
 	}); 
 
-	/* 
-	test('should trigger application stack report activate', () => {
-		this.timeout(1 * 60 * 1000);
-		vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {
+	
+	test('should trigger application stack report activate', async () => {
+		await vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {
 			assert.ok(true);
 		},(reason: any) => {
-			assert.ok(true);
+			assert.equal(reason.name, 'Error');
+			assert.equal(reason.message, `Running the contributed command:'extension.fabric8AnalyticsWidget' failed.`)
 		});
 	});
 
-	test('should trigger fabric8-analytics full stack report activate', function () {
-		this.timeout(1 * 60 * 1000);
-		vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS).then((res) => {
+	test('should trigger fabric8-analytics full stack report activate', async () => {
+		await vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS).then((res) => {
 			assert.ok(true);
 		},(reason: any) => {
-			assert.ok(true);
+			assert.equal(reason.name, 'Error');
+			assert.equal(reason.message, `Running the contributed command:'extension.fabric8AnalyticsWidgetFullStack' failed.`)
 		});
-	}); */
+	});
 
 });

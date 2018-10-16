@@ -15,7 +15,7 @@ suite('stacknalysis module', () => {
 
     let sandbox: sinon.SinonSandbox;
     let getStub: sinon.SinonStub;
-    let dummyMomentoData = {}; 
+    let dummyMomentoData = {};
     
     class DummyMemento implements vscode.Memento {
         get<T>(key: string): Promise<T|undefined> {

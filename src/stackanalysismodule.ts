@@ -19,7 +19,7 @@ export module stackanalysismodule {
     export let post_stack_analysis: any;
     export let clearContextInfo: any;
     export let triggerStackAnalyses: any;
-    export let  processStackAnalyses: any;
+    export let processStackAnalyses: any;
 
     stack_collector = (file_uri, id, cb) => {
         const options = {};
@@ -85,17 +85,16 @@ export module stackanalysismodule {
                                 thatContext = context;
                                 post_stack_analysis(options, file_uri, thatContext, cb);
 
-                        } else {
-                            vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
-                            cb(null);
-                        }
+                            } else {
+                                vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
+                                cb(null);
+                            }
 
-                    });
+                        });
                     } else {
                         vscode.window.showErrorMessage('No manifest file found to be analyzed');
                         cb(null);
                     }
-
                 },
                 // rejected
                 (reason: any) => {
@@ -104,6 +103,7 @@ export module stackanalysismodule {
                 });
         } else {
             vscode.window.showErrorMessage('Please reopen the Project, unable to get workspace details');
+            cb(null);
         }
 	};
 
@@ -148,13 +148,13 @@ export module stackanalysismodule {
     };
 
     clearContextInfo = (context) => {
-        context.globalState.update('f8_access_token', '');
-        context.globalState.update('f8_refresh_token', '');
         context.globalState.update('f8_3scale_user_key', '');
         context.globalState.update('f8_access_routes', '');
     };
 
-    processStackAnalyses = (context, provider, previewUri, editor, text, fileUri) => {
+    processStackAnalyses = (context, provider, previewUri) => {
+        let editor = vscode.window.activeTextEditor;
+        let fileUri: string = editor.document.fileName;
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
             return new Promise((resolve, reject) => {
                 let effectiveF8Var = 'effectivef8Package';
@@ -202,10 +202,7 @@ export module stackanalysismodule {
         vscode.workspace['workspaceFolders'] && vscode.workspace['workspaceFolders'].length>1){
             vscode.window.showInformationMessage('Multi-root Workspaces are not supported currently');
         } else if(vscode.window.activeTextEditor){
-            let editor = vscode.window.activeTextEditor;
-            let text = editor.document.getText();
-            let fileUri: string = editor.document.fileName;
-            processStackAnalyses(context, provider, previewUri, editor, text, fileUri);
+            processStackAnalyses(context, provider, previewUri);
         } else {
             vscode.window.showInformationMessage('No manifest file is active in editor');
         }

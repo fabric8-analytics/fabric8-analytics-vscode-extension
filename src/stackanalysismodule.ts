@@ -153,6 +153,7 @@ export module stackanalysismodule {
     };
 
     processStackAnalyses = (context, provider, previewUri) => {
+        if(vscode && vscode.window && vscode.window.activeTextEditor) {
         let editor = vscode.window.activeTextEditor;
         let fileUri: string = editor.document.fileName;
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
@@ -195,7 +196,10 @@ export module stackanalysismodule {
                 });
             });
           });
-    }
+        } else {
+            vscode.window.showInformationMessage(`No manifest file is active in editor`);
+        }
+    };
 
     triggerStackAnalyses = (context, provider, previewUri) => {
         if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace.hasOwnProperty['workspaceFolders'] &&

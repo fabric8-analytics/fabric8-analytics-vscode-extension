@@ -10,3 +10,5 @@ coverage/
 .history
 target/
 coverage/
+.history
+target/

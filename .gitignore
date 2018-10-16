@@ -7,3 +7,8 @@ ca-lsp-server/
 .DS_Store
 *.tar.*
 coverage/
+.history
+target/
+coverage/
+.history
+target/

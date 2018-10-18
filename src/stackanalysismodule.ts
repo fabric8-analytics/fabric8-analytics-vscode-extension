@@ -61,7 +61,7 @@ export module stackanalysismodule {
 
         let payloadData : any;
         let projRootPath: string = vscode.workspace.rootPath;
-        if(projRootPath){
+        if(projRootPath && file_uri){
             let encodedProjRootPath: any = projRootPath.replace(/ /g,'%20');
             let strSplit = '/';
             if(process && process.platform && process.platform.toLowerCase() === 'win32'){
@@ -71,6 +71,7 @@ export module stackanalysismodule {
             let projName: string = projRootPathSplit[projRootPathSplit.length-1].toLowerCase();
             let filePathList = file_uri.split(projName+strSplit);
 
+            if(filePathList && filePathList.length>1) {
             vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,null).then(
                 (result: vscode.Uri[]) => {
                     if(result && result.length){
@@ -101,8 +102,13 @@ export module stackanalysismodule {
                     vscode.window.showErrorMessage(reason);
                     cb(null);
                 });
+            } else {
+                vscode.window.showErrorMessage('Please reopen the file, unable to get filepath');
+                cb(null);
+            }
+
         } else {
-            vscode.window.showErrorMessage('Please reopen the Project, unable to get workspace details');
+            vscode.window.showErrorMessage('Please reopen the Project, unable to get project path');
             cb(null);
         }
 	};
@@ -210,6 +216,6 @@ export module stackanalysismodule {
         } else {
             vscode.window.showInformationMessage('No manifest file is active in editor');
         }
-    }
+    };
 
 }

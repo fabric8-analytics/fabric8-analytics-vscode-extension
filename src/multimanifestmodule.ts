@@ -14,6 +14,7 @@ export module multimanifestmodule {
     export let find_manifests_workspace: any;
     export let form_manifests_payload: any;
     export let triggerFullStackAnalyses: any;
+    export let triggerManifestWs: any;
 
     find_manifests_workspace = (context, filesRegex, cb) => {
 
@@ -196,12 +197,15 @@ export module multimanifestmodule {
                             ProjectDataProvider[effectiveF8WsVar](vscodeRootpath, (dataEpom) => {
                                 if(dataEpom){
                                   p.report({message: 'Analyzing your stack ...' });
-                                  if(triggerManifestWs(context, filesRegex, provider, previewUri)){
+                                  let promiseTriggerManifestWs = triggerManifestWs(context, filesRegex, provider, previewUri);
+                                  promiseTriggerManifestWs.then(() => {
                                     p.report({message: 'Successfully generated stack report ...' });
                                     resolve();
-                                  } else {
+                                  })
+                                  .catch(() => {
+                                    p.report({message: 'Unable to generate stack report ...' });
                                     reject();
-                                  } 
+                                  }); 
                                 } else {
                                   p.report({message: 'Unable to resolve dependencies ...' });
                                   reject();
@@ -220,30 +224,32 @@ export module multimanifestmodule {
               });
             });
         }
-    }
+    };
 
-    function triggerManifestWs(context, filesRegex, provider, previewUri) {
-        authextension.authorize_f8_analytics(context, (data) => {
-          if(data){
-            return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
-              let manifest_finder = multimanifestmodule.find_manifests_workspace;
-              manifest_finder(context, filesRegex, (data) => { 
-                if(data){
-                  provider.signal(previewUri, data);
-                  return true;
-                }else {
-                  provider.signal(previewUri,null);
-                  return false;
-                }
-              });
-              provider.signalInit(previewUri,null);
-              }, (reason) => {
-              vscode.window.showErrorMessage(reason);
-              return false;
+    triggerManifestWs = (context, filesRegex, provider, previewUri) => {
+        return new Promise((resolve,reject) => {
+            authextension.authorize_f8_analytics(context, (data) => {
+            if(data){
+                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
+                    let manifest_finder = multimanifestmodule.find_manifests_workspace;
+                    manifest_finder(context, filesRegex, (data) => {
+                        if(data){
+                            provider.signal(previewUri, data);
+                            resolve(true);
+                        } else {
+                            provider.signal(previewUri,null);
+                            reject();
+                        }
+                    });
+                    provider.signalInit(previewUri,null);
+                }, (reason) => {
+                    vscode.window.showErrorMessage(reason);
+                    reject();
+                });
+            } else {
+                reject();
+            }
             });
-          } else {
-              return false;
-          }
         });
       };
 

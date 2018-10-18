@@ -16,7 +16,7 @@ export module authextension {
         Apiendpoint.OSIO_ROUTE_URL = context_f8_access_routes.prod;
         process.env['RECOMMENDER_API_URL'] = context_f8_access_routes.prod+'/api/v1';
         process.env['THREE_SCALE_USER_TOKEN'] = context_f8_3scale_user_key;
-    }
+    };
 
     authorize_f8_analytics = (context, cb) => {
         let context_f8_access_routes = context.globalState.get('f8_access_routes');

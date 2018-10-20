@@ -3,10 +3,12 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
+import { authextension } from '../src/authextension';
 import { stackanalysismodule } from '../src/stackanalysismodule';
 import { contentprovidermodule } from '../src/contentprovidermodule';
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
 import { stackAnalysisServices } from '../src/stackAnalysisService';
+import { multimanifestmodule } from '../src/multimanifestmodule';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -144,17 +146,34 @@ suite('stacknalysis module', () => {
             });
         }
 
-        test('processStackAnalyses should not call effectivef8Pom as manifest file is opened in editor', async () => {
+        test('processStackAnalyses should call effectivef8Package not effectivef8Pom as manifest file is opened in editor is package.json', async () => {
             await activateEditorSleep(1500);
             let spyEffectivef8Pom = sandbox.spy(ProjectDataProvider, 'effectivef8Pom');
+            let spyWindowProgress = sandbox.spy(vscode.window, 'withProgress');
+            let stubEffectivef8Package =  sandbox.stub(ProjectDataProvider, 'effectivef8Package').yields('/path/package.json');
+            let stubAuthorize_f8_analytics =  sandbox.stub(authextension, 'authorize_f8_analytics').yields(true);
+            let stubExecuteCommand =  sandbox.stub(vscode.commands, 'executeCommand').resolves(true);
+            sandbox.stub(stackanalysismodule, 'get_stack_metadata').yields(true);
             stackanalysismodule.processStackAnalyses(context, provider, previewUri);
             expect(spyEffectivef8Pom).callCount(0);
+            expect(spyWindowProgress).callCount(1);
+            expect(stubEffectivef8Package).calledOnce;
+            expect(stubAuthorize_f8_analytics).calledOnce;
+            expect(stubExecuteCommand).calledOnce;
         });
 
-        test('processStackAnalyses should call effectivef8Package as manifest file is opened in editor', () => {
-            let spyEffectivef8Package = sandbox.spy(ProjectDataProvider, 'effectivef8Package');
+        test('processStackAnalyses should not call authorize_f8_analytics if effectivef8Package fails', async () => {
+            await activateEditorSleep(1500);
+            let spyWindowProgress = sandbox.spy(vscode.window, 'withProgress');
+            let stubEffectivef8Package =  sandbox.stub(ProjectDataProvider, 'effectivef8Package').yields(false);
+            let stubAuthorize_f8_analytics =  sandbox.stub(authextension, 'authorize_f8_analytics').yields(true);
+            let stubExecuteCommand =  sandbox.stub(vscode.commands, 'executeCommand').resolves(true);
+            sandbox.stub(stackanalysismodule, 'get_stack_metadata').yields(true);
             stackanalysismodule.processStackAnalyses(context, provider, previewUri);
-            expect(spyEffectivef8Package).calledOnce;
+            expect(spyWindowProgress).callCount(1);
+            expect(stubEffectivef8Package).calledOnce;
+            expect(stubAuthorize_f8_analytics).callCount(0);
+            expect(stubExecuteCommand).callCount(0);
         });
 
         test('triggerStackAnalyses should call processStackAnalyses as manifest file is opened in editor', () => {
@@ -163,20 +182,18 @@ suite('stacknalysis module', () => {
             expect(spyProcessStackAnalyses).calledOnce;
         });
 
-        test('get_stack_metadata should call vscode API showErrorMessage as manifest file is opened in editor with invalid path', async () => {
-            let rootPath = vscode.workspace.rootPath;
-            let spyShowErrorMessage = sandbox.spy(vscode.window, 'showErrorMessage');
-            await stackanalysismodule.get_stack_metadata(context, rootPath+'/target/tarpackage.json');
-            await sleep(1500);
-            expect(spyShowErrorMessage).calledOnce;
-        });
-
         test('get_stack_metadata should call vscode API findFiles, postStackAnalysisService, form_manifests_payload as manifest file is opened in editor', async () => {
             let rootPath = vscode.workspace.rootPath;
             let spyFindFiles = sandbox.spy(vscode.workspace, 'findFiles');
+            let stubPostStackAnalysisService =  sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').resolves('12345');
+            let stubFormManifestPayload =  sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields([{'fsPath': 'path/package.json'}]);
+            
             await stackanalysismodule.get_stack_metadata(context, rootPath+'/target/package.json');
             await sleep(1500);
+            
             expect(spyFindFiles).calledOnce;
+            expect(stubFormManifestPayload).calledOnce;
+            expect(stubPostStackAnalysisService).calledOnce;
         });
 
     });

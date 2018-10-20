@@ -15,6 +15,7 @@ export module multimanifestmodule {
     export let form_manifests_payload: any;
     export let triggerFullStackAnalyses: any;
     export let triggerManifestWs: any;
+    export let manifestFileRead: any;
 
     find_manifests_workspace = (context, filesRegex, cb) => {
 
@@ -103,7 +104,7 @@ export module multimanifestmodule {
     };
 
 
-    let manifestFileRead = (fileContent) => {
+    manifestFileRead = (fileContent) => {
         let form_data = {
             'manifest': '',
             'filePath': '',
@@ -134,7 +135,7 @@ export module multimanifestmodule {
                             contentType: 'text/plain'
                         }
                     };
-                    if(!fileContent._fsPath.endsWith('LICENSE')){
+                    if(!fileContent.fsPath.endsWith('LICENSE')){
                         let filePathSplit = /(\/target|\/stackinfo|\/poms|)/g;
                         let strSplit = '/';
                         if(process && process.platform && process.platform.toLowerCase() === 'win32'){

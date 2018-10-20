@@ -49,77 +49,84 @@ suite('stacknalysis Services', () => {
         expect(context.globalState.get('f8_3scale_user_key')).equals('');	
     });
 
-    test('getStackAnalysisService should return success', () => {
+    test('getStackAnalysisService should return success with statuscode 200', () => {
         const options = {};
-        let stackAnalysisResp;
+        let sampleBody = {'result': 'sucess'};
         options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
-        let promiseGetStackAnalysis = stackAnalysisServices.getStackAnalysisService(options);
-        promiseGetStackAnalysis.then((resp) => {
-            stackAnalysisResp = resp['result'];
-            expect(stackAnalysisResp).equals('success');
-        });
+        let stubRequestGet = sandbox.stub(request, 'get').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
+        stackAnalysisServices.getStackAnalysisService(options);
+        expect(stubRequestGet).calledOnce;
     });
 
-    test('getStackAnalysisService should return failure', () => {
+    test('getStackAnalysisService should return success with statuscode 403', () => {
         const options = {};
-        let stackAnalysisResp;
+        let sampleBody = {'result': 'sucess'};
         options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects({'result':'failure'});
-        let promiseGetStackAnalysis = stackAnalysisServices.getStackAnalysisService(options);
-        promiseGetStackAnalysis.catch((resp) => {
-            stackAnalysisResp = resp['result'];
-            expect(stackAnalysisResp).equals('failure');
-        });
+        let stubRequestGet = sandbox.stub(request, 'get').yields(null, {'statusCode':403}, JSON.stringify(sampleBody));
+        stackAnalysisServices.getStackAnalysisService(options);
+        expect(stubRequestGet).calledOnce;
     });
 
-    test('postStackAnalysisService should return success', () => {
+    test('postStackAnalysisService should return success with statuscode 200', () => {
         const options = {};
-        let stackAnalysisResp;
+        let sampleBody = {'id': '12345','status':'success'};
         options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').resolves({'result':'success'});
-        let promisePostStackAnalysis = stackAnalysisServices.postStackAnalysisService(options, context);
-        promisePostStackAnalysis.then((resp) => {
-            stackAnalysisResp = resp['result'];
-            expect(stackAnalysisResp).equals('success');
-        });
+        let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
+        stackAnalysisServices.postStackAnalysisService(options, context);
+        expect(stubRequestPost).calledOnce;
     });
 
-    test('postStackAnalysisService should return failure', () => {
+    test('postStackAnalysisService should return success with error and statuscode 200 ', () => {
         const options = {};
-        let stackAnalysisResp;
+        let sampleBody = { 'error': 'Could not process aa76ab88de4d444896e1969360f628bf.'};
         options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').rejects({'result':'failure'});
-        let promisePostStackAnalysis = stackAnalysisServices.postStackAnalysisService(options, context);
-        promisePostStackAnalysis.catch((resp) => {
-            stackAnalysisResp = resp['result'];
-            expect(stackAnalysisResp).equals('failure');
-        });
+        let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
+        stackAnalysisServices.postStackAnalysisService(options, context);
+        expect(stubRequestPost).calledOnce;
     });
 
-    test('getStackAnalysisService should return success', () => {
+    test('postStackAnalysisService should return success with statuscode 401', () => {
         const options = {};
-        let stackAnalysisResp;
         options['uri'] = 'https://abc.com';
-        sandbox.stub(request, 'get').returns({'result': 'sucess'});
-        let promiseGetStackAnalysis = stackAnalysisServices.getStackAnalysisService(options);
-        promiseGetStackAnalysis.then((resp) => {
-            stackAnalysisResp = resp['result'];
-            expect(stackAnalysisResp).equals('success');
-        });
+        let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':401});
+        stackAnalysisServices.postStackAnalysisService(options, context);
+        expect(stubRequestPost).calledOnce;
     });
 
-    test('postStackAnalysisService should return success', () => {
+    test('postStackAnalysisService should return success with statuscode 429', () => {
         const options = {};
-        let stackAnalysisResp;
         options['uri'] = 'https://abc.com';
-        sandbox.stub(request, 'post').returns({'result':'success'});
-        let promisePostStackAnalysis = stackAnalysisServices.postStackAnalysisService(options, context);
-        promisePostStackAnalysis.then((resp) => {
-            stackAnalysisResp = resp['result'];
-            expect(stackAnalysisResp).equals('success');
-        });
+        let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':429});
+        stackAnalysisServices.postStackAnalysisService(options, context);
+        expect(stubRequestPost).calledOnce;
     });
 
+    test('postStackAnalysisService should return success with statuscode 400', () => {
+        const options = {};
+        options['uri'] = 'https://abc.com';
+        let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':400});
+        stackAnalysisServices.postStackAnalysisService(options, context);
+        expect(stubRequestPost).calledOnce;
+    });
+
+    test('postStackAnalysisService should return success with statuscode 500 and call ClearContextInfo', () => {
+        const options = {};
+        options['uri'] = 'https://abc.com';
+        let spyClearContextInfo = sandbox.stub(stackAnalysisServices, 'clearContextInfo');
+        let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':500});
+        stackAnalysisServices.postStackAnalysisService(options, context);
+        expect(stubRequestPost).calledOnce;
+        expect(spyClearContextInfo).calledOnce;
+    });
+
+    test('postStackAnalysisService should return error', () => {
+        const options = {};
+        options['uri'] = 'https://abc.com';
+        let spyClearContextInfo = sandbox.stub(stackAnalysisServices, 'clearContextInfo');
+        let stubRequestPost = sandbox.stub(request, 'post').yields('err');
+        stackAnalysisServices.postStackAnalysisService(options, context);
+        expect(stubRequestPost).calledOnce;
+        expect(spyClearContextInfo).calledOnce;
+    });
 
 });

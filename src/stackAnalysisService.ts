@@ -48,7 +48,7 @@ export module stackAnalysisServices {
                         if (resp.error === undefined && resp.status === 'success') {
                             resolve(resp.id);
                         } else {
-                            vscode.window.showErrorMessage(`Failed :: ${httpResponse.statusCodehttpResponse.statusCode }, Status: ${httpResponse.statusCode}`);
+                            vscode.window.showErrorMessage(`Failed :: ${resp.error}, Status: ${httpResponse.statusCode}`);
                             reject(httpResponse.statusCode);
                         }
                     } else if(httpResponse.statusCode === 401){

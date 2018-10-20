@@ -53,9 +53,9 @@ export module stackanalysismodule {
                 strSplit = '\\';
             }
             let projRootPathSplit: any = encodedProjRootPath.split(strSplit);
-            let projName: string = projRootPathSplit[projRootPathSplit.length-1].toLowerCase();
+            let projName: string = projRootPathSplit[projRootPathSplit.length-1];
             let filePathList = file_uri.split(projName+strSplit);
-
+            
             if(filePathList && filePathList.length>1) {
             vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,null).then(
                 (result: vscode.Uri[]) => {

@@ -15,7 +15,6 @@ export module stackAnalysisServices {
         return new Promise((resolve, reject) => {
             request.get(options, (err, httpResponse, body) => {
                 if(err){
-                    console.log('error', err);
                     reject(err);
                 } else {
                     if (httpResponse.statusCode === 200 || httpResponse.statusCode === 202) {

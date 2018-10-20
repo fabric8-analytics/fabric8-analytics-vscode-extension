@@ -83,7 +83,7 @@ export module  ProjectDataProvider {
 
     formPackagedependency= (item) => {
         let manifestRootFolderPath: string = null;
-        manifestRootFolderPath = item.toLowerCase().split('package.json')[0];
+        manifestRootFolderPath = item.split('package.json')[0];
         return new Promise((resolve, reject) => {
             fs.readFile(manifestRootFolderPath+'package.json', {encoding: 'utf-8'}, function(err, data) {
                 if(data){
@@ -168,5 +168,5 @@ export module  ProjectDataProvider {
     trimTrailingChars = (s)  => {
         let result = s.replace(/\\+$/, "");
         return result;
-    }
+    };
 }

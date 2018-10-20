@@ -6,54 +6,39 @@ import { Apiendpoint } from './apiendpoint';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { authextension } from './authextension';
+import { stackAnalysisServices } from './stackAnalysisService';
 
 export module stackanalysismodule {
 
-    const request = require('request');
-    let stack_analysis_requests = new Map<String, String>();
-    let stack_analysis_responses = new Map<String, String>();
-    let stack_collector_count = 0;
+    export let stack_collector_count = 0;
 
     export let stack_collector: any;
     export let get_stack_metadata: any;
     export let post_stack_analysis: any;
-    export let clearContextInfo: any;
     export let triggerStackAnalyses: any;
     export let processStackAnalyses: any;
 
     stack_collector = (file_uri, id, cb) => {
         const options = {};
+        stack_collector_count++;
         options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-        request.get(options, (err, httpResponse, body) => {
-            stack_collector_count++;
-            if(err){
-                cb(null);
-            } else {
-                if (httpResponse.statusCode === 200 || httpResponse.statusCode === 202) {
-                    let data = JSON.parse(body);
-                    if (!data.hasOwnProperty('error')) {
-                        stack_analysis_responses.set(file_uri, data);
-                        cb(data);
-                    }
-                    else {
-                        if (httpResponse.statusCode === 200 || httpResponse.statusCode === 202) {
-                            if(stack_collector_count <= 10){
-                                setTimeout(() => { stack_collector(file_uri, id, cb); }, 6000);
-                            } else{
-                                vscode.window.showErrorMessage(`Unable to get stack analyzed, try again`);
-                                cb(null);
-                            }
-                        }
-                    }
-                } else if(httpResponse.statusCode === 403){
-                    vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
-                    cb(null);
-                } else {
-                    vscode.window.showErrorMessage(`Failed to get stack analyzed, Status:  ${httpResponse.statusCode} `);
+        stackAnalysisServices.getStackAnalysisService(options)
+        .then((respData) => {
+            if (!respData.hasOwnProperty('error')) {
+                cb(respData);
+            }
+            else {
+                if(stack_collector_count <= 10){
+                    setTimeout(() => { stack_collector(file_uri, id, cb); }, 6000);
+                } else{
+                    vscode.window.showErrorMessage(`Unable to get stack analyzed, try again`);
                     cb(null);
                 }
             }
-
+        })
+        .catch((err) => {
+            console.log(err);
+            cb(null);
         });
 	};
 
@@ -84,7 +69,17 @@ export module stackanalysismodule {
                                 options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                                 options['formData'] = payloadData;
                                 thatContext = context;
-                                post_stack_analysis(options, file_uri, thatContext, cb);
+
+                                stackAnalysisServices.postStackAnalysisService(options, thatContext)
+                                .then((respData) => {
+                                    console.log(`Analyzing your stack, id ${respData}`);
+                                    stack_collector_count = 0;
+                                    stack_collector(file_uri, respData, cb);
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                    cb(null);
+                                });
 
                             } else {
                                 vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
@@ -112,51 +107,6 @@ export module stackanalysismodule {
             cb(null);
         }
 	};
-
-
-    post_stack_analysis = (options, file_uri, thatContext, cb) => {
-        console.log('Options', options && options.formData);
-        request.post(options, (err, httpResponse, body) => {
-            if(err){
-                clearContextInfo(thatContext);
-                console.log('error', err);
-                cb(null);
-            }else {
-                console.log('response Post '+body);
-                if ((httpResponse.statusCode === 200 || httpResponse.statusCode === 202)) {
-                    let resp = JSON.parse(body);
-                    if (resp.error === undefined && resp.status === 'success') {
-                        stack_analysis_requests[file_uri] = resp.id;
-                        console.log(`Analyzing your stack, id ${resp.id}`);
-                        stack_collector_count = 0;
-                        setTimeout(() => { stack_collector(file_uri, resp.id, cb); }, 6000);
-                    } else {
-                        vscode.window.showErrorMessage(`Failed :: ${resp.error }, Status: ${httpResponse.statusCode}`);
-                        cb(null);
-                    }
-                } else if(httpResponse.statusCode === 401){
-                    clearContextInfo(thatContext);
-                    vscode.window.showErrorMessage(`Looks like there is some intermittent issue while communicating with services, please try again. Status: ${httpResponse.statusCode}`);
-                    cb(null);
-                } else if(httpResponse.statusCode === 429 || httpResponse.statusCode === 403){
-                    vscode.window.showInformationMessage(`Service is currently busy to process your request for analysis, please try again in few minutes. Status:  ${httpResponse.statusCode} `);
-                    cb(null);
-                } else if(httpResponse.statusCode === 400){
-                    vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
-                    cb(null);
-                } else {
-                    vscode.window.showErrorMessage(`Failed to trigger application's stack analysis, try in a while. Status: ${httpResponse.statusCode}`);
-                    cb(null);
-                }
-            }
-
-        });
-    };
-
-    clearContextInfo = (context) => {
-        context.globalState.update('f8_3scale_user_key', '');
-        context.globalState.update('f8_access_routes', '');
-    };
 
     processStackAnalyses = (context, provider, previewUri) => {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {

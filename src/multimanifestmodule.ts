@@ -5,9 +5,9 @@ import * as fs from 'fs';
 
 import { stackanalysismodule } from './stackanalysismodule';
 import { Apiendpoint } from './apiendpoint';
-
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { authextension } from './authextension';
+import { stackAnalysisServices } from './stackAnalysisService';
 
 export module multimanifestmodule {
 
@@ -31,7 +31,17 @@ export module multimanifestmodule {
                             options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                             options['formData'] = payloadData;
                             thatContext = context;
-                            stackanalysismodule.post_stack_analysis(options, file_uri, thatContext, cb);
+
+                            stackAnalysisServices.postStackAnalysisService(options, thatContext)
+                            .then((respData) => {
+                                console.log(`Analyzing your stack, id ${respData}`);
+                                stackanalysismodule.stack_collector_count = 0;
+                                stackanalysismodule.stack_collector(file_uri, respData, cb);
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                cb(null);
+                            });
 
                     } else {
                         vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
@@ -106,8 +116,6 @@ export module multimanifestmodule {
         let filePath: string = '';
         let filePathList: any = [];
         let projRootPath: string = vscode.workspace.rootPath;
-        // let projRootPathSplit: any = projRootPath.split('/');
-        // let projName: string = projRootPathSplit[projRootPathSplit.length-1];
         return new Promise((resolve, reject) => {
             let fsPath : string = fileContent.fsPath ? fileContent.fsPath : '';
             fs.readFile(fsPath, function(err, data) {

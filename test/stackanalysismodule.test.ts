@@ -46,18 +46,6 @@ suite('stacknalysis module', () => {
        sandbox.restore();
     });
 
-    test('context data should have been cleared', () => {
-        stackanalysismodule.clearContextInfo(context);
-        expect(context.globalState.get('f8_access_routes')).equals('');
-        expect(context.globalState.get('f8_3scale_user_key')).equals('');
-    });
-
-    test('stack_collector should call the callback', () => {
-        let callback = sandbox.spy();
-        stackanalysismodule.stack_collector('', '123', callback);
-        expect(callback).calledOnce;
-    });
-
     test('get_stack_metadata should call the callback when called with invalid fileuri', () => {
         let callback = sandbox.spy();
         let showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');

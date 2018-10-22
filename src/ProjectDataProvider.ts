@@ -9,14 +9,12 @@ export module  ProjectDataProvider {
     export let effectivef8Pom: any;
     export let effectivef8PackageWS: any;
     export let effectivef8Package: any;
+    export let getDependencyVersion: any;
+    export let formPackagedependency: any;
 
-    let getDependencyVersion: any;
-    let formPackagedependency: any;
     let trimTrailingChars: any;
 
     effectivef8PomWs = (item, cb) => {
-        let pomXmlFilePath: string = null;
-        pomXmlFilePath = item.fsPath;
         const cmd: string = [
             Utils.getMavenExecutable(),
             'io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare',
@@ -51,7 +49,7 @@ export module  ProjectDataProvider {
                 vscode.window.showErrorMessage(error.message);
                 cb(false);
             } else {
-                let ePomPathList: any = pomXmlFilePath.toLowerCase().split('pom.xml');
+                let ePomPathList: any = pomXmlFilePath.split('pom.xml');
                 if(ePomPathList.length>0){
                     let ePomPath: string = ePomPathList[0] + filepath;
                     cb(ePomPath);

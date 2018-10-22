@@ -184,14 +184,14 @@ suite('stacknalysis module', () => {
 
         test('get_stack_metadata should call vscode API findFiles, postStackAnalysisService, form_manifests_payload as manifest file is opened in editor', async () => {
             let rootPath = vscode.workspace.rootPath;
-            let spyFindFiles = sandbox.spy(vscode.workspace, 'findFiles');
+            let stubFindFiles = sandbox.stub(vscode.workspace, 'findFiles').resolves(['path/package.json']);
             let stubPostStackAnalysisService =  sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').resolves('12345');
             let stubFormManifestPayload =  sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields([{'fsPath': 'path/package.json'}]);
             
             await stackanalysismodule.get_stack_metadata(context, rootPath+'/target/package.json');
             await sleep(1500);
             
-            expect(spyFindFiles).calledOnce;
+            expect(stubFindFiles).calledOnce;
             expect(stubFormManifestPayload).calledOnce;
             expect(stubPostStackAnalysisService).calledOnce;
         });

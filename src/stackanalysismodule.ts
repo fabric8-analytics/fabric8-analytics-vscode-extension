@@ -37,7 +37,6 @@ export module stackanalysismodule {
             }
         })
         .catch((err) => {
-            console.log(err);
             cb(null);
         });
 	};

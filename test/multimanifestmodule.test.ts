@@ -58,12 +58,12 @@ suite('multimanifest module', () => {
     });
 
     test('find_manifests_workspace should call stack_collector', () => {
-        let spyStackCollector = sandbox.spy(stackanalysismodule,'stack_collector');
+        let stubStackCollector = sandbox.stub(stackanalysismodule,'stack_collector').yields(null);
         sandbox.stub(vscode.workspace, 'findFiles').resolves([{'fspath':'path/file'}]);
         sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields([{'fspath':'path/file'}]);
         sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').resolves('12345');
         multimanifestmodule.find_manifests_workspace(context, '/pom.xml', (data) => {
-            expect(spyStackCollector).calledOnce;
+            expect(stubStackCollector).calledOnce;
         });
     });
 

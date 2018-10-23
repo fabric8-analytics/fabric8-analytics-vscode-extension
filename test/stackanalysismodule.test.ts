@@ -66,21 +66,24 @@ suite('stacknalysis module', () => {
         expect(showErrorMessageSpy).calledOnce;
     });
 
-    test('stack_collector should call getStackAnalysisService', () => {
+    test('stack_collector should call getStackAnalysisService with failure', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        let getStackAnalysisServiceSpy = sandbox.spy(stackAnalysisServices, 'getStackAnalysisService');
-        stackanalysismodule.stack_collector('file-uri', '1234');
-        expect(getStackAnalysisServiceSpy).calledOnce;
+        let stubGetStackAnalysisService = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects('err');
+        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+            expect(callback).equals(null);
+        });
+        expect(stubGetStackAnalysisService).calledOnce;
     });
 
     test('stack_collector should call getStackAnalysisService with success', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
+        let stubGetStackAnalysisServ = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
         stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
             expect(callback.result).equals('success');
         });
+        expect(stubGetStackAnalysisServ).calledOnce;
     });
 
     test('stack_collector should call getStackAnalysisService with success having error as property', () => {
@@ -177,9 +180,9 @@ suite('stacknalysis module', () => {
         });
 
         test('triggerStackAnalyses should call processStackAnalyses as manifest file is opened in editor', () => {
-            let spyProcessStackAnalyses = sandbox.spy(stackanalysismodule, 'processStackAnalyses');
+            let stubProcessStackAnalyses = sandbox.stub(stackanalysismodule, 'processStackAnalyses');
             stackanalysismodule.triggerStackAnalyses(context, provider, previewUri);
-            expect(spyProcessStackAnalyses).calledOnce;
+            expect(stubProcessStackAnalyses).calledOnce;
         });
 
         test('get_stack_metadata should call vscode API findFiles, postStackAnalysisService, form_manifests_payload as manifest file is opened in editor', async () => {

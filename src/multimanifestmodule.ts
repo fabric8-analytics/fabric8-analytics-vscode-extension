@@ -40,7 +40,6 @@ export module multimanifestmodule {
                                 stackanalysismodule.stack_collector(file_uri, respData, cb);
                             })
                             .catch((err) => {
-                                console.log(err);
                                 cb(null);
                             });
 

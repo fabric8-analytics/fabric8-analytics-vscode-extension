@@ -128,12 +128,12 @@
       "type": "object",
       "title": "Openshift.io configuration",
       "properties": {
-        "componentAnalysisServer.maxNumberOfProblems": {
+        "dependencyAnalyticsServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
           "description": "Controls the maximum number of problems produced by the server."
         },
-        "componentAnalysisServer.trace.server": {
+        "dependencyAnalyticsServer.trace.server": {
           "type": "string",
           "enum": [
             "off",
@@ -141,7 +141,7 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the componentAnalysisServer service."
+          "description": "Traces the communication between VSCode and the dependencyAnalyticsServer service."
         },
         "maven.executable.path": {
           "type": "string",
@@ -185,9 +185,9 @@
   },
   "dependencies": {
     "fabric8-analytics-lsp-server": "0.1.37",
-    "request": "2.88.0",
     "fs": "0.0.1-security",
     "path": "^0.12.7",
+    "request": "2.88.0",
     "vscode-languageclient": "3.1.0"
   }
 }

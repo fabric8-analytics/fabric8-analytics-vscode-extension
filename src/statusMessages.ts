@@ -10,4 +10,5 @@ export namespace StatusMessages {
     export const WIN_SUCCESS_ANALYZE_DEPENDENCIES = 'Successfully generated stack report';
     export const WIN_FAILURE_ANALYZE_DEPENDENCIES = 'Unable to generate stack report';
     export const WIN_FAILURE_RESOLVE_DEPENDENCIES = 'Unable to generate stack report';
+    export const LSP_INITIALIZE = 'Initializing Language Server';
 }

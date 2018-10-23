@@ -7,6 +7,7 @@ import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { authextension } from './authextension';
 import { stackAnalysisServices } from './stackAnalysisService';
+import { StatusMessages } from './statusMessages';
 
 export module stackanalysismodule {
 
@@ -111,8 +112,9 @@ export module stackanalysismodule {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
         let editor = vscode.window.activeTextEditor;
         let fileUri: string = editor.document.fileName;
-        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
             return new Promise((resolve, reject) => {
+                p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
                 let effectiveF8Var = 'effectivef8Package';
                 if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
                     effectiveF8Var = 'effectivef8Pom';
@@ -120,14 +122,14 @@ export module stackanalysismodule {
 
                 ProjectDataProvider[effectiveF8Var](editor.document.uri.fsPath, (dataEpom) => {
                     if(dataEpom){
-                        p.report({message: 'Analyzing your stack ...' });
+                        p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
                         provider.signalInit(previewUri,null);
                         authextension.authorize_f8_analytics(context, (data) => {
                             if(data){
                               return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
                                 stackanalysismodule.get_stack_metadata(context, dataEpom, (data) => {
                                   if(data){
-                                    p.report({message: 'Successfully generated stack report ...' });
+                                    p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES });
                                     resolve();
                                     provider.signal(previewUri, data);
                                   } else {
@@ -145,7 +147,7 @@ export module stackanalysismodule {
                             }
                         });
                     } else {
-                      p.report({message: 'Unable to resolve dependencies ...' });
+                      p.report({message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES});
                       reject();
                     }
                 });

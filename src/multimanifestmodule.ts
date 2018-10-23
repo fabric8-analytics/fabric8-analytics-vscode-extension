@@ -8,6 +8,7 @@ import { Apiendpoint } from './apiendpoint';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { authextension } from './authextension';
 import { stackAnalysisServices } from './stackAnalysisService';
+import { StatusMessages } from './statusMessages';
 
 export module multimanifestmodule {
 
@@ -170,9 +171,9 @@ export module multimanifestmodule {
             vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level`);
           } else {
             provider.signalInit(previewUri,null);
-            vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'Generate application stack report'}, p => {
-              return new Promise((resolve, reject) => { 
-      
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
+                return new Promise((resolve, reject) => { 
+                
                 vscode.workspace.findFiles('{pom.xml,**/package.json}','**/node_modules').then(
                   (result: vscode.Uri[]) => {
                       if(result && result.length){
@@ -202,20 +203,21 @@ export module multimanifestmodule {
                           return;
                         } 
                         else {
+                            p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES});
                             ProjectDataProvider[effectiveF8WsVar](vscodeRootpath, (dataEpom) => {
                                 if(dataEpom){
-                                  p.report({message: 'Analyzing your stack ...' });
+                                  p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
                                   let promiseTriggerManifestWs = triggerManifestWs(context, filesRegex, provider, previewUri);
                                   promiseTriggerManifestWs.then(() => {
-                                    p.report({message: 'Successfully generated stack report ...' });
+                                    p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
                                     resolve();
                                   })
                                   .catch(() => {
-                                    p.report({message: 'Unable to generate stack report ...' });
+                                    p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
                                     reject();
                                   }); 
                                 } else {
-                                  p.report({message: 'Unable to resolve dependencies ...' });
+                                  p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
                                   reject();
                                 }
                             });

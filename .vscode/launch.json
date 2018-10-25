@@ -23,6 +23,14 @@
 			"sourceMaps": true,
 			"outFiles": ["${workspaceRoot}/out/test/**/*.js"],
 			"preLaunchTask": "npm"
+		},
+		{
+			"type": "node",
+			"request": "attach",
+			"name": "Attach to Server",
+			"port": 6009,
+			"restart": true,
+			"outFiles": ["${workspaceRoot}/node_modules/fabric8-analytics-lsp-server/**/*.js"]
 		}
 	]
 }

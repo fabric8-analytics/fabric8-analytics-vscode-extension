@@ -70,8 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
 				lspClient.onNotification('caNotification', (data) => {
 					vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
 						return new Promise((resolve, reject) => {
-							p.report({message: 'Analysing dependencies for any security vulnerability' });
-							console.log('loading files ' + data);
+							p.report({message: 'Analyzing dependencies for any security vulnerability' });
 							p.report({message: data });
 							setTimeout(function () {	
 							  resolve();

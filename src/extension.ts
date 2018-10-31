@@ -17,13 +17,13 @@ import { StatusMessages } from './statusMessages';
 let lspClient: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
-  let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
+	let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
 
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
-  let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
+	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => stackanalysismodule.triggerStackAnalyses(context, provider, previewUri));
-  let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.triggerFullStackAnalyses(context, provider, previewUri));
+  	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.triggerFullStackAnalyses(context, provider, previewUri));
 
 	authextension.authorize_f8_analytics(context, (data) => {
 		if(data){
@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
 			// Options to control the language client
 			let clientOptions: LanguageClientOptions = {
 				// Register the server for xml, json documents
-				documentSelector: ['json','xml','xsd'],
+				documentSelector: [{ scheme: 'file', language: 'json' },{ scheme: 'file', language: 'xml' }],
 				synchronize: {
 					// Synchronize the setting section 'dependencyAnalyticsServer' to the server
 					configurationSection: 'dependencyAnalyticsServer',
@@ -67,22 +67,34 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 
 			lspClient.onReady().then(() => {
-				lspClient.onNotification('caNotification', (data) => {
+				lspClient.onNotification('caNotification', (respData) => {
 					vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
 						return new Promise((resolve, reject) => {
-							p.report({message: 'Analyzing dependencies for any security vulnerability' });
-							p.report({message: data });
+							p.report({message: 'Checking for security vulnerabilities ...' });
+							p.report({message: respData.data });
 							setTimeout(function () {	
 							  resolve();
-							}, 2000);
+							  if(respData && respData.hasOwnProperty('isEditAction') && !respData.isEditAction) {
+								showInfoOnfileOpen(respData.data);
+							  }
+							}, 2500);
 						});
 					});
 				});	
 			});
+
+
 			context.subscriptions.push(disposable, registration,lspClient.start(), disposableFullStack);
 		}
 	});
 
+	let showInfoOnfileOpen = ((msg: string) => {
+		vscode.window.showInformationMessage(`${msg}. Generate application stack report on Workspace to view detail report`, 'Generate').then((selection:any) => {
+			if(selection === 'Generate'){
+				vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
+			}
+		});
+	});
 }
 
 export function deactivate(): Thenable<void> {

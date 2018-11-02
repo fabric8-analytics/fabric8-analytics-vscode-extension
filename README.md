@@ -13,25 +13,20 @@
 Extending support for Python and Go languages is currently under progress.
 
 ## Prerequisites
-* [For analyzing Java applications] Maven must be installed on your machine. Provide the Maven executable filepath.
+* **For analyzing Java applications** Maven must be installed on your machine. Provide the Maven executable filepath.
+* **For analyzing Node applications** Node and npm must be installed on your machine. Provide the npm executable filepath.
 
-> **Note:** By default, the `mvn` command is executed directly in the terminal, which requires that  `mvn` is found in your system environment `PATH`.           
- If you do not want to add it into your system environment `PATH`, you can specify the maven executable path in settings.
+> **Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that  `mvn/npm` is found in your system environment `PATH`.           
+ If you do not want to add it into your system environment `PATH`, you can specify the maven executable path in settings. You can do this via preferences in VS Code:
+
+ File/Code > Preferences
 
 ```
 {
+    ...
     "maven.executable.path": "/path-to-maven-home/bin/mvn"
-}
-```
-
-* [For analyzing Node applications] Node and npm must be installed on your machine. Provide the npm executable filepath.
-
-> **Note:** By default, the `npm` command is executed directly in the terminal, which requires that  `npm` is found in your system environment `PATH`.           
- If you do not want to add it into your system environment `PATH`, you can specify the maven executable path in settings.
-
-```
-{
     "npm.executable.path": "/path-to-npm-home/bin/npm"
+    ...
 }
 ```
 

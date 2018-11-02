@@ -53,7 +53,7 @@ Application stack analysis report with Insights about your application dependenc
 
 Alerts for any CVEs are shown in the **PROBLEMS** tab when you open the `pom.xml / package.json` manifest file.
 
-![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.png)
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.gif)
 
 
 ## Usage
@@ -71,7 +71,7 @@ To view the 'Application's stack analysis report' for the entire project (includ
 ## Contributing
 
 This is an open source project, contributions and questions are welcome. If you have any feedback, suggestions, or ideas, reach us on:
-* Chat: [#openshiftio  ](https://chat.openshift.io/developers/channels/town-square).
+* Chat: [#Dependency Analytics](https://chat.openshift.io/developers/channels/fabric8-analytics).
 * Log issues:  [GitHub Repository](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues).
 
 ## Note

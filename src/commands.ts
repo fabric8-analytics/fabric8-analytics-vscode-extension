@@ -9,6 +9,7 @@ export namespace Commands {
      */
     export const TRIGGER_STACK_ANALYSIS = 'extension.fabric8AnalyticsWidget';
     export const TRIGGER_FULL_STACK_ANALYSIS = 'extension.fabric8AnalyticsWidgetFullStack';
+    export const TRIGGER_LSP_EDIT = 'lsp.applyTextEdit';
 
 }
 

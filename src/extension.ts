@@ -23,7 +23,15 @@ export function activate(context: vscode.ExtensionContext) {
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 
 	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => stackanalysismodule.triggerStackAnalyses(context, provider, previewUri));
-  	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.triggerFullStackAnalyses(context, provider, previewUri));
+	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.triggerFullStackAnalyses(context, provider, previewUri));
+	
+	let runCodeAction = ((document: vscode.TextDocument, range: vscode.Range, message:string) => {
+		let edit = new vscode.WorkspaceEdit();
+		let editor = vscode.window.activeTextEditor;
+		edit.replace(editor.document.uri, document['range'], document['newText']);
+		return vscode.workspace.applyEdit(edit);
+	});
+	let disposableLspEdit = vscode.commands.registerCommand(Commands.TRIGGER_LSP_EDIT, runCodeAction, this);  
 
 	authextension.authorize_f8_analytics(context, (data) => {
 		if(data){
@@ -70,8 +78,8 @@ export function activate(context: vscode.ExtensionContext) {
 				lspClient.onNotification('caNotification', (respData) => {
 					vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
 						return new Promise((resolve, reject) => {
-							p.report({message: 'Checking for security vulnerabilities ...' });
-							p.report({message: respData.data });
+							p.report({message: 'Dependency Analytics: Checking for security vulnerabilities ...' });
+							p.report({message: 'Dependency Analytics: '+respData.data });
 							setTimeout(function () {	
 							  resolve();
 							  if(respData && respData.hasOwnProperty('isEditAction') && !respData.isEditAction) {
@@ -84,13 +92,13 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 
 
-			context.subscriptions.push(disposable, registration,lspClient.start(), disposableFullStack);
+			context.subscriptions.push(disposable, registration,lspClient.start(), disposableFullStack, disposableLspEdit);
 		}
 	});
 
 	let showInfoOnfileOpen = ((msg: string) => {
-		vscode.window.showInformationMessage(`${msg}. Generate application stack report on Workspace to view detail report`, 'Generate').then((selection:any) => {
-			if(selection === 'Generate'){
+		vscode.window.showInformationMessage(`${msg}.`, 'View detailed report').then((selection:any) => {
+			if(selection === 'View detailed report'){
 				vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
 			}
 		});

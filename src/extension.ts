@@ -78,8 +78,8 @@ export function activate(context: vscode.ExtensionContext) {
 				lspClient.onNotification('caNotification', (respData) => {
 					vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
 						return new Promise((resolve, reject) => {
-							p.report({message: 'Dependency Analytics: Checking for security vulnerabilities ...' });
-							p.report({message: 'Dependency Analytics: '+respData.data });
+							p.report({message: '[Dependency Analytics] Checking for security vulnerabilities ...' });
+							p.report({message: '[Dependency Analytics] '+respData.data });
 							setTimeout(function () {	
 							  resolve();
 							  if(respData && respData.hasOwnProperty('isEditAction') && !respData.isEditAction) {

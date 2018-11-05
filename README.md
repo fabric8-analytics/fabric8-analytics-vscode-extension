@@ -55,7 +55,7 @@ Know more about Dependency Analytics Platform
 The mission of this project is to significantly enhance developer experience:
 providing Insights(security, licenses, AI based guidance) for applications and helping developers, Enterprises.
 
-* [GitHub Organisation](https://github.com/fabric8-analytics)
+* [GitHub Organization](https://github.com/fabric8-analytics)
 
 Feedback & Questions
 ====================

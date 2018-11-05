@@ -107,11 +107,6 @@ suite('stacknalysis module', () => {
 
     suite('stacknalysis module: no manifest opened', () => {
 
-        test('triggerStackAnalyses should show info message as no manifest opened in editor', () => {
-            let showInfoMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
-            stackanalysismodule.triggerStackAnalyses(context, provider, previewUri);
-            expect(showInfoMessageSpy).calledOnce;
-        });
     
         test('processStackAnalyses should not call effectivef8Package', () => {
             let effectivef8PackageSpy = sandbox.spy(ProjectDataProvider, 'effectivef8Package');
@@ -179,11 +174,6 @@ suite('stacknalysis module', () => {
             expect(stubExecuteCommand).callCount(0);
         });
 
-        test('triggerStackAnalyses should call processStackAnalyses as manifest file is opened in editor', () => {
-            let stubProcessStackAnalyses = sandbox.stub(stackanalysismodule, 'processStackAnalyses');
-            stackanalysismodule.triggerStackAnalyses(context, provider, previewUri);
-            expect(stubProcessStackAnalyses).calledOnce;
-        });
 
         test('get_stack_metadata should call vscode API findFiles, postStackAnalysisService, form_manifests_payload as manifest file is opened in editor', async () => {
             let rootPath = vscode.workspace.rootPath;

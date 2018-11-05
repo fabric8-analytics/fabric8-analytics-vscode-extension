@@ -17,6 +17,7 @@ export module multimanifestmodule {
     export let triggerFullStackAnalyses: any;
     export let triggerManifestWs: any;
     export let manifestFileRead: any;
+    export let dependencyAnalyticsReportFlow: any;
 
     find_manifests_workspace = (context, filesRegex, cb) => {
 
@@ -166,10 +167,25 @@ export module multimanifestmodule {
         });
      };
 
-    triggerFullStackAnalyses = (context, provider, previewUri) => {
+    dependencyAnalyticsReportFlow = (context, provider, previewUri) => {
+        let editor = vscode.window.activeTextEditor;
         if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
             vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level`);
-          } else {
+        } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
+            let folder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+            if(folder.uri.fsPath + '/pom.xml' === editor.document.fileName || folder.uri.fsPath + '\\pom.xml' === editor.document.fileName) {
+                triggerFullStackAnalyses(context, provider, previewUri);
+            } else {
+                stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+            }
+        } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('package.json')!== -1) {
+            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+        } else {
+            triggerFullStackAnalyses(context, provider, previewUri);
+        }
+    };
+
+    triggerFullStackAnalyses = (context, provider, previewUri) => {
             provider.signalInit(previewUri,null);
             vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
                 return new Promise((resolve, reject) => { 
@@ -233,7 +249,6 @@ export module multimanifestmodule {
                   });
               });
             });
-        }
     };
 
     triggerManifestWs = (context, filesRegex, provider, previewUri) => {

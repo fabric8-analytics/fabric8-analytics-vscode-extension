@@ -42,7 +42,6 @@
     "vscode": "^1.23.0"
   },
   "activationEvents": [
-    "onCommand:extension.fabric8AnalyticsWidget",
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "onLanguage:xml",
     "onLanguage:json"
@@ -85,42 +84,40 @@
     ],
     "commands": [
       {
-        "key": "ctrl+j",
-        "command": "extension.fabric8AnalyticsWidget",
-        "title": "Generate application stack report on manifest file"
-      },
-      {
         "key": "ctrl+k",
         "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "title": "Generate application stack report on Workspace"
+        "title": "View Dependency Analytics Report ..."
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "extension.fabric8AnalyticsWidget",
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceLangId == xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceLangId == json"
         }
       ],
       "explorer/context": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceFilename == package.json"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceFilename == pom.xml"
         }
-      ],
+      ], 
       "editor/context": [
         {
-          "command": "extension.fabric8AnalyticsWidget",
-          "when": "resourceLangId == xml"
-        },
-        {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
-        },
-        {
-          "command": "extension.fabric8AnalyticsWidget",
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceFilename == package.json"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceFilename == pom.xml"
         }
       ]
     },

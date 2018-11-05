@@ -20,7 +20,6 @@ suite('Fabric8 Analytics Extension', () => {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			const FABRIC8_COMMANDS:string[] = [
-				Commands.TRIGGER_STACK_ANALYSIS,
 				Commands.TRIGGER_FULL_STACK_ANALYSIS
 			];
 			let foundFabric8Commands = commands.filter(function(value){
@@ -30,15 +29,6 @@ suite('Fabric8 Analytics Extension', () => {
 		});
 	}); 
 
-	
-	test('should trigger application stack report activate', async () => {
-		await vscode.commands.executeCommand(Commands.TRIGGER_STACK_ANALYSIS).then((res) => {
-			assert.ok(true);
-		},(reason: any) => {
-			assert.equal(reason.name, 'Error');
-			assert.equal(reason.message, `Running the contributed command:'extension.fabric8AnalyticsWidget' failed.`)
-		});
-	});
 
 	test('should trigger fabric8-analytics full stack report activate', async () => {
 		await vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS).then((res) => {

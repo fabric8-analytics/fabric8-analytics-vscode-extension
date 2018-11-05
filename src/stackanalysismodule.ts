@@ -51,10 +51,7 @@ export module stackanalysismodule {
             if(process && process.platform && process.platform.toLowerCase() === 'win32'){
                 strSplit = '\\';
             }
-            let projRootPathSplit: any = encodedProjRootPath.split(strSplit);
-            let projName: string = projRootPathSplit[projRootPathSplit.length-1];
-            let filePathList = file_uri.split(projName+strSplit);
-            
+            let filePathList = file_uri.split(encodedProjRootPath+strSplit);
             if(filePathList && filePathList.length>1) {
             vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,null).then(
                 (result: vscode.Uri[]) => {
@@ -125,7 +122,7 @@ export module stackanalysismodule {
                         provider.signalInit(previewUri,null);
                         authextension.authorize_f8_analytics(context, (data) => {
                             if(data){
-                              return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
+                              return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
                                 stackanalysismodule.get_stack_metadata(context, dataEpom, (data) => {
                                   if(data){
                                     p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES });

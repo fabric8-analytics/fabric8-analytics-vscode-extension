@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Dependency Analytics",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -13,10 +13,6 @@
     }
   ],
   "license": "Apache-2.0",
-  "galleryBanner": {
-    "color": "#000000",
-    "theme": "dark"
-  },
   "bugs": {
     "url": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues",
     "email": "jakumar@redhat.com"
@@ -27,15 +23,14 @@
   },
   "homepage": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md",
   "categories": [
-    "Programming Languages",
     "Other"
   ],
   "keywords": [
-    "Dependencies",
-    "Vulnerabilities",
-    "License",
-    "Node",
-    "Maven"
+    "dependencies",
+    "vulnerability",
+    "license",
+    "node",
+    "java"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
@@ -43,50 +38,41 @@
   },
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
-    "onLanguage:xml",
-    "onLanguage:json"
+    "workspaceContains:**/package.json",
+    "workspaceContains:**/pom.xml"
   ],
   "main": "./out/src/extension",
   "contributes": {
     "languages": [
       {
-        "id": "Security",
+        "id": "security",
         "aliases": [
-          "CVE"
-        ]
-      },
-      {
-        "id": "application-license",
-        "aliases": [
-          "license-conflict"
-        ]
-      },
-      {
-        "id": "Insights",
-        "aliases": [
-          "Artificial-Intelligence",
-          "Deep-Learning",
-          "Machine-Learning",
-          "Analytics",
-          "suggest-dependencies"
-        ]
-      },
-      {
-        "id": "Opensource",
-        "aliases": [
-          "maven",
-          "java",
-          "npm",
+          "CVE",
           "pom.xml",
           "package.json"
+        ]
+      },
+      {
+        "id": "analytics",
+        "aliases": [
+          "AI",
+          "artificial intelligence",
+          "deep learning",
+          "suggest dependencies"
         ]
       }
     ],
     "commands": [
       {
-        "key": "ctrl+k",
         "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "title": "View Dependency Analytics Report ..."
+        "title": "Dependency Analytics Report ..."
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "extension.fabric8AnalyticsWidgetFullStack",
+        "key": "ctrl+d",
+        "mac": "cmd+d"
       }
     ],
     "menus": {
@@ -109,7 +95,7 @@
           "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceFilename == pom.xml"
         }
-      ], 
+      ],
       "editor/context": [
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
@@ -181,7 +167,7 @@
     "remap-istanbul": "^0.12.0"
   },
   "dependencies": {
-    "fabric8-analytics-lsp-server": "0.1.44",
+    "fabric8-analytics-lsp-server": "0.1.46",
     "fs": "0.0.1-security",
     "path": "^0.12.7",
     "request": "2.88.0",

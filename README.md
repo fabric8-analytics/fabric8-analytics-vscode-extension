@@ -1,87 +1,69 @@
 # Dependency Analytics
 
- Application stack analysis report with Insights about your application dependencies:
+[![Build Status](https://ci.centos.org/job/devtools-fabric8-analytics-vscode-extension/badge/icon)](https://ci.centos.org/job/devtools-fabric8-analytics-vscode-extension/)
+[![Chat](https://img.shields.io/badge/chat-on%20mattermost-brightgreen.svg)](https://chat.openshift.io/developers/channels/fabric8-analytics)
+[![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/redhat.fabric8-analytics.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
+
+ 'Dependency Analytics Report' with Insights about your application dependencies:
 - Flags a security vulnerability(CVE) and suggests a remedial version
 - Shows Github popularity metrics along with latest version
 - Suggests a project level license, check for conflicts between dependency licences
-- AI based guidance for alternative dependencies
-- AI based guidance for additional dependencies 
+- AI based guidance for additional, alternative dependencies
 
 ## Supported Languages
 
- 'Dependency Analytics' extension supports projects using Maven and projects build on npm (Node ecosystem). 
+'Dependency Analytics' extension supports projects using Maven and projects build on npm (Node ecosystem). 
 Extending support for Python and Go languages is currently under progress.
 
 ## Prerequisites
-* **For analyzing Java applications** Maven must be installed on your machine. Provide the Maven executable filepath.
-* **For analyzing Node applications** Node and npm must be installed on your machine. Provide the npm executable filepath.
 
-> **Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that  `mvn/npm` is found in your system environment `PATH`.           
- If you do not want to add it into your system environment `PATH`, you can specify the maven executable path in settings. You can do this via preferences in VS Code:
+This extension assumes you have the following binaries on your `PATH`:
 
- File/Code > Preferences
-
-```
-{
-    ...
-    "maven.executable.path": "/path-to-maven-home/bin/mvn"
-    "npm.executable.path": "/path-to-npm-home/bin/npm"
-    ...
-}
-```
+* `mvn` (for analyzing Java applications)
+* `npm` (for analyzing Node applications)
 
 ## Quick Start
 
-1. Install the extension.
-
-2. How to use ?
-
-  - Open or edit a manifest file (`pom.xml` / `package.json`) to flag any CVEs present in your application
-  - Right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or  'Vscode File editor' to display 'Application stack analysis report' for your application.
+  - Install the extension.
+  - Opening or editing a manifest file (`pom.xml` / `package.json`) scans your application for security vulnerabilities.
+  - Right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or  'Vscode File editor' to display 'Dependency Analytics Report' for your application.
 
 
 ## Features
 
-Application stack analysis report with Insights about your application dependencies:
-- Flags a security vulnerability(CVE) and suggests a remedial version
-- Shows Github popularity metrics along with latest version
-- Suggests a project level license, check for conflicts between dependency licences
-- AI based guidance for alternative dependencies
-- AI based guidance for additional dependencies 
-
-![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
-
-Alerts for any CVEs are shown in the **PROBLEMS** tab when you open the `pom.xml / package.json` manifest file.
+- Opening or editing a manifest file (`pom.xml` / `package.json`) scans your application for security vulnerabilities, flag them along with 'quick fixes'.
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.png)
 
+- Right click on a manifest file(`pom.xml` / `package.json`) and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
+1. Flags a security vulnerability(CVE) and suggests a remedial version
+2. Shows Github popularity metrics along with latest version
+3. Suggests a project level license, check for conflicts between dependency licences
+4. AI based guidance for additional,alternative dependencies
 
-## Usage
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
 
-You can get 'Application stack analysis report' with Insights (Security, License and guidance for additional/alternative) about your application dependencies
+- **For multi module maven application** Right click on root `pom.xml` in editor window and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report for the entire application.
 
-To view the 'Application's stack analysis report' for a specific module:
-1. Open a manifest file (`pom.xml`, `package.json`).
-2. Use `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on manifest file** to see the application's stack analysis report for the manifest file.
+![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/stackanalysis.gif)
+
+-------------------------------------------------------------------------------------------------------------------
+**Note** It creates a folder `target` in workspace which is used for processing of manifest files, needed for generating stack report. So kindly add `target` in `.gitignore`.
+
+Know more about Dependency Analytics Platform
+==============================================
+The mission of this project is to significantly enhance developer experience:
+providing Insights(security, licenses, AI based guidance) for applications and helping developers, Enterprises.
+
+- [GitHub Organisation](https://github.com/fabric8-analytics)
+
+Feedback & Questions
+====================
+* File a bug in [GitHub Issues](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues)
+* Chat with us on [Mattermost](https://chat.openshift.io/developers/channels/fabric8-analytics)
+
+License
+=======
+Apache 2.0, See [LICENSE](LICENSE) for more information.
 
 
-To view the 'Application's stack analysis report' for the entire project (including multiple sub-modules):
-* Use command `Ctrl+Shift+P` on Linux or `Cmd+Shift+P` on Mac, and then click **Generate application stack report on Workspace** to view the application's stack analysis report for the entire workspace/project.
-
-## Contributing
-
-This is an open source project, contributions and questions are welcome. If you have any feedback, suggestions, or ideas, reach us on:
-* Chat: [#openshiftio  ](https://chat.openshift.io/developers/channels/town-square).
-* Log issues:  [GitHub Repository](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues).
-
-## Note
-
-It creates a folder `target` in workspace which is used for processing of manifest files, needed for generating stack report. So kindly add `target` in `.gitignore`.
-
-### Develop this extension
-
-1. Install the dependencies:
-`npm install`.
-2. Start the compiler in watch mode:
-`npm run compile`.
-3. Open this folder in VS Code and press `F5`.

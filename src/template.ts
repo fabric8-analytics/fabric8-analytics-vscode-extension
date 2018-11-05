@@ -250,7 +250,7 @@ export namespace Templates {
         <div id="loading_screen">
         <div style="text-align: center;margin-top:130px;" id="caption">
             <h1 style='color:#ffffff'>Dependency Analytics</h1>
-            <h1 style='color:#ffffff'>Application stack analysis in progress</h1>
+            <h2 style='color:#ffffff'>Analyzing application dependencies...</h2>
             <br />
             <br />
             <br />

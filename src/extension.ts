@@ -21,9 +21,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
-
-	let disposable = vscode.commands.registerCommand(Commands.TRIGGER_STACK_ANALYSIS, () => stackanalysismodule.triggerStackAnalyses(context, provider, previewUri));
-	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.triggerFullStackAnalyses(context, provider, previewUri));
+	
+	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.dependencyAnalyticsReportFlow(context, provider, previewUri));
 	
 	let runCodeAction = ((document: vscode.TextDocument, range: vscode.Range, message:string) => {
 		let edit = new vscode.WorkspaceEdit();
@@ -92,13 +91,13 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 
 
-			context.subscriptions.push(disposable, registration,lspClient.start(), disposableFullStack, disposableLspEdit);
+			context.subscriptions.push(registration,lspClient.start(), disposableFullStack, disposableLspEdit);
 		}
 	});
 
 	let showInfoOnfileOpen = ((msg: string) => {
-		vscode.window.showInformationMessage(`${msg}.`, 'View detailed report').then((selection:any) => {
-			if(selection === 'View detailed report'){
+		vscode.window.showInformationMessage(`${msg}.`, 'View Dependency Analytics Report ...').then((selection:any) => {
+			if(selection === 'View Dependency Analytics Report ...'){
 				vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
 			}
 		});

@@ -186,76 +186,76 @@ export module multimanifestmodule {
     };
 
     triggerFullStackAnalyses = (context, provider, previewUri) => {
-            provider.signalInit(previewUri,null);
-            vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
-                return new Promise((resolve, reject) => { 
-                
-                vscode.workspace.findFiles('{pom.xml,**/package.json}','**/node_modules').then(
-                  (result: vscode.Uri[]) => {
-                      if(result && result.length){
-                        // Do not create an effective pom if no pom.xml is present
-                        let effective_pom_skip = true;
-                        let effectiveF8WsVar = 'effectivef8Package';
-                        let vscodeRootpath = vscode.workspace.rootPath;
-                        if(process && process.platform && process.platform.toLowerCase() === 'win32'){
-                            vscodeRootpath += '\\';
-                        } else {
-                            vscodeRootpath += '/'; 
+        provider.signalInit(previewUri,null);
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
+            return new Promise((resolve, reject) => { 
+            
+            vscode.workspace.findFiles('{pom.xml,**/package.json}','**/node_modules').then(
+                (result: vscode.Uri[]) => {
+                    if(result && result.length){
+                    // Do not create an effective pom if no pom.xml is present
+                    let effective_pom_skip = true;
+                    let effectiveF8WsVar = 'effectivef8Package';
+                    let vscodeRootpath = vscode.workspace.rootPath;
+                    if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+                        vscodeRootpath += '\\';
+                    } else {
+                        vscodeRootpath += '/'; 
+                    }
+                    let filesRegex = 'target/package.json';
+                    let pom_count = 0;
+                    result.forEach((item) => {
+                        if (item.fsPath.indexOf('pom.xml') >= 0) {
+                        effective_pom_skip = false;
+                        pom_count += 1;
+                        effectiveF8WsVar = 'effectivef8PomWs';
+                        filesRegex = 'target/stackinfo/**/pom.xml';
                         }
-                        let filesRegex = 'target/package.json';
-                        let pom_count = 0;
-                        result.forEach((item) => {
-                          if (item.fsPath.indexOf('pom.xml') >= 0) {
-                            effective_pom_skip = false;
-                            pom_count += 1;
-                            effectiveF8WsVar = 'effectivef8PomWs';
-                            filesRegex = 'target/stackinfo/**/pom.xml';
-                          }
-                        });
-      
-                        if (!effective_pom_skip && pom_count === 0) {
-                          vscode.window.showInformationMessage('Multi ecosystem support is not yet available.');
-                          reject();
-                          return;
-                        } 
-                        else {
-                            p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES});
-                            ProjectDataProvider[effectiveF8WsVar](vscodeRootpath, (dataEpom) => {
-                                if(dataEpom){
-                                  p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
-                                  let promiseTriggerManifestWs = triggerManifestWs(context, filesRegex, provider, previewUri);
-                                  promiseTriggerManifestWs.then(() => {
-                                    p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
-                                    resolve();
-                                  })
-                                  .catch(() => {
-                                    p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
-                                    reject();
-                                  }); 
-                                } else {
-                                  p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
-                                  reject();
-                                }
-                            });
-                        }
-                      } else {
-                        vscode.window.showInformationMessage(`Coudn't find manifest at root workspace level`);
+                    });
+    
+                    if (!effective_pom_skip && pom_count === 0) {
+                        vscode.window.showInformationMessage('Multi ecosystem support is not yet available.');
                         reject();
-                      }
-                  },
-                  // Other ecosystem flow
-                  (reason: any) => {
-                    vscode.window.showInformationMessage(`Coudn't find supported manifest at root workspace level`);
-                  });
-              });
+                        return;
+                    } 
+                    else {
+                        p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES});
+                        ProjectDataProvider[effectiveF8WsVar](vscodeRootpath, (dataEpom) => {
+                            if(dataEpom){
+                                p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
+                                let promiseTriggerManifestWs = triggerManifestWs(context, filesRegex, provider, previewUri);
+                                promiseTriggerManifestWs.then(() => {
+                                p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
+                                resolve();
+                                })
+                                .catch(() => {
+                                p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
+                                reject();
+                                }); 
+                            } else {
+                                p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
+                                reject();
+                            }
+                        });
+                    }
+                    } else {
+                    vscode.window.showInformationMessage(`Coudn't find manifest at root workspace level`);
+                    reject();
+                    }
+                },
+                // Other ecosystem flow
+                (reason: any) => {
+                vscode.window.showInformationMessage(`Coudn't find supported manifest at root workspace level`);
+                });
             });
+        });
     };
 
     triggerManifestWs = (context, filesRegex, provider, previewUri) => {
         return new Promise((resolve,reject) => {
             authextension.authorize_f8_analytics(context, (data) => {
             if(data){
-                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, 'Application stack report').then((success) => {
+                vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
                     let manifest_finder = multimanifestmodule.find_manifests_workspace;
                     manifest_finder(context, filesRegex, (data) => {
                         if(data){

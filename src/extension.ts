@@ -9,7 +9,6 @@ import * as path from 'path';
 
 import { Commands } from './commands';
 import { contentprovidermodule } from './contentprovidermodule';
-import { stackanalysismodule } from './stackanalysismodule';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -77,8 +76,8 @@ export function activate(context: vscode.ExtensionContext) {
 				lspClient.onNotification('caNotification', (respData) => {
 					vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
 						return new Promise((resolve, reject) => {
-							p.report({message: '[Dependency Analytics] Checking for security vulnerabilities ...' });
-							p.report({message: '[Dependency Analytics] '+respData.data });
+							p.report({message: 'Checking for security vulnerabilities ...' });
+							p.report({message: respData.data });
 							setTimeout(function () {	
 							  resolve();
 							  if(respData && respData.hasOwnProperty('isEditAction') && !respData.isEditAction) {
@@ -96,8 +95,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	let showInfoOnfileOpen = ((msg: string) => {
-		vscode.window.showInformationMessage(`${msg}.`, 'View Dependency Analytics Report ...').then((selection:any) => {
-			if(selection === 'View Dependency Analytics Report ...'){
+		vscode.window.showInformationMessage(`${msg}.`, 'Dependency Analytics Report ...').then((selection:any) => {
+			if(selection === 'Dependency Analytics Report ...'){
 				vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
 			}
 		});

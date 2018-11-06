@@ -19,13 +19,13 @@ export module multimanifestmodule {
     export let manifestFileRead: any;
     export let dependencyAnalyticsReportFlow: any;
 
-    find_manifests_workspace = (context, filesRegex, cb) => {
+    find_manifests_workspace = (context, vscodeRootpath, filesRegex, cb) => {
 
         let payloadData : any;
         vscode.workspace.findFiles(`{${filesRegex},LICENSE}`,'**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
-                    form_manifests_payload(result, (data) => {
+                    form_manifests_payload(result, vscodeRootpath, (data) => {
                         if(data){
                             payloadData = data;
                             const options = {};
@@ -65,7 +65,7 @@ export module multimanifestmodule {
     };
 
 
-    form_manifests_payload = (resultList, callbacknew) : any => {
+    form_manifests_payload = (resultList, vscodeRootpath, callbacknew) : any => {
         let fileReadPromises: Array<any> = [];
         for(let i=0;i<resultList.length;i++){
             let fileReadPromise = manifestFileRead(resultList[i]);
@@ -105,7 +105,7 @@ export module multimanifestmodule {
     };
 
 
-    manifestFileRead = (fileContent) => {
+    manifestFileRead = (vscodeRoootPath, fileContent) => {
         let form_data = {
             'manifest': '',
             'filePath': '',
@@ -169,9 +169,7 @@ export module multimanifestmodule {
 
     dependencyAnalyticsReportFlow = (context, provider, previewUri) => {
         let editor = vscode.window.activeTextEditor;
-        if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-            vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level`);
-        } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
+        if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
             let folder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
             if(folder.uri.fsPath + '/pom.xml' === editor.document.fileName || folder.uri.fsPath + '\\pom.xml' === editor.document.fileName) {
                 triggerFullStackAnalyses(context, provider, previewUri);
@@ -196,7 +194,13 @@ export module multimanifestmodule {
                     // Do not create an effective pom if no pom.xml is present
                     let effective_pom_skip = true;
                     let effectiveF8WsVar = 'effectivef8Package';
-                    let vscodeRootpath = vscode.workspace.rootPath;
+                    let vscodeRootpath: any;
+                        if(vscode && vscode.window && vscode.window.activeTextEditor) {
+                            let editor = vscode.window.activeTextEditor;
+                            let fileUri: string = editor.document.fileName;
+                            let fileUrl = editor.document.uri;
+                            let folder = vscode.workspace.getWorkspaceFolder(fileUrl);
+                            vscodeRootpath = folder.uri.fsPath;}
                     if(process && process.platform && process.platform.toLowerCase() === 'win32'){
                         vscodeRootpath += '\\';
                     } else {
@@ -212,18 +216,17 @@ export module multimanifestmodule {
                         filesRegex = 'target/stackinfo/**/pom.xml';
                         }
                     });
-    
                     if (!effective_pom_skip && pom_count === 0) {
                         vscode.window.showInformationMessage('Multi ecosystem support is not yet available.');
                         reject();
                         return;
-                    } 
+                        } 
                     else {
                         p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES});
                         ProjectDataProvider[effectiveF8WsVar](vscodeRootpath, (dataEpom) => {
                             if(dataEpom){
                                 p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
-                                let promiseTriggerManifestWs = triggerManifestWs(context, filesRegex, provider, previewUri);
+                                let promiseTriggerManifestWs = triggerManifestWs(context, vscodeRootpath, filesRegex, provider, previewUri);
                                 promiseTriggerManifestWs.then(() => {
                                 p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
                                 resolve();
@@ -238,26 +241,26 @@ export module multimanifestmodule {
                             }
                         });
                     }
-                    } else {
-                    vscode.window.showInformationMessage(`Coudn't find manifest at root workspace level`);
+                } else {
+                    vscode.window.showInformationMessage(`Couldn't find manifest at root workspace level`);
                     reject();
                     }
                 },
                 // Other ecosystem flow
                 (reason: any) => {
-                vscode.window.showInformationMessage(`Coudn't find supported manifest at root workspace level`);
+                vscode.window.showInformationMessage(`Couldn't find supported manifest at root workspace level`);
                 });
             });
         });
     };
 
-    triggerManifestWs = (context, filesRegex, provider, previewUri) => {
+    triggerManifestWs = (context, vscodeRootpath,  filesRegex, provider, previewUri) => {
         return new Promise((resolve,reject) => {
             authextension.authorize_f8_analytics(context, (data) => {
             if(data){
                 vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
                     let manifest_finder = multimanifestmodule.find_manifests_workspace;
-                    manifest_finder(context, filesRegex, (data) => {
+                    manifest_finder(context, vscodeRootpath, filesRegex, (data) => {
                         if(data){
                             provider.signal(previewUri, data);
                             resolve(true);

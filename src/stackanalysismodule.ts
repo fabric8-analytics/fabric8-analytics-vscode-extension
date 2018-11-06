@@ -41,10 +41,9 @@ export module stackanalysismodule {
         });
 	};
 
-	get_stack_metadata = (context, file_uri, cb) => {
+	get_stack_metadata = (context, file_uri, projRootPath, cb) => {
 
         let payloadData : any;
-        let projRootPath: string = vscode.workspace.rootPath;
         if(projRootPath && file_uri){
             let encodedProjRootPath: any = projRootPath.replace(/ /g,'%20');
             let strSplit = '/';
@@ -108,6 +107,8 @@ export module stackanalysismodule {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
         let editor = vscode.window.activeTextEditor;
         let fileUri: string = editor.document.fileName;
+        let fileUrl = editor.document.uri;
+        let folder = vscode.workspace.getWorkspaceFolder(fileUrl);
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
             return new Promise((resolve, reject) => {
                 p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
@@ -123,7 +124,7 @@ export module stackanalysismodule {
                         authextension.authorize_f8_analytics(context, (data) => {
                             if(data){
                               return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
-                                stackanalysismodule.get_stack_metadata(context, dataEpom, (data) => {
+                                stackanalysismodule.get_stack_metadata(context, dataEpom, folder.uri.fsPath, (data) => {
                                   if(data){
                                     p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES });
                                     resolve();

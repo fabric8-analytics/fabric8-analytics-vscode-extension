@@ -19,10 +19,11 @@ export module multimanifestmodule {
     export let manifestFileRead: any;
     export let dependencyAnalyticsReportFlow: any;
 
-    find_manifests_workspace = (context, filesRegex, cb) => {
+    find_manifests_workspace = (context, workspaceFolder, filesRegex, cb) => {
 
         let payloadData : any;
-        vscode.workspace.findFiles(`{${filesRegex},LICENSE}`,'**/node_modules').then(
+        const relativePattern = new vscode.RelativePattern(workspaceFolder, `{${filesRegex},LICENSE}`);
+        vscode.workspace.findFiles(relativePattern,'**/node_modules').then(
             (result: vscode.Uri[]) => {
                 if(result && result.length){
                     form_manifests_payload(result, (data) => {
@@ -167,7 +168,11 @@ export module multimanifestmodule {
             });
         });
      };
-
+    
+    /*
+    * Needed async function in order to wait for user selection in case of 
+    * multi root projects
+    */
     dependencyAnalyticsReportFlow = async (context, provider, previewUri) => {
         let editor = vscode.window.activeTextEditor;
         if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
@@ -182,8 +187,6 @@ export module multimanifestmodule {
         } else if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
             let workspaceFolder = await vscode.window.showWorkspaceFolderPick({ placeHolder: 'Pick Workspace Folder to which this setting should be applied' })
                 if (workspaceFolder) {
-                    debugger;
-                    console.log(workspaceFolder);
                     triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
                 } else {
                     vscode.window.showInformationMessage(`No Workspace selected.`);
@@ -232,7 +235,7 @@ export module multimanifestmodule {
                         ProjectDataProvider[effectiveF8WsVar](vscodeRootpath, (dataEpom) => {
                             if(dataEpom){
                                 p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
-                                let promiseTriggerManifestWs = triggerManifestWs(context, filesRegex, provider, previewUri);
+                                let promiseTriggerManifestWs = triggerManifestWs(context, workspaceFolder, filesRegex, provider, previewUri);
                                 promiseTriggerManifestWs.then(() => {
                                 p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
                                 resolve();
@@ -248,25 +251,25 @@ export module multimanifestmodule {
                         });
                     }
                     } else {
-                    vscode.window.showInformationMessage(`Can't find manifest at root workspace level`);
+                    vscode.window.showInformationMessage(StatusMessages.NO_SUPPORTED_MANIFEST);
                     reject();
                     }
                 },
                 // Other ecosystem flow
                 (reason: any) => {
-                vscode.window.showInformationMessage(`Can't find supported manifest at root workspace level`);
+                vscode.window.showInformationMessage(StatusMessages.NO_SUPPORTED_MANIFEST);
                 });
             });
         });
     };
 
-    triggerManifestWs = (context, filesRegex, provider, previewUri) => {
+    triggerManifestWs = (context, workspaceFolder, filesRegex, provider, previewUri) => {
         return new Promise((resolve,reject) => {
             authextension.authorize_f8_analytics(context, (data) => {
             if(data){
                 vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
                     let manifest_finder = multimanifestmodule.find_manifests_workspace;
-                    manifest_finder(context, filesRegex, (data) => {
+                    manifest_finder(context, workspaceFolder, filesRegex, (data) => {
                         if(data){
                             provider.signal(previewUri, data);
                             resolve(true);

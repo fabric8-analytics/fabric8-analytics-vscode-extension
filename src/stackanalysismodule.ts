@@ -106,7 +106,6 @@ export module stackanalysismodule {
 
     processStackAnalyses = (context, editor, provider, previewUri) => {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
-        // let editor = vscode.window.activeTextEditor;
         let fileUri: string = editor.document.fileName;
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
             return new Promise((resolve, reject) => {

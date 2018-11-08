@@ -52,7 +52,8 @@ suite('multimanifest module', () => {
 
     test('find_manifests_workspace should return null in callback', () => {
         sandbox.stub(vscode.workspace, 'findFiles').resolves([]);
-        multimanifestmodule.find_manifests_workspace(context, '/pom.xml', (data) => {
+        let workspaceFolder = vscode.workspace.workspaceFolders[0];
+        multimanifestmodule.find_manifests_workspace(context, workspaceFolder, '/pom.xml', (data) => {
             expect(data).equals(null);
         });
     });
@@ -62,7 +63,8 @@ suite('multimanifest module', () => {
         sandbox.stub(vscode.workspace, 'findFiles').resolves([{'fspath':'path/file'}]);
         sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields([{'fspath':'path/file'}]);
         sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').resolves('12345');
-        multimanifestmodule.find_manifests_workspace(context, '/pom.xml', (data) => {
+        let workspaceFolder = vscode.workspace.workspaceFolders[0];
+        multimanifestmodule.find_manifests_workspace(context, workspaceFolder, '/pom.xml', (data) => {
             expect(stubStackCollector).calledOnce;
         });
     });
@@ -71,7 +73,8 @@ suite('multimanifest module', () => {
         sandbox.stub(vscode.workspace, 'findFiles').resolves([{'fspath':'path/file'}]);
         sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields([{'fspath':'path/file'}]);
         sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').rejects('err');
-        multimanifestmodule.find_manifests_workspace(context, '/pom.xml', (data) => {
+        let workspaceFolder = vscode.workspace.workspaceFolders[0];
+        multimanifestmodule.find_manifests_workspace(context, workspaceFolder, '/pom.xml', (data) => {
             expect(data).equals(null);
         });
     });
@@ -79,7 +82,8 @@ suite('multimanifest module', () => {
     test('find_manifests_workspace should return null in callback if form_manifests_payload retuns falsy', () => {
         sandbox.stub(vscode.workspace, 'findFiles').resolves([{'fspath':'path/file'}]);
         sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields(null);
-        multimanifestmodule.find_manifests_workspace(context, '/pom.xml', (data) => {
+        let workspaceFolder = vscode.workspace.workspaceFolders[0];
+        multimanifestmodule.find_manifests_workspace(context, workspaceFolder, '/pom.xml', (data) => {
             expect(data).equals(null);
         });
     });
@@ -106,6 +110,7 @@ suite('multimanifest module', () => {
 
     test('manifestFileRead should return error', () => {
         sandbox.stub(fs, 'readFile').yields({'message':'err'});
+        sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns({'uri' : {'fsPath':'path/samplenodeapp'}});
         let promiseManifestFileRead = multimanifestmodule.manifestFileRead({'fsPath': 'path'});
         promiseManifestFileRead.catch((err)=>{
             expect(err).equals('err');
@@ -114,6 +119,7 @@ suite('multimanifest module', () => {
 
     test('manifestFileRead should return license value', () => {
         sandbox.stub(fs, 'readFile').yields({'message':'err'}, 123);
+        sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns({'uri' : {'fsPath':'path/samplenodeapp'}});
         let promiseManifestFileRead = multimanifestmodule.manifestFileRead({'fsPath': 'path/LICENSE'});
         promiseManifestFileRead.then((data)=>{
             expect(data.license.value).equals('123');

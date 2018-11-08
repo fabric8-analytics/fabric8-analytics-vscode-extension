@@ -12,4 +12,5 @@ export namespace StatusMessages {
     export const WIN_FAILURE_RESOLVE_DEPENDENCIES = 'Unable to generate stack report';
     export const LSP_INITIALIZE = 'Initializing Language Server';
     export const REPORT_TAB_TITLE = 'Dependency Analytics Report';
+    export const NO_SUPPORTED_MANIFEST = 'Cannot find supported manifest at root workspace level';
 }

@@ -117,7 +117,8 @@ export module multimanifestmodule {
 
         let filePath: string = '';
         let filePathList: any = [];
-        let projRootPath: string = vscode.workspace.rootPath;
+        // TODO: vscode.workspace.workspaceFolders[0].uri.fsPath should come from quickpick
+        let projRootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
         return new Promise((resolve, reject) => {
             let fsPath : string = fileContent.fsPath ? fileContent.fsPath : '';
             fs.readFile(fsPath, function(err, data) {
@@ -170,16 +171,16 @@ export module multimanifestmodule {
     dependencyAnalyticsReportFlow = (context, provider, previewUri) => {
         let editor = vscode.window.activeTextEditor;
         if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-            vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Coudn't find valid manifest file at root workspace level`);
+            vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Can't find valid manifest file at root workspace level`);
         } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
             let folder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
             if(folder.uri.fsPath + '/pom.xml' === editor.document.fileName || folder.uri.fsPath + '\\pom.xml' === editor.document.fileName) {
                 triggerFullStackAnalyses(context, provider, previewUri);
             } else {
-                stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+                stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             }
         } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('package.json')!== -1) {
-            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
         } else {
             triggerFullStackAnalyses(context, provider, previewUri);
         }
@@ -196,7 +197,8 @@ export module multimanifestmodule {
                     // Do not create an effective pom if no pom.xml is present
                     let effective_pom_skip = true;
                     let effectiveF8WsVar = 'effectivef8Package';
-                    let vscodeRootpath = vscode.workspace.rootPath;
+                    // let vscodeRootpath = vscode.workspace.rootPath;
+                    let vscodeRootpath = vscode.workspace.workspaceFolders[0].uri.fsPath;
                     if(process && process.platform && process.platform.toLowerCase() === 'win32'){
                         vscodeRootpath += '\\';
                     } else {
@@ -239,13 +241,13 @@ export module multimanifestmodule {
                         });
                     }
                     } else {
-                    vscode.window.showInformationMessage(`Coudn't find manifest at root workspace level`);
+                    vscode.window.showInformationMessage(`Can't find manifest at root workspace level`);
                     reject();
                     }
                 },
                 // Other ecosystem flow
                 (reason: any) => {
-                vscode.window.showInformationMessage(`Coudn't find supported manifest at root workspace level`);
+                vscode.window.showInformationMessage(`Can't find supported manifest at root workspace level`);
                 });
             });
         });

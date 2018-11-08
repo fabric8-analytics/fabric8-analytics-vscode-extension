@@ -41,11 +41,11 @@ export module stackanalysismodule {
         });
 	};
 
-	get_stack_metadata = (context, file_uri, cb) => {
-
+	get_stack_metadata = (context, editor, file_uri, cb) => {
         let payloadData : any;
-        let projRootPath: string = vscode.workspace.rootPath;
-        if(projRootPath && file_uri){
+        let projRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+        if(projRoot && file_uri){
+            let projRootPath = projRoot.uri.fsPath;
             let encodedProjRootPath: any = projRootPath.replace(/ /g,'%20');
             let strSplit = '/';
             if(process && process.platform && process.platform.toLowerCase() === 'win32'){
@@ -104,9 +104,9 @@ export module stackanalysismodule {
         }
 	};
 
-    processStackAnalyses = (context, provider, previewUri) => {
+    processStackAnalyses = (context, editor, provider, previewUri) => {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
-        let editor = vscode.window.activeTextEditor;
+        // let editor = vscode.window.activeTextEditor;
         let fileUri: string = editor.document.fileName;
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
             return new Promise((resolve, reject) => {
@@ -123,7 +123,7 @@ export module stackanalysismodule {
                         authextension.authorize_f8_analytics(context, (data) => {
                             if(data){
                               return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
-                                stackanalysismodule.get_stack_metadata(context, dataEpom, (data) => {
+                                stackanalysismodule.get_stack_metadata(context, editor, dataEpom, (data) => {
                                   if(data){
                                     p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES });
                                     resolve();

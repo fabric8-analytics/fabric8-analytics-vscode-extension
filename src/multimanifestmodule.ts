@@ -117,8 +117,8 @@ export module multimanifestmodule {
 
         let filePath: string = '';
         let filePathList: any = [];
-        // TODO: vscode.workspace.workspaceFolders[0].uri.fsPath should come from quickpick
-        let projRootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        let projRoot = vscode.workspace.getWorkspaceFolder(fileContent);
+        let projRootPath = projRoot.uri.fsPath;
         return new Promise((resolve, reject) => {
             let fsPath : string = fileContent.fsPath ? fileContent.fsPath : '';
             fs.readFile(fsPath, function(err, data) {
@@ -144,7 +144,7 @@ export module multimanifestmodule {
                             filePathSplit = /(\\target|\\stackinfo|\\poms|)/g;
                             strSplit = '\\';
                         }
-                        filePath = fileContent._fsPath.split(projRootPath)[1].replace(filePathSplit, '');
+                        filePath = fileContent.fsPath.split(projRootPath)[1].replace(filePathSplit, '');
                         filePathList = filePath.split(strSplit);
 
                         manifestObj.options.filename = filePathList[filePathList.length-1];
@@ -168,37 +168,44 @@ export module multimanifestmodule {
         });
      };
 
-    dependencyAnalyticsReportFlow = (context, provider, previewUri) => {
+    dependencyAnalyticsReportFlow = async (context, provider, previewUri) => {
         let editor = vscode.window.activeTextEditor;
-        if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-            vscode.window.showInformationMessage(`Multi-root Workspaces are not supported currently, Can't find valid manifest file at root workspace level`);
-        } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
-            let folder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-            if(folder.uri.fsPath + '/pom.xml' === editor.document.fileName || folder.uri.fsPath + '\\pom.xml' === editor.document.fileName) {
-                triggerFullStackAnalyses(context, provider, previewUri);
+        if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
+            let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+            if(workspaceFolder.uri.fsPath + '/pom.xml' === editor.document.fileName || workspaceFolder.uri.fsPath + '\\pom.xml' === editor.document.fileName) {
+                triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
             } else {
                 stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             }
         } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('package.json')!== -1) {
             stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
+        } else if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
+            let workspaceFolder = await vscode.window.showWorkspaceFolderPick({ placeHolder: 'Pick Workspace Folder to which this setting should be applied' })
+                if (workspaceFolder) {
+                    debugger;
+                    console.log(workspaceFolder);
+                    triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
+                } else {
+                    vscode.window.showInformationMessage(`No Workspace selected.`);
+                }
         } else {
-            triggerFullStackAnalyses(context, provider, previewUri);
+            let workspaceFolder = vscode.workspace.workspaceFolders[0];
+            triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
         }
     };
 
-    triggerFullStackAnalyses = (context, provider, previewUri) => {
+    triggerFullStackAnalyses = (context, workspaceFolder, provider, previewUri) => {
         provider.signalInit(previewUri,null);
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
-            return new Promise((resolve, reject) => { 
-            
-            vscode.workspace.findFiles('{pom.xml,**/package.json}','**/node_modules').then(
+            return new Promise((resolve, reject) => {
+                const relativePattern = new vscode.RelativePattern(workspaceFolder, '{pom.xml,**/package.json}');
+                vscode.workspace.findFiles(relativePattern,'**/node_modules').then(
                 (result: vscode.Uri[]) => {
                     if(result && result.length){
                     // Do not create an effective pom if no pom.xml is present
                     let effective_pom_skip = true;
                     let effectiveF8WsVar = 'effectivef8Package';
-                    // let vscodeRootpath = vscode.workspace.rootPath;
-                    let vscodeRootpath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+                    let vscodeRootpath = workspaceFolder.uri.fsPath;
                     if(process && process.platform && process.platform.toLowerCase() === 'win32'){
                         vscodeRootpath += '\\';
                     } else {

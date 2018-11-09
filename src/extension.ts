@@ -14,13 +14,13 @@ import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 
 let lspClient: LanguageClient;
+let diagCountInfo, onFileOpen = [];
 
 export function activate(context: vscode.ExtensionContext) {
 	let previewUri = vscode.Uri.parse('fabric8-analytics-widget://authority/fabric8-analytics-widget');
 
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
-	
 	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.dependencyAnalyticsReportFlow(context, provider, previewUri));
 	
 	let runCodeAction = ((document: vscode.TextDocument, range: vscode.Range, message:string) => {
@@ -76,20 +76,21 @@ export function activate(context: vscode.ExtensionContext) {
 				lspClient.onNotification('caNotification', (respData) => {
 					vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
 						return new Promise((resolve, reject) => {
-							p.report({message: 'Checking for security vulnerabilities ...' });
 							p.report({message: respData.data });
 							setTimeout(function () {	
 							  resolve();
-							  if(respData && respData.hasOwnProperty('isEditAction') && !respData.isEditAction) {
+							  if((respData && respData.hasOwnProperty('diagCount')) &&
+								((respData.diagCount > 0 && respData.diagCount !== diagCountInfo) || (!onFileOpen) || (onFileOpen && onFileOpen.indexOf(vscode.window.activeTextEditor.document.fileName) == -1))){
+								diagCountInfo = respData.diagCount;
+								onFileOpen.push(vscode.window.activeTextEditor.document.fileName);
 								showInfoOnfileOpen(respData.data);
 							  }
 							}, 2500);
+							
 						});
 					});
 				});	
 			});
-
-
 			context.subscriptions.push(registration,lspClient.start(), disposableFullStack, disposableLspEdit);
 		}
 	});
@@ -107,6 +108,7 @@ export function deactivate(): Thenable<void> {
 	if (!lspClient) {
 		return undefined;
 	}
+	onFileOpen = [];
 	return lspClient.stop();
 }
 

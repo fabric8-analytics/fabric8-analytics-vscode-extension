@@ -185,7 +185,7 @@ export module multimanifestmodule {
         } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('package.json')!== -1) {
             stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
         } else if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-            let workspaceFolder = await vscode.window.showWorkspaceFolderPick({ placeHolder: 'Pick Workspace Folder to which this setting should be applied' })
+            let workspaceFolder = await vscode.window.showWorkspaceFolderPick({ placeHolder: 'Pick Workspace Folder...' })
                 if (workspaceFolder) {
                     triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
                 } else {

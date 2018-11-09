@@ -192,7 +192,7 @@ export module multimanifestmodule {
             Apiendpoint.API_ECOSYSTEM = 'npm';
             stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
         } else if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
-            let workspaceFolder = await vscode.window.showWorkspaceFolderPick({ placeHolder: 'Pick Workspace Folder...' }); 
+            let workspaceFolder = await vscode.window.showWorkspaceFolderPick({placeHolder: 'Pick Workspace Folder...'}); 
                 if (workspaceFolder) {
                     triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
                 } else {

@@ -1,17 +1,16 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import request = require('request');
 
-export module stackAnalysisServices {
+export class StackAnalysisServices {
 
-    const request = require('request');
-
-    export const clearContextInfo = (context) => {
+    static clearContextInfo(context) {
         context.globalState.update('f8_3scale_user_key', '');
         context.globalState.update('f8_access_routes', '');
     };
 
-    export const getStackAnalysisService = function(options) {
+    static getStackAnalysisService(options) {
         return new Promise((resolve, reject) => {
             request.get(options, (err, httpResponse, body) => {
                 if(err){
@@ -33,12 +32,12 @@ export module stackAnalysisServices {
         });
       };
 
-    export const postStackAnalysisService = function(options, context) {
+    static postStackAnalysisService (options, context) {
         return new Promise((resolve, reject) => {
             console.log('Options', options && options.formData);
             request.post(options, (err, httpResponse, body) => {
                 if(err){
-                    clearContextInfo(context);
+                    this.clearContextInfo(context);
                     console.log('error', err);
                     reject(err);
                 } else {
@@ -52,7 +51,7 @@ export module stackAnalysisServices {
                             reject(httpResponse.statusCode);
                         }
                     } else if(httpResponse.statusCode === 401){
-                        clearContextInfo(context);
+                        this.clearContextInfo(context);
                         vscode.window.showErrorMessage(`Looks like there is some intermittent issue while communicating with services, please try again. Status: ${httpResponse.statusCode}`);
                         reject(httpResponse.statusCode);
                     } else if(httpResponse.statusCode === 429 || httpResponse.statusCode === 403){
@@ -62,7 +61,7 @@ export module stackAnalysisServices {
                         vscode.window.showInformationMessage(`Manifest file(s) are not proper. Status:  ${httpResponse.statusCode} `);
                         reject(httpResponse.statusCode);
                     } else {
-                        clearContextInfo(context);
+                        this.clearContextInfo(context);
                         vscode.window.showErrorMessage(`Failed to trigger application's stack analysis, try in a while. Status: ${httpResponse.statusCode}`);
                         reject(httpResponse.statusCode);
                     }

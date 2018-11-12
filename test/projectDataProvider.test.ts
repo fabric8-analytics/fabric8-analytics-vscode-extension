@@ -105,14 +105,14 @@ suite('projectDataProvider Modules', () => {
         expect(stubWriteFile).calledOnce;
     });
 
-    test('getDependencyVersion should return success', () => {
-        let stubExec = sandbox.stub(child_process, 'exec').yields(null, 'success', 'success');
-        let stubExistsSync = sandbox.stub(fs, 'existsSync').returns(true);
-        ProjectDataProvider.getDependencyVersion('path/package.json', (cb) => {
-            expect(cb).equals(true);
-        });
-        expect(stubExistsSync).callCount(2);
-        expect(stubExec).calledOnce;
-    });
+    // test('getDependencyVersion should return success', () => {
+    //     let stubExec = sandbox.stub(child_process, 'exec').yields(null, 'success', 'success');
+    //     let stubExistsSync = sandbox.stub(fs, 'existsSync').returns(true);
+    //     ProjectDataProvider.getDependencyVersion('path/package.json', (cb) => {
+    //         expect(cb).equals(true);
+    //     });
+    //     expect(stubExistsSync).callCount(2);
+    //     expect(stubExec).calledOnce;
+    // });
 
 });

@@ -11,4 +11,3 @@ export namespace Commands {
     export const TRIGGER_LSP_EDIT = 'lsp.applyTextEdit';
 
 }
-

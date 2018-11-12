@@ -9,8 +9,8 @@ import * as path from 'path';
 
 import { Commands } from './commands';
 import { contentprovidermodule } from './contentprovidermodule';
-import { multimanifestmodule } from './multimanifestmodule';
-import { authextension } from './authextension';
+import { Multimanifestmodule } from './multimanifestmodule';
+import { Authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 
 let lspClient: LanguageClient;
@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let provider = new contentprovidermodule.TextDocumentContentProvider();  //new TextDocumentContentProvider();
 	let registration = vscode.workspace.registerTextDocumentContentProvider('fabric8-analytics-widget', provider);
 	
-	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => multimanifestmodule.dependencyAnalyticsReportFlow(context, provider, previewUri));
+	let disposableFullStack = vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS, () => Multimanifestmodule.dependencyAnalyticsReportFlow(context, provider, previewUri));
 	
 	let runCodeAction = ((document: vscode.TextDocument, range: vscode.Range, message:string) => {
 		let edit = new vscode.WorkspaceEdit();
@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	let disposableLspEdit = vscode.commands.registerCommand(Commands.TRIGGER_LSP_EDIT, runCodeAction, this);  
 
-	authextension.authorize_f8_analytics(context, (data) => {
+	Authextension.authorize_f8_analytics(context, (data) => {
 		if(data){
 			// The server is implemented in node
 			let serverModule = context.asAbsolutePath(

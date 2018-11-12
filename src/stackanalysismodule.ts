@@ -3,33 +3,29 @@
 import * as vscode from 'vscode';
 
 import { Apiendpoint } from './apiendpoint';
-import { multimanifestmodule } from './multimanifestmodule';
+import { Multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
-import { authextension } from './authextension';
-import { stackAnalysisServices } from './stackAnalysisService';
+import { Authextension } from './authextension';
+import { StackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
 
-export module stackanalysismodule {
+export class StackAnalysisModule {
 
-    export let stack_collector_count = 0;
+    static stack_collector_count: number = 0;
+    
 
-    export let stack_collector: any;
-    export let get_stack_metadata: any;
-    export let post_stack_analysis: any;
-    export let processStackAnalyses: any;
-
-    stack_collector = (file_uri, id, cb) => {
+    static stack_collector(file_uri, id, cb) {
         const options = {};
-        stack_collector_count++;
+        this.stack_collector_count++;
         options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-        stackAnalysisServices.getStackAnalysisService(options)
+        StackAnalysisServices.getStackAnalysisService(options)
         .then((respData) => {
             if (!respData.hasOwnProperty('error')) {
                 cb(respData);
             }
             else {
-                if(stack_collector_count <= 10){
-                    setTimeout(() => { stack_collector(file_uri, id, cb); }, 6000);
+                if(this.stack_collector_count <= 10){
+                    setTimeout(() => { this.stack_collector(file_uri, id, cb); }, 6000);
                 } else{
                     vscode.window.showErrorMessage(`Unable to get stack analyzed, try again`);
                     cb(null);
@@ -41,7 +37,7 @@ export module stackanalysismodule {
         });
 	};
 
-	get_stack_metadata = (context, editor, file_uri, cb) => {
+	static get_stack_metadata(context, editor, file_uri, cb) {
         let payloadData : any;
         let projRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
         if(projRoot && file_uri){
@@ -56,7 +52,7 @@ export module stackanalysismodule {
             vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,null).then(
                 (result: vscode.Uri[]) => {
                     if(result && result.length){
-                        multimanifestmodule.form_manifests_payload(result, (data) => {
+                        Multimanifestmodule.form_manifests_payload(result, (data) => {
                             if(data){
                                 payloadData = data;
                                 const options = {};
@@ -66,11 +62,11 @@ export module stackanalysismodule {
                                 options['formData'] = payloadData;
                                 thatContext = context;
 
-                                stackAnalysisServices.postStackAnalysisService(options, thatContext)
+                                StackAnalysisServices.postStackAnalysisService(options, thatContext)
                                 .then((respData) => {
                                     console.log(`Analyzing your stack, id ${respData}`);
-                                    stack_collector_count = 0;
-                                    stack_collector(file_uri, respData, cb);
+                                    this.stack_collector_count = 0;
+                                    this.stack_collector(file_uri, respData, cb);
                                 })
                                 .catch((err) => {
                                     console.log(err);
@@ -104,7 +100,7 @@ export module stackanalysismodule {
         }
 	};
 
-    processStackAnalyses = (context, editor, provider, previewUri) => {
+    static processStackAnalyses(context, editor, provider, previewUri) {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
         let fileUri: string = editor.document.fileName;
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
@@ -119,10 +115,10 @@ export module stackanalysismodule {
                     if(dataEpom){
                         p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
                         provider.signalInit(previewUri,null);
-                        authextension.authorize_f8_analytics(context, (data) => {
+                        Authextension.authorize_f8_analytics(context, (data) => {
                             if(data){
                               return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
-                                stackanalysismodule.get_stack_metadata(context, editor, dataEpom, (data) => {
+                                this.get_stack_metadata(context, editor, dataEpom, (data) => {
                                   if(data){
                                     p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES });
                                     resolve();

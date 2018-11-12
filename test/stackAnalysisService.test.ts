@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
-import { stackAnalysisServices } from '../src/stackAnalysisService';
+import { StackAnalysisServices } from '../src/stackAnalysisService';
 
 const request = require('request');
 
@@ -44,7 +44,7 @@ suite('stacknalysis Services', () => {
     });
 
     test('context data should have been cleared', () => {	
-        stackAnalysisServices.clearContextInfo(context);	
+        StackAnalysisServices.clearContextInfo(context);	
         expect(context.globalState.get('f8_access_routes')).equals('');	
         expect(context.globalState.get('f8_3scale_user_key')).equals('');	
     });
@@ -54,7 +54,7 @@ suite('stacknalysis Services', () => {
         let sampleBody = {'result': 'sucess'};
         options['uri'] = 'https://abc.com';
         let stubRequestGet = sandbox.stub(request, 'get').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
-        stackAnalysisServices.getStackAnalysisService(options);
+        StackAnalysisServices.getStackAnalysisService(options);
         expect(stubRequestGet).calledOnce;
     });
 
@@ -63,7 +63,7 @@ suite('stacknalysis Services', () => {
         let sampleBody = {'result': 'sucess'};
         options['uri'] = 'https://abc.com';
         let stubRequestGet = sandbox.stub(request, 'get').yields(null, {'statusCode':403}, JSON.stringify(sampleBody));
-        stackAnalysisServices.getStackAnalysisService(options);
+        StackAnalysisServices.getStackAnalysisService(options);
         expect(stubRequestGet).calledOnce;
     });
 
@@ -72,7 +72,7 @@ suite('stacknalysis Services', () => {
         let sampleBody = {'id': '12345','status':'success'};
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
-        stackAnalysisServices.postStackAnalysisService(options, context);
+        StackAnalysisServices.postStackAnalysisService(options, context);
         expect(stubRequestPost).calledOnce;
     });
 
@@ -81,7 +81,7 @@ suite('stacknalysis Services', () => {
         let sampleBody = { 'error': 'Could not process aa76ab88de4d444896e1969360f628bf.'};
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
-        stackAnalysisServices.postStackAnalysisService(options, context);
+        StackAnalysisServices.postStackAnalysisService(options, context);
         expect(stubRequestPost).calledOnce;
     });
 
@@ -89,7 +89,7 @@ suite('stacknalysis Services', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':401});
-        stackAnalysisServices.postStackAnalysisService(options, context);
+        StackAnalysisServices.postStackAnalysisService(options, context);
         expect(stubRequestPost).calledOnce;
     });
 
@@ -97,7 +97,7 @@ suite('stacknalysis Services', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':429});
-        stackAnalysisServices.postStackAnalysisService(options, context);
+        StackAnalysisServices.postStackAnalysisService(options, context);
         expect(stubRequestPost).calledOnce;
     });
 
@@ -105,16 +105,16 @@ suite('stacknalysis Services', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':400});
-        stackAnalysisServices.postStackAnalysisService(options, context);
+        StackAnalysisServices.postStackAnalysisService(options, context);
         expect(stubRequestPost).calledOnce;
     });
 
     test('postStackAnalysisService should return success with statuscode 500 and call ClearContextInfo', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        let spyClearContextInfo = sandbox.spy(stackAnalysisServices, 'clearContextInfo');
+        let spyClearContextInfo = sandbox.spy(StackAnalysisServices, 'clearContextInfo');
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':500});
-        stackAnalysisServices.postStackAnalysisService(options, context);
+        StackAnalysisServices.postStackAnalysisService(options, context);
         expect(stubRequestPost).calledOnce;
         expect(spyClearContextInfo).calledOnce;
     });
@@ -122,9 +122,9 @@ suite('stacknalysis Services', () => {
     test('postStackAnalysisService should return error', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        let spyClearContextInfo = sandbox.spy(stackAnalysisServices, 'clearContextInfo');
+        let spyClearContextInfo = sandbox.spy(StackAnalysisServices, 'clearContextInfo');
         let stubRequestPost = sandbox.stub(request, 'post').yields('err');
-        stackAnalysisServices.postStackAnalysisService(options, context);
+        StackAnalysisServices.postStackAnalysisService(options, context);
         expect(stubRequestPost).calledOnce;
         expect(spyClearContextInfo).calledOnce;
     });

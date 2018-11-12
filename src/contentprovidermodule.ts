@@ -57,7 +57,6 @@ export module contentprovidermodule {
   		}
 	}
 
-
     let render_project_failure = () => {
       return `<div>
                 <p style='color:#ffffff;text-align: center;'>Unable to analyze your stack.</p>
@@ -65,7 +64,7 @@ export module contentprovidermodule {
     };
 
     let render_stack_iframe = (portaluri) => {
-      //const result = sa.result[0];
+      // const result = sa.result[0];
       return `<iframe width="100%" height="100%" frameborder="0" src=${portaluri} id="frame2" name="frame2"></iframe>`;
     };
 

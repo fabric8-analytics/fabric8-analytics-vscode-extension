@@ -3,12 +3,11 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
-import { authextension } from '../src/authextension';
-import { stackanalysismodule } from '../src/stackanalysismodule';
+import { Authextension } from '../src/authextension';
+import { StackAnalysisModule } from '../src/stackanalysismodule';
 import { contentprovidermodule } from '../src/contentprovidermodule';
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
-import { stackAnalysisServices } from '../src/stackAnalysisService';
-import { multimanifestmodule } from '../src/multimanifestmodule';
+import { StackAnalysisServices } from '../src/stackAnalysisService';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -62,7 +61,7 @@ suite('stacknalysis module', () => {
         let callback = sandbox.spy();
         let showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
         let stubWorkspaceFolder = sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns(undefined);
-        stackanalysismodule.get_stack_metadata(context, editor, '', callback);
+        StackAnalysisModule.get_stack_metadata(context, editor, '', callback);
         expect(callback).calledOnce;
         expect(showErrorMessageSpy).calledOnce;
     });
@@ -70,8 +69,8 @@ suite('stacknalysis module', () => {
     test('stack_collector should call getStackAnalysisService with failure', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        let stubGetStackAnalysisService = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects('err');
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+        let stubGetStackAnalysisService = sandbox.stub(StackAnalysisServices, 'getStackAnalysisService').rejects('err');
+        StackAnalysisModule.stack_collector('file-uri', '1234', (callback) => {
             expect(callback).equals(null);
         });
         expect(stubGetStackAnalysisService).calledOnce;
@@ -80,8 +79,8 @@ suite('stacknalysis module', () => {
     test('stack_collector should call getStackAnalysisService with success', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        let stubGetStackAnalysisServ = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+        let stubGetStackAnalysisServ = sandbox.stub(StackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
+        StackAnalysisModule.stack_collector('file-uri', '1234', (callback) => {
             expect(callback.result).equals('success');
         });
         expect(stubGetStackAnalysisServ).calledOnce;
@@ -90,8 +89,8 @@ suite('stacknalysis module', () => {
     test('stack_collector should call getStackAnalysisService with success having error as property', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'error':'err msg'});
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+        sandbox.stub(StackAnalysisServices, 'getStackAnalysisService').resolves({'error':'err msg'});
+        StackAnalysisModule.stack_collector('file-uri', '1234', (callback) => {
             expect(callback.error).equals('success');
         });
         
@@ -100,8 +99,8 @@ suite('stacknalysis module', () => {
     test('stack_collector should call getStackAnalysisService with failure', () => {
         const options = {};
         options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects({'error':'err msg'});
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+        sandbox.stub(StackAnalysisServices, 'getStackAnalysisService').rejects({'error':'err msg'});
+        StackAnalysisModule.stack_collector('file-uri', '1234', (callback) => {
             expect(callback).equals(null);
         });
     });
@@ -111,19 +110,19 @@ suite('stacknalysis module', () => {
     
         test('processStackAnalyses should not call effectivef8Package', () => {
             let effectivef8PackageSpy = sandbox.spy(ProjectDataProvider, 'effectivef8Package');
-            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+            StackAnalysisModule.processStackAnalyses(context, provider, previewUri, '');
             expect(effectivef8PackageSpy).callCount(0);
         });
         
         test('processStackAnalyses should not call effectivef8Pom', () => {
             let effectivef8PomSpy = sandbox.spy(ProjectDataProvider, 'effectivef8Pom');
-            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+            StackAnalysisModule.processStackAnalyses(context, provider, previewUri, '');
             expect(effectivef8PomSpy).callCount(0);
         });
 
         test('processStackAnalyses should show info message as no manifest opened in editor', () => {
             let showInfoMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
-            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+            StackAnalysisModule.processStackAnalyses(context, provider, previewUri, '');
             expect(showInfoMessageSpy).calledOnce;
         }); 
     });
@@ -150,10 +149,10 @@ suite('stacknalysis module', () => {
             let spyEffectivef8Pom = sandbox.spy(ProjectDataProvider, 'effectivef8Pom');
             let spyWindowProgress = sandbox.spy(vscode.window, 'withProgress');
             let stubEffectivef8Package =  sandbox.stub(ProjectDataProvider, 'effectivef8Package').yields('/path/package.json');
-            let stubAuthorize_f8_analytics =  sandbox.stub(authextension, 'authorize_f8_analytics').yields(true);
+            let stubAuthorize_f8_analytics =  sandbox.stub(Authextension, 'authorize_f8_analytics').yields(true);
             let stubExecuteCommand =  sandbox.stub(vscode.commands, 'executeCommand').resolves(true);
-            sandbox.stub(stackanalysismodule, 'get_stack_metadata').yields(true);
-            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
+            sandbox.stub(StackAnalysisModule, 'get_stack_metadata').yields(true);
+            StackAnalysisModule.processStackAnalyses(context, editor, provider, previewUri);
             expect(spyEffectivef8Pom).callCount(0);
             expect(spyWindowProgress).callCount(1);
             expect(stubEffectivef8Package).calledOnce;
@@ -165,10 +164,10 @@ suite('stacknalysis module', () => {
             await activateEditorSleep(1500);
             let spyWindowProgress = sandbox.spy(vscode.window, 'withProgress');
             let stubEffectivef8Package =  sandbox.stub(ProjectDataProvider, 'effectivef8Package').yields(false);
-            let stubAuthorize_f8_analytics =  sandbox.stub(authextension, 'authorize_f8_analytics').yields(true);
+            let stubAuthorize_f8_analytics =  sandbox.stub(Authextension, 'authorize_f8_analytics').yields(true);
             let stubExecuteCommand =  sandbox.stub(vscode.commands, 'executeCommand').resolves(true);
-            sandbox.stub(stackanalysismodule, 'get_stack_metadata').yields(true);
-            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
+            sandbox.stub(StackAnalysisModule, 'get_stack_metadata').yields(true);
+            StackAnalysisModule.processStackAnalyses(context, editor, provider, previewUri);
             expect(spyWindowProgress).callCount(1);
             expect(stubEffectivef8Package).calledOnce;
             expect(stubAuthorize_f8_analytics).callCount(0);

@@ -2,14 +2,14 @@
 
 import { workspace } from 'vscode';
 
-export namespace Utils {
+export class Utils {
 
-    export function getMavenExecutable(): string {
+    static getMavenExecutable(): string {
         const mavenPath: string = workspace.getConfiguration('maven.executable').get<string>('path');
         return mavenPath ? `"${mavenPath}"` : 'mvn';
     }
 
-    export function getNodeExecutable(): string {
+    static getNodeExecutable(): string {
         const npmPath: string = workspace.getConfiguration('npm.executable').get<string>('path');
         return npmPath ? `"${npmPath}"` : 'npm';
     }

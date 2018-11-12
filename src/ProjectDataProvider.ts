@@ -3,18 +3,9 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import { Utils } from './Utils';
 
-export module  ProjectDataProvider {
+export class  ProjectDataProvider {
 
-    export let effectivef8PomWs: any;
-    export let effectivef8Pom: any;
-    export let effectivef8PackageWS: any;
-    export let effectivef8Package: any;
-    export let getDependencyVersion: any;
-    export let formPackagedependency: any;
-
-    let trimTrailingChars: any;
-
-    effectivef8PomWs = (item, cb) => {
+    static effectivef8PomWs(item, cb) {
         const cmd: string = [
             Utils.getMavenExecutable(),
             'io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare',
@@ -32,7 +23,7 @@ export module  ProjectDataProvider {
         });
     };
 
-    effectivef8Pom = (item, cb) => {
+    static effectivef8Pom(item, cb) {
         let pomXmlFilePath: string = null;
         let filepath: string = 'target/pom.xml';
         pomXmlFilePath = item;
@@ -61,12 +52,12 @@ export module  ProjectDataProvider {
         });
     };
 
-    effectivef8Package = (item, cb) => {
+    static effectivef8Package(item, cb) {
         let manifestRootFolderPath: string = null;
         manifestRootFolderPath = item.split('package.json')[0];
-        getDependencyVersion(manifestRootFolderPath, (depResp) => {
+        this.getDependencyVersion(manifestRootFolderPath, (depResp) => {
             if(depResp){
-                let formPackagedependencyPromise = formPackagedependency(item);
+                let formPackagedependencyPromise = this.formPackagedependency(item);
                 formPackagedependencyPromise.then((data) => {
                     return cb(data);
                 })
@@ -79,7 +70,7 @@ export module  ProjectDataProvider {
         });
     };
 
-    formPackagedependency= (item) => {
+    static formPackagedependency(item) {
         let manifestRootFolderPath: string = null;
         manifestRootFolderPath = item.split('package.json')[0];
         return new Promise((resolve, reject) => {
@@ -121,9 +112,9 @@ export module  ProjectDataProvider {
         });
     };
 
-    getDependencyVersion = (manifestRootFolderPath, cb) => {
+    static getDependencyVersion(manifestRootFolderPath, cb) {
         let dir = manifestRootFolderPath+'target';
-        let prefixPath = trimTrailingChars(manifestRootFolderPath);
+        let prefixPath = this.trimTrailingChars(manifestRootFolderPath);
         let npmPrefixPath = manifestRootFolderPath;
         if (!fs.existsSync(dir)){
             fs.mkdirSync(dir);
@@ -163,8 +154,8 @@ export module  ProjectDataProvider {
     };
 
 
-    trimTrailingChars = (s)  => {
-        let result = s.replace(/\\+$/, "");
+    static trimTrailingChars(s) {
+        let result = s.replace(/\\+$/, '');
         return result;
     };
 }

@@ -4,7 +4,7 @@
 [![Chat](https://img.shields.io/badge/chat-on%20mattermost-brightgreen.svg)](https://chat.openshift.io/developers/channels/fabric8-analytics)
 [![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/redhat.fabric8-analytics.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
 
-'Dependency Analytics Report' with Insights about your application dependencies:
+'Dependency Analytics Report' with Insights about your application dependencies: 
 * Flags a security vulnerability(CVE) and suggests a remedial version
 * Shows Github popularity metrics along with latest version
 * Suggests a project level license, check for conflicts between dependency licences

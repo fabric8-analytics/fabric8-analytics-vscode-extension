@@ -115,6 +115,8 @@ export module stackanalysismodule {
                 let effectiveF8Var = 'effectivef8Package';
                 if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
                     effectiveF8Var = 'effectivef8Pom';
+                } else if(fileUri.toLowerCase().indexOf('requirements.txt')!== -1){
+                    effectiveF8Var = 'effectivef8Pypi';
                 }
 
                 ProjectDataProvider[effectiveF8Var](editor.document.uri.fsPath, (dataEpom) => {

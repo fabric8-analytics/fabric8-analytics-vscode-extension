@@ -13,4 +13,9 @@ export namespace Utils {
         const npmPath: string = workspace.getConfiguration('npm.executable').get<string>('path');
         return npmPath ? `"${npmPath}"` : 'npm';
     }
+
+    export function getPypiExecutable(): string {
+        const pypiPath: string = workspace.getConfiguration('pypi.executable').get<string>('path');
+        return pypiPath;
+    }
 }

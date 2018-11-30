@@ -2,16 +2,18 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { exec } from 'child_process';
 import { Utils } from './Utils';
+import { StatusMessages } from './statusMessages';
 
 export module  ProjectDataProvider {
 
     export let effectivef8PomWs: any;
     export let effectivef8Pom: any;
-    export let effectivef8PackageWS: any;
     export let effectivef8Package: any;
     export let getDependencyVersion: any;
     export let formPackagedependency: any;
     export let formPackagedependencyNpmList: any;
+    export let effectivef8Pypi: any;
+
     let trimTrailingChars: any;
 
     effectivef8PomWs = (item, cb) => {
@@ -224,5 +226,51 @@ export module  ProjectDataProvider {
     trimTrailingChars = (s)  => {
         let result = s.replace(/\\+$/, "");
         return result;
+    };
+
+    effectivef8Pypi = (item, cb) => {
+        let reqTxtFilePath: string = item.indexOf('requirements.txt') > 0 ? item : item + 'requirements.txt';
+        let manifestRootFolderPath = item.split('requirements.txt')[0];
+        let filepath: string = manifestRootFolderPath+ 'target/pylist.json';
+        let dir = manifestRootFolderPath+'target';
+        let pyPiInterpreter = Utils.getPypiExecutable();
+        if(!pyPiInterpreter){
+            vscode.window.showInformationMessage(StatusMessages.PYPI_INTERPRETOR_PATH, 'More Details')
+            .then(selection => {
+                vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension#prerequisites'));
+            });
+            cb(false);
+            return;
+        }
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
+        const cmd: string = [
+            pyPiInterpreter,
+            `-m pip install -r `,
+            ` ${reqTxtFilePath};`,
+            pyPiInterpreter,
+            `-c 'exec("""\nimport sys,json,pkg_resources as pr;a=set();b=set();rt=open(sys.argv[1]).readlines();gd=pr.get_distribution;rq=pr.require;res=list()\nfor i in rt:\n    try:\n        for j in rq(i):\n            J=(gd(j).key,gd(j).version);a.add(J)\n            for k in j.requires():\n                K=(gd(k).key,gd(k).version);b.add(K)\n    except:\n        pass\nfor i in rt:\n    try:\n        p=gd(i);d=(p.key,p.version)\n        if d in (a-b):\n            rs={}\n            rs["package"]=p.key\n            rs["version"]=p.version\n            rs["deps"]=set()\n            for j in pr.require(i):\n                t=(j.key,j.version)\n                if d != t and d in (a-b): rs["deps"].add(t)\n            rs["deps"]=[{"package":p,"version":v}for p, v in rs["deps"]];res.append(rs)\n    except:\n        pass\na=sys.argv[2:3]\nop=open(a[0],"w") if a else sys.stdout\njson.dump(res,op)\n""")'`,
+            ` ${reqTxtFilePath}`,
+            ` ${filepath}`
+        ].join(' ');
+        console.log('effectivef8Pypi '+ cmd);
+        exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
+            if (error) {
+                vscode.window.showErrorMessage(_stderr);
+                console.log(_stderr);
+                console.log(error.message);
+                cb(false);
+            } else {
+                let eReqPathList: any = reqTxtFilePath.split('requirements.txt');
+                if(eReqPathList.length>0){
+                    let eReqPath: string = eReqPathList[0] + 'target/pylist.json';
+                    cb(eReqPath);
+                }else{
+                    vscode.window.showInformationMessage('Looks like there either are some problem with manifest file or python interpreter is not set');
+                    cb(false);
+                }
+            }
+        });
     };
 }

@@ -114,7 +114,7 @@ export module multimanifestmodule {
             'license': ''
         };
         let manifestObj: any;
-        let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json' , 'npmlist.json' : 'application/json', 'pom.xml' : 'text/xml', 'packageVersion.json' : 'application/json'};
+        let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json' , 'pom.xml' : 'text/xml', 'pylist.json' : 'application/json', 'npmlist.json' : 'application/json'};
         let licenseObj: any;
 
         let filePath: string = '';
@@ -155,6 +155,9 @@ export module multimanifestmodule {
                         form_data['manifest'] = manifestObj;
                         if(filePath && typeof filePath === 'string' && filePath.indexOf('npmlist') !== -1){
                             form_data['filePath'] = filePath.replace('npmlist','package');
+                        }
+                        if(filePath && typeof filePath === 'string' && filePath.indexOf('pylist.json') !== -1){
+                            form_data['filePath'] = filePath.replace('pylist.json','requirements.txt');
                         } else {
                             form_data['filePath'] = filePath;
                         }
@@ -191,6 +194,9 @@ export module multimanifestmodule {
         } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('package.json')!== -1) {
             Apiendpoint.API_ECOSYSTEM = 'npm';
             stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
+        } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('requirements.txt')!== -1) {
+            Apiendpoint.API_ECOSYSTEM = 'pypi';
+            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
         } else if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
             let workspaceFolder = await vscode.window.showWorkspaceFolderPick({placeHolder: 'Pick Workspace Folder...'}); 
                 if (workspaceFolder) {
@@ -208,7 +214,7 @@ export module multimanifestmodule {
         provider.signalInit(previewUri,null);
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
             return new Promise((resolve, reject) => {
-                const relativePattern = new vscode.RelativePattern(workspaceFolder, '{pom.xml,**/package.json}');
+                const relativePattern = new vscode.RelativePattern(workspaceFolder, '{pom.xml,**/package.json,requirements.txt}');
                 vscode.workspace.findFiles(relativePattern,'**/node_modules').then(
                 (result: vscode.Uri[]) => {
                     if(result && result.length){
@@ -226,11 +232,15 @@ export module multimanifestmodule {
                     let pom_count = 0;
                     result.forEach((item) => {
                         if (item.fsPath.indexOf('pom.xml') >= 0) {
-                        effective_pom_skip = false;
-                        pom_count += 1;
-                        Apiendpoint.API_ECOSYSTEM = 'maven';
-                        effectiveF8WsVar = 'effectivef8PomWs';
-                        filesRegex = 'target/stackinfo/**/pom.xml';
+                            effective_pom_skip = false;
+                            pom_count += 1;
+                            Apiendpoint.API_ECOSYSTEM = 'maven';
+                            effectiveF8WsVar = 'effectivef8PomWs';
+                            filesRegex = 'target/stackinfo/**/pom.xml';
+                        } else if(item.fsPath.indexOf('requirements.txt') >= 0){
+                            Apiendpoint.API_ECOSYSTEM = 'pypi';
+                            effectiveF8WsVar = 'effectivef8Pypi';
+                            filesRegex = 'target/pylist.json';
                         }
                     });
     

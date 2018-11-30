@@ -1,6 +1,5 @@
 # Dependency Analytics
 
-[![Build Status](https://ci.centos.org/job/devtools-fabric8-analytics-vscode-extension/badge/icon)](https://ci.centos.org/job/devtools-fabric8-analytics-vscode-extension/)
 [![Chat](https://img.shields.io/badge/chat-on%20mattermost-brightgreen.svg)](https://chat.openshift.io/developers/channels/fabric8-analytics)
 [![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/redhat.fabric8-analytics.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
 
@@ -12,8 +11,8 @@
 
 ## Supported Languages
 
-'Dependency Analytics' extension supports projects using Maven and projects build on npm (Node ecosystem). 
-Extending support for Python and Go languages is currently under progress.
+'Dependency Analytics' extension supports projects using Maven, projects build on npm (Node ecosystem) and projects using Python. 
+Extending support for Go languages is currently under progress.
 
 ## Prerequisites
 
@@ -21,6 +20,21 @@ This extension assumes you have the following binaries on your `PATH`:
 
 * `mvn` (for analyzing Java applications)
 * `npm` (for analyzing Node applications)
+* `python` (for analyzing Python applications)
+
+ **Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that  `mvn/npm` is found in your system environment `PATH`. For Python applicatin `Interpreter Path` is required to be provided as below.          	
+ You can do this via preferences in VS Code:	
+ File/Code > Preferences	This extension assumes you have the following binaries on your `PATH`:
+ 
+  ```
+  {
+      ...	
+      "maven.executable.path": "/path-to-maven-home/bin/mvn"	
+      "npm.executable.path": "/path-to-npm-home/bin/npm"
+      "pypi.executable.path": "/path-to-python-home/bin/python"
+      ...	
+  }	
+```
 
 > **NOTE** Dependency Analytics is an online service hosted and maintained by Red Hat. This open source software will access only your manifests and license file(s) to learn about application dependencies and licenses before giving you the report.
 
@@ -37,7 +51,7 @@ This extension assumes you have the following binaries on your `PATH`:
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.gif)
 
-2. Right click on a manifest file(`pom.xml` / `package.json`) and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
+2. Right click on a manifest file(`pom.xml` / `package.json`/ `requirements.txt`) and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
 * Flags a security vulnerability(CVE) and suggests a remedial version
 * Shows Github popularity metrics along with latest version
 * Suggests a project level license, check for conflicts between dependency licences

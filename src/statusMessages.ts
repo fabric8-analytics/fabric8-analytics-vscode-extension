@@ -13,4 +13,5 @@ export namespace StatusMessages {
     export const LSP_INITIALIZE = 'Initializing Language Server';
     export const REPORT_TAB_TITLE = 'Dependency Analytics Report';
     export const NO_SUPPORTED_MANIFEST = 'Cannot find supported manifest at root workspace level';
+    export const PYPI_INTERPRETOR_PATH = 'Provide path for python interpretor `Code/File -> Preferences -> Settings -> Workspace Settings`.For details check READMEs';
 }

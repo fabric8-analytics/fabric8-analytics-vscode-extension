@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 			// Options to control the language client
 			let clientOptions: LanguageClientOptions = {
 				// Register the server for xml, json documents
-				documentSelector: [{ scheme: 'file', language: 'json' },{ scheme: 'file', language: 'xml' }],
+				documentSelector: [{ scheme: 'file', language: 'json' },{ scheme: 'file', language: 'xml' }, { scheme: 'file', language: 'plaintext' }, { scheme: 'file', language: 'pip-requirements' }],
 				synchronize: {
 					// Synchronize the setting section 'dependencyAnalyticsServer' to the server
 					configurationSection: 'dependencyAnalyticsServer',

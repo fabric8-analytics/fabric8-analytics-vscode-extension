@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 			// Options to control the language client
 			let clientOptions: LanguageClientOptions = {
 				// Register the server for xml, json documents
-				documentSelector: [{ scheme: 'file', language: 'json' },{ scheme: 'file', language: 'xml' }, { scheme: 'file', language: 'plaintext' }],
+				documentSelector: [{ scheme: 'file', language: 'json' },{ scheme: 'file', language: 'xml' }],
 				synchronize: {
 					// Synchronize the setting section 'dependencyAnalyticsServer' to the server
 					configurationSection: 'dependencyAnalyticsServer',
@@ -80,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
 							setTimeout(function () {	
 							  resolve();
 							  if((respData && respData.hasOwnProperty('diagCount')) &&
-								((respData.diagCount > 0 && respData.diagCount !== diagCountInfo) || (!onFileOpen) || (vscode.window.activeTextEditor && onFileOpen && onFileOpen.indexOf(vscode.window.activeTextEditor.document.fileName) == -1))){
+								((respData.diagCount > 0 && respData.diagCount !== diagCountInfo) || (!onFileOpen) || (onFileOpen && onFileOpen.indexOf(vscode.window.activeTextEditor.document.fileName) == -1))){
 								diagCountInfo = respData.diagCount;
 								onFileOpen.push(vscode.window.activeTextEditor.document.fileName);
 								showInfoOnfileOpen(respData.data);

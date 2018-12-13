@@ -34,7 +34,6 @@ export module multimanifestmodule {
                             let file_uri: string;
                             options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                             options['formData'] = payloadData;
-                            options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
                             thatContext = context;
 
                             stackAnalysisServices.postStackAnalysisService(options, thatContext)
@@ -114,7 +113,7 @@ export module multimanifestmodule {
             'license': ''
         };
         let manifestObj: any;
-        let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json', 'npmlist.json' : 'application/json' , 'pom.xml' : 'text/xml', 'packageVersion.json' : 'application/json'};
+        let manifest_mime_type: any = {'requirements.txt' : 'text/plain', 'package.json' : 'application/json' , 'pom.xml' : 'text/xml', 'packageVersion.json' : 'application/json'};
         let licenseObj: any;
 
         let filePath: string = '';
@@ -153,11 +152,7 @@ export module multimanifestmodule {
                         manifestObj.options.contentType = manifest_mime_type[filePathList[filePathList.length-1]];
                         manifestObj.value = data.toString();
                         form_data['manifest'] = manifestObj;
-                        if(filePath && typeof filePath === 'string' && filePath.indexOf('npmlist') !== -1){
-                            form_data['filePath'] = filePath.replace('npmlist','package');
-                        } else {
-                            form_data['filePath'] = filePath;
-                        }
+                        form_data['filePath'] = filePath;
                     } else {
                         licenseObj.options.filename = 'LICENSE';
                         licenseObj.options.contentType = 'text/plain';
@@ -182,14 +177,12 @@ export module multimanifestmodule {
         let editor = vscode.window.activeTextEditor;
         if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
             let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-            Apiendpoint.API_ECOSYSTEM = 'maven';
             if(workspaceFolder.uri.fsPath + '/pom.xml' === editor.document.fileName || workspaceFolder.uri.fsPath + '\\pom.xml' === editor.document.fileName) {
                 triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
             } else {
                 stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             }
         } else if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('package.json')!== -1) {
-            Apiendpoint.API_ECOSYSTEM = 'npm';
             stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
         } else if(vscode.workspace.hasOwnProperty('workspaceFolders') && vscode.workspace['workspaceFolders'].length>1){
             let workspaceFolder = await vscode.window.showWorkspaceFolderPick({ placeHolder: 'Pick Workspace Folder to which this setting should be applied' })
@@ -215,20 +208,18 @@ export module multimanifestmodule {
                     // Do not create an effective pom if no pom.xml is present
                     let effective_pom_skip = true;
                     let effectiveF8WsVar = 'effectivef8Package';
-                    Apiendpoint.API_ECOSYSTEM = 'npm';
                     let vscodeRootpath = workspaceFolder.uri.fsPath;
                     if(process && process.platform && process.platform.toLowerCase() === 'win32'){
                         vscodeRootpath += '\\';
                     } else {
                         vscodeRootpath += '/'; 
                     }
-                    let filesRegex = 'target/npmlist.json';
+                    let filesRegex = 'target/package.json';
                     let pom_count = 0;
                     result.forEach((item) => {
                         if (item.fsPath.indexOf('pom.xml') >= 0) {
                         effective_pom_skip = false;
                         pom_count += 1;
-                        Apiendpoint.API_ECOSYSTEM = 'maven';
                         effectiveF8WsVar = 'effectivef8PomWs';
                         filesRegex = 'target/stackinfo/**/pom.xml';
                         }

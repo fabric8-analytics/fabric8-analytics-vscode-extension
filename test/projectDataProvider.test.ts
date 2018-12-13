@@ -63,7 +63,7 @@ suite('projectDataProvider Modules', () => {
 
     test('effectivef8Package should return success', () => {
         let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').yields(true);
-        let stubFormPackagedependency = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').resolves('sample');
+        let stubFormPackagedependency = sandbox.stub(ProjectDataProvider, 'formPackagedependency').resolves('sample');
         ProjectDataProvider.effectivef8Package('path/package.json', (cb) => {
             expect(cb).equals('sample');
         });
@@ -71,9 +71,9 @@ suite('projectDataProvider Modules', () => {
         expect(stubFormPackagedependency).calledOnce;
     });
 
-    test('effectivef8Package should return error if formPackagedependencyNpmList fails', () => {
+    test('effectivef8Package should return error if formPackagedependency fails', () => {
         let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').yields(true);
-        let stubFormPackagedependency = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').rejects('err');
+        let stubFormPackagedependency = sandbox.stub(ProjectDataProvider, 'formPackagedependency').rejects('err');
         ProjectDataProvider.effectivef8Package('path/package.json', (cb) => {
             expect(cb).equals(false);
         });

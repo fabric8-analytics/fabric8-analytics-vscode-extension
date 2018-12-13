@@ -39,8 +39,7 @@
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "workspaceContains:**/package.json",
-    "workspaceContains:**/pom.xml",
-    "workspaceContains:**/requirements.txt"
+    "workspaceContains:**/pom.xml"
   ],
   "main": "./out/src/extension",
   "contributes": {

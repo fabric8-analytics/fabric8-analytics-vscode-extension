@@ -53,7 +53,8 @@ export module stackanalysismodule {
             }
             let filePathList = file_uri.split(encodedProjRootPath+strSplit);
             if(filePathList && filePathList.length>1) {
-            vscode.workspace.findFiles(`{${filePathList[1]},LICENSE}`,null).then(
+                const relativePattern = new vscode.RelativePattern(projRoot, `{${filePathList[1]},LICENSE}`);
+                vscode.workspace.findFiles(relativePattern,null).then(
                 (result: vscode.Uri[]) => {
                     if(result && result.length){
                         multimanifestmodule.form_manifests_payload(result, (data) => {

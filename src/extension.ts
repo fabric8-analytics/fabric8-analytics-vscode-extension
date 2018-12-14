@@ -79,8 +79,9 @@ export function activate(context: vscode.ExtensionContext) {
 							p.report({message: respData.data });
 							setTimeout(function () {	
 							  resolve();
-							  if((respData && respData.hasOwnProperty('diagCount')) &&
-								((respData.diagCount > 0 && respData.diagCount !== diagCountInfo) || (!onFileOpen) || (onFileOpen && onFileOpen.indexOf(vscode.window.activeTextEditor.document.fileName) == -1))){
+							  if((respData && respData.hasOwnProperty('diagCount') && vscode.window.activeTextEditor) &&
+								((respData.diagCount > 0 && respData.diagCount !== diagCountInfo) || 
+								(!onFileOpen) || (onFileOpen && onFileOpen.indexOf(vscode.window.activeTextEditor.document.fileName) === -1))){
 								diagCountInfo = respData.diagCount;
 								onFileOpen.push(vscode.window.activeTextEditor.document.fileName);
 								showInfoOnfileOpen(respData.data);

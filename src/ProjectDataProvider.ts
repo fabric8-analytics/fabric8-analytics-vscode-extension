@@ -11,7 +11,7 @@ export module  ProjectDataProvider {
     export let effectivef8Package: any;
     export let getDependencyVersion: any;
     export let formPackagedependency: any;
-
+    export let formPackagedependencyNpmList: any;
     let trimTrailingChars: any;
 
     effectivef8PomWs = (item, cb) => {
@@ -56,17 +56,19 @@ export module  ProjectDataProvider {
                 }else{
                     vscode.window.showInformationMessage('Looks like there either are some problem with manifest file or mvn is not set in path');
                     cb(false);
+                    
                 }
             }
         });
-    };
+    }; 
 
     effectivef8Package = (item, cb) => {
         let manifestRootFolderPath: string = null;
         manifestRootFolderPath = item.split('package.json')[0];
         getDependencyVersion(manifestRootFolderPath, (depResp) => {
             if(depResp){
-                let formPackagedependencyPromise = formPackagedependency(item);
+                // let formPackagedependencyPromise = formPackagedependency(item);
+                let formPackagedependencyPromise = formPackagedependencyNpmList(item);
                 formPackagedependencyPromise.then((data) => {
                     return cb(data);
                 })
@@ -76,6 +78,62 @@ export module  ProjectDataProvider {
             }else {
                 cb(false);
             }
+        });
+    };
+
+    function isEmptyObject(obj) {
+        for(var prop in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+            return false;
+          }
+        }
+        return true;
+    }
+
+    function clearEmptyObject(myObj) {
+        for(var key in myObj){
+            if(!(myObj[key] instanceof Array) && typeof(myObj[key]) == 'object' && isEmptyObject(myObj[key])){
+                delete myObj[key];
+            } 
+        }
+        return myObj;
+    }
+
+    function formatObj(myObj, keyArrays){
+        for(var key in myObj){
+            if(keyArrays.indexOf(key) == -1 && ( myObj[key] instanceof Array || typeof(myObj[key]) != 'object' || isEmptyObject(myObj[key]))){
+                delete myObj[key];
+            } else {
+                if(typeof(myObj[key]) == 'object') {
+                    formatObj(myObj[key],keyArrays);
+                }
+            }  
+        }
+        return myObj = clearEmptyObject(myObj);
+    }
+
+    formPackagedependencyNpmList = (item) => {
+        let manifestRootFolderPath: string = null;
+        manifestRootFolderPath = item.split('package.json')[0];
+        return new Promise((resolve, reject) => {
+            fs.readFile(manifestRootFolderPath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
+                if(data){
+                    let packageListDependencies = JSON.parse(data);
+                    let packageDependencies = formatObj(packageListDependencies, ['name','version']);
+                    fs.writeFile(manifestRootFolderPath+'target/npmlist.json',JSON.stringify(packageDependencies), function(err) {
+                        if(err) {
+                            vscode.window.showErrorMessage(`Unable to format ${manifestRootFolderPath}target/npmlist.json`);
+                            reject(err);
+                        } else {
+                            let ePkgPath: any = manifestRootFolderPath+'target/npmlist.json';
+                            resolve(ePkgPath);
+                        }  
+                    });
+                } else {
+                    vscode.window.showErrorMessage(`Unable to parse ${manifestRootFolderPath}target/npmlist.json`);
+                    reject(err);
+                }
+            });
         });
     };
 

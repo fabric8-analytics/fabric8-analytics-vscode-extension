@@ -65,6 +65,7 @@ export module stackanalysismodule {
                                 let file_uri: string;
                                 options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
                                 options['formData'] = payloadData;
+                                options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
                                 thatContext = context;
 
                                 stackAnalysisServices.postStackAnalysisService(options, thatContext)

@@ -156,7 +156,7 @@ export module multimanifestmodule {
                         if(filePath && typeof filePath === 'string' && filePath.indexOf('npmlist') !== -1){
                             form_data['filePath'] = filePath.replace('npmlist','package');
                         }
-                        if(filePath && typeof filePath === 'string' && filePath.indexOf('pylist.json') !== -1){
+                        else if(filePath && typeof filePath === 'string' && filePath.indexOf('pylist.json') !== -1){
                             form_data['filePath'] = filePath.replace('pylist.json','requirements.txt');
                         } else {
                             form_data['filePath'] = filePath;

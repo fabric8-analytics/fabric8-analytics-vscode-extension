@@ -10,7 +10,6 @@ export module  ProjectDataProvider {
     export let effectivef8Pom: any;
     export let effectivef8Package: any;
     export let getDependencyVersion: any;
-    export let formPackagedependency: any;
     export let formPackagedependencyNpmList: any;
     export let effectivef8Pypi: any;
 
@@ -84,7 +83,7 @@ export module  ProjectDataProvider {
     };
 
     function isEmptyObject(obj) {
-        for(var prop in obj) {
+        for(let prop in obj) {
           if (Object.prototype.hasOwnProperty.call(obj, prop)) {
             return false;
           }
@@ -93,7 +92,7 @@ export module  ProjectDataProvider {
     }
 
     function clearEmptyObject(myObj) {
-        for(var key in myObj){
+        for(let key in myObj){
             if(!(myObj[key] instanceof Array) && typeof(myObj[key]) == 'object' && isEmptyObject(myObj[key])){
                 delete myObj[key];
             } 
@@ -102,8 +101,8 @@ export module  ProjectDataProvider {
     }
 
     function formatObj(myObj, keyArrays){
-        for(var key in myObj){
-            if(keyArrays.indexOf(key) == -1 && ( myObj[key] instanceof Array || typeof(myObj[key]) != 'object' || isEmptyObject(myObj[key]))){
+        for(let key in myObj){
+            if(keyArrays.indexOf(key) === -1 && ( myObj[key] instanceof Array || typeof(myObj[key]) != 'object' || isEmptyObject(myObj[key]))){
                 delete myObj[key];
             } else {
                 if(typeof(myObj[key]) == 'object') {
@@ -139,47 +138,6 @@ export module  ProjectDataProvider {
         });
     };
 
-    formPackagedependency= (item) => {
-        let manifestRootFolderPath: string = null;
-        manifestRootFolderPath = item.split('package.json')[0];
-        return new Promise((resolve, reject) => {
-            fs.readFile(manifestRootFolderPath+'package.json', {encoding: 'utf-8'}, function(err, data) {
-                if(data){
-                    let packageDependencies = JSON.parse(data);
-                    fs.readFile(manifestRootFolderPath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
-                        if(data){
-                            let packageListDependencies = JSON.parse(data);
-                            let packageDepKeys = [];
-                            if(packageDependencies && packageDependencies.hasOwnProperty('dependencies')) {
-                                packageDepKeys = Object.keys(packageDependencies.dependencies);
-                            }
-                            for(let i =0; i<packageDepKeys.length;i++) {
-                                if(packageListDependencies.dependencies[packageDepKeys[i]] && 
-                                    packageListDependencies.dependencies[packageDepKeys[i]].version) {
-                                    packageDependencies.dependencies[packageDepKeys[i]] = packageListDependencies.dependencies[packageDepKeys[i]].version;
-                                } 
-                            }
-                            fs.writeFile(manifestRootFolderPath+'target/package.json',JSON.stringify(packageDependencies), function(err) {
-                                if(err) {
-                                    vscode.window.showErrorMessage(`Unable to create ${manifestRootFolderPath}target/package.json`);
-                                    reject(err);
-                                } else {
-                                    let ePkgPath: any = manifestRootFolderPath+'target/package.json';
-                                    resolve(ePkgPath);
-                                }  
-                            });
-                        } else {
-                            vscode.window.showErrorMessage(`Unable to parse ${manifestRootFolderPath}target/npmlist.json`);
-                            reject(err);
-                        }
-                    });
-                } else {
-                    vscode.window.showErrorMessage(`Unable to parse ${item}`);
-                    reject(err);
-                }
-            });
-        });
-    };
 
     getDependencyVersion = (manifestRootFolderPath, cb) => {
         let dir = manifestRootFolderPath+'target';

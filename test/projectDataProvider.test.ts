@@ -63,45 +63,45 @@ suite('projectDataProvider Modules', () => {
 
     test('effectivef8Package should return success', () => {
         let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').yields(true);
-        let stubFormPackagedependency = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').resolves('sample');
+        let stubFormPackagedependencyNpmList = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').resolves('sample');
         ProjectDataProvider.effectivef8Package('path/package.json', (cb) => {
             expect(cb).equals('sample');
         });
         expect(stubGetDependencyVersion).calledOnce;
-        expect(stubFormPackagedependency).calledOnce;
+        expect(stubFormPackagedependencyNpmList).calledOnce;
     });
 
     test('effectivef8Package should return error if formPackagedependencyNpmList fails', () => {
         let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').yields(true);
-        let stubFormPackagedependency = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').rejects('err');
+        let stubFormPackagedependencyNpmList = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').rejects('err');
         ProjectDataProvider.effectivef8Package('path/package.json', (cb) => {
             expect(cb).equals(false);
         });
         expect(stubGetDependencyVersion).calledOnce;
-        expect(stubFormPackagedependency).calledOnce;
+        expect(stubFormPackagedependencyNpmList).calledOnce;
     });
 
-    test('formPackagedependency should return error', () => {
+    test('formPackagedependencyNpmList should return error', () => {
         let stubReadFile = sandbox.stub(fs, 'readFile').yields('err');
-        ProjectDataProvider.formPackagedependency('path/package.json');
+        ProjectDataProvider.formPackagedependencyNpmList('path/package.json');
         expect(stubReadFile).calledOnce;
     });
 
-    test('formPackagedependency should return success', () => {
+    test('formPackagedependencyNpmList should return success', () => {
         let sampleBody = { 'status': 'success'};
         let stubReadFile = sandbox.stub(fs, 'readFile').yields(null, JSON.stringify(sampleBody));
         let stubWriteFile = sandbox.stub(fs, 'writeFile').yields(null, true);
-        ProjectDataProvider.formPackagedependency('path/package.json');
-        expect(stubReadFile).callCount(2);
+        ProjectDataProvider.formPackagedependencyNpmList('path/package.json');
+        expect(stubReadFile).calledOnce;
         expect(stubWriteFile).calledOnce;
     });
 
-    test('formPackagedependency fail while writing file', () => {
+    test('formPackagedependencyNpmList fail while writing file', () => {
         let sampleBody = { 'status': 'success'};
         let stubReadFile = sandbox.stub(fs, 'readFile').yields(null, JSON.stringify(sampleBody));
         let stubWriteFile = sandbox.stub(fs, 'writeFile').yields('err');
-        ProjectDataProvider.formPackagedependency('path/package.json');
-        expect(stubReadFile).callCount(2);
+        ProjectDataProvider.formPackagedependencyNpmList('path/package.json');
+        expect(stubReadFile).calledOnce;
         expect(stubWriteFile).calledOnce;
     });
 

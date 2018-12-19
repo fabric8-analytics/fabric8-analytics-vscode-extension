@@ -24,7 +24,7 @@ This extension assumes you have the following binaries on your `PATH`:
 
  **Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that  `mvn/npm` is found in your system environment `PATH`. For Python applicatin `Interpreter Path` is required to be provided as below.          	
  You can do this via preferences in VS Code:	
- File/Code > Preferences	This extension assumes you have the following binaries on your `PATH`:
+ File/Code > Preferences > Setting > Workspace Settings. Then Open settings.json.	This extension assumes you have the following binaries on your `PATH`:
  
   ```
   {

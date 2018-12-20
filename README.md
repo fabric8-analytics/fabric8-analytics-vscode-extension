@@ -22,16 +22,16 @@ This extension assumes you have the following binaries on your `PATH`:
 * `npm` (for analyzing Node applications)
 * `python` (for analyzing Python applications)
 
- **Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that  `mvn/npm` is found in your system environment `PATH`. For Python applicatin `Interpreter Path` is required to be provided as below.          	
+ **Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that  `mvn/npm` is found in your system environment `PATH`. For Python applications [Interpreter Path](https://code.visualstudio.com/docs/python/environments#_manually-specify-an-interpreter) is required to be provided as below.          	
  You can do this via preferences in VS Code:	
- File/Code > Preferences > Setting > Workspace Settings. Then Open settings.json.	This extension assumes you have the following binaries on your `PATH`:
+ File(Code on macOS) > Preferences > Settings to open your [Settings](https://code.visualstudio.com/docs/getstarted/settings), select Workspace (open settings.json) and add below.
  
   ```
   {
       ...	
       "maven.executable.path": "/path-to-maven-home/bin/mvn"	
       "npm.executable.path": "/path-to-npm-home/bin/npm"
-      "pypi.executable.path": "/path-to-python-home/bin/python"
+      "python.pythonPath": "/path-to-python-home/bin/python"
       ...	
   }	
 ```
@@ -41,13 +41,13 @@ This extension assumes you have the following binaries on your `PATH`:
 ## Quick Start
 
   - Install the extension.
-  - Opening or editing a manifest file (`pom.xml` / `package.json`) scans your application for security vulnerabilities.
-  - Right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or  'Vscode File editor' to display 'Dependency Analytics Report' for your application.
+  - Opening or editing a manifest file (`pom.xml` / `package.json`/ `requirements.txt`) scans your application for security vulnerabilities.
+  - Right click on a manifest file (`pom.xml`/`package.json`/ `requirements.txt`) in the 'Vscode File explorer' or  'Vscode File editor' to display 'Dependency Analytics Report' for your application.
 
 
 ## Features
 
-1. Opening or editing a manifest file (`pom.xml` / `package.json`) scans your application for security vulnerabilities, flag them along with 'quick fixes'.
+1. Opening or editing a manifest file (`pom.xml` / `package.json`/ `requirements.txt`) scans your application for security vulnerabilities, flag them along with 'quick fixes'.
 
 ![ screencast ](https://raw.githubusercontent.com/fabric8-analytics/fabric8-analytics-vscode-extension/master/images/compAnalysis.gif)
 

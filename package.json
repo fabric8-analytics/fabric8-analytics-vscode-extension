@@ -40,7 +40,8 @@
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "workspaceContains:**/package.json",
-    "workspaceContains:**/pom.xml"
+    "workspaceContains:**/pom.xml",
+    "workspaceContains:**/requirements.txt"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -120,6 +121,17 @@
         }
       ]
     },
+    "configurationAttributes": {
+      "launch": {
+        "properties": {
+          "pythonPath": {
+            "type": "string",
+            "description": "Path (fully qualified) to python executable. Defaults to the value in settings.json",
+            "default": "${config:python.pythonPath}"
+          }
+        }
+      }
+    },
     "configuration": {
       "type": "object",
       "title": "Openshift.io configuration",
@@ -151,10 +163,10 @@
           "description": "Specifies absolute path of npm executable.",
           "scope": "window"
         },
-        "pypi.executable.path": {
+        "python.pythonPath": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of npm executable.",
+          "description": "Path (fully qualified) to python executable. Defaults to the value in settings.json",
           "scope": "window"
         }
       }

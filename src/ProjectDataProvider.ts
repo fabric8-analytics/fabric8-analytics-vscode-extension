@@ -192,6 +192,12 @@ export module  ProjectDataProvider {
         let filepath: string = manifestRootFolderPath+ 'target/pylist.json';
         let dir = manifestRootFolderPath+'target';
         let pyPiInterpreter = Utils.getPypiExecutable();
+        let editor = vscode.window.activeTextEditor;
+        if(editor && editor.document && editor.document.uri && pyPiInterpreter && pyPiInterpreter.indexOf('${workspaceFolder}')!== -1){
+            let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+            pyPiInterpreter = pyPiInterpreter.replace('${workspaceFolder}',workspaceFolder.uri.fsPath);
+        }
+        
         if(!pyPiInterpreter){
             vscode.window.showInformationMessage(StatusMessages.PYPI_INTERPRETOR_PATH, 'More Details')
             .then(selection => {

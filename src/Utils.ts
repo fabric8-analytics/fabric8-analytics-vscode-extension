@@ -15,7 +15,7 @@ export namespace Utils {
     }
 
     export function getPypiExecutable(): string {
-        const pypiPath: string = workspace.getConfiguration('pypi.executable').get<string>('path');
+        const pypiPath: string = workspace.getConfiguration('python').get('pythonPath');
         return pypiPath;
     }
 }

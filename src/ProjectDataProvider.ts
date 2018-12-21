@@ -214,7 +214,7 @@ export module  ProjectDataProvider {
             `-m pip install -r `,
             ` ${reqTxtFilePath};`,
             pyPiInterpreter,
-            `-c 'exec("""\nimport sys,json,pkg_resources as pr;a=set();b=set();rt=open(sys.argv[1]).readlines();gd=pr.get_distribution;rq=pr.require;res=list()\nfor i in rt:\n    try:\n        for j in rq(i):\n            J=(gd(j).key,gd(j).version);a.add(J)\n            for k in j.requires():\n                K=(gd(k).key,gd(k).version);b.add(K)\n    except:\n        pass\nfor i in rt:\n    try:\n        p=gd(i);d=(p.key,p.version)\n        if d in (a-b):\n            rs={}\n            rs["package"]=p.key\n            rs["version"]=p.version\n            rs["deps"]=set()\n            for j in pr.require(i):\n                t=(j.key,j.version)\n                if d != t and d in (a-b): rs["deps"].add(t)\n            rs["deps"]=[{"package":p,"version":v}for p, v in rs["deps"]];res.append(rs)\n    except:\n        pass\na=sys.argv[2:3]\nop=open(a[0],"w") if a else sys.stdout\njson.dump(res,op)\n""")'`,
+            StatusMessages.PYPI_INTERPRETOR_CMD,
             ` ${reqTxtFilePath}`,
             ` ${filepath}`
         ].join(' ');

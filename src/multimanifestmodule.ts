@@ -19,89 +19,100 @@ export module multimanifestmodule {
     export let manifestFileRead: any;
     export let dependencyAnalyticsReportFlow: any;
 
-    find_manifests_workspace = (context, workspaceFolder, filesRegex, cb) => {
-
-        let payloadData : any;
-        const relativePattern = new vscode.RelativePattern(workspaceFolder, `{${filesRegex},LICENSE}`);
-        vscode.workspace.findFiles(relativePattern,'**/node_modules').then(
-            (result: vscode.Uri[]) => {
-                if(result && result.length){
-                    form_manifests_payload(result, (data) => {
-                        if(data){
+    find_manifests_workspace = (context, workspaceFolder, filesRegex) => {
+        return new Promise(function(resolve, reject) {
+            let payloadData : any;
+            const relativePattern = new vscode.RelativePattern(workspaceFolder, `{${filesRegex},LICENSE}`);
+            vscode.workspace.findFiles(relativePattern,'**/node_modules').then(
+                (result: vscode.Uri[]) => {
+                    if(result && result.length){
+                        form_manifests_payload(result).then((data)=>{
                             payloadData = data;
-                            const options = {};
-                            let thatContext: any;
-                            let file_uri: string;
-                            options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-                            options['formData'] = payloadData;
-                            options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
-                            thatContext = context;
+                                const options = {};
+                                let thatContext: any;
+                                options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                                options['formData'] = payloadData;
+                                options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
+                                thatContext = context;
 
-                            stackAnalysisServices.postStackAnalysisService(options, thatContext)
-                            .then((respData) => {
-                                console.log(`Analyzing your stack, id ${respData}`);
-                                stackanalysismodule.stack_collector_count = 0;
-                                stackanalysismodule.stack_collector(file_uri, respData, cb);
-                            })
-                            .catch((err) => {
-                                cb(null);
-                            });
+                                stackAnalysisServices.postStackAnalysisService(options, thatContext)
+                                .then((respId) => {
+                                    console.log(`Analyzing your stack, id ${respId}`);
 
+                                    const interval = setInterval(() => {
+                                        stackanalysismodule.stack_collector(respId).then((data) => {
+                                            if (!data.hasOwnProperty('error')) {
+                                                clearInterval(interval);
+                                                resolve(data);
+                                            }
+                                            // keep on waiting
+                                        })
+                                        .catch(() => {
+                                            clearInterval(interval);
+                                            reject(null);
+                                        });;
+                                    }, 6000);
+                                })
+                                .catch((err) => {
+                                    reject(null);
+                                });
+                        })
+                        .catch(() => {
+                            vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
+                            reject(null);
+                        });
                     } else {
-                        vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
-                        cb(null);
+                        vscode.window.showErrorMessage('No manifest file found to be analysed');
+                        reject(null);
                     }
-                
+                    
+                },
+                // rejected
+                (reason: any) => {
+                    vscode.window.showErrorMessage(reason);
+                    reject(null);
                 });
-                } else {
-                     vscode.window.showErrorMessage('No manifest file found to be analysed');
-                     cb(null);
-                }
-                
-            },
-            // rejected
-            (reason: any) => {
-                vscode.window.showErrorMessage(reason);
-                cb(null);
-            });
+        });
     };
 
 
-    form_manifests_payload = (resultList, callbacknew) : any => {
-        let fileReadPromises: Array<any> = [];
-        for(let i=0;i<resultList.length;i++){
-            let fileReadPromise = manifestFileRead(resultList[i]);
-            fileReadPromises.push(fileReadPromise);
-        }
-
-        Promise.all(fileReadPromises)
-        .then((datas) => {
-            let form_data = {
-                'manifest[]': [],
-                'filePath[]': [],
-                'license[]': [],
-                origin: 'lsp'
-            };
-            datas.forEach((item) => {
-                if(item.manifest && item.filePath){
-                    form_data['manifest[]'].push(item.manifest);
-                    form_data['filePath[]'].push(item.filePath);
-                }
-                if(item.hasOwnProperty('license') &&  item.license.value){ 
-                    form_data['license[]'].push(item.license);
-                }
-                //TODO : for logging 400 issue
-                if (!item.manifest && !item.license) {
-                    console.log('Manifest is missed', item);
-                }
-                if (!item.filePath && !item.license) {
-                    console.log('filePath is missed', item);
-                }
+    form_manifests_payload = (resultList) : any => {
+        return new Promise((resolve,reject)=>{
+            let fileReadPromises: Array<any> = [];
+            for(let i=0;i<resultList.length;i++){
+                let fileReadPromise = manifestFileRead(resultList[i]);
+                fileReadPromises.push(fileReadPromise);
+            }
+    
+            Promise.all(fileReadPromises)
+            .then((datas) => {
+                let form_data = {
+                    'manifest[]': [],
+                    'filePath[]': [],
+                    'license[]': [],
+                    origin: 'lsp'
+                };
+                datas.forEach((item) => {
+                    if(item.manifest && item.filePath){
+                        form_data['manifest[]'].push(item.manifest);
+                        form_data['filePath[]'].push(item.filePath);
+                    }
+                    if(item.hasOwnProperty('license') &&  item.license.value){ 
+                        form_data['license[]'].push(item.license);
+                    }
+                    //TODO : for logging 400 issue
+                    if (!item.manifest && !item.license) {
+                        console.log('Manifest is missed', item);
+                    }
+                    if (!item.filePath && !item.license) {
+                        console.log('filePath is missed', item);
+                    }
+                });
+                resolve(form_data);
+            })
+            .catch(() => {
+                reject(null);
             });
-            callbacknew(form_data);
-        })
-        .catch(() => {
-            callbacknew(null);
         });
 
     };
@@ -245,24 +256,22 @@ export module multimanifestmodule {
                     } 
                     else {
                         p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES});
-                        ProjectDataProvider[effectiveF8WsVar](workspaceFolder, (dataEpom) => {
-                            if(dataEpom){
+                        ProjectDataProvider[effectiveF8WsVar](workspaceFolder).then(()=> {
                                 p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
-                                let promiseTriggerManifestWs = triggerManifestWs(context, workspaceFolder, filesRegex, provider, previewUri);
-                                promiseTriggerManifestWs.then(() => {
-                                p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
-                                resolve();
+                                triggerManifestWs(context, workspaceFolder, filesRegex, provider, previewUri).then(() => {
+                                    p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
+                                    resolve();
                                 })
                                 .catch(() => {
+                                    p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
+                                    reject();
+                                });
+                            })
+                            .catch(() => {
                                 p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
                                 reject();
-                                }); 
-                            } else {
-                                p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
-                                reject();
-                            }
-                        });
-                    }
+                            });
+                        }
                     } else {
                     vscode.window.showInformationMessage(StatusMessages.NO_SUPPORTED_MANIFEST);
                     reject();
@@ -281,15 +290,13 @@ export module multimanifestmodule {
             authextension.authorize_f8_analytics(context, (data) => {
             if(data){
                 vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
-                    let manifest_finder = multimanifestmodule.find_manifests_workspace;
-                    manifest_finder(context, workspaceFolder, filesRegex, (data) => {
-                        if(data){
-                            provider.signal(previewUri, data);
-                            resolve(true);
-                        } else {
-                            provider.signal(previewUri,null);
-                            reject();
-                        }
+                    find_manifests_workspace(context, workspaceFolder, filesRegex).then((data) => {
+                        provider.signal(previewUri, data);
+                        resolve(true);
+                    })
+                    .catch(() => {
+                        provider.signal(previewUri,null);
+                        reject();
                     });
                     provider.signalInit(previewUri,null);
                 }, (reason) => {
@@ -302,5 +309,4 @@ export module multimanifestmodule {
             });
         });
       };
-
 }

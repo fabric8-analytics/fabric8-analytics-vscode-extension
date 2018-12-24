@@ -58,16 +58,16 @@ suite('multimanifest module', () => {
         });
     });
 
-    test('find_manifests_workspace should call stack_collector', () => {
-        let stubStackCollector = sandbox.stub(stackanalysismodule,'stack_collector').yields(null);
-        sandbox.stub(vscode.workspace, 'findFiles').resolves([{'fspath':'path/file'}]);
-        sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields([{'fspath':'path/file'}]);
-        sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').resolves('12345');
-        let workspaceFolder = vscode.workspace.workspaceFolders[0];
-        multimanifestmodule.find_manifests_workspace(context, workspaceFolder, '/pom.xml', (data) => {
-            expect(stubStackCollector).calledOnce;
-        });
-    });
+    // test('find_manifests_workspace should call stack_collector', () => {
+    //     let stubStackCollector = sandbox.stub(stackanalysismodule,'stack_collector').yields(null);
+    //     sandbox.stub(vscode.workspace, 'findFiles').resolves([{'fspath':'path/file'}]);
+    //     sandbox.stub(multimanifestmodule, 'form_manifests_payload').yields([{'fspath':'path/file'}]);
+    //     sandbox.stub(stackAnalysisServices, 'postStackAnalysisService').resolves('12345');
+    //     let workspaceFolder = vscode.workspace.workspaceFolders[0];
+    //     multimanifestmodule.find_manifests_workspace(context, workspaceFolder, '/pom.xml', (data) => {
+    //         expect(stubStackCollector).calledOnce;
+    //     });
+    // });
 
     test('find_manifests_workspace should return null in callback if postStackAnalysisService fails', () => {
         sandbox.stub(vscode.workspace, 'findFiles').resolves([{'fspath':'path/file'}]);

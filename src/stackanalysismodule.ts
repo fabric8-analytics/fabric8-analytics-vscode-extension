@@ -5,37 +5,16 @@ import * as vscode from 'vscode';
 import { Apiendpoint } from './apiendpoint';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
-import { authextension } from './authextension';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
 
 export module stackanalysismodule {
-
-    export let stack_collector_count = 0;
-
-    export let stack_collector: any;
     export let get_stack_metadata: any;
     export let post_stack_analysis: any;
     export let processStackAnalyses: any;
 
-    stack_collector = (id) => {
-        return new Promise(function(resolve, reject){
-            const options = {};
-            stack_collector_count++;
-            options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${id}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-            stackAnalysisServices.getStackAnalysisService(options)
-            .then((respData) => {
-                resolve(respData);
-            })
-            .catch(() => {
-                reject(null);
-            });
-        });
-	};
-
-	get_stack_metadata = (context, editor, file_uri) => {
+	get_stack_metadata = (editor, file_uri) => {
         return new Promise(function(resolve,reject) {
-            let payloadData : any;
             let projRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
             if(projRoot && file_uri){
                 let projRootPath = projRoot.uri.fsPath;
@@ -50,41 +29,7 @@ export module stackanalysismodule {
                     vscode.workspace.findFiles(relativePattern,null).then(
                     (result: vscode.Uri[]) => {
                         if(result && result.length){
-                            multimanifestmodule.form_manifests_payload(result).then((data)=>{
-                                payloadData = data;
-                                const options = {};
-                                let thatContext: any;
-                                options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-                                options['formData'] = payloadData;
-                                options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
-                                thatContext = context;
-
-                                stackAnalysisServices.postStackAnalysisService(options, thatContext)
-                                .then((respId) => {
-                                    console.log(`Analyzing your stack, id ${respId}`);
-                                    const interval = setInterval(() => {
-                                        stackanalysismodule.stack_collector(respId).then((data) => {
-                                            if (!data.hasOwnProperty('error')) {
-                                                clearInterval(interval);
-                                                resolve(data);
-                                            }
-                                            // keep on waiting
-                                        })
-                                        .catch(() => {
-                                            clearInterval(interval);
-                                            reject(null);
-                                        });;
-                                    }, 6000);
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                    reject(null);
-                                });
-                            })
-                            .catch(()=>{
-                                vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
-                                reject(null);
-                            });
+                            resolve(result);
                         } else {
                             vscode.window.showErrorMessage('No manifest file found to be analyzed');
                             reject(null);
@@ -109,49 +54,74 @@ export module stackanalysismodule {
 
     processStackAnalyses = (context, editor, provider, previewUri) => {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
-        let fileUri: string = editor.document.fileName;
-        let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
-            return new Promise((resolve, reject) => {
-                p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
-                let effectiveF8Var = 'effectivef8Package';
-                let argumentList = workspaceFolder;
-                if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
-                    effectiveF8Var = 'effectivef8Pom';
-                    argumentList = editor.document.uri.fsPath;
-                } else if(fileUri.toLowerCase().indexOf('requirements.txt')!== -1){
-                    effectiveF8Var = 'effectivef8Pypi';
-                }
-                ProjectDataProvider[effectiveF8Var](argumentList).then((dataEpom)=> {
-                    p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
-                    provider.signalInit(previewUri,null);
-                    authextension.authorize_f8_analytics(context, (data) => {
-                        if(data){
-                            return vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
-                            
-                                get_stack_metadata(context, editor, dataEpom).then((data)=>{
-                                    p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES });
-                                    resolve();
+            let fileUri: string = editor.document.fileName;
+            let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+            provider.signalInit(previewUri,null);
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
+                return new Promise((resolve, reject) => {
+                    p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
+                    let effectiveF8Var = 'effectivef8Package';
+                    let argumentList = workspaceFolder;
+                    if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
+                        effectiveF8Var = 'effectivef8Pom';
+                        argumentList = editor.document.uri.fsPath;
+                    } else if(fileUri.toLowerCase().indexOf('requirements.txt')!== -1){
+                        effectiveF8Var = 'effectivef8Pypi';
+                    }
+                    ProjectDataProvider[effectiveF8Var](argumentList)
+                    .then(async (dataEpom)=> {
+                        await multimanifestmodule.triggerManifestWs(context, provider, previewUri);
+                        return dataEpom;
+                    })
+                    .then(async (dataEpom)=>{
+                        let result = await get_stack_metadata(editor, dataEpom);
+                        p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
+                        return result;
+                    })
+                    .then(async (result)=>{
+                        let formData = await multimanifestmodule.form_manifests_payload(result);
+                        return formData;
+                    })
+                    .then(async (formData)=>{
+                        let payloadData = formData;
+                        const options = {};
+                        let thatContext: any;
+                        options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                        options['formData'] = payloadData;
+                        options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
+                        thatContext = context;
+                        let respId = await stackAnalysisServices.postStackAnalysisService(options, thatContext);
+                        p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
+                        return respId;
+                    })
+                    .then(async (respId)=>{
+                        console.log(`Analyzing your stack, id ${respId}`);
+                        const options = {};
+                        options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${respId}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                        const interval = setInterval(() => {
+                            stackAnalysisServices.getStackAnalysisService(options).then((data) => {
+                                if (!data.hasOwnProperty('error')) {
+                                    clearInterval(interval);
+                                    p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
                                     provider.signal(previewUri, data);
-                                }).catch(()=> {
-                                    provider.signal(previewUri,null);
-                                    reject();
-                                });
-                            provider.signalInit(previewUri,null);
-                            }, (reason) => {
+                                    resolve();
+                                }
+                                // keep on waiting
+                            })
+                            .catch(() => {
+                                clearInterval(interval);
+                                provider.signal(previewUri,null);
                                 reject();
-                                vscode.window.showErrorMessage(reason);
-                            });
-                        } else {
-                            reject();
-                        }
+                            });;
+                        }, 6000);
+                    })
+                    .catch(() => {
+                        p.report({message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES});
+                        provider.signal(previewUri,null);
+                        reject();
                     });
-                }).catch(() => {
-                    p.report({message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES});
-                    reject();
                 });
             });
-          });
         } else {
             vscode.window.showInformationMessage(`No manifest file is active in editor`);
         }

@@ -67,44 +67,44 @@ suite('stacknalysis module', () => {
         expect(showErrorMessageSpy).calledOnce;
     });
 
-    test('stack_collector should call getStackAnalysisService with failure', () => {
-        const options = {};
-        options['uri'] = 'https://abc.com';
-        let stubGetStackAnalysisService = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects('err');
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-            expect(callback).equals(null);
-        });
-        expect(stubGetStackAnalysisService).calledOnce;
-    });
+    // test('stack_collector should call getStackAnalysisService with failure', () => {
+    //     const options = {};
+    //     options['uri'] = 'https://abc.com';
+    //     let stubGetStackAnalysisService = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects('err');
+    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+    //         expect(callback).equals(null);
+    //     });
+    //     expect(stubGetStackAnalysisService).calledOnce;
+    // });
 
-    test('stack_collector should call getStackAnalysisService with success', () => {
-        const options = {};
-        options['uri'] = 'https://abc.com';
-        let stubGetStackAnalysisServ = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-            expect(callback.result).equals('success');
-        });
-        expect(stubGetStackAnalysisServ).calledOnce;
-    });
+    // test('stack_collector should call getStackAnalysisService with success', () => {
+    //     const options = {};
+    //     options['uri'] = 'https://abc.com';
+    //     let stubGetStackAnalysisServ = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
+    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+    //         expect(callback.result).equals('success');
+    //     });
+    //     expect(stubGetStackAnalysisServ).calledOnce;
+    // });
 
-    test('stack_collector should call getStackAnalysisService with success having error as property', () => {
-        const options = {};
-        options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'error':'err msg'});
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-            expect(callback.error).equals('success');
-        });
+    // test('stack_collector should call getStackAnalysisService with success having error as property', () => {
+    //     const options = {};
+    //     options['uri'] = 'https://abc.com';
+    //     sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'error':'err msg'});
+    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+    //         expect(callback.error).equals('success');
+    //     });
         
-    });
+    // });
 
-    test('stack_collector should call getStackAnalysisService with failure', () => {
-        const options = {};
-        options['uri'] = 'https://abc.com';
-        sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects({'error':'err msg'});
-        stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-            expect(callback).equals(null);
-        });
-    });
+    // test('stack_collector should call getStackAnalysisService with failure', () => {
+    //     const options = {};
+    //     options['uri'] = 'https://abc.com';
+    //     sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects({'error':'err msg'});
+    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
+    //         expect(callback).equals(null);
+    //     });
+    // });
 
     suite('stacknalysis module: no manifest opened', () => {
 

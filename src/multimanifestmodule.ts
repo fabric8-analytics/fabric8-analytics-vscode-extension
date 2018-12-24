@@ -19,59 +19,23 @@ export module multimanifestmodule {
     export let manifestFileRead: any;
     export let dependencyAnalyticsReportFlow: any;
 
-    find_manifests_workspace = (context, workspaceFolder, filesRegex) => {
+    find_manifests_workspace = (workspaceFolder, filesRegex) => {
         return new Promise(function(resolve, reject) {
-            let payloadData : any;
             const relativePattern = new vscode.RelativePattern(workspaceFolder, `{${filesRegex},LICENSE}`);
-            vscode.workspace.findFiles(relativePattern,'**/node_modules').then(
-                (result: vscode.Uri[]) => {
-                    if(result && result.length){
-                        form_manifests_payload(result).then((data)=>{
-                            payloadData = data;
-                                const options = {};
-                                let thatContext: any;
-                                options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
-                                options['formData'] = payloadData;
-                                options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
-                                thatContext = context;
-
-                                stackAnalysisServices.postStackAnalysisService(options, thatContext)
-                                .then((respId) => {
-                                    console.log(`Analyzing your stack, id ${respId}`);
-
-                                    const interval = setInterval(() => {
-                                        stackanalysismodule.stack_collector(respId).then((data) => {
-                                            if (!data.hasOwnProperty('error')) {
-                                                clearInterval(interval);
-                                                resolve(data);
-                                            }
-                                            // keep on waiting
-                                        })
-                                        .catch(() => {
-                                            clearInterval(interval);
-                                            reject(null);
-                                        });;
-                                    }, 6000);
-                                })
-                                .catch((err) => {
-                                    reject(null);
-                                });
-                        })
-                        .catch(() => {
-                            vscode.window.showErrorMessage(`Failed to trigger application's stack analysis`);
-                            reject(null);
-                        });
-                    } else {
-                        vscode.window.showErrorMessage('No manifest file found to be analysed');
-                        reject(null);
-                    }
-                    
-                },
-                // rejected
-                (reason: any) => {
-                    vscode.window.showErrorMessage(reason);
+            vscode.workspace.findFiles(relativePattern,'**/node_modules')
+            .then((result: vscode.Uri[]) => {
+                if(result && result.length){
+                    resolve(result);
+                } else {
+                    vscode.window.showErrorMessage('No manifest file found to be analysed');
                     reject(null);
-                });
+                }
+            },
+            // rejected
+            (reason: any) => {
+                vscode.window.showErrorMessage(reason);
+                reject(null);
+            });
         });
     };
 
@@ -256,19 +220,55 @@ export module multimanifestmodule {
                     } 
                     else {
                         p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES});
-                        ProjectDataProvider[effectiveF8WsVar](workspaceFolder).then(()=> {
+                        ProjectDataProvider[effectiveF8WsVar](workspaceFolder)
+                            .then(async ()=> {
+                                await triggerManifestWs(context, provider, previewUri);
+                            })
+                            .then(async ()=>{
+                                let result = await find_manifests_workspace(workspaceFolder, filesRegex);
                                 p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
-                                triggerManifestWs(context, workspaceFolder, filesRegex, provider, previewUri).then(() => {
-                                    p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
-                                    resolve();
-                                })
-                                .catch(() => {
-                                    p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
-                                    reject();
-                                });
+                                return result;
+                            })
+                            .then(async (result)=>{
+                                let formData = await form_manifests_payload(result);
+                                return formData;
+                            })
+                            .then(async (formData)=>{
+                                let payloadData = formData;
+                                const options = {};
+                                let thatContext: any;
+                                options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                                options['formData'] = payloadData;
+                                options['headers'] = {'origin': 'vscode','ecosystem': Apiendpoint.API_ECOSYSTEM};
+                                thatContext = context;
+                                let respId = await stackAnalysisServices.postStackAnalysisService(options, thatContext);
+                                p.report({message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES});
+                                return respId;
+                            })
+                            .then(async (respId)=>{
+                                console.log(`Analyzing your stack, id ${respId}`);
+                                const options = {};
+                                options['uri'] = `${Apiendpoint.STACK_API_URL}stack-analyses/${respId}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                                const interval = setInterval(() => {
+                                    stackAnalysisServices.getStackAnalysisService(options).then((data) => {
+                                        if (!data.hasOwnProperty('error')) {
+                                            clearInterval(interval);
+                                            provider.signal(previewUri, data);
+                                            resolve();
+                                        }
+                                        // keep on waiting
+                                    })
+                                    .catch(() => {
+                                        clearInterval(interval);
+                                        p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
+                                        provider.signal(previewUri,null);
+                                        reject();
+                                    });;
+                                }, 6000);
                             })
                             .catch(() => {
                                 p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
+                                provider.signal(previewUri,null);
                                 reject();
                             });
                         }
@@ -285,20 +285,13 @@ export module multimanifestmodule {
         });
     };
 
-    triggerManifestWs = (context, workspaceFolder, filesRegex, provider, previewUri) => {
+    triggerManifestWs = (context, provider, previewUri) => {
         return new Promise((resolve,reject) => {
             authextension.authorize_f8_analytics(context, (data) => {
             if(data){
                 vscode.commands.executeCommand('vscode.previewHtml', previewUri, vscode.ViewColumn.One, StatusMessages.REPORT_TAB_TITLE).then((success) => {
-                    find_manifests_workspace(context, workspaceFolder, filesRegex).then((data) => {
-                        provider.signal(previewUri, data);
-                        resolve(true);
-                    })
-                    .catch(() => {
-                        provider.signal(previewUri,null);
-                        reject();
-                    });
                     provider.signalInit(previewUri,null);
+                    resolve(true);
                 }, (reason) => {
                     vscode.window.showErrorMessage(reason);
                     reject();

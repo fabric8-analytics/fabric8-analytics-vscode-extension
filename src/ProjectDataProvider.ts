@@ -15,12 +15,18 @@ export module  ProjectDataProvider {
 
     let trimTrailingChars: any;
 
-    effectivef8PomWs = (item, cb) => {
+    effectivef8PomWs = (workspaceFolder, cb) => {
+        let vscodeRootpath = workspaceFolder.uri.fsPath;
+        if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+            vscodeRootpath += '\\';
+        } else {
+            vscodeRootpath += '/'; 
+        }
         const cmd: string = [
             Utils.getMavenExecutable(),
             'io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare',
             '-f',
-            `"${item}"`
+            `"${vscodeRootpath}"`
         ].join(' ');
         console.log('effectivef8PomWs '+ cmd);
         exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {
@@ -63,13 +69,16 @@ export module  ProjectDataProvider {
         });
     }; 
 
-    effectivef8Package = (item, cb) => {
-        let manifestRootFolderPath: string = null;
-        manifestRootFolderPath = item.split('package.json')[0];
-        getDependencyVersion(manifestRootFolderPath, (depResp) => {
+    effectivef8Package = (workspaceFolder, cb) => {
+        let vscodeRootpath = workspaceFolder.uri.fsPath;
+        if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+            vscodeRootpath += '\\';
+        } else {
+            vscodeRootpath += '/'; 
+        }
+        getDependencyVersion(vscodeRootpath, (depResp) => {
             if(depResp){
-                // let formPackagedependencyPromise = formPackagedependency(item);
-                let formPackagedependencyPromise = formPackagedependencyNpmList(item);
+                let formPackagedependencyPromise = formPackagedependencyNpmList(vscodeRootpath);
                 formPackagedependencyPromise.then((data) => {
                     return cb(data);
                 })
@@ -113,25 +122,23 @@ export module  ProjectDataProvider {
         return myObj = clearEmptyObject(myObj);
     }
 
-    formPackagedependencyNpmList = (item) => {
-        let manifestRootFolderPath: string = null;
-        manifestRootFolderPath = item.split('package.json')[0];
+    formPackagedependencyNpmList = (vscodeRootpath) => {
         return new Promise((resolve, reject) => {
-            fs.readFile(manifestRootFolderPath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
+            fs.readFile(vscodeRootpath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
                 if(data){
                     let packageListDependencies = JSON.parse(data);
                     let packageDependencies = formatObj(packageListDependencies, ['name','version']);
-                    fs.writeFile(manifestRootFolderPath+'target/npmlist.json',JSON.stringify(packageDependencies), function(err) {
+                    fs.writeFile(vscodeRootpath+'target/npmlist.json',JSON.stringify(packageDependencies), function(err) {
                         if(err) {
-                            vscode.window.showErrorMessage(`Unable to format ${manifestRootFolderPath}target/npmlist.json`);
+                            vscode.window.showErrorMessage(`Unable to format ${vscodeRootpath}target/npmlist.json`);
                             reject(err);
                         } else {
-                            let ePkgPath: any = manifestRootFolderPath+'target/npmlist.json';
+                            let ePkgPath: any = vscodeRootpath+'target/npmlist.json';
                             resolve(ePkgPath);
                         }  
                     });
                 } else {
-                    vscode.window.showErrorMessage(`Unable to parse ${manifestRootFolderPath}target/npmlist.json`);
+                    vscode.window.showErrorMessage(`Unable to parse ${vscodeRootpath}target/npmlist.json`);
                     reject(err);
                 }
             });
@@ -186,15 +193,19 @@ export module  ProjectDataProvider {
         return result;
     };
 
-    effectivef8Pypi = (item, cb) => {
-        let reqTxtFilePath: string = item.indexOf('requirements.txt') > 0 ? item : item + 'requirements.txt';
-        let manifestRootFolderPath = item.split('requirements.txt')[0];
-        let filepath: string = manifestRootFolderPath+ 'target/pylist.json';
-        let dir = manifestRootFolderPath+'target';
+    effectivef8Pypi = (workspaceFolder, cb) => {
+        let vscodeRootpath = workspaceFolder.uri.fsPath;
+        if(process && process.platform && process.platform.toLowerCase() === 'win32'){
+            vscodeRootpath += '\\';
+        } else {
+            vscodeRootpath += '/'; 
+        }
+
+        let reqTxtFilePath: string = vscodeRootpath + 'requirements.txt';
+        let filepath: string = vscodeRootpath+ 'target/pylist.json';
+        let dir = vscodeRootpath+'target';
         let pyPiInterpreter = Utils.getPypiExecutable();
-        let editor = vscode.window.activeTextEditor;
-        if(editor && editor.document && editor.document.uri && pyPiInterpreter && pyPiInterpreter.indexOf('${workspaceFolder}')!== -1){
-            let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+        if(pyPiInterpreter && pyPiInterpreter.indexOf('${workspaceFolder}')!== -1){
             pyPiInterpreter = pyPiInterpreter.replace('${workspaceFolder}',workspaceFolder.uri.fsPath);
         }
         

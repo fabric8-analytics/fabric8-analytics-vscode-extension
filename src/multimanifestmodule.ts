@@ -222,12 +222,6 @@ export module multimanifestmodule {
                     let effective_pom_skip = true;
                     let effectiveF8WsVar = 'effectivef8Package';
                     Apiendpoint.API_ECOSYSTEM = 'npm';
-                    let vscodeRootpath = workspaceFolder.uri.fsPath;
-                    if(process && process.platform && process.platform.toLowerCase() === 'win32'){
-                        vscodeRootpath += '\\';
-                    } else {
-                        vscodeRootpath += '/'; 
-                    }
                     let filesRegex = 'target/npmlist.json';
                     let pom_count = 0;
                     result.forEach((item) => {
@@ -251,7 +245,7 @@ export module multimanifestmodule {
                     } 
                     else {
                         p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES});
-                        ProjectDataProvider[effectiveF8WsVar](vscodeRootpath, (dataEpom) => {
+                        ProjectDataProvider[effectiveF8WsVar](workspaceFolder, (dataEpom) => {
                             if(dataEpom){
                                 p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES});
                                 let promiseTriggerManifestWs = triggerManifestWs(context, workspaceFolder, filesRegex, provider, previewUri);

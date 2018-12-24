@@ -109,17 +109,19 @@ export module stackanalysismodule {
     processStackAnalyses = (context, editor, provider, previewUri) => {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
         let fileUri: string = editor.document.fileName;
+        let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
             return new Promise((resolve, reject) => {
                 p.report({message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
                 let effectiveF8Var = 'effectivef8Package';
+                let argumentList = workspaceFolder;
                 if(fileUri.toLowerCase().indexOf('pom.xml')!== -1){
                     effectiveF8Var = 'effectivef8Pom';
+                    argumentList = editor.document.uri.fsPath;
                 } else if(fileUri.toLowerCase().indexOf('requirements.txt')!== -1){
                     effectiveF8Var = 'effectivef8Pypi';
                 }
-
-                ProjectDataProvider[effectiveF8Var](editor.document.uri.fsPath, (dataEpom) => {
+                ProjectDataProvider[effectiveF8Var](argumentList, (dataEpom) => {
                     if(dataEpom){
                         p.report({message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
                         provider.signalInit(previewUri,null);

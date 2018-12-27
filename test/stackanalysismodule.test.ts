@@ -58,53 +58,13 @@ suite('stacknalysis module', () => {
        sandbox.restore();
     });
 
-    test('get_stack_metadata should call the callback when called with empty file uri', () => {
-        let callback = sandbox.spy();
+    test('get_stack_metadata should call the callback when called with empty file uri', async () => {
         let showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
-        let stubWorkspaceFolder = sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns(undefined);
-        stackanalysismodule.get_stack_metadata(context, editor, '', callback);
-        expect(callback).calledOnce;
-        expect(showErrorMessageSpy).calledOnce;
+        sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns(undefined);
+        await stackanalysismodule.get_stack_metadata(editor, '').catch((err) => {
+            expect(showErrorMessageSpy).calledOnce;
+        });
     });
-
-    // test('stack_collector should call getStackAnalysisService with failure', () => {
-    //     const options = {};
-    //     options['uri'] = 'https://abc.com';
-    //     let stubGetStackAnalysisService = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects('err');
-    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-    //         expect(callback).equals(null);
-    //     });
-    //     expect(stubGetStackAnalysisService).calledOnce;
-    // });
-
-    // test('stack_collector should call getStackAnalysisService with success', () => {
-    //     const options = {};
-    //     options['uri'] = 'https://abc.com';
-    //     let stubGetStackAnalysisServ = sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'result':'success'});
-    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-    //         expect(callback.result).equals('success');
-    //     });
-    //     expect(stubGetStackAnalysisServ).calledOnce;
-    // });
-
-    // test('stack_collector should call getStackAnalysisService with success having error as property', () => {
-    //     const options = {};
-    //     options['uri'] = 'https://abc.com';
-    //     sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').resolves({'error':'err msg'});
-    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-    //         expect(callback.error).equals('success');
-    //     });
-        
-    // });
-
-    // test('stack_collector should call getStackAnalysisService with failure', () => {
-    //     const options = {};
-    //     options['uri'] = 'https://abc.com';
-    //     sandbox.stub(stackAnalysisServices, 'getStackAnalysisService').rejects({'error':'err msg'});
-    //     stackanalysismodule.stack_collector('file-uri', '1234', (callback) => {
-    //         expect(callback).equals(null);
-    //     });
-    // });
 
     suite('stacknalysis module: no manifest opened', () => {
 
@@ -139,21 +99,15 @@ suite('stacknalysis module', () => {
             });
         }
 
-        function sleep(ms){
-            return new Promise(resolve => {
-                setTimeout(resolve,ms);
-            });
-        }
-
         test('processStackAnalyses should call effectivef8Package not effectivef8Pom as manifest file is opened in editor is package.json', async () => {
             await activateEditorSleep(1500);
             let spyEffectivef8Pom = sandbox.spy(ProjectDataProvider, 'effectivef8Pom');
             let spyWindowProgress = sandbox.spy(vscode.window, 'withProgress');
-            let stubEffectivef8Package =  sandbox.stub(ProjectDataProvider, 'effectivef8Package').yields('/path/package.json');
+            let stubEffectivef8Package =  sandbox.stub(ProjectDataProvider, 'effectivef8Package').resolves('/path/package.json');
             let stubAuthorize_f8_analytics =  sandbox.stub(authextension, 'authorize_f8_analytics').yields(true);
             let stubExecuteCommand =  sandbox.stub(vscode.commands, 'executeCommand').resolves(true);
-            sandbox.stub(stackanalysismodule, 'get_stack_metadata').yields(true);
-            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
+            sandbox.stub(stackanalysismodule, 'get_stack_metadata').resolves(true);
+            await stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             expect(spyEffectivef8Pom).callCount(0);
             expect(spyWindowProgress).callCount(1);
             expect(stubEffectivef8Package).calledOnce;

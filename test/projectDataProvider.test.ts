@@ -58,31 +58,16 @@ suite('projectDataProvider Modules', () => {
 
     test('effectivef8Package should return error', () => {
         let workspaceFolder = vscode.workspace.workspaceFolders[0];
-        let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').yields(false);
-        ProjectDataProvider.effectivef8Package(workspaceFolder, (cb) => {
-            expect(cb).equals(false);
-        });
+        let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').rejects(false);
+        ProjectDataProvider.effectivef8Package(workspaceFolder);
         expect(stubGetDependencyVersion).calledOnce;
     });
 
-    test('effectivef8Package should return success', () => {
+    test('effectivef8Package should return success', async () => {
         let workspaceFolder = vscode.workspace.workspaceFolders[0];
-        let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').yields(true);
+        let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').resolves(true);
         let stubFormPackagedependencyNpmList = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').resolves('sample');
-        ProjectDataProvider.effectivef8Package(workspaceFolder, (cb) => {
-            expect(cb).equals('sample');
-        });
-        expect(stubGetDependencyVersion).calledOnce;
-        expect(stubFormPackagedependencyNpmList).calledOnce;
-    });
-
-    test('effectivef8Package should return error if formPackagedependencyNpmList fails', () => {
-        let workspaceFolder = vscode.workspace.workspaceFolders[0];
-        let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').yields(true);
-        let stubFormPackagedependencyNpmList = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').rejects('err');
-        ProjectDataProvider.effectivef8Package(workspaceFolder, (cb) => {
-            expect(cb).equals(false);
-        });
+        await ProjectDataProvider.effectivef8Package(workspaceFolder);
         expect(stubGetDependencyVersion).calledOnce;
         expect(stubFormPackagedependencyNpmList).calledOnce;
     });

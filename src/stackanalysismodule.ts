@@ -14,7 +14,7 @@ export module stackanalysismodule {
     export let processStackAnalyses: any;
 
 	get_stack_metadata = (editor, file_uri) => {
-        return new Promise(function(resolve,reject) {
+        return new Promise((resolve,reject) => {
             let projRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
             if(projRoot && file_uri){
                 let projRootPath = projRoot.uri.fsPath;
@@ -31,23 +31,20 @@ export module stackanalysismodule {
                         if(result && result.length){
                             resolve(result);
                         } else {
-                            vscode.window.showErrorMessage('No manifest file found to be analyzed');
-                            reject(null);
+                            reject(StatusMessages.NO_SUPPORTED_MANIFEST);
                         }
                     },
                     // rejected
                     (reason: any) => {
                         vscode.window.showErrorMessage(reason);
-                        reject(null);
+                        reject(reason);
                     });
                 } else {
-                    vscode.window.showErrorMessage('Please reopen the file, unable to get filepath');
-                    reject(null);
+                    reject(`Please reopen the file, unable to get filepath`);
                 }
     
             } else {
-                vscode.window.showErrorMessage('Please reopen the Project, unable to get project path');
-                reject(null);
+                reject(`Please reopen the Project, unable to get project path`);
             }
         });
 	};
@@ -108,16 +105,20 @@ export module stackanalysismodule {
                                 }
                                 // keep on waiting
                             })
-                            .catch(() => {
+                            .catch((error) => {
                                 clearInterval(interval);
                                 provider.signal(previewUri,null);
-                                reject();
+                                console.log(error);
+                                vscode.window.showErrorMessage(error);
+                                reject(error);
                             });;
                         }, 6000);
                     })
-                    .catch(() => {
+                    .catch((err) => {
                         p.report({message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES});
                         provider.signal(previewUri,null);
+                        console.log(err);
+                        vscode.window.showErrorMessage(err);
                         reject();
                     });
                 });

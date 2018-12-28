@@ -59,10 +59,9 @@ suite('stacknalysis module', () => {
     });
 
     test('get_stack_metadata should call the callback when called with empty file uri', async () => {
-        let showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
         sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns(undefined);
         await stackanalysismodule.get_stack_metadata(editor, '').catch((err) => {
-            expect(showErrorMessageSpy).calledOnce;
+            expect(err).equals('Please reopen the Project, unable to get project path');
         });
     });
 

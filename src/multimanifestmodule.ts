@@ -12,14 +12,7 @@ import { StatusMessages } from './statusMessages';
 
 export module multimanifestmodule {
 
-    export let find_manifests_workspace: any;
-    export let form_manifests_payload: any;
-    export let triggerFullStackAnalyses: any;
-    export let triggerManifestWs: any;
-    export let manifestFileRead: any;
-    export let dependencyAnalyticsReportFlow: any;
-
-    find_manifests_workspace = (workspaceFolder, filesRegex) => {
+    export const find_manifests_workspace = (workspaceFolder, filesRegex) => {
         return new Promise(function(resolve, reject) {
             const relativePattern = new vscode.RelativePattern(workspaceFolder, `{${filesRegex},LICENSE}`);
             vscode.workspace.findFiles(relativePattern,'**/node_modules')
@@ -27,20 +20,18 @@ export module multimanifestmodule {
                 if(result && result.length){
                     resolve(result);
                 } else {
-                    vscode.window.showErrorMessage('No manifest file found to be analysed');
-                    reject(null);
+                    reject(`No manifest file found to be analysed`);
                 }
             },
             // rejected
             (reason: any) => {
-                vscode.window.showErrorMessage(reason);
-                reject(null);
+                reject(reason);
             });
         });
     };
 
 
-    form_manifests_payload = (resultList) : any => {
+    export const form_manifests_payload = (resultList) : any => {
         return new Promise((resolve,reject)=>{
             let fileReadPromises: Array<any> = [];
             for(let i=0;i<resultList.length;i++){
@@ -82,7 +73,7 @@ export module multimanifestmodule {
     };
 
 
-    manifestFileRead = (fileContent) => {
+    export const manifestFileRead = (fileContent) => {
         let form_data = {
             'manifest': '',
             'filePath': '',
@@ -98,7 +89,7 @@ export module multimanifestmodule {
         let projRootPath = projRoot.uri.fsPath;
         return new Promise((resolve, reject) => {
             let fsPath : string = fileContent.fsPath ? fileContent.fsPath : '';
-            fs.readFile(fsPath, function(err, data) {
+            fs.readFile(fsPath, function(err, data) {  
                 if(data){
                     manifestObj = {
                         value: '',
@@ -156,7 +147,7 @@ export module multimanifestmodule {
     * Needed async function in order to wait for user selection in case of 
     * multi root projects
     */
-    dependencyAnalyticsReportFlow = async (context, provider, previewUri) => {
+   export const dependencyAnalyticsReportFlow = async (context, provider, previewUri) => {
         let editor = vscode.window.activeTextEditor;
         if(editor && editor.document.fileName && editor.document.fileName.toLowerCase().indexOf('pom.xml')!== -1) {
             let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
@@ -185,7 +176,7 @@ export module multimanifestmodule {
         }
     };
 
-    triggerFullStackAnalyses = (context, workspaceFolder, provider, previewUri) => {
+    export const triggerFullStackAnalyses = (context, workspaceFolder, provider, previewUri) => {
         provider.signalInit(previewUri,null);
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: StatusMessages.EXT_TITLE}, p => {
             return new Promise((resolve, reject) => {
@@ -265,7 +256,7 @@ export module multimanifestmodule {
                                         console.log(error);
                                         vscode.window.showErrorMessage(error);
                                         reject();
-                                    });;
+                                    });
                                 }, 6000);
                             })
                             .catch((err) => {
@@ -289,7 +280,7 @@ export module multimanifestmodule {
         });
     };
 
-    triggerManifestWs = (context, provider, previewUri) => {
+    export const triggerManifestWs = (context, provider, previewUri) => {
         return new Promise((resolve,reject) => {
             authextension.authorize_f8_analytics(context, (data) => {
             if(data){

@@ -177,7 +177,8 @@
     "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "CODE_TESTS_WORKSPACE='./test/resources/sampleNodeApp/' node ./node_modules/vscode/bin/test",
-    "reinstall": "npm cache verify && npm install"
+    "reinstall": "npm cache verify && npm install",
+    "lint": "tslint -c tslint.json src/*.ts"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -186,7 +187,7 @@
     "@types/sinon": "^5.0.2",
     "decache": "^4.4.0",
     "mocha": "^5.2.0",
-    "tslint": "^4.3.1",
+    "tslint": "^5.11.0",
     "chai": "^4.1.2",
     "sinon": "^6.3.4",
     "sinon-chai": "^3.2.0",

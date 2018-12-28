@@ -7,8 +7,6 @@ import { authextension } from '../src/authextension';
 import { stackanalysismodule } from '../src/stackanalysismodule';
 import { contentprovidermodule } from '../src/contentprovidermodule';
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
-import { stackAnalysisServices } from '../src/stackAnalysisService';
-import { multimanifestmodule } from '../src/multimanifestmodule';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -22,7 +20,7 @@ suite('stacknalysis module', () => {
             'uri': {
                 'fsPath':'/Users/sampleNodeRepo/package.json',
                 'path':'/Users/sampleNodeRepo/package.json',
-                'scheme':"file"
+                'scheme':'file'
             }, 
             'fileName': '/Users/sampleNodeRepo/package.json'}};
     
@@ -39,6 +37,7 @@ suite('stacknalysis module', () => {
     const context: vscode.ExtensionContext = {
         extensionPath: 'path',
         storagePath: 'string',
+        // tslint:disable-next-line:no-empty
         subscriptions: { dispose(): any {} }[0],
         workspaceState: new DummyMemento(),
         globalState: new DummyMemento(),
@@ -60,9 +59,15 @@ suite('stacknalysis module', () => {
 
     test('get_stack_metadata should call the callback when called with empty file uri', async () => {
         sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns(undefined);
-        await stackanalysismodule.get_stack_metadata(editor, '').catch((err) => {
-            expect(err).equals('Please reopen the Project, unable to get project path');
-        });
+        let savedErr: string;
+        try {
+            await stackanalysismodule.get_stack_metadata(editor, '');
+        } catch (err) {
+            savedErr = err;    
+            return;
+        }
+        expect(savedErr).equals('Please reopen the Project, unable to get project path'); 
+        expect.fail();
     });
 
     suite('stacknalysis module: no manifest opened', () => {
@@ -70,20 +75,20 @@ suite('stacknalysis module', () => {
     
         test('processStackAnalyses should not call effectivef8Package', () => {
             let effectivef8PackageSpy = sandbox.spy(ProjectDataProvider, 'effectivef8Package');
-            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             expect(effectivef8PackageSpy).callCount(0);
         });
         
         test('processStackAnalyses should not call effectivef8Pom', () => {
             let effectivef8PomSpy = sandbox.spy(ProjectDataProvider, 'effectivef8Pom');
-            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
+            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             expect(effectivef8PomSpy).callCount(0);
         });
 
         test('processStackAnalyses should show info message as no manifest opened in editor', () => {
             let showInfoMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
-            stackanalysismodule.processStackAnalyses(context, provider, previewUri);
-            expect(showInfoMessageSpy).calledOnce;
+            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
+            expect(showInfoMessageSpy).callCount(1);
         }); 
     });
 
@@ -109,9 +114,9 @@ suite('stacknalysis module', () => {
             await stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             expect(spyEffectivef8Pom).callCount(0);
             expect(spyWindowProgress).callCount(1);
-            expect(stubEffectivef8Package).calledOnce;
-            expect(stubAuthorize_f8_analytics).calledOnce;
-            expect(stubExecuteCommand).calledOnce;
+            expect(stubEffectivef8Package).callCount(1);
+            expect(stubAuthorize_f8_analytics).callCount(1);
+            expect(stubExecuteCommand).callCount(1);
         });
 
         test('processStackAnalyses should not call authorize_f8_analytics if effectivef8Package fails', async () => {
@@ -121,9 +126,9 @@ suite('stacknalysis module', () => {
             let stubAuthorize_f8_analytics =  sandbox.stub(authextension, 'authorize_f8_analytics').yields(true);
             let stubExecuteCommand =  sandbox.stub(vscode.commands, 'executeCommand').resolves(true);
             sandbox.stub(stackanalysismodule, 'get_stack_metadata').yields(true);
-            stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
+            await stackanalysismodule.processStackAnalyses(context, editor, provider, previewUri);
             expect(spyWindowProgress).callCount(1);
-            expect(stubEffectivef8Package).calledOnce;
+            expect(stubEffectivef8Package).callCount(1);
             expect(stubAuthorize_f8_analytics).callCount(0);
             expect(stubExecuteCommand).callCount(0);
         });

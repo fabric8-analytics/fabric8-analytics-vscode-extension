@@ -6,16 +6,7 @@ import { StatusMessages } from './statusMessages';
 
 export module  ProjectDataProvider {
 
-    export let effectivef8PomWs: any;
-    export let effectivef8Pom: any;
-    export let effectivef8Package: any;
-    export let getDependencyVersion: any;
-    export let formPackagedependencyNpmList: any;
-    export let effectivef8Pypi: any;
-
-    let trimTrailingChars: any;
-
-    effectivef8PomWs = (workspaceFolder) => {
+    export const effectivef8PomWs = (workspaceFolder) => {
         return new Promise(function(resolve, reject){
             let vscodeRootpath = workspaceFolder.uri.fsPath;
             if(process && process.platform && process.platform.toLowerCase() === 'win32'){
@@ -41,7 +32,7 @@ export module  ProjectDataProvider {
         });
     };
 
-    effectivef8Pom = (item) => {
+    export const effectivef8Pom = (item) => {
         return new Promise(function(resolve, reject){
             let pomXmlFilePath: string = null;
             let filepath: string = 'target/pom.xml';
@@ -73,7 +64,7 @@ export module  ProjectDataProvider {
         });
     }; 
 
-    effectivef8Package = (workspaceFolder) => {
+    export const effectivef8Package = (workspaceFolder) => {
         return new Promise(function(resolve, reject){
             let vscodeRootpath = workspaceFolder.uri.fsPath;
             if(process && process.platform && process.platform.toLowerCase() === 'win32'){
@@ -106,7 +97,7 @@ export module  ProjectDataProvider {
 
     function clearEmptyObject(myObj) {
         for(let key in myObj){
-            if(!(myObj[key] instanceof Array) && typeof(myObj[key]) == 'object' && isEmptyObject(myObj[key])){
+            if(!(myObj[key] instanceof Array) && typeof(myObj[key]) === 'object' && isEmptyObject(myObj[key])){
                 delete myObj[key];
             } 
         }
@@ -115,10 +106,10 @@ export module  ProjectDataProvider {
 
     function formatObj(myObj, keyArrays){
         for(let key in myObj){
-            if(keyArrays.indexOf(key) === -1 && ( myObj[key] instanceof Array || typeof(myObj[key]) != 'object' || isEmptyObject(myObj[key]))){
+            if(keyArrays.indexOf(key) === -1 && ( myObj[key] instanceof Array || typeof(myObj[key]) !== 'object' || isEmptyObject(myObj[key]))){
                 delete myObj[key];
             } else {
-                if(typeof(myObj[key]) == 'object') {
+                if(typeof(myObj[key]) === 'object') {
                     formatObj(myObj[key],keyArrays);
                 }
             }  
@@ -126,7 +117,7 @@ export module  ProjectDataProvider {
         return myObj = clearEmptyObject(myObj);
     }
 
-    formPackagedependencyNpmList = (vscodeRootpath) => {
+    export const formPackagedependencyNpmList = (vscodeRootpath) => {
         return new Promise((resolve, reject) => {
             fs.readFile(vscodeRootpath+'target/npmlist.json', {encoding: 'utf-8'}, function(err, data) {
                 if(data){
@@ -150,7 +141,7 @@ export module  ProjectDataProvider {
     };
 
 
-    getDependencyVersion = (manifestRootFolderPath) => {
+    export const getDependencyVersion = (manifestRootFolderPath) => {
         return new Promise(function(resolve, reject){
             let dir = manifestRootFolderPath+'target';
             let prefixPath = trimTrailingChars(manifestRootFolderPath);
@@ -193,12 +184,12 @@ export module  ProjectDataProvider {
     };
 
 
-    trimTrailingChars = (s)  => {
+    export const trimTrailingChars = (s)  => {
         let result = s.replace(/\\+$/, '');
         return result;
     };
 
-    effectivef8Pypi = (workspaceFolder) => {
+    export const  effectivef8Pypi = (workspaceFolder) => {
         return new Promise(function(resolve, reject){
             let vscodeRootpath = workspaceFolder.uri.fsPath;
             if(process && process.platform && process.platform.toLowerCase() === 'win32'){

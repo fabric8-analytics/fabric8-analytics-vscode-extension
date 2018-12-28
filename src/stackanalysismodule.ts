@@ -9,11 +9,8 @@ import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
 
 export module stackanalysismodule {
-    export let get_stack_metadata: any;
-    export let post_stack_analysis: any;
-    export let processStackAnalyses: any;
 
-	get_stack_metadata = (editor, file_uri) => {
+	export const get_stack_metadata = (editor, file_uri) => {
         return new Promise((resolve,reject) => {
             let projRoot = vscode.workspace.getWorkspaceFolder(editor.document.uri);
             if(projRoot && file_uri){
@@ -49,7 +46,7 @@ export module stackanalysismodule {
         });
 	};
 
-    processStackAnalyses = (context, editor, provider, previewUri) => {
+    export const processStackAnalyses = (context, editor, provider, previewUri) => {
         if(vscode && vscode.window && vscode.window.activeTextEditor) {
             let fileUri: string = editor.document.fileName;
             let workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
@@ -111,7 +108,7 @@ export module stackanalysismodule {
                                 console.log(error);
                                 vscode.window.showErrorMessage(error);
                                 reject(error);
-                            });;
+                            });
                         }, 6000);
                     })
                     .catch((err) => {

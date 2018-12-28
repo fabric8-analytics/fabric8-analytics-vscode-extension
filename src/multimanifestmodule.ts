@@ -74,8 +74,8 @@ export module multimanifestmodule {
                 });
                 resolve(form_data);
             })
-            .catch(() => {
-                reject(null);
+            .catch((error) => {
+                reject(error);
             });
         });
 
@@ -258,17 +258,21 @@ export module multimanifestmodule {
                                         }
                                         // keep on waiting
                                     })
-                                    .catch(() => {
+                                    .catch((error) => {
                                         clearInterval(interval);
                                         p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
                                         provider.signal(previewUri,null);
+                                        console.log(error);
+                                        vscode.window.showErrorMessage(error);
                                         reject();
                                     });;
                                 }, 6000);
                             })
-                            .catch(() => {
+                            .catch((err) => {
                                 p.report({message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES});
                                 provider.signal(previewUri,null);
+                                console.log(err);
+                                vscode.window.showErrorMessage(err);
                                 reject();
                             });
                         }
@@ -294,10 +298,10 @@ export module multimanifestmodule {
                     resolve(true);
                 }, (reason) => {
                     vscode.window.showErrorMessage(reason);
-                    reject();
+                    reject(reason);
                 });
             } else {
-                reject();
+                reject(`Unable to authenticate.`);
             }
             });
         });

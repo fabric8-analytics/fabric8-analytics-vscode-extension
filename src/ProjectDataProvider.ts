@@ -241,15 +241,14 @@ export module  ProjectDataProvider {
                     vscode.window.showErrorMessage(_stderr);
                     console.log(_stderr);
                     console.log(error.message);
-                    reject(false);
+                    reject(_stderr);
                 } else {
                     let eReqPathList: any = reqTxtFilePath.split('requirements.txt');
                     if(eReqPathList.length>0){
                         let eReqPath: string = eReqPathList[0] + 'target/pylist.json';
                         resolve(eReqPath);
                     }else{
-                        vscode.window.showInformationMessage('Looks like there either are some problem with manifest file or python interpreter is not set');
-                        reject(false);
+                        reject(StatusMessages.PYPI_FAILURE);
                     }
                 }
             });

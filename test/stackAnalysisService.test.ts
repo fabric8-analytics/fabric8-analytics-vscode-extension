@@ -3,8 +3,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import { stackAnalysisServices } from '../src/stackAnalysisService';
-
-const request = require('request');
+import * as request from 'request';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -27,6 +26,7 @@ suite('stacknalysis Services', () => {
     const context: vscode.ExtensionContext = {
         extensionPath: 'path',
         storagePath: 'string',
+        // tslint:disable-next-line:no-empty
         subscriptions: { dispose(): any {} }[0],
         workspaceState: new DummyMemento(),
         globalState: new DummyMemento(),
@@ -55,7 +55,7 @@ suite('stacknalysis Services', () => {
         options['uri'] = 'https://abc.com';
         let stubRequestGet = sandbox.stub(request, 'get').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
         stackAnalysisServices.getStackAnalysisService(options);
-        expect(stubRequestGet).calledOnce;
+        expect(stubRequestGet).callCount(1);
     });
 
     test('getStackAnalysisService should return success with statuscode 403', () => {
@@ -64,7 +64,7 @@ suite('stacknalysis Services', () => {
         options['uri'] = 'https://abc.com';
         let stubRequestGet = sandbox.stub(request, 'get').yields(null, {'statusCode':403}, JSON.stringify(sampleBody));
         stackAnalysisServices.getStackAnalysisService(options);
-        expect(stubRequestGet).calledOnce;
+        expect(stubRequestGet).callCount(1);
     });
 
     test('postStackAnalysisService should return success with statuscode 200', () => {
@@ -73,7 +73,7 @@ suite('stacknalysis Services', () => {
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
         stackAnalysisServices.postStackAnalysisService(options, context);
-        expect(stubRequestPost).calledOnce;
+        expect(stubRequestPost).callCount(1);
     });
 
     test('postStackAnalysisService should return success with error and statuscode 200 ', () => {
@@ -82,7 +82,7 @@ suite('stacknalysis Services', () => {
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':200}, JSON.stringify(sampleBody));
         stackAnalysisServices.postStackAnalysisService(options, context);
-        expect(stubRequestPost).calledOnce;
+        expect(stubRequestPost).callCount(1);
     });
 
     test('postStackAnalysisService should return success with statuscode 401', () => {
@@ -90,7 +90,7 @@ suite('stacknalysis Services', () => {
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':401});
         stackAnalysisServices.postStackAnalysisService(options, context);
-        expect(stubRequestPost).calledOnce;
+        expect(stubRequestPost).callCount(1);
     });
 
     test('postStackAnalysisService should return success with statuscode 429', () => {
@@ -98,7 +98,7 @@ suite('stacknalysis Services', () => {
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':429});
         stackAnalysisServices.postStackAnalysisService(options, context);
-        expect(stubRequestPost).calledOnce;
+        expect(stubRequestPost).callCount(1);
     });
 
     test('postStackAnalysisService should return success with statuscode 400', () => {
@@ -106,7 +106,7 @@ suite('stacknalysis Services', () => {
         options['uri'] = 'https://abc.com';
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':400});
         stackAnalysisServices.postStackAnalysisService(options, context);
-        expect(stubRequestPost).calledOnce;
+        expect(stubRequestPost).callCount(1);
     });
 
     test('postStackAnalysisService should return success with statuscode 500 and call ClearContextInfo', () => {
@@ -115,8 +115,8 @@ suite('stacknalysis Services', () => {
         let spyClearContextInfo = sandbox.spy(stackAnalysisServices, 'clearContextInfo');
         let stubRequestPost = sandbox.stub(request, 'post').yields(null, {'statusCode':500});
         stackAnalysisServices.postStackAnalysisService(options, context);
-        expect(stubRequestPost).calledOnce;
-        expect(spyClearContextInfo).calledOnce;
+        expect(stubRequestPost).callCount(1);
+        expect(spyClearContextInfo).callCount(1);
     });
 
     test('postStackAnalysisService should return error', () => {
@@ -125,8 +125,8 @@ suite('stacknalysis Services', () => {
         let spyClearContextInfo = sandbox.spy(stackAnalysisServices, 'clearContextInfo');
         let stubRequestPost = sandbox.stub(request, 'post').yields('err');
         stackAnalysisServices.postStackAnalysisService(options, context);
-        expect(stubRequestPost).calledOnce;
-        expect(spyClearContextInfo).calledOnce;
+        expect(stubRequestPost).callCount(1);
+        expect(spyClearContextInfo).callCount(1);
     });
 
 });

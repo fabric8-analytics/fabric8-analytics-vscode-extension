@@ -3,7 +3,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as fs from 'fs';
-const child_process = require('child_process');
+import * as child_process from 'child_process';
 
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
 
@@ -22,45 +22,55 @@ suite('projectDataProvider Modules', () => {
        sandbox.restore();
     });
 
-    test('effectivef8PomWs should return error', () => {
+    test('effectivef8PomWs should return error', async () => {
         let workspaceFolder = vscode.workspace.workspaceFolders[0];
         let stubExec = sandbox.stub(child_process, 'exec').yields('err');
-        ProjectDataProvider.effectivef8PomWs(workspaceFolder, (cb) => {
-            expect(cb).equals(false);
-        });
-        expect(stubExec).calledOnce;
+        let savedErr: boolean;
+        try {
+            await ProjectDataProvider.effectivef8PomWs(workspaceFolder);
+        } catch (err) {
+            savedErr = err;    
+            return;
+        }
+        expect(savedErr).equals(false);
+        expect.fail();
+        expect(stubExec).callCount(1);
     });
 
-    test('effectivef8PomWs should return success', () => {
+    test('effectivef8PomWs should return success', async () => {
         let workspaceFolder = vscode.workspace.workspaceFolders[0];
         let stubExec = sandbox.stub(child_process, 'exec').yields(null, 'success', 'success');
-        ProjectDataProvider.effectivef8PomWs(workspaceFolder, (cb) => {
-            expect(cb).equals(true);
-        });
-        expect(stubExec).calledOnce;
+        let effectivef8PomWsPR = await ProjectDataProvider.effectivef8PomWs(workspaceFolder);
+        expect(effectivef8PomWsPR).equals(true);
+        expect(stubExec).callCount(1);
     });
 
-    test('effectivef8Pom should return error', () => {
+    test('effectivef8Pom should return error', async () => {
         let stubExec = sandbox.stub(child_process, 'exec').yields('err');
-        ProjectDataProvider.effectivef8Pom('path/pom.xml', (cb) => {
-            expect(cb).equals(false);
-        });
-        expect(stubExec).calledOnce;
+        let savedErr: boolean;
+        try {
+            await ProjectDataProvider.effectivef8Pom('path/pom.xml');
+        } catch (err) {
+            savedErr = err;    
+            return;
+        }
+        expect(savedErr).equals(false);
+        expect.fail();
+        expect(stubExec).callCount(1);
     });
 
-    test('effectivef8Pom should return success', () => {
+    test('effectivef8Pom should return success', async() => {
         let stubExec = sandbox.stub(child_process, 'exec').yields(null, 'success', 'success');
-        ProjectDataProvider.effectivef8Pom('path/pom.xml', (cb) => {
-            expect(cb).equals('path/target/pom.xml');
-        });
-        expect(stubExec).calledOnce;
+        let effectivef8PomPR = await ProjectDataProvider.effectivef8Pom('path/pom.xml');
+        expect(effectivef8PomPR).equals('path/target/pom.xml');
+        expect(stubExec).callCount(1);
     });
 
     test('effectivef8Package should return error', () => {
         let workspaceFolder = vscode.workspace.workspaceFolders[0];
         let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').rejects(false);
         ProjectDataProvider.effectivef8Package(workspaceFolder);
-        expect(stubGetDependencyVersion).calledOnce;
+        expect(stubGetDependencyVersion).callCount(1);
     });
 
     test('effectivef8Package should return success', async () => {
@@ -68,8 +78,8 @@ suite('projectDataProvider Modules', () => {
         let stubGetDependencyVersion = sandbox.stub(ProjectDataProvider, 'getDependencyVersion').resolves(true);
         let stubFormPackagedependencyNpmList = sandbox.stub(ProjectDataProvider, 'formPackagedependencyNpmList').resolves('sample');
         await ProjectDataProvider.effectivef8Package(workspaceFolder);
-        expect(stubGetDependencyVersion).calledOnce;
-        expect(stubFormPackagedependencyNpmList).calledOnce;
+        expect(stubGetDependencyVersion).callCount(1);
+        expect(stubFormPackagedependencyNpmList).callCount(1);
     });
 
     test('formPackagedependencyNpmList should return error', () => {
@@ -82,7 +92,7 @@ suite('projectDataProvider Modules', () => {
         }
         let stubReadFile = sandbox.stub(fs, 'readFile').yields('err');
         ProjectDataProvider.formPackagedependencyNpmList(vscodeRootpath);
-        expect(stubReadFile).calledOnce;
+        expect(stubReadFile).callCount(1);
     });
 
     test('formPackagedependencyNpmList should return success', () => {
@@ -97,8 +107,8 @@ suite('projectDataProvider Modules', () => {
         let stubReadFile = sandbox.stub(fs, 'readFile').yields(null, JSON.stringify(sampleBody));
         let stubWriteFile = sandbox.stub(fs, 'writeFile').yields(null, true);
         ProjectDataProvider.formPackagedependencyNpmList(vscodeRootpath);
-        expect(stubReadFile).calledOnce;
-        expect(stubWriteFile).calledOnce;
+        expect(stubReadFile).callCount(1);
+        expect(stubWriteFile).callCount(1);
     });
 
     test('formPackagedependencyNpmList fail while writing file', () => {
@@ -113,11 +123,11 @@ suite('projectDataProvider Modules', () => {
         let stubReadFile = sandbox.stub(fs, 'readFile').yields(null, JSON.stringify(sampleBody));
         let stubWriteFile = sandbox.stub(fs, 'writeFile').yields('err');
         ProjectDataProvider.formPackagedependencyNpmList(vscodeRootpath);
-        expect(stubReadFile).calledOnce;
-        expect(stubWriteFile).calledOnce;
+        expect(stubReadFile).callCount(1);
+        expect(stubWriteFile).callCount(1);
     });
 
-    test('getDependencyVersion should return success', () => {
+    test('getDependencyVersion should return success', async() => {
         let workspaceFolder = vscode.workspace.workspaceFolders[0];
         let vscodeRootpath = workspaceFolder.uri.fsPath;
         if(process && process.platform && process.platform.toLowerCase() === 'win32'){
@@ -127,11 +137,10 @@ suite('projectDataProvider Modules', () => {
         }
         let stubExec = sandbox.stub(child_process, 'exec').yields(null, 'success', 'success');
         let stubExistsSync = sandbox.stub(fs, 'existsSync').returns(true);
-        ProjectDataProvider.getDependencyVersion(vscodeRootpath, (cb) => {
-            expect(cb).equals(true);
-        });
+        let depVersionPromise = await ProjectDataProvider.getDependencyVersion(vscodeRootpath);
+        expect(depVersionPromise).equals(true);
         expect(stubExistsSync).callCount(2);
-        expect(stubExec).calledOnce;
+        expect(stubExec).callCount(1);
     });
 
 });

@@ -1,10 +1,9 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as request from 'request';
 
 export module stackAnalysisServices {
-
-    const request = require('request');
 
     export const clearContextInfo = (context) => {
         context.globalState.update('f8_3scale_user_key', '');

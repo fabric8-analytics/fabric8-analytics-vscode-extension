@@ -1,22 +1,23 @@
-
 {
-	"rules": {
-		"no-unused-expression": true,
-		"no-duplicate-variable": true,
-		"no-unused-variable": true,
-		"curly": true,
-		"class-name": true,
-		"semicolon": true,
-		"triple-equals": true,
-		"quotemark": [true, "single", "avoid-escape"],
-		"no-debugger": true,
-		"no-empty": true,
-		"no-var-keyword": true,
-		"no-unsafe-finally": true,
-		"new-parens":true,
-		"no-duplicate-imports": true,
-		"deprecation":true,
-		"no-unsafe-any":true,
-		"no-string-throw":true
-	}
+    "defaultSeverity": "error",
+    "rules": {
+        "no-unused-expression": true,
+        "no-duplicate-variable": true,
+        "curly": true,
+        "class-name": true,
+        "semicolon": true,
+        "triple-equals": true,
+        "quotemark": [
+            true,
+            "single",
+            "avoid-escape"
+        ],
+        "no-debugger": true,
+        "no-empty": true,
+        "no-var-keyword": true,
+        "no-unsafe-finally": true,
+        "new-parens": true,
+        "no-string-throw": true,
+        "no-require-imports": true
+    }
 }

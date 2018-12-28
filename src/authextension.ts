@@ -2,10 +2,9 @@
 
 import * as vscode from 'vscode';
 import { Apiendpoint } from './apiendpoint';
+import * as request from 'request';
 
 export module authextension {
-
-    const request = require('request');
     export let authorize_f8_analytics: any;
     export let get_3scale_routes: any;
     let setContextData: any;
@@ -58,5 +57,4 @@ export module authextension {
 
         });
     };
-
 }

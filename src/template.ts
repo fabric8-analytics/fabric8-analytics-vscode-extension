@@ -4,11 +4,10 @@
  * Commonly used commands
  */
 export namespace Templates {
-    /**
-     * Template for loaders
-     */
-    export const LOADER_TEMPLATE = 
-    `<!DOCTYPE html>
+  /**
+   * Template for loaders
+   */
+  export const LOADER_TEMPLATE = `<!DOCTYPE html>
     <html>
     <head>
         <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
@@ -268,8 +267,7 @@ export namespace Templates {
     </body>
     </html>`;
 
-    export const HEADER_TEMPLATE = 
-    `<!DOCTYPE html>
+  export const HEADER_TEMPLATE = `<!DOCTYPE html>
     <html>
     <head>
     <meta charset="utf-8"/>
@@ -303,6 +301,5 @@ export namespace Templates {
     <div class='top-caption'>
     </div>`;
 
-    export const FOOTER_TEMPLATE = '</body></html>';
-
+  export const FOOTER_TEMPLATE = '</body></html>';
 }

@@ -8,25 +8,23 @@ const expect = chai.expect;
 chai.use(sinonChai);
 
 suite('Utils module', () => {
+  let sandbox: sinon.SinonSandbox;
 
-    let sandbox: sinon.SinonSandbox;
+  setup(() => {
+    sandbox = sinon.createSandbox();
+  });
 
-    setup(() => {
-        sandbox = sinon.createSandbox();
-    });
+  teardown(() => {
+    sandbox.restore();
+  });
 
-    teardown(() => {
-       sandbox.restore();
-    });
+  test('getMavenExecutable should return mvn', () => {
+    let mavenPath = Utils.getMavenExecutable();
+    expect(mavenPath).equals('mvn');
+  });
 
-    test('getMavenExecutable should return mvn', () => {
-        let mavenPath = Utils.getMavenExecutable();
-        expect(mavenPath).equals('mvn');
-    });
-
-    test('getNodeExecutable should return npm', () => {
-        let mavenPath = Utils.getNodeExecutable();
-        expect(mavenPath).equals('npm');
-    });
-
+  test('getNodeExecutable should return npm', () => {
+    let mavenPath = Utils.getNodeExecutable();
+    expect(mavenPath).equals('npm');
+  });
 });

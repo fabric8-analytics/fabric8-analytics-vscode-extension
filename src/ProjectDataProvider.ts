@@ -35,14 +35,16 @@ export module  ProjectDataProvider {
     export const effectivef8Pom = (item) => {
         return new Promise(function(resolve, reject){
             let pomXmlFilePath: string = null;
-            let filepath: string = 'target/pom.xml';
+            let filepath: string = 'target/dependencies.txt';
             pomXmlFilePath = item;
             const cmd: string = [
                 Utils.getMavenExecutable(),
-                'help:effective-pom',
+                'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
                 '-f',
-                `"${pomXmlFilePath}"`,
-                `-Doutput="${filepath}"`
+                `${pomXmlFilePath}`,
+                `-DoutputFile=${filepath}`,
+                `-DoutputType=dot`,
+                `-DappendOutput=true`
             ].join(' ');
             console.log('effectivef8Pom '+ cmd);
             exec(cmd, (error: Error, _stdout: string, _stderr: string): void => {

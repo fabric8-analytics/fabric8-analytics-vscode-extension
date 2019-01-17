@@ -8,6 +8,7 @@ export module ProjectDataProvider {
   export const effectivef8PomWs = workspaceFolder => {
     return new Promise(function(resolve, reject) {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
+      let filepath: string = 'target/dependencies.txt';
       if (
         process &&
         process.platform &&
@@ -15,13 +16,16 @@ export module ProjectDataProvider {
       ) {
         vscodeRootpath += '\\';
       } else {
-        vscodeRootpath += '/';
+        vscodeRootpath += '/pom.xml';
       }
       const cmd: string = [
         Utils.getMavenExecutable(),
-        'io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare',
+        'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
         '-f',
-        `"${vscodeRootpath}"`
+        `${vscodeRootpath}`,
+        `-DoutputFile=${filepath}`,
+        `-DoutputType=dot`,
+        `-DappendOutput=true`
       ].join(' ');
       console.log('effectivef8PomWs ' + cmd);
       exec(

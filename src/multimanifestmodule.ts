@@ -83,7 +83,7 @@ export module multimanifestmodule {
     let manifest_mime_type: any = {
       'requirements.txt': 'text/plain',
       'package.json': 'application/json',
-      'pom.xml': 'text/xml',
+      'pom.xml': 'text/plain',
       'pylist.json': 'application/json',
       'npmlist.json': 'application/json'
     };
@@ -283,7 +283,7 @@ export module multimanifestmodule {
                     pom_count += 1;
                     Apiendpoint.API_ECOSYSTEM = 'maven';
                     effectiveF8WsVar = 'effectivef8PomWs';
-                    filesRegex = 'target/stackinfo/**/pom.xml';
+                    filesRegex = 'target/dependencies.txt';
                   } else if (item.fsPath.indexOf('requirements.txt') >= 0) {
                     Apiendpoint.API_ECOSYSTEM = 'pypi';
                     effectiveF8WsVar = 'effectivef8Pypi';

@@ -6,7 +6,6 @@ import * as fs from 'fs';
 
 import { multimanifestmodule } from '../src/multimanifestmodule';
 import { authextension } from '../src/authextension';
-import { contentprovidermodule } from '../src/contentprovidermodule';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -36,11 +35,6 @@ suite('multimanifest module', () => {
       return '';
     }
   };
-
-  let provider = new contentprovidermodule.TextDocumentContentProvider();
-  let previewUri = vscode.Uri.parse(
-    'fabric8-analytics-widget://authority/fabric8-analytics-widget'
-  );
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -114,11 +108,7 @@ suite('multimanifest module', () => {
       .yields(null);
     let savedErr: string;
     try {
-      await multimanifestmodule.triggerManifestWs(
-        context,
-        provider,
-        previewUri
-      );
+      await multimanifestmodule.triggerManifestWs(context);
     } catch (err) {
       savedErr = err;
       return;
@@ -132,41 +122,11 @@ suite('multimanifest module', () => {
     let stubAuthorize_f8_analytics = sandbox
       .stub(authextension, 'authorize_f8_analytics')
       .yields(true);
-    let stubExecuteCommand = sandbox
-      .stub(vscode.commands, 'executeCommand')
-      .resolves(true);
     sandbox.stub(multimanifestmodule, 'find_manifests_workspace').yields(true);
     let promiseTriggerManifestWs = await multimanifestmodule.triggerManifestWs(
-      context,
-      provider,
-      previewUri
+      context
     );
     expect(promiseTriggerManifestWs).equals(true);
     expect(stubAuthorize_f8_analytics).callCount(1);
-    expect(stubExecuteCommand).callCount(1);
-  });
-
-  test('triggerManifestWs should should return fail if executeCommand fails', async () => {
-    let stubAuthorize_f8_analytics = sandbox
-      .stub(authextension, 'authorize_f8_analytics')
-      .yields(true);
-    let stubExecuteCommand = sandbox
-      .stub(vscode.commands, 'executeCommand')
-      .rejects('err');
-    let savedErr: string;
-    try {
-      await multimanifestmodule.triggerManifestWs(
-        context,
-        provider,
-        previewUri
-      );
-    } catch (err) {
-      savedErr = err.name;
-      return;
-    }
-    expect(savedErr).equals('err');
-    expect.fail();
-    expect(stubAuthorize_f8_analytics).callCount(1);
-    expect(stubExecuteCommand).callCount(1);
   });
 });

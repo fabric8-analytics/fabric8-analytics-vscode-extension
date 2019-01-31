@@ -7,6 +7,7 @@ import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
+import { DependencyReportPanel } from './dependencyReportPanel';
 
 export module stackanalysismodule {
   export const get_stack_metadata = (editor, file_uri) => {
@@ -52,18 +53,12 @@ export module stackanalysismodule {
     });
   };
 
-  export const processStackAnalyses = (
-    context,
-    editor,
-    provider,
-    previewUri
-  ) => {
+  export const processStackAnalyses = (context, editor) => {
     if (vscode && vscode.window && vscode.window.activeTextEditor) {
       let fileUri: string = editor.document.fileName;
       let workspaceFolder = vscode.workspace.getWorkspaceFolder(
         editor.document.uri
       );
-      provider.signalInit(previewUri, null);
       vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Window,
@@ -84,11 +79,7 @@ export module stackanalysismodule {
             }
             ProjectDataProvider[effectiveF8Var](argumentList)
               .then(async dataEpom => {
-                await multimanifestmodule.triggerManifestWs(
-                  context,
-                  provider,
-                  previewUri
-                );
+                await multimanifestmodule.triggerManifestWs(context);
                 return dataEpom;
               })
               .then(async dataEpom => {
@@ -144,14 +135,21 @@ export module stackanalysismodule {
                           message:
                             StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                         });
-                        provider.signal(previewUri, data);
+                        if (DependencyReportPanel.currentPanel) {
+                          DependencyReportPanel.currentPanel.doUpdatePanle(
+                            data
+                          );
+                        }
                         resolve();
                       }
                       // keep on waiting
                     })
                     .catch(error => {
                       clearInterval(interval);
-                      provider.signal(previewUri, null);
+                      // provider.signal(previewUri, null);
+                      // if (DependencyReportPanel.currentPanel) {
+                      //   DependencyReportPanel.currentPanel.doUpdatePanle(null);
+                      // }
                       console.log(error);
                       vscode.window.showErrorMessage(error);
                       reject(error);
@@ -162,7 +160,10 @@ export module stackanalysismodule {
                 p.report({
                   message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
                 });
-                provider.signal(previewUri, null);
+                // provider.signal(previewUri, null);
+                // if (DependencyReportPanel.currentPanel) {
+                //   DependencyReportPanel.currentPanel.doUpdatePanle(null);
+                // }
                 console.log(err);
                 vscode.window.showErrorMessage(err);
                 reject();

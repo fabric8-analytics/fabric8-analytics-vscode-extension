@@ -8,10 +8,12 @@ export namespace Templates {
    * Template for loaders
    */
   export const LOADER_TEMPLATE = `<!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
+        <meta charset="UTF-8">
         <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-        <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+        <meta http-equiv="Content-Security-Policy" content="img-src vscode-resource: https:;">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
         html, body {
             width: 100%;
@@ -268,11 +270,13 @@ export namespace Templates {
     </html>`;
 
   export const HEADER_TEMPLATE = `<!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
     <meta charset="utf-8"/>
-    <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-    <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+    <meta charset="UTF-8">
+        <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+        <meta http-equiv="Content-Security-Policy" content="img-src vscode-resource: https:;">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
     html,body {
     width: 100%;

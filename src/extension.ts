@@ -10,7 +10,6 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { contentprovidermodule } from './contentprovidermodule';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -20,23 +19,9 @@ let diagCountInfo,
   onFileOpen = [];
 
 export function activate(context: vscode.ExtensionContext) {
-  let previewUri = vscode.Uri.parse(
-    'fabric8-analytics-widget://authority/fabric8-analytics-widget'
-  );
-
-  let provider = new contentprovidermodule.TextDocumentContentProvider(); //new TextDocumentContentProvider();
-  let registration = vscode.workspace.registerTextDocumentContentProvider(
-    'fabric8-analytics-widget',
-    provider
-  );
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
-    () =>
-      multimanifestmodule.dependencyAnalyticsReportFlow(
-        context,
-        provider,
-        previewUri
-      )
+    () => multimanifestmodule.dependencyAnalyticsReportFlow(context)
   );
 
   let runCodeAction = (
@@ -136,7 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
         });
       });
       context.subscriptions.push(
-        registration,
         lspClient.start(),
         disposableFullStack,
         disposableLspEdit

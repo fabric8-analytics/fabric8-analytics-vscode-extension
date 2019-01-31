@@ -9,6 +9,7 @@ import { ProjectDataProvider } from './ProjectDataProvider';
 import { authextension } from './authextension';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
+import { DependencyReportPanel } from './dependencyReportPanel';
 
 export module multimanifestmodule {
   export const find_manifests_workspace = (workspaceFolder, filesRegex) => {
@@ -170,11 +171,7 @@ export module multimanifestmodule {
    * Needed async function in order to wait for user selection in case of
    * multi root projects
    */
-  export const dependencyAnalyticsReportFlow = async (
-    context,
-    provider,
-    previewUri
-  ) => {
+  export const dependencyAnalyticsReportFlow = async context => {
     let editor = vscode.window.activeTextEditor;
     if (
       editor &&
@@ -189,19 +186,9 @@ export module multimanifestmodule {
         workspaceFolder.uri.fsPath + '/pom.xml' === editor.document.fileName ||
         workspaceFolder.uri.fsPath + '\\pom.xml' === editor.document.fileName
       ) {
-        triggerFullStackAnalyses(
-          context,
-          workspaceFolder,
-          provider,
-          previewUri
-        );
+        triggerFullStackAnalyses(context, workspaceFolder);
       } else {
-        stackanalysismodule.processStackAnalyses(
-          context,
-          editor,
-          provider,
-          previewUri
-        );
+        stackanalysismodule.processStackAnalyses(context, editor);
       }
     } else if (
       editor &&
@@ -209,12 +196,7 @@ export module multimanifestmodule {
       editor.document.fileName.toLowerCase().indexOf('package.json') !== -1
     ) {
       Apiendpoint.API_ECOSYSTEM = 'npm';
-      stackanalysismodule.processStackAnalyses(
-        context,
-        editor,
-        provider,
-        previewUri
-      );
+      stackanalysismodule.processStackAnalyses(context, editor);
     } else if (
       vscode.workspace.hasOwnProperty('workspaceFolders') &&
       vscode.workspace['workspaceFolders'].length > 1
@@ -223,28 +205,17 @@ export module multimanifestmodule {
         placeHolder: 'Pick Workspace Folder...'
       });
       if (workspaceFolder) {
-        triggerFullStackAnalyses(
-          context,
-          workspaceFolder,
-          provider,
-          previewUri
-        );
+        triggerFullStackAnalyses(context, workspaceFolder);
       } else {
         vscode.window.showInformationMessage(`No Workspace selected.`);
       }
     } else {
       let workspaceFolder = vscode.workspace.workspaceFolders[0];
-      triggerFullStackAnalyses(context, workspaceFolder, provider, previewUri);
+      triggerFullStackAnalyses(context, workspaceFolder);
     }
   };
 
-  export const triggerFullStackAnalyses = (
-    context,
-    workspaceFolder,
-    provider,
-    previewUri
-  ) => {
-    provider.signalInit(previewUri, null);
+  export const triggerFullStackAnalyses = (context, workspaceFolder) => {
     vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
@@ -291,7 +262,7 @@ export module multimanifestmodule {
                   });
                   ProjectDataProvider[effectiveF8WsVar](workspaceFolder)
                     .then(async () => {
-                      await triggerManifestWs(context, provider, previewUri);
+                      await triggerManifestWs(context);
                     })
                     .then(async () => {
                       let result = await find_manifests_workspace(
@@ -345,7 +316,11 @@ export module multimanifestmodule {
                           .then(data => {
                             if (!data.hasOwnProperty('error')) {
                               clearInterval(interval);
-                              provider.signal(previewUri, data);
+                              if (DependencyReportPanel.currentPanel) {
+                                DependencyReportPanel.currentPanel.doUpdatePanle(
+                                  data
+                                );
+                              }
                               resolve();
                             }
                             // keep on waiting
@@ -356,7 +331,12 @@ export module multimanifestmodule {
                               message:
                                 StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                             });
-                            provider.signal(previewUri, null);
+                            // provider.signal(previewUri, null);
+                            // if (DependencyReportPanel.currentPanel) {
+                            //   DependencyReportPanel.currentPanel.doUpdatePanle(
+                            //     null
+                            //   );
+                            // }
                             console.log(error);
                             vscode.window.showErrorMessage(error);
                             reject();
@@ -367,7 +347,10 @@ export module multimanifestmodule {
                       p.report({
                         message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                       });
-                      provider.signal(previewUri, null);
+                      // provider.signal(previewUri, null);
+                      // if (DependencyReportPanel.currentPanel) {
+                      //   DependencyReportPanel.currentPanel.doUpdatePanle(null);
+                      // }
                       console.log(err);
                       vscode.window.showErrorMessage(err);
                       reject();
@@ -392,27 +375,12 @@ export module multimanifestmodule {
     );
   };
 
-  export const triggerManifestWs = (context, provider, previewUri) => {
+  export const triggerManifestWs = context => {
     return new Promise((resolve, reject) => {
       authextension.authorize_f8_analytics(context, data => {
         if (data) {
-          vscode.commands
-            .executeCommand(
-              'vscode.previewHtml',
-              previewUri,
-              vscode.ViewColumn.One,
-              StatusMessages.REPORT_TAB_TITLE
-            )
-            .then(
-              success => {
-                provider.signalInit(previewUri, null);
-                resolve(true);
-              },
-              reason => {
-                vscode.window.showErrorMessage(reason);
-                reject(reason);
-              }
-            );
+          DependencyReportPanel.createOrShow(context.extensionPath, null);
+          resolve(true);
         } else {
           reject(`Unable to authenticate.`);
         }

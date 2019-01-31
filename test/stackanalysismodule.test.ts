@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 
 import { authextension } from '../src/authextension';
 import { stackanalysismodule } from '../src/stackanalysismodule';
-import { contentprovidermodule } from '../src/contentprovidermodule';
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
 
 const expect = chai.expect;
@@ -47,11 +46,6 @@ suite('stacknalysis module', () => {
     }
   };
 
-  let provider = new contentprovidermodule.TextDocumentContentProvider();
-  let previewUri = vscode.Uri.parse(
-    'fabric8-analytics-widget://authority/fabric8-analytics-widget'
-  );
-
   setup(() => {
     sandbox = sinon.createSandbox();
   });
@@ -81,12 +75,7 @@ suite('stacknalysis module', () => {
         ProjectDataProvider,
         'effectivef8Package'
       );
-      stackanalysismodule.processStackAnalyses(
-        context,
-        editor,
-        provider,
-        previewUri
-      );
+      stackanalysismodule.processStackAnalyses(context, editor);
       expect(effectivef8PackageSpy).callCount(0);
     });
 
@@ -95,12 +84,7 @@ suite('stacknalysis module', () => {
         ProjectDataProvider,
         'effectivef8Pom'
       );
-      stackanalysismodule.processStackAnalyses(
-        context,
-        editor,
-        provider,
-        previewUri
-      );
+      stackanalysismodule.processStackAnalyses(context, editor);
       expect(effectivef8PomSpy).callCount(0);
     });
 
@@ -109,12 +93,7 @@ suite('stacknalysis module', () => {
         vscode.window,
         'showInformationMessage'
       );
-      stackanalysismodule.processStackAnalyses(
-        context,
-        editor,
-        provider,
-        previewUri
-      );
+      stackanalysismodule.processStackAnalyses(context, editor);
       expect(showInfoMessageSpy).callCount(1);
     });
   });
@@ -149,21 +128,12 @@ suite('stacknalysis module', () => {
       let stubAuthorize_f8_analytics = sandbox
         .stub(authextension, 'authorize_f8_analytics')
         .yields(true);
-      let stubExecuteCommand = sandbox
-        .stub(vscode.commands, 'executeCommand')
-        .resolves(true);
       sandbox.stub(stackanalysismodule, 'get_stack_metadata').resolves(true);
-      await stackanalysismodule.processStackAnalyses(
-        context,
-        editor,
-        provider,
-        previewUri
-      );
+      await stackanalysismodule.processStackAnalyses(context, editor);
       expect(spyEffectivef8Pom).callCount(0);
       expect(spyWindowProgress).callCount(1);
       expect(stubEffectivef8Package).callCount(1);
       expect(stubAuthorize_f8_analytics).callCount(1);
-      expect(stubExecuteCommand).callCount(1);
     });
 
     test('processStackAnalyses should not call authorize_f8_analytics if effectivef8Package fails', async () => {
@@ -175,20 +145,11 @@ suite('stacknalysis module', () => {
       let stubAuthorize_f8_analytics = sandbox
         .stub(authextension, 'authorize_f8_analytics')
         .yields(true);
-      let stubExecuteCommand = sandbox
-        .stub(vscode.commands, 'executeCommand')
-        .resolves(true);
       sandbox.stub(stackanalysismodule, 'get_stack_metadata').yields(true);
-      await stackanalysismodule.processStackAnalyses(
-        context,
-        editor,
-        provider,
-        previewUri
-      );
+      await stackanalysismodule.processStackAnalyses(context, editor);
       expect(spyWindowProgress).callCount(1);
       expect(stubEffectivef8Package).callCount(1);
       expect(stubAuthorize_f8_analytics).callCount(0);
-      expect(stubExecuteCommand).callCount(0);
     });
   });
 });

@@ -136,6 +136,11 @@ export class DependencyReportPanel {
       r += render_stack_iframe(portal_uri);
       r += footer;
       this._panel.webview.html = r;
+    } else if (data && data === 'error') {
+      let r = header;
+      r += render_project_failure();
+      r += footer;
+      this._panel.webview.html = r;
     }
   }
 

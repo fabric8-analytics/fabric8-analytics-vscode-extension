@@ -317,7 +317,7 @@ export module multimanifestmodule {
                             if (!data.hasOwnProperty('error')) {
                               clearInterval(interval);
                               if (DependencyReportPanel.currentPanel) {
-                                DependencyReportPanel.currentPanel.doUpdatePanle(
+                                DependencyReportPanel.currentPanel.doUpdatePanel(
                                   data
                                 );
                               }
@@ -331,14 +331,7 @@ export module multimanifestmodule {
                               message:
                                 StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                             });
-                            // provider.signal(previewUri, null);
-                            // if (DependencyReportPanel.currentPanel) {
-                            //   DependencyReportPanel.currentPanel.doUpdatePanle(
-                            //     null
-                            //   );
-                            // }
-                            console.log(error);
-                            vscode.window.showErrorMessage(error);
+                            stackanalysismodule.handleError(error);
                             reject();
                           });
                       }, 6000);
@@ -347,12 +340,7 @@ export module multimanifestmodule {
                       p.report({
                         message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                       });
-                      // provider.signal(previewUri, null);
-                      // if (DependencyReportPanel.currentPanel) {
-                      //   DependencyReportPanel.currentPanel.doUpdatePanle(null);
-                      // }
-                      console.log(err);
-                      vscode.window.showErrorMessage(err);
+                      stackanalysismodule.handleError(err);
                       reject();
                     });
                 }

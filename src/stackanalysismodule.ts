@@ -136,7 +136,7 @@ export module stackanalysismodule {
                             StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                         });
                         if (DependencyReportPanel.currentPanel) {
-                          DependencyReportPanel.currentPanel.doUpdatePanle(
+                          DependencyReportPanel.currentPanel.doUpdatePanel(
                             data
                           );
                         }
@@ -146,12 +146,10 @@ export module stackanalysismodule {
                     })
                     .catch(error => {
                       clearInterval(interval);
-                      // provider.signal(previewUri, null);
-                      // if (DependencyReportPanel.currentPanel) {
-                      //   DependencyReportPanel.currentPanel.doUpdatePanle(null);
-                      // }
-                      console.log(error);
-                      vscode.window.showErrorMessage(error);
+                      p.report({
+                        message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                      });
+                      handleError(error);
                       reject(error);
                     });
                 }, 6000);
@@ -160,12 +158,7 @@ export module stackanalysismodule {
                 p.report({
                   message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
                 });
-                // provider.signal(previewUri, null);
-                // if (DependencyReportPanel.currentPanel) {
-                //   DependencyReportPanel.currentPanel.doUpdatePanle(null);
-                // }
-                console.log(err);
-                vscode.window.showErrorMessage(err);
+                handleError(err);
                 reject();
               });
           });
@@ -176,5 +169,13 @@ export module stackanalysismodule {
         `No manifest file is active in editor`
       );
     }
+  };
+
+  export const handleError = err => {
+    if (DependencyReportPanel.currentPanel) {
+      DependencyReportPanel.currentPanel.doUpdatePanel('error');
+    }
+    console.log(err);
+    vscode.window.showErrorMessage(err);
   };
 }

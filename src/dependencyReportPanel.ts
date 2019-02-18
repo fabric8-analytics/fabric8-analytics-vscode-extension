@@ -22,9 +22,7 @@ export class DependencyReportPanel {
   public static data;
 
   private readonly _panel: vscode.WebviewPanel;
-  private readonly _extensionPath: string;
   private _disposables: vscode.Disposable[] = [];
-  private _loading = true;
 
   public static createOrShow(extensionPath: string, data: any) {
     const column = vscode.window.activeTextEditor
@@ -57,11 +55,7 @@ export class DependencyReportPanel {
       }
     );
 
-    DependencyReportPanel.currentPanel = new DependencyReportPanel(
-      panel,
-      extensionPath,
-      loading
-    );
+    DependencyReportPanel.currentPanel = new DependencyReportPanel(panel);
   }
 
   // public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
@@ -71,17 +65,11 @@ export class DependencyReportPanel {
   //   );
   // }
 
-  private constructor(
-    panel: vscode.WebviewPanel,
-    extensionPath: string,
-    loading: boolean
-  ) {
+  private constructor(panel: vscode.WebviewPanel) {
     this._panel = panel;
-    this._extensionPath = extensionPath;
 
     // Set the webview's initial html content
     // this._update();
-    this._loading = loading;
     this._updateWebView();
 
     // Listen for when the panel is disposed
@@ -149,7 +137,6 @@ export class DependencyReportPanel {
 
     // Clean up our resources
     this._panel.dispose();
-    this._loading = true;
     DependencyReportPanel.data = null;
     while (this._disposables.length) {
       const x = this._disposables.pop();

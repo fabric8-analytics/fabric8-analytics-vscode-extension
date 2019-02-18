@@ -365,14 +365,17 @@ export module multimanifestmodule {
 
   export const triggerManifestWs = context => {
     return new Promise((resolve, reject) => {
-      authextension.authorize_f8_analytics(context, data => {
-        if (data) {
-          DependencyReportPanel.createOrShow(context.extensionPath, null);
-          resolve(true);
-        } else {
+      authextension
+        .authorize_f8_analytics(context)
+        .then(data => {
+          if (data) {
+            DependencyReportPanel.createOrShow(context.extensionPath, null);
+            resolve(true);
+          }
+        })
+        .catch(err => {
           reject(`Unable to authenticate.`);
-        }
-      });
+        });
     });
   };
 }

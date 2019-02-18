@@ -121,7 +121,7 @@ suite('multimanifest module', () => {
   test('triggerManifestWs should should resolve to true', async () => {
     let stubAuthorize_f8_analytics = sandbox
       .stub(authextension, 'authorize_f8_analytics')
-      .yields(true);
+      .resolves(true);
     sandbox.stub(multimanifestmodule, 'find_manifests_workspace').yields(true);
     let promiseTriggerManifestWs = await multimanifestmodule.triggerManifestWs(
       context

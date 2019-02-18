@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
     this
   );
 
-  authextension.authorize_f8_analytics(context, data => {
+  authextension.authorize_f8_analytics(context).then(data => {
     if (data) {
       // The server is implemented in node
       let serverModule = context.asAbsolutePath(

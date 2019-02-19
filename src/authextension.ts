@@ -16,7 +16,7 @@ export module authextension {
   };
 
   export const authorize_f8_analytics = context => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       let context_f8_access_routes = context.globalState.get(
         'f8_access_routes'
       );
@@ -39,7 +39,7 @@ export module authextension {
   };
 
   export const get_3scale_routes = context => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       let options = {};
       options['uri'] = `${
         Apiendpoint.THREE_SCALE_CONNECT_URL

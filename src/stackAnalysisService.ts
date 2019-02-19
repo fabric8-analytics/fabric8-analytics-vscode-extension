@@ -105,7 +105,7 @@ export module stackAnalysisServices {
     });
   };
 
-  export const get3ScaleRouteService = function(options) {
+  export const get3ScaleRouteService = function(options: object) {
     return new Promise((resolve, reject) => {
       request.get(options, (err, httpResponse, body) => {
         if (err) {

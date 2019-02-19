@@ -11,13 +11,11 @@ export namespace Templates {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-        <meta http-equiv="Content-Security-Policy" content="img-src vscode-resource: https:;">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
         html, body {
-            width: 100%;
-            height: 100%;
+            width: 96%;
+            height: 90%;
             font-size: 16px;
         }
 
@@ -273,37 +271,21 @@ export namespace Templates {
     <html lang="en">
     <head>
     <meta charset="utf-8"/>
-    <meta charset="UTF-8">
-        <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-        <meta http-equiv="Content-Security-Policy" content="img-src vscode-resource: https:;">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
     html,body {
-    width: 100%;
-    height: 100%;
+    width: 98%;
+    height: 99%;
     font-size: 16px;
     }
 
     body {
-    background: #1e1e1e;
-    }
-
-    .caption {
-    font-family: sans-serif;
-    font-weight: 100;
-    padding-left: 4px;
-    }
-
-    .top-caption {
-    border-bottom: 1px solid #555;
-    width: 95%;
+    background: #ffffff;
     }
 
     </style>
     </head>
-    <body>
-    <div class='top-caption'>
-    </div>`;
+    <body>`;
 
   export const FOOTER_TEMPLATE = '</body></html>';
 }

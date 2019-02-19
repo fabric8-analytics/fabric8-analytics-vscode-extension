@@ -28,13 +28,7 @@ export class DependencyReportPanel {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
-    let loading = true;
     DependencyReportPanel.data = data;
-    // if data is defined
-    if (data) {
-      // DependencyReportPanel.data = data;
-      loading = false;
-    }
     // If we already have a panel, show it.
     if (DependencyReportPanel.currentPanel) {
       DependencyReportPanel.currentPanel._panel.reveal(column);
@@ -44,26 +38,20 @@ export class DependencyReportPanel {
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
       DependencyReportPanel.viewType,
-      'Test Analytics Report',
+      'Dependency Analytics Report',
       column || vscode.ViewColumn.One,
       {
         // Enable javascript in the webview
         enableScripts: true,
+        retainContextWhenHidden: true,
 
         // And restric the webview to only loading content from our extension's `media` directory.
-        localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'media'))]
+        localResourceRoots: []
       }
     );
 
     DependencyReportPanel.currentPanel = new DependencyReportPanel(panel);
   }
-
-  // public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
-  //   DependencyReportPanel.currentPanel = new DependencyReportPanel(
-  //     panel,
-  //     extensionPath
-  //   );
-  // }
 
   private constructor(panel: vscode.WebviewPanel) {
     this._panel = panel;
@@ -102,16 +90,7 @@ export class DependencyReportPanel {
     );
   }
 
-  public doRefactor() {
-    // Send a message to the webview webview.
-    // You can send any JSON serializable data.
-    this._panel.webview.postMessage({ command: 'refactor' });
-  }
-
-  public doUpdatePanel(data) {
-    // Send a message to the webview webview.
-    // You can send any JSON serializable data.
-    // this._panel.webview.postMessage(data);
+  public doUpdatePanel(data: any) {
     if (data && data.request_id) {
       DependencyReportPanel.data = data;
       let r = header;
@@ -172,7 +151,7 @@ export class DependencyReportPanel {
 
 let render_project_failure = () => {
   return `<div>
-                <p style='color:#ffffff;text-align: center;'>Unable to analyze your stack.</p>
+                <p style='color:#000000;text-align: center;'>Unable to analyze your stack.</p>
               </div>`;
 };
 

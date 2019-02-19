@@ -6,7 +6,7 @@ import { StatusMessages } from './statusMessages';
 
 export module ProjectDataProvider {
   export const effectivef8PomWs = workspaceFolder => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
       if (
         process &&
@@ -39,7 +39,7 @@ export module ProjectDataProvider {
   };
 
   export const effectivef8Pom = item => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       let pomXmlFilePath: string = null;
       let filepath: string = 'target/pom.xml';
       pomXmlFilePath = item;
@@ -75,7 +75,7 @@ export module ProjectDataProvider {
   };
 
   export const effectivef8Package = workspaceFolder => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
       if (
         process &&
@@ -184,7 +184,7 @@ export module ProjectDataProvider {
   };
 
   export const getDependencyVersion = manifestRootFolderPath => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       let dir = manifestRootFolderPath + 'target';
       let prefixPath = trimTrailingChars(manifestRootFolderPath);
       let npmPrefixPath = manifestRootFolderPath;
@@ -240,7 +240,7 @@ export module ProjectDataProvider {
   };
 
   export const effectivef8Pypi = workspaceFolder => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
       if (
         process &&

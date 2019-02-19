@@ -13,7 +13,7 @@ import { DependencyReportPanel } from './dependencyReportPanel';
 
 export module multimanifestmodule {
   export const find_manifests_workspace = (workspaceFolder, filesRegex) => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       const relativePattern = new vscode.RelativePattern(
         workspaceFolder,
         `{${filesRegex},LICENSE}`
@@ -215,7 +215,10 @@ export module multimanifestmodule {
     }
   };
 
-  export const triggerFullStackAnalyses = (context, workspaceFolder) => {
+  export const triggerFullStackAnalyses = (
+    context: vscode.ExtensionContext,
+    workspaceFolder: vscode.WorkspaceFolder
+  ) => {
     vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,

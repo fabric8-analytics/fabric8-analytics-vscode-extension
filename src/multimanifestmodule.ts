@@ -216,18 +216,6 @@ export module multimanifestmodule {
         previewUri
       );
     } else if (
-      editor &&
-      editor.document.fileName &&
-      editor.document.fileName.toLowerCase().indexOf('requirements.txt') !== -1
-    ) {
-      Apiendpoint.API_ECOSYSTEM = 'pypi';
-      stackanalysismodule.processStackAnalyses(
-        context,
-        editor,
-        provider,
-        previewUri
-      );
-    } else if (
       vscode.workspace.hasOwnProperty('workspaceFolders') &&
       vscode.workspace['workspaceFolders'].length > 1
     ) {
@@ -266,7 +254,7 @@ export module multimanifestmodule {
         return new Promise((resolve, reject) => {
           const relativePattern = new vscode.RelativePattern(
             workspaceFolder,
-            '{pom.xml,**/package.json,requirements.txt}'
+            '{pom.xml,**/package.json}'
           );
           vscode.workspace.findFiles(relativePattern, '**/node_modules').then(
             (result: vscode.Uri[]) => {

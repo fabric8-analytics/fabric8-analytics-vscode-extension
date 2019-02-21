@@ -88,7 +88,10 @@ export module ProjectDataProvider {
       }
       getDependencyVersion(vscodeRootpath)
         .then(() => {
-          let formPackagedependencyPromise = formPackagedependencyNpmList(
+          /* let formPackagedependencyPromise = formPackagedependencyNpmList(
+            vscodeRootpath
+          ); */
+          let formPackagedependencyPromise = formPackagedependency(
             vscodeRootpath
           );
           formPackagedependencyPromise
@@ -175,6 +178,78 @@ export module ProjectDataProvider {
           } else {
             vscode.window.showErrorMessage(
               `Unable to parse ${vscodeRootpath}target/npmlist.json`
+            );
+            reject(err);
+          }
+        }
+      );
+    });
+  };
+
+  export const formPackagedependency = vscodeRootpath => {
+    let manifestRootFolderPath: string = vscodeRootpath;
+    //        manifestRootFolderPath = item.split('package.json')[0];
+    return new Promise((resolve, reject) => {
+      fs.readFile(
+        manifestRootFolderPath + 'package.json',
+        { encoding: 'utf-8' },
+        function(err, data) {
+          if (data) {
+            let packageDependencies = JSON.parse(data);
+            fs.readFile(
+              manifestRootFolderPath + 'target/npmlist.json',
+              { encoding: 'utf-8' },
+              function(err, data) {
+                if (data) {
+                  let packageListDependencies = JSON.parse(data);
+                  let packageDepKeys = [];
+                  if (
+                    packageDependencies &&
+                    packageDependencies.hasOwnProperty('dependencies')
+                  ) {
+                    packageDepKeys = Object.keys(
+                      packageDependencies.dependencies
+                    );
+                  }
+                  for (let i = 0; i < packageDepKeys.length; i++) {
+                    if (
+                      packageListDependencies.dependencies[packageDepKeys[i]] &&
+                      packageListDependencies.dependencies[packageDepKeys[i]]
+                        .version
+                    ) {
+                      packageDependencies.dependencies[packageDepKeys[i]] =
+                        packageListDependencies.dependencies[
+                          packageDepKeys[i]
+                        ].version;
+                    }
+                  }
+                  fs.writeFile(
+                    manifestRootFolderPath + 'target/package.json',
+                    JSON.stringify(packageDependencies),
+                    function(err) {
+                      if (err) {
+                        vscode.window.showErrorMessage(
+                          `Unable to create ${manifestRootFolderPath}target/package.json`
+                        );
+                        reject(err);
+                      } else {
+                        let ePkgPath: any =
+                          manifestRootFolderPath + 'target/package.json';
+                        resolve(ePkgPath);
+                      }
+                    }
+                  );
+                } else {
+                  vscode.window.showErrorMessage(
+                    `Unable to parse ${manifestRootFolderPath}target/npmlist.json`
+                  );
+                  reject(err);
+                }
+              }
+            );
+          } else {
+            vscode.window.showErrorMessage(
+              `Unable to parse ${manifestRootFolderPath}package.json`
             );
             reject(err);
           }

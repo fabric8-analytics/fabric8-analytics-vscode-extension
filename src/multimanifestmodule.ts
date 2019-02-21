@@ -263,7 +263,8 @@ export module multimanifestmodule {
                 let effective_pom_skip = true;
                 let effectiveF8WsVar = 'effectivef8Package';
                 Apiendpoint.API_ECOSYSTEM = 'npm';
-                let filesRegex = 'target/npmlist.json';
+                // let filesRegex = 'target/npmlist.json';
+                let filesRegex = 'target/package.json';
                 let pom_count = 0;
                 result.forEach(item => {
                   if (item.fsPath.indexOf('pom.xml') >= 0) {

@@ -73,8 +73,11 @@ suite('projectDataProvider Modules', () => {
     let stubGetDependencyVersion = sandbox
       .stub(ProjectDataProvider, 'getDependencyVersion')
       .resolves(true);
+    // let stubFormPackagedependencyNpmList = sandbox
+    //   .stub(ProjectDataProvider, 'formPackagedependencyNpmList')
+    //   .resolves('sample');
     let stubFormPackagedependencyNpmList = sandbox
-      .stub(ProjectDataProvider, 'formPackagedependencyNpmList')
+      .stub(ProjectDataProvider, 'formPackagedependency')
       .resolves('sample');
     await ProjectDataProvider.effectivef8Package(
       'path/samplenodeapp/',

@@ -64,7 +64,10 @@ export module ProjectDataProvider {
       let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
       getDependencyVersion(item, vscodeRootpath)
         .then(() => {
-          let formPackagedependencyPromise = formPackagedependencyNpmList(
+          /* let formPackagedependencyPromise = formPackagedependencyNpmList(
+            vscodeRootpath
+          ); */
+          let formPackagedependencyPromise = formPackagedependency(
             vscodeRootpath
           );
           formPackagedependencyPromise

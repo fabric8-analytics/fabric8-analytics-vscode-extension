@@ -21,6 +21,17 @@ suite('projectDataProvider Modules', () => {
     sandbox.restore();
   });
 
+  let editor = {
+    document: {
+      uri: {
+        fsPath: '/Users/sampleNodeRepo/package.json',
+        path: '/Users/sampleNodeRepo/package.json',
+        scheme: 'file'
+      },
+      fileName: '/Users/sampleNodeRepo/package.json'
+    }
+  };
+
   test('effectivef8PomWs should return error', async () => {
     let workspaceFolder = vscode.workspace.workspaceFolders[0];
     let stubExec = sandbox.stub(child_process, 'exec').yields('err');
@@ -52,7 +63,7 @@ suite('projectDataProvider Modules', () => {
     let stubExec = sandbox.stub(child_process, 'exec').yields('err');
     let savedErr: boolean;
     try {
-      await ProjectDataProvider.effectivef8Pom('path/pom.xml');
+      await ProjectDataProvider.effectivef8Pom(editor);
     } catch (err) {
       savedErr = err;
       return;
@@ -63,13 +74,23 @@ suite('projectDataProvider Modules', () => {
   });
 
   test('effectivef8Pom should return success', async () => {
+    sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns(<any>{
+      uri: {
+        fsPath: 'path/samplenodeapp',
+        scheme: 'file',
+        authority: '',
+        fragment: '',
+        query: '',
+        path: 'path/samplenodeapp'
+      }
+    });
     let stubExec = sandbox
       .stub(child_process, 'exec')
       .yields(null, 'success', 'success');
-    let effectivef8PomPR = await ProjectDataProvider.effectivef8Pom(
-      'path/pom.xml'
+    let effectivef8PomPR = await ProjectDataProvider.effectivef8Pom(editor);
+    expect(effectivef8PomPR).equals(
+      'path/samplenodeapp/target/dependencies.txt'
     );
-    expect(effectivef8PomPR).equals('path/target/pom.xml');
     expect(stubExec).callCount(1);
   });
 

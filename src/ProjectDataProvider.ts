@@ -17,11 +17,15 @@ export module ProjectDataProvider {
       } else {
         vscodeRootpath += '/';
       }
+      const filepath = vscodeRootpath + `target/dependencies.txt`;
       const cmd: string = [
         Utils.getMavenExecutable(),
-        'io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare',
+        'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
         '-f',
-        `"${vscodeRootpath}"`
+        `"${vscodeRootpath}"`,
+        `-DoutputFile=${filepath}`,
+        `-DoutputType=dot`,
+        `-DappendOutput=true`
       ].join(' ');
       console.log('effectivef8PomWs ' + cmd);
       exec(
@@ -38,17 +42,31 @@ export module ProjectDataProvider {
     });
   };
 
-  export const effectivef8Pom = item => {
+  export const effectivef8Pom = editor => {
     return new Promise((resolve, reject) => {
-      let pomXmlFilePath: string = null;
-      let filepath: string = 'target/pom.xml';
-      pomXmlFilePath = item;
+      let workspaceFolder = vscode.workspace.getWorkspaceFolder(
+        editor.document.uri
+      );
+      let vscodeRootpath = workspaceFolder.uri.fsPath;
+      let item = editor.document.uri.fsPath;
+      if (
+        process &&
+        process.platform &&
+        process.platform.toLowerCase() === 'win32'
+      ) {
+        vscodeRootpath += '\\';
+      } else {
+        vscodeRootpath += '/';
+      }
+      const filepath = vscodeRootpath + `target/dependencies.txt`;
       const cmd: string = [
         Utils.getMavenExecutable(),
-        'help:effective-pom',
+        'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
         '-f',
-        `"${pomXmlFilePath}"`,
-        `-Doutput="${filepath}"`
+        `"${item}"`,
+        `-DoutputFile="${filepath}"`,
+        `-DoutputType=dot`,
+        `-DappendOutput=true`
       ].join(' ');
       console.log('effectivef8Pom ' + cmd);
       exec(
@@ -58,16 +76,7 @@ export module ProjectDataProvider {
             vscode.window.showErrorMessage(error.message);
             reject(false);
           } else {
-            let ePomPathList: any = pomXmlFilePath.split('pom.xml');
-            if (ePomPathList.length > 0) {
-              let ePomPath: string = ePomPathList[0] + filepath;
-              resolve(ePomPath);
-            } else {
-              vscode.window.showInformationMessage(
-                'Looks like there either are some problem with manifest file or mvn is not set in path'
-              );
-              reject(false);
-            }
+            resolve(filepath);
           }
         }
       );

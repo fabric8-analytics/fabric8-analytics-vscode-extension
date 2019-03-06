@@ -274,7 +274,7 @@ export namespace Templates {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
     html,body {
-    width: 98%;
+    width: 99%;
     height: 99%;
     font-size: 16px;
     }

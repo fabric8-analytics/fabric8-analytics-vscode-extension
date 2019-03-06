@@ -54,6 +54,7 @@ export module stackAnalysisServices {
     let errorMsg: string;
     return new Promise((resolve, reject) => {
       console.log('Options', options && options.formData);
+      console.log('Options', options && options.headers);
       request.post(options, (err, httpResponse, body) => {
         if (err) {
           clearContextInfo(context);

@@ -71,7 +71,8 @@ export module stackanalysismodule {
             let argumentList = workspaceFolder;
             if (fileUri.toLowerCase().indexOf('pom.xml') !== -1) {
               effectiveF8Var = 'effectivef8Pom';
-              argumentList = editor.document.uri.fsPath;
+              argumentList = editor;
+              // argumentList = editor.document.uri.fsPath;
             } else if (
               fileUri.toLowerCase().indexOf('requirements.txt') !== -1
             ) {

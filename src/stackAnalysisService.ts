@@ -9,7 +9,7 @@ export module stackAnalysisServices {
     context.globalState.update('f8_access_routes', '');
   };
 
-  export const getStackAnalysisService = function(options) {
+  export const getStackAnalysisService = options => {
     let errorMsg: string;
     return new Promise((resolve, reject) => {
       request.get(options, (err, httpResponse, body) => {
@@ -50,7 +50,7 @@ export module stackAnalysisServices {
     });
   };
 
-  export const postStackAnalysisService = function(options, context) {
+  export const postStackAnalysisService = (options, context) => {
     let errorMsg: string;
     return new Promise((resolve, reject) => {
       console.log('Options', options && options.formData);
@@ -106,7 +106,7 @@ export module stackAnalysisServices {
     });
   };
 
-  export const get3ScaleRouteService = function(options: object) {
+  export const get3ScaleRouteService = (options: object) => {
     return new Promise((resolve, reject) => {
       request.get(options, (err, httpResponse, body) => {
         if (err) {

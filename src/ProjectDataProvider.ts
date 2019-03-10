@@ -5,7 +5,7 @@ import { Utils } from './Utils';
 import { StatusMessages } from './statusMessages';
 
 export module ProjectDataProvider {
-  export const effectivef8PomWs = workspaceFolder => {
+  export const effectivef8Pom = (item, workspaceFolder) => {
     return new Promise((resolve, reject) => {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
       if (
@@ -20,46 +20,8 @@ export module ProjectDataProvider {
       const filepath = vscodeRootpath + `target/dependencies.txt`;
       const cmd: string = [
         Utils.getMavenExecutable(),
-        'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
-        '-f',
-        `"${vscodeRootpath}"`,
-        `-DoutputFile=${filepath}`,
-        `-DoutputType=dot`,
-        `-DappendOutput=true`
-      ].join(' ');
-      console.log('effectivef8PomWs ' + cmd);
-      exec(
-        cmd,
-        (error: Error, _stdout: string, _stderr: string): void => {
-          if (error) {
-            vscode.window.showErrorMessage(error.message);
-            reject(false);
-          } else {
-            resolve(true);
-          }
-        }
-      );
-    });
-  };
-
-  export const effectivef8Pom = editor => {
-    return new Promise((resolve, reject) => {
-      let workspaceFolder = vscode.workspace.getWorkspaceFolder(
-        editor.document.uri
-      );
-      let vscodeRootpath = workspaceFolder.uri.fsPath;
-      let item = editor.document.uri.fsPath;
-      if (
-        process &&
-        process.platform &&
-        process.platform.toLowerCase() === 'win32'
-      ) {
-        vscodeRootpath += '\\';
-      } else {
-        vscodeRootpath += '/';
-      }
-      const filepath = vscodeRootpath + `target/dependencies.txt`;
-      const cmd: string = [
+        `clean install -DskipTests=true -f`,
+        `"${item}" &&`,
         Utils.getMavenExecutable(),
         'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
         '-f',
@@ -76,14 +38,14 @@ export module ProjectDataProvider {
             vscode.window.showErrorMessage(error.message);
             reject(false);
           } else {
-            resolve(filepath);
+            resolve(`target/dependencies.txt`);
           }
         }
       );
     });
   };
 
-  export const effectivef8Package = workspaceFolder => {
+  export const effectivef8Package = (item, workspaceFolder) => {
     return new Promise((resolve, reject) => {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
       if (
@@ -95,14 +57,14 @@ export module ProjectDataProvider {
       } else {
         vscodeRootpath += '/';
       }
-      getDependencyVersion(vscodeRootpath)
+      getDependencyVersion(item, vscodeRootpath)
         .then(() => {
           let formPackagedependencyPromise = formPackagedependencyNpmList(
             vscodeRootpath
           );
           formPackagedependencyPromise
             .then(data => {
-              resolve(data);
+              resolve(`target/npmlist.json`);
             })
             .catch(() => {
               reject(false);
@@ -192,11 +154,11 @@ export module ProjectDataProvider {
     });
   };
 
-  export const getDependencyVersion = manifestRootFolderPath => {
+  export const getDependencyVersion = (item, manifestRootFolderPath) => {
     return new Promise((resolve, reject) => {
       let dir = manifestRootFolderPath + 'target';
-      let prefixPath = trimTrailingChars(manifestRootFolderPath);
-      let npmPrefixPath = manifestRootFolderPath;
+      let prefixPath = trimTrailingChars(item);
+      let npmPrefixPath = item;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
@@ -205,7 +167,7 @@ export module ProjectDataProvider {
         process.platform &&
         process.platform.toLowerCase() === 'win32'
       ) {
-        npmPrefixPath += 'node_modules';
+        npmPrefixPath = npmPrefixPath + 'node_modules';
         if (!fs.existsSync(npmPrefixPath)) {
           fs.mkdirSync(npmPrefixPath);
         }

@@ -4,10 +4,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 
 import { stackanalysismodule } from './stackanalysismodule';
-import { Apiendpoint } from './apiendpoint';
-import { ProjectDataProvider } from './ProjectDataProvider';
 import { authextension } from './authextension';
-import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
@@ -182,30 +179,35 @@ export module multimanifestmodule {
    */
   export const dependencyAnalyticsReportFlow = async context => {
     let editor = vscode.window.activeTextEditor;
+    let workspaceFolder: vscode.WorkspaceFolder;
     if (
       editor &&
       editor.document.fileName &&
       editor.document.fileName.toLowerCase().indexOf('pom.xml') !== -1
     ) {
-      let workspaceFolder = vscode.workspace.getWorkspaceFolder(
+      workspaceFolder = vscode.workspace.getWorkspaceFolder(
         editor.document.uri
       );
-      Apiendpoint.API_ECOSYSTEM = 'maven';
-      if (
-        workspaceFolder.uri.fsPath + '/pom.xml' === editor.document.fileName ||
-        workspaceFolder.uri.fsPath + '\\pom.xml' === editor.document.fileName
-      ) {
-        triggerFullStackAnalyses(context, workspaceFolder);
-      } else {
-        stackanalysismodule.processStackAnalyses(context, editor);
-      }
+      stackanalysismodule.processStackAnalyses(
+        context,
+        workspaceFolder,
+        'maven',
+        editor
+      );
     } else if (
       editor &&
       editor.document.fileName &&
       editor.document.fileName.toLowerCase().indexOf('package.json') !== -1
     ) {
-      Apiendpoint.API_ECOSYSTEM = 'npm';
-      stackanalysismodule.processStackAnalyses(context, editor);
+      workspaceFolder = vscode.workspace.getWorkspaceFolder(
+        editor.document.uri
+      );
+      stackanalysismodule.processStackAnalyses(
+        context,
+        workspaceFolder,
+        'npm',
+        editor
+      );
     } else if (
       vscode.workspace.hasOwnProperty('workspaceFolders') &&
       vscode.workspace['workspaceFolders'].length > 1
@@ -228,150 +230,48 @@ export module multimanifestmodule {
     context: vscode.ExtensionContext,
     workspaceFolder: vscode.WorkspaceFolder
   ) => {
-    vscode.window.withProgress(
-      {
-        location: vscode.ProgressLocation.Window,
-        title: StatusMessages.EXT_TITLE
-      },
-      p => {
-        return new Promise((resolve, reject) => {
-          const relativePattern = new vscode.RelativePattern(
-            workspaceFolder,
-            '{pom.xml,**/package.json}'
-          );
-          vscode.workspace.findFiles(relativePattern, '**/node_modules').then(
-            (result: vscode.Uri[]) => {
-              if (result && result.length) {
-                // Do not create an effective pom if no pom.xml is present
-                let effective_pom_skip = true;
-                let effectiveF8WsVar = 'effectivef8Package';
-                Apiendpoint.API_ECOSYSTEM = 'npm';
-                let filesRegex = 'target/npmlist.json';
-                let pom_count = 0;
-                result.forEach(item => {
-                  if (item.fsPath.indexOf('pom.xml') >= 0) {
-                    effective_pom_skip = false;
-                    pom_count += 1;
-                    Apiendpoint.API_ECOSYSTEM = 'maven';
-                    effectiveF8WsVar = 'effectivef8PomWs';
-                    // filesRegex = 'target/stackinfo/**/pom.xml';
-                    filesRegex = 'target/dependencies.txt';
-                  } else if (item.fsPath.indexOf('requirements.txt') >= 0) {
-                    Apiendpoint.API_ECOSYSTEM = 'pypi';
-                    effectiveF8WsVar = 'effectivef8Pypi';
-                    filesRegex = 'target/pylist.json';
-                  }
-                });
-
-                if (!effective_pom_skip && pom_count === 0) {
-                  vscode.window.showInformationMessage(
-                    'Multi ecosystem support is not yet available.'
-                  );
-                  reject();
-                  return;
-                } else {
-                  p.report({
-                    message: StatusMessages.WIN_RESOLVING_DEPENDENCIES
-                  });
-                  ProjectDataProvider[effectiveF8WsVar](workspaceFolder)
-                    .then(async () => {
-                      await triggerManifestWs(context);
-                    })
-                    .then(async () => {
-                      let result = await find_manifests_workspace(
-                        workspaceFolder,
-                        filesRegex
-                      );
-                      p.report({
-                        message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
-                      });
-                      return result;
-                    })
-                    .then(async result => {
-                      let formData = await form_manifests_payload(result);
-                      return formData;
-                    })
-                    .then(async formData => {
-                      let payloadData = formData;
-                      const options = {};
-                      let thatContext: any;
-                      options['uri'] = `${
-                        Apiendpoint.STACK_API_URL
-                      }stack-analyses/?user_key=${
-                        Apiendpoint.STACK_API_USER_KEY
-                      }`;
-                      options['formData'] = payloadData;
-                      options['headers'] = {
-                        origin: 'vscode',
-                        ecosystem: Apiendpoint.API_ECOSYSTEM
-                      };
-                      thatContext = context;
-                      let respId = await stackAnalysisServices.postStackAnalysisService(
-                        options,
-                        thatContext
-                      );
-                      p.report({
-                        message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
-                      });
-                      return respId;
-                    })
-                    .then(async respId => {
-                      console.log(`Analyzing your stack, id ${respId}`);
-                      const options = {};
-                      options['uri'] = `${
-                        Apiendpoint.STACK_API_URL
-                      }stack-analyses/${respId}?user_key=${
-                        Apiendpoint.STACK_API_USER_KEY
-                      }`;
-                      const interval = setInterval(() => {
-                        stackAnalysisServices
-                          .getStackAnalysisService(options)
-                          .then(data => {
-                            if (!data.hasOwnProperty('error')) {
-                              clearInterval(interval);
-                              if (DependencyReportPanel.currentPanel) {
-                                DependencyReportPanel.currentPanel.doUpdatePanel(
-                                  data
-                                );
-                              }
-                              resolve();
-                            }
-                            // keep on waiting
-                          })
-                          .catch(error => {
-                            clearInterval(interval);
-                            p.report({
-                              message:
-                                StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                            });
-                            stackanalysismodule.handleError(error);
-                            reject();
-                          });
-                      }, 6000);
-                    })
-                    .catch(err => {
-                      p.report({
-                        message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                      });
-                      stackanalysismodule.handleError(err);
-                      reject();
-                    });
-                }
-              } else {
-                vscode.window.showInformationMessage(
-                  StatusMessages.NO_SUPPORTED_MANIFEST
-                );
-                reject();
-              }
-            },
-            // Other ecosystem flow
-            (reason: any) => {
-              vscode.window.showInformationMessage(
-                StatusMessages.NO_SUPPORTED_MANIFEST
-              );
+    const relativePattern = new vscode.RelativePattern(
+      workspaceFolder,
+      '{pom.xml,**/package.json}'
+    );
+    vscode.workspace.findFiles(relativePattern, '**/node_modules').then(
+      (result: vscode.Uri[]) => {
+        if (result && result.length) {
+          // Do not create an effective pom if no pom.xml is present
+          let effective_pom_skip = true;
+          let ecosystem = 'npm';
+          let pom_count = 0;
+          result.forEach(item => {
+            if (item.fsPath.indexOf('pom.xml') >= 0) {
+              effective_pom_skip = false;
+              pom_count += 1;
+              ecosystem = 'maven';
             }
+          });
+
+          if (!effective_pom_skip && pom_count === 0) {
+            vscode.window.showInformationMessage(
+              'Multi ecosystem support is not yet available.'
+            );
+            return;
+          } else {
+            stackanalysismodule.processStackAnalyses(
+              context,
+              workspaceFolder,
+              ecosystem
+            );
+          }
+        } else {
+          vscode.window.showInformationMessage(
+            StatusMessages.NO_SUPPORTED_MANIFEST
           );
-        });
+        }
+      },
+      // Other ecosystem flow
+      (reason: any) => {
+        vscode.window.showInformationMessage(
+          StatusMessages.NO_SUPPORTED_MANIFEST
+        );
       }
     );
   };

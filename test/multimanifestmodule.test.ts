@@ -105,7 +105,7 @@ suite('multimanifest module', () => {
   test('triggerManifestWs should return error', async () => {
     let stubAuthorize_f8_analytics = sandbox
       .stub(authextension, 'authorize_f8_analytics')
-      .yields(null);
+      .rejects('err');
     let savedErr: string;
     try {
       await multimanifestmodule.triggerManifestWs(context);
@@ -122,7 +122,9 @@ suite('multimanifest module', () => {
     let stubAuthorize_f8_analytics = sandbox
       .stub(authextension, 'authorize_f8_analytics')
       .resolves(true);
-    sandbox.stub(multimanifestmodule, 'find_manifests_workspace').yields(true);
+    sandbox
+      .stub(multimanifestmodule, 'find_manifests_workspace')
+      .resolves(['path/samplenodeapp/license.txt']);
     let promiseTriggerManifestWs = await multimanifestmodule.triggerManifestWs(
       context
     );

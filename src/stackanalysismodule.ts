@@ -28,21 +28,15 @@ export module stackanalysismodule {
           ProjectDataProvider[effectiveF8Var](argumentList, workspaceFolder)
             .then(async dataEpom => {
               await multimanifestmodule.triggerManifestWs(context);
-              return dataEpom;
-            })
-            .then(async dataEpom => {
-              let result = await multimanifestmodule.find_manifests_workspace(
-                workspaceFolder,
-                dataEpom
-              );
               p.report({
                 message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
               });
-              return result;
+              return dataEpom;
             })
-            .then(async result => {
+            .then(async dataEpom => {
               let formData = await multimanifestmodule.form_manifests_payload(
-                result
+                dataEpom,
+                workspaceFolder
               );
               return formData;
             })

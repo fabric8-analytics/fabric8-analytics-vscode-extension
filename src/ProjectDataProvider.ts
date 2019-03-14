@@ -38,7 +38,7 @@ export module ProjectDataProvider {
             vscode.window.showErrorMessage(error.message);
             reject(false);
           } else {
-            resolve(`target/dependencies.txt`);
+            resolve(filepath);
           }
         }
       );
@@ -64,7 +64,7 @@ export module ProjectDataProvider {
           );
           formPackagedependencyPromise
             .then(data => {
-              resolve(`target/npmlist.json`);
+              resolve(data);
             })
             .catch(() => {
               reject(false);
@@ -167,7 +167,7 @@ export module ProjectDataProvider {
         process.platform &&
         process.platform.toLowerCase() === 'win32'
       ) {
-        npmPrefixPath = npmPrefixPath + 'node_modules';
+        npmPrefixPath = trimTrailingChars(npmPrefixPath) + '\\node_modules';
         if (!fs.existsSync(npmPrefixPath)) {
           fs.mkdirSync(npmPrefixPath);
         }

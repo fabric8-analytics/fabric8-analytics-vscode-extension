@@ -51,7 +51,7 @@ suite('projectDataProvider Modules', () => {
       'path/samplenodeapp/',
       workspaceFolder
     );
-    expect(effectivef8PomPR).equals('target/dependencies.txt');
+    expect(effectivef8PomPR).contains('target/dependencies.txt');
     expect(stubExec).callCount(1);
   });
 

@@ -89,9 +89,6 @@ suite('stacknalysis module', () => {
       let stubTriggerManifestWs = sandbox
         .stub(multimanifestmodule, 'triggerManifestWs')
         .resolves(true);
-      let stubFindManifestWs = sandbox
-        .stub(multimanifestmodule, 'find_manifests_workspace')
-        .resolves(['target/npmlist.json']);
       let stubFormManifestPayload = sandbox
         .stub(multimanifestmodule, 'form_manifests_payload')
         .resolves({ orgin: 'vscode', ecosystem: 'npm' });

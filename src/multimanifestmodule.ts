@@ -9,60 +9,27 @@ import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
 export module multimanifestmodule {
-  export const find_manifests_workspace = (workspaceFolder, filesRegex) => {
+  export const form_manifests_payload = (resultPath, workspaceFolder): any => {
     return new Promise((resolve, reject) => {
-      const relativePattern = new vscode.RelativePattern(
-        workspaceFolder,
-        `{${filesRegex},LICENSE}`
-      );
-      vscode.workspace.findFiles(relativePattern, '**/node_modules').then(
-        (result: vscode.Uri[]) => {
-          if (result && result.length) {
-            resolve(result);
-          } else {
-            reject(`No manifest file found to be analysed`);
-          }
-        },
-        // rejected
-        (reason: any) => {
-          reject(reason);
-        }
-      );
-    });
-  };
-
-  export const form_manifests_payload = (resultList): any => {
-    return new Promise((resolve, reject) => {
-      let fileReadPromises: Array<any> = [];
-      for (let i = 0; i < resultList.length; i++) {
-        let fileReadPromise = manifestFileRead(resultList[i]);
-        fileReadPromises.push(fileReadPromise);
-      }
-
-      Promise.all(fileReadPromises)
-        .then(datas => {
+      manifestFileRead(resultPath, workspaceFolder)
+        .then(item => {
           let form_data = {
             'manifest[]': [],
             'filePath[]': [],
             'license[]': [],
             origin: 'lsp'
           };
-          datas.forEach(item => {
-            if (item.manifest && item.filePath) {
-              form_data['manifest[]'].push(item.manifest);
-              form_data['filePath[]'].push(item.filePath);
-            }
-            if (item.hasOwnProperty('license') && item.license.value) {
-              form_data['license[]'].push(item.license);
-            }
-            //TODO : for logging 400 issue
-            if (!item.manifest && !item.license) {
-              console.log('Manifest is missed', item);
-            }
-            if (!item.filePath && !item.license) {
-              console.log('filePath is missed', item);
-            }
-          });
+          if (item && item['manifest'] && item['filePath']) {
+            form_data['manifest[]'].push(item['manifest']);
+            form_data['filePath[]'].push(item['filePath']);
+          }
+          //TODO : for logging 400 issue
+          if (!item['manifest'] && !item['license']) {
+            console.log('Manifest is missed', item);
+          }
+          if (!item['filePath'] && !item['license']) {
+            console.log('filePath is missed', item);
+          }
           resolve(form_data);
         })
         .catch(error => {
@@ -71,7 +38,7 @@ export module multimanifestmodule {
     });
   };
 
-  export const manifestFileRead = fileContent => {
+  export const manifestFileRead = (fsPath, workspaceFolder) => {
     let form_data = {
       manifest: '',
       filePath: '',
@@ -85,14 +52,10 @@ export module multimanifestmodule {
       'pylist.json': 'application/json',
       'npmlist.json': 'application/json'
     };
-    let licenseObj: any;
-
     let filePath: string = '';
     let filePathList: any = [];
-    let projRoot = vscode.workspace.getWorkspaceFolder(fileContent);
-    let projRootPath = projRoot.uri.fsPath;
+    let projRootPath = workspaceFolder.uri.fsPath;
     return new Promise((resolve, reject) => {
-      let fsPath: string = fileContent.fsPath ? fileContent.fsPath : '';
       fs.readFile(fsPath, function(err, data) {
         if (data) {
           manifestObj = {
@@ -102,14 +65,7 @@ export module multimanifestmodule {
               contentType: 'text/plain'
             }
           };
-          licenseObj = {
-            value: '',
-            options: {
-              filename: '',
-              contentType: 'text/plain'
-            }
-          };
-          if (!fileContent.fsPath.endsWith('LICENSE')) {
+          if (!fsPath.endsWith('LICENSE')) {
             let filePathSplit = /(\/target|\/stackinfo|\/poms|)/g;
             let strSplit = '/';
             if (
@@ -120,9 +76,7 @@ export module multimanifestmodule {
               filePathSplit = /(\\target|\\stackinfo|\\poms|)/g;
               strSplit = '\\';
             }
-            filePath = fileContent.fsPath
-              .split(projRootPath)[1]
-              .replace(filePathSplit, '');
+            filePath = fsPath.split(projRootPath)[1].replace(filePathSplit, '');
             filePathList = filePath.split(strSplit);
 
             manifestObj.options.filename =
@@ -158,11 +112,6 @@ export module multimanifestmodule {
             } else {
               form_data['filePath'] = filePath;
             }
-          } else {
-            licenseObj.options.filename = 'LICENSE';
-            licenseObj.options.contentType = 'text/plain';
-            licenseObj.value = data.toString();
-            form_data['license'] = licenseObj;
           }
           resolve(form_data);
         } else {

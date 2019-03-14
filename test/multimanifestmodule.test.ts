@@ -13,7 +13,7 @@ chai.use(sinonChai);
 suite('multimanifest module', () => {
   let sandbox: sinon.SinonSandbox;
   let dummyMomentoData = {};
-
+  let workspaceFolder = vscode.workspace.workspaceFolders[0];
   class DummyMemento implements vscode.Memento {
     get<T>(key: string): Promise<T | undefined> {
       return dummyMomentoData[key];
@@ -44,30 +44,14 @@ suite('multimanifest module', () => {
     sandbox.restore();
   });
 
-  test('find_manifests_workspace should return null in callback if findFiles retuns empty list', async () => {
-    sandbox.stub(vscode.workspace, 'findFiles').resolves([]);
-    let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    let savedErr: string;
-    try {
-      await multimanifestmodule.find_manifests_workspace(
-        workspaceFolder,
-        '/pom.xml'
-      );
-    } catch (err) {
-      savedErr = err;
-      return;
-    }
-    expect(savedErr).equals(`No manifest file found to be analysed`);
-    expect.fail();
-  });
-
   test('form_manifests_payload should throw error', async () => {
     let savedErr: string;
     sandbox.stub(multimanifestmodule, 'manifestFileRead').rejects('err');
     try {
-      await multimanifestmodule.form_manifests_payload([
-        { fspath: 'path/file' }
-      ]);
+      await multimanifestmodule.form_manifests_payload(
+        'path/file',
+        workspaceFolder
+      );
     } catch (err) {
       savedErr = err.name;
       return;
@@ -77,13 +61,13 @@ suite('multimanifest module', () => {
   });
 
   test('form_manifests_payload should return form_data in success', async () => {
-    sandbox
-      .stub(multimanifestmodule, 'manifestFileRead')
-      .resolves([
-        { manifest: 'manifest', filePath: 'path', license: { value: 'sample' } }
-      ]);
+    sandbox.stub(multimanifestmodule, 'manifestFileRead').resolves({
+      manifest: 'manifest',
+      filePath: 'path'
+    });
     let form_manifests_payloadPR = await multimanifestmodule.form_manifests_payload(
-      [{ manifest: 'manifest', filePath: 'path', license: { value: 'sample' } }]
+      'path/file',
+      workspaceFolder
     );
     expect(form_manifests_payloadPR).to.include({ origin: 'lsp' });
   });
@@ -93,13 +77,29 @@ suite('multimanifest module', () => {
     sandbox.stub(fs, 'readFile').yields({ message: 'err' });
     //sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns({'uri' : {'fsPath':'path/samplenodeapp', 'scheme':'file','authority':'','fragment':'', 'query': '', 'path': 'path/samplenodeapp'}});
     try {
-      await multimanifestmodule.manifestFileRead({ fsPath: 'path' });
+      await multimanifestmodule.manifestFileRead('path/file', workspaceFolder);
     } catch (err) {
       savedErr = err;
       return;
     }
     expect(savedErr).equals('err');
     expect.fail();
+  });
+
+  test('manifestFileRead should return data', async () => {
+    let savedData: any, savedErr: string;
+    sandbox.stub(fs, 'readFile').yields(null, true);
+    let filePath = workspaceFolder.uri.fsPath + 'path/file/package.json';
+    try {
+      savedData = await multimanifestmodule.manifestFileRead(
+        filePath,
+        workspaceFolder
+      );
+    } catch (err) {
+      savedErr = err;
+      return;
+    }
+    expect(savedData.filePath).equals('path/file/package.json');
   });
 
   test('triggerManifestWs should return error', async () => {
@@ -122,13 +122,36 @@ suite('multimanifest module', () => {
     let stubAuthorize_f8_analytics = sandbox
       .stub(authextension, 'authorize_f8_analytics')
       .resolves(true);
-    sandbox
-      .stub(multimanifestmodule, 'find_manifests_workspace')
-      .resolves(['path/samplenodeapp/license.txt']);
     let promiseTriggerManifestWs = await multimanifestmodule.triggerManifestWs(
       context
     );
     expect(promiseTriggerManifestWs).equals(true);
     expect(stubAuthorize_f8_analytics).callCount(1);
+  });
+
+  test('triggerFullStackAnalyses should call findFiles once', async () => {
+    let findFilesSpy = sandbox.spy(vscode.workspace, 'findFiles');
+    try {
+      await multimanifestmodule.triggerFullStackAnalyses(
+        context,
+        workspaceFolder
+      );
+    } catch (err) {
+      return;
+    }
+    expect(findFilesSpy).callCount(1);
+  });
+
+  test('dependencyAnalyticsReportFlow should call triggerFullStackAnalyse once', async () => {
+    let triggerFullStackAnalyseSpy = sandbox.spy(
+      multimanifestmodule,
+      'triggerFullStackAnalyses'
+    );
+    try {
+      await multimanifestmodule.dependencyAnalyticsReportFlow(context);
+    } catch (err) {
+      return;
+    }
+    expect(triggerFullStackAnalyseSpy).callCount(1);
   });
 });

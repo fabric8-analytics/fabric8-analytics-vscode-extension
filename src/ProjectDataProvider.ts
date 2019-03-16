@@ -21,7 +21,7 @@ export module ProjectDataProvider {
         Utils.getMavenExecutable(),
         'io.github.stackinfo:stackinfo-maven-plugin:0.2:prepare',
         '-f',
-        `"${vscodeRootpath}"`
+        `"${vscodeRootpath}pom.xml"`
       ].join(' ');
       console.log('effectivef8PomWs ' + cmd);
       exec(
@@ -150,7 +150,7 @@ export module ProjectDataProvider {
       fs.readFile(
         vscodeRootpath + 'target/npmlist.json',
         { encoding: 'utf-8' },
-        function(err, data) {
+        function (err, data) {
           if (data) {
             let packageListDependencies = JSON.parse(data);
             let packageDependencies = formatObj(packageListDependencies, [
@@ -160,7 +160,7 @@ export module ProjectDataProvider {
             fs.writeFile(
               vscodeRootpath + 'target/npmlist.json',
               JSON.stringify(packageDependencies),
-              function(err) {
+              function (err) {
                 if (err) {
                   vscode.window.showErrorMessage(
                     `Unable to format ${vscodeRootpath}target/npmlist.json`

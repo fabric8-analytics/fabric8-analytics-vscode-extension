@@ -1,6 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as paths from 'path';
 
 import { Apiendpoint } from './apiendpoint';
 import { multimanifestmodule } from './multimanifestmodule';
@@ -119,7 +120,7 @@ export module stackanalysismodule {
     if (ecosystem === 'maven') {
       argumentList = editor
         ? editor.document.uri.fsPath
-        : workspaceFolder.uri.fsPath;
+        : paths.join(workspaceFolder.uri.fsPath, 'pom.xml');
       effectiveF8Var = 'effectivef8Pom';
     } else if (ecosystem === 'npm') {
       argumentList = editor

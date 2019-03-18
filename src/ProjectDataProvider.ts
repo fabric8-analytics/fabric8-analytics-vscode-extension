@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as paths from 'path';
 import { exec } from 'child_process';
 import { Utils } from './Utils';
 import { StatusMessages } from './statusMessages';
@@ -8,16 +9,7 @@ export module ProjectDataProvider {
   export const effectivef8Pom = (item, workspaceFolder) => {
     return new Promise((resolve, reject) => {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
-      if (
-        process &&
-        process.platform &&
-        process.platform.toLowerCase() === 'win32'
-      ) {
-        vscodeRootpath += '\\';
-      } else {
-        vscodeRootpath += '/';
-      }
-      const filepath = vscodeRootpath + `target/dependencies.txt`;
+      const filepath = paths.join(vscodeRootpath, 'target', 'dependencies.txt');
       const cmd: string = [
         Utils.getMavenExecutable(),
         `clean install -DskipTests=true -f`,
@@ -47,16 +39,7 @@ export module ProjectDataProvider {
 
   export const effectivef8Package = (item, workspaceFolder) => {
     return new Promise((resolve, reject) => {
-      let vscodeRootpath = workspaceFolder.uri.fsPath;
-      if (
-        process &&
-        process.platform &&
-        process.platform.toLowerCase() === 'win32'
-      ) {
-        vscodeRootpath += '\\';
-      } else {
-        vscodeRootpath += '/';
-      }
+      let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
       getDependencyVersion(item, vscodeRootpath)
         .then(() => {
           let formPackagedependencyPromise = formPackagedependencyNpmList(
@@ -117,60 +100,52 @@ export module ProjectDataProvider {
   }
 
   export const formPackagedependencyNpmList = vscodeRootpath => {
+    let npmListPath = paths.join(vscodeRootpath, 'target', 'npmlist.json');
     return new Promise((resolve, reject) => {
-      fs.readFile(
-        vscodeRootpath + 'target/npmlist.json',
-        { encoding: 'utf-8' },
-        function(err, data) {
-          if (data) {
-            let packageListDependencies = JSON.parse(data);
-            let packageDependencies = formatObj(packageListDependencies, [
-              'name',
-              'version'
-            ]);
-            fs.writeFile(
-              vscodeRootpath + 'target/npmlist.json',
-              JSON.stringify(packageDependencies),
-              function(err) {
-                if (err) {
-                  vscode.window.showErrorMessage(
-                    `Unable to format ${vscodeRootpath}target/npmlist.json`
-                  );
-                  reject(err);
-                } else {
-                  let ePkgPath: any = vscodeRootpath + 'target/npmlist.json';
-                  resolve(ePkgPath);
-                }
+      fs.readFile(npmListPath, { encoding: 'utf-8' }, function(err, data) {
+        if (data) {
+          let packageListDependencies = JSON.parse(data);
+          let packageDependencies = formatObj(packageListDependencies, [
+            'name',
+            'version'
+          ]);
+          fs.writeFile(
+            npmListPath,
+            JSON.stringify(packageDependencies),
+            function(err) {
+              if (err) {
+                vscode.window.showErrorMessage(
+                  `Unable to format ${npmListPath}`
+                );
+                reject(err);
+              } else {
+                resolve(npmListPath);
               }
-            );
-          } else {
-            vscode.window.showErrorMessage(
-              `Unable to parse ${vscodeRootpath}target/npmlist.json`
-            );
-            reject(err);
-          }
+            }
+          );
+        } else {
+          vscode.window.showErrorMessage(`Unable to parse ${npmListPath}`);
+          reject(err);
         }
-      );
+      });
     });
   };
 
   export const getDependencyVersion = (item, manifestRootFolderPath) => {
     return new Promise((resolve, reject) => {
-      let dir = manifestRootFolderPath + 'target';
+      let dir = paths.join(manifestRootFolderPath, 'target');
+      let npmListPath = paths.join(
+        manifestRootFolderPath,
+        'target',
+        'npmlist.json'
+      );
       let prefixPath = trimTrailingChars(item);
-      let npmPrefixPath = item;
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
-      if (
-        process &&
-        process.platform &&
-        process.platform.toLowerCase() === 'win32'
-      ) {
-        npmPrefixPath = trimTrailingChars(npmPrefixPath) + '\\node_modules';
-        if (!fs.existsSync(npmPrefixPath)) {
-          fs.mkdirSync(npmPrefixPath);
-        }
+      let npmPrefixPath = paths.join(item, 'node_modules');
+      if (!fs.existsSync(npmPrefixPath)) {
+        fs.mkdirSync(npmPrefixPath);
       }
 
       const cmd: string = [
@@ -184,17 +159,17 @@ export module ProjectDataProvider {
         `--prefix="${prefixPath}"`,
         '--prod',
         `-json >`,
-        `"${manifestRootFolderPath}target/npmlist.json"`
+        `"${npmListPath}"`
       ].join(' ');
       console.log('npm cmd :: ' + cmd);
       exec(
         cmd,
         (error: Error, _stdout: string, _stderr: string): void => {
-          if (fs.existsSync(`${manifestRootFolderPath}target/npmlist.json`)) {
+          if (fs.existsSync(`${npmListPath}`)) {
             resolve(true);
           } else {
             vscode.window.showErrorMessage(
-              `Failed to resolve dependencies for ${manifestRootFolderPath}package.json`
+              `Failed to resolve dependencies for ${npmListPath}`
             );
             console.log('_stderr' + _stderr);
             console.log('error' + error);
@@ -213,19 +188,9 @@ export module ProjectDataProvider {
   export const effectivef8Pypi = workspaceFolder => {
     return new Promise((resolve, reject) => {
       let vscodeRootpath = workspaceFolder.uri.fsPath;
-      if (
-        process &&
-        process.platform &&
-        process.platform.toLowerCase() === 'win32'
-      ) {
-        vscodeRootpath += '\\';
-      } else {
-        vscodeRootpath += '/';
-      }
-
-      let reqTxtFilePath: string = vscodeRootpath + 'requirements.txt';
-      let filepath: string = vscodeRootpath + 'target/pylist.json';
-      let dir = vscodeRootpath + 'target';
+      let reqTxtFilePath = paths.join(vscodeRootpath, 'requirements.txt');
+      let filepath = paths.join(vscodeRootpath, 'target', 'pylist.json');
+      let dir = paths.join(vscodeRootpath, 'target');
       let pyPiInterpreter = Utils.getPypiExecutable();
       if (
         pyPiInterpreter &&

@@ -7,7 +7,7 @@
 		"editor.formatOnSave": true
 	},
 	"[javascript]": {
-		"editor.formatOnSave": true
+		"editor.formatOnSave": false
 	},
 	"[json]": {
 		"editor.formatOnSave": true

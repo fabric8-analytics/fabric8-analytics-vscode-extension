@@ -3,6 +3,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as fs from 'fs';
+import * as paths from 'path';
 import * as child_process from 'child_process';
 
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
@@ -85,16 +86,7 @@ suite('projectDataProvider Modules', () => {
 
   test('formPackagedependencyNpmList should return error', () => {
     let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    let vscodeRootpath = workspaceFolder.uri.fsPath;
-    if (
-      process &&
-      process.platform &&
-      process.platform.toLowerCase() === 'win32'
-    ) {
-      vscodeRootpath += '\\';
-    } else {
-      vscodeRootpath += '/';
-    }
+    let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
     let stubReadFile = sandbox.stub(fs, 'readFile').yields('err');
     ProjectDataProvider.formPackagedependencyNpmList(vscodeRootpath);
     expect(stubReadFile).callCount(1);
@@ -102,16 +94,7 @@ suite('projectDataProvider Modules', () => {
 
   test('formPackagedependencyNpmList should return success', () => {
     let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    let vscodeRootpath = workspaceFolder.uri.fsPath;
-    if (
-      process &&
-      process.platform &&
-      process.platform.toLowerCase() === 'win32'
-    ) {
-      vscodeRootpath += '\\';
-    } else {
-      vscodeRootpath += '/';
-    }
+    let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
     let sampleBody = { status: 'success' };
     let stubReadFile = sandbox
       .stub(fs, 'readFile')
@@ -124,16 +107,7 @@ suite('projectDataProvider Modules', () => {
 
   test('formPackagedependencyNpmList fail while writing file', () => {
     let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    let vscodeRootpath = workspaceFolder.uri.fsPath;
-    if (
-      process &&
-      process.platform &&
-      process.platform.toLowerCase() === 'win32'
-    ) {
-      vscodeRootpath += '\\';
-    } else {
-      vscodeRootpath += '/';
-    }
+    let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
     let sampleBody = { status: 'success' };
     let stubReadFile = sandbox
       .stub(fs, 'readFile')
@@ -146,26 +120,16 @@ suite('projectDataProvider Modules', () => {
 
   test('getDependencyVersion should return success', async () => {
     let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    let vscodeRootpath = workspaceFolder.uri.fsPath;
-    if (
-      process &&
-      process.platform &&
-      process.platform.toLowerCase() === 'win32'
-    ) {
-      vscodeRootpath += '\\';
-    } else {
-      vscodeRootpath += '/';
-    }
+    let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
     let stubExec = sandbox
       .stub(child_process, 'exec')
       .yields(null, 'success', 'success');
-    let stubExistsSync = sandbox.stub(fs, 'existsSync').returns(true);
+    sandbox.stub(fs, 'existsSync').returns(true);
     let depVersionPromise = await ProjectDataProvider.getDependencyVersion(
       'path/samplenodeapp/',
       vscodeRootpath
     );
     expect(depVersionPromise).equals(true);
-    expect(stubExistsSync).callCount(2);
     expect(stubExec).callCount(1);
   });
 });

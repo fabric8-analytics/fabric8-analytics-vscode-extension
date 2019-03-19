@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as paths from 'path';
+import * as os from 'os';
 import { exec } from 'child_process';
 import { Utils } from './Utils';
 import { StatusMessages } from './statusMessages';
@@ -134,6 +135,7 @@ export module ProjectDataProvider {
   export const getDependencyVersion = (item, manifestRootFolderPath) => {
     return new Promise((resolve, reject) => {
       let dir = paths.join(manifestRootFolderPath, 'target');
+      let npmPrefixPath = paths.join(manifestRootFolderPath);
       let npmListPath = paths.join(
         manifestRootFolderPath,
         'target',
@@ -143,11 +145,12 @@ export module ProjectDataProvider {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
-      let npmPrefixPath = paths.join(item, 'node_modules');
-      if (!fs.existsSync(npmPrefixPath)) {
-        fs.mkdirSync(npmPrefixPath);
+      if (os.platform() === 'win32') {
+        npmPrefixPath = paths.join(item, 'node_modules');
+        if (!fs.existsSync(npmPrefixPath)) {
+          fs.mkdirSync(npmPrefixPath);
+        }
       }
-
       const cmd: string = [
         Utils.getNodeExecutable(),
         `--prefix="${npmPrefixPath}"`,

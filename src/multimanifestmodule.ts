@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as os from 'os';
 
 import { stackanalysismodule } from './stackanalysismodule';
 import { authextension } from './authextension';
@@ -68,11 +69,7 @@ export module multimanifestmodule {
           if (!fsPath.endsWith('LICENSE')) {
             let filePathSplit = /(\/target|\/stackinfo|\/poms|)/g;
             let strSplit = '/';
-            if (
-              process &&
-              process.platform &&
-              process.platform.toLowerCase() === 'win32'
-            ) {
+            if (os.platform() === 'win32') {
               filePathSplit = /(\\target|\\stackinfo|\\poms|)/g;
               strSplit = '\\';
             }

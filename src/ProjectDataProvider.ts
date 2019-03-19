@@ -26,6 +26,7 @@ export module ProjectDataProvider {
       console.log('effectivef8Pom ' + cmd);
       exec(
         cmd,
+        { maxBuffer: 1024 * 500 },
         (error: Error, _stdout: string, _stderr: string): void => {
           if (error) {
             vscode.window.showErrorMessage(error.message);
@@ -167,6 +168,7 @@ export module ProjectDataProvider {
       console.log('npm cmd :: ' + cmd);
       exec(
         cmd,
+        { maxBuffer: 1024 * 500 },
         (error: Error, _stdout: string, _stderr: string): void => {
           if (fs.existsSync(`${npmListPath}`)) {
             resolve(true);
@@ -237,6 +239,7 @@ export module ProjectDataProvider {
       console.log('effectivef8Pypi ' + cmd);
       exec(
         cmd,
+        { maxBuffer: 1024 * 500 },
         (error: Error, _stdout: string, _stderr: string): void => {
           if (error) {
             vscode.window.showErrorMessage(_stderr);

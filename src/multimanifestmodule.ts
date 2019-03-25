@@ -123,37 +123,32 @@ export module multimanifestmodule {
    * Needed async function in order to wait for user selection in case of
    * multi root projects
    */
-  export const dependencyAnalyticsReportFlow = async context => {
+  export const dependencyAnalyticsReportFlow = async (context, uri = null) => {
     let editor = vscode.window.activeTextEditor;
     let workspaceFolder: vscode.WorkspaceFolder;
-    if (
-      editor &&
-      editor.document.fileName &&
-      editor.document.fileName.toLowerCase().indexOf('pom.xml') !== -1
-    ) {
-      workspaceFolder = vscode.workspace.getWorkspaceFolder(
-        editor.document.uri
-      );
-      stackanalysismodule.processStackAnalyses(
-        context,
-        workspaceFolder,
-        'maven',
-        editor
-      );
-    } else if (
-      editor &&
-      editor.document.fileName &&
-      editor.document.fileName.toLowerCase().indexOf('package.json') !== -1
-    ) {
-      workspaceFolder = vscode.workspace.getWorkspaceFolder(
-        editor.document.uri
-      );
-      stackanalysismodule.processStackAnalyses(
-        context,
-        workspaceFolder,
-        'npm',
-        editor
-      );
+    if (uri) {
+      if (uri.fsPath && uri.fsPath.toLowerCase().indexOf('pom.xml') !== -1) {
+        workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+        stackanalysismodule.processStackAnalyses(
+          context,
+          workspaceFolder,
+          'maven',
+          uri
+        );
+      } else if (
+        uri.fsPath &&
+        uri.fsPath.toLowerCase().indexOf('package.json') !== -1
+      ) {
+        workspaceFolder = vscode.workspace.getWorkspaceFolder(
+          editor.document.uri
+        );
+        stackanalysismodule.processStackAnalyses(
+          context,
+          workspaceFolder,
+          'npm',
+          uri
+        );
+      }
     } else if (
       vscode.workspace.hasOwnProperty('workspaceFolders') &&
       vscode.workspace['workspaceFolders'].length > 1

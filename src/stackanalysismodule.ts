@@ -113,18 +113,18 @@ export module stackanalysismodule {
     context,
     workspaceFolder,
     ecosystem,
-    editor = null
+    uri = null
   ) => {
     let effectiveF8Var: string, argumentList: string;
     Apiendpoint.API_ECOSYSTEM = ecosystem;
     if (ecosystem === 'maven') {
-      argumentList = editor
-        ? editor.document.uri.fsPath
+      argumentList = uri
+        ? uri.fsPath
         : paths.join(workspaceFolder.uri.fsPath, 'pom.xml');
       effectiveF8Var = 'effectivef8Pom';
     } else if (ecosystem === 'npm') {
-      argumentList = editor
-        ? editor.document.uri.fsPath.split('package.json')[0]
+      argumentList = uri
+        ? uri.fsPath.split('package.json')[0]
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Package';
     }

@@ -13,7 +13,7 @@ export module ProjectDataProvider {
       const filepath = paths.join(vscodeRootpath, 'target', 'dependencies.txt');
       const cmd: string = [
         Utils.getMavenExecutable(),
-        `clean install -DskipTests=true -f`,
+        `clean -f`,
         `"${item}" &&`,
         Utils.getMavenExecutable(),
         'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
@@ -26,7 +26,7 @@ export module ProjectDataProvider {
       console.log('effectivef8Pom ' + cmd);
       exec(
         cmd,
-        { maxBuffer: 1024 * 500 },
+        { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
           if (error) {
             vscode.window.showErrorMessage(error.message);
@@ -168,7 +168,7 @@ export module ProjectDataProvider {
       console.log('npm cmd :: ' + cmd);
       exec(
         cmd,
-        { maxBuffer: 1024 * 500 },
+        { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
           if (fs.existsSync(`${npmListPath}`)) {
             resolve(true);
@@ -239,7 +239,7 @@ export module ProjectDataProvider {
       console.log('effectivef8Pypi ' + cmd);
       exec(
         cmd,
-        { maxBuffer: 1024 * 500 },
+        { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
           if (error) {
             vscode.window.showErrorMessage(_stderr);

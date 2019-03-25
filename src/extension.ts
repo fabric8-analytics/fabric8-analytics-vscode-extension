@@ -21,7 +21,8 @@ let diagCountInfo,
 export function activate(context: vscode.ExtensionContext) {
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
-    () => multimanifestmodule.dependencyAnalyticsReportFlow(context)
+    (uri: vscode.Uri) =>
+      multimanifestmodule.dependencyAnalyticsReportFlow(context, uri)
   );
 
   let runCodeAction = (

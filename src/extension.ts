@@ -13,6 +13,7 @@ import { Commands } from './commands';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
+import { Utils } from './Utils';
 
 let lspClient: LanguageClient;
 let diagCountInfo,
@@ -95,27 +96,39 @@ export function activate(context: vscode.ExtensionContext) {
             p => {
               return new Promise((resolve, reject) => {
                 p.report({ message: respData.data });
-                setTimeout(function() {
-                  resolve();
-                  if (
-                    respData &&
-                    respData.hasOwnProperty('diagCount') &&
-                    vscode.window.activeTextEditor &&
-                    ((respData.diagCount > 0 &&
-                      respData.diagCount !== diagCountInfo) ||
-                      !onFileOpen ||
-                      (onFileOpen &&
-                        onFileOpen.indexOf(
-                          vscode.window.activeTextEditor.document.fileName
-                        ) === -1))
-                  ) {
-                    diagCountInfo = respData.diagCount;
-                    onFileOpen.push(
-                      vscode.window.activeTextEditor.document.fileName
-                    );
-                    showInfoOnfileOpen(respData.data);
-                  }
-                }, 2500);
+                if (
+                  respData &&
+                  respData.hasOwnProperty('diagCount') &&
+                  vscode.window.activeTextEditor &&
+                  ((respData.diagCount > 0 &&
+                    respData.diagCount !== diagCountInfo) ||
+                    !onFileOpen ||
+                    (onFileOpen &&
+                      onFileOpen.indexOf(
+                        vscode.window.activeTextEditor.document.fileName
+                      ) === -1))
+                ) {
+                  setTimeout(() => {
+                    resolve();
+                  }, 1500);
+                  diagCountInfo = respData.diagCount;
+                  onFileOpen.push(
+                    vscode.window.activeTextEditor.document.fileName
+                  );
+                  showInfoOnfileOpen(respData.data);
+                } else if (
+                  respData &&
+                  respData.hasOwnProperty('diagCount') &&
+                  respData.diagCount > 0
+                ) {
+                  setTimeout(() => {
+                    resolve();
+                  }, 1500);
+                } else {
+                  setTimeout(() => {
+                    reject();
+                  }, 2500);
+                }
               });
             }
           );

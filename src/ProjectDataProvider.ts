@@ -5,17 +5,22 @@ import * as os from 'os';
 import { exec } from 'child_process';
 import { Utils } from './Utils';
 import { StatusMessages } from './statusMessages';
+import { DepOutputChannel } from './DepOutputChannel';
 
 export module ProjectDataProvider {
   export const effectivef8Pom = (item, workspaceFolder) => {
     return new Promise((resolve, reject) => {
+      const outputChannelDep = new DepOutputChannel();
+      outputChannelDep.clearOutputChannel();
       let vscodeRootpath = workspaceFolder.uri.fsPath;
       const filepath = paths.join(vscodeRootpath, 'target', 'dependencies.txt');
       const cmd: string = [
         Utils.getMavenExecutable(),
+        `--quiet`,
         `clean -f`,
         `"${item}" &&`,
         Utils.getMavenExecutable(),
+        `--quiet`,
         'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
         '-f',
         `"${item}"`,
@@ -23,13 +28,20 @@ export module ProjectDataProvider {
         `-DoutputType=dot`,
         `-DappendOutput=true`
       ].join(' ');
-      console.log('effectivef8Pom ' + cmd);
+      console.log('CMD : ' + cmd);
+      outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
       exec(
         cmd,
         { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
+          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
+          outputChannelDep.addMsgOutputChannel(outputMsg);
           if (error) {
-            vscode.window.showErrorMessage(error.message);
+            vscode.window.showErrorMessage(`${error.message}`);
+            console.log('_stdout :' + _stdout);
+            console.log('_stderr :' + _stderr);
+            console.log('error :' + error);
+            outputChannelDep.showOutputChannel();
             reject(false);
           } else {
             resolve(filepath);
@@ -134,6 +146,8 @@ export module ProjectDataProvider {
   };
 
   export const getDependencyVersion = (item, manifestRootFolderPath) => {
+    const outputChannelDep = new DepOutputChannel();
+    outputChannelDep.clearOutputChannel();
     return new Promise((resolve, reject) => {
       let dir = paths.join(manifestRootFolderPath, 'target');
       let npmPrefixPath = paths.join(manifestRootFolderPath);
@@ -157,27 +171,40 @@ export module ProjectDataProvider {
         `--prefix="${npmPrefixPath}"`,
         'install',
         `"${prefixPath}"`,
+        `--quiet`,
         '&&',
         Utils.getNodeExecutable(),
         'list',
         `--prefix="${prefixPath}"`,
         '--prod',
         `-json >`,
-        `"${npmListPath}"`
+        `"${npmListPath}"`,
+        `--quiet`
       ].join(' ');
-      console.log('npm cmd :: ' + cmd);
+      console.log('CMD : ' + cmd);
+      outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
       exec(
         cmd,
         { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
+          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
+          outputChannelDep.addMsgOutputChannel(outputMsg);
           if (fs.existsSync(`${npmListPath}`)) {
             resolve(true);
           } else {
-            vscode.window.showErrorMessage(
-              `Failed to resolve dependencies for ${npmListPath}`
-            );
-            console.log('_stderr' + _stderr);
-            console.log('error' + error);
+            if (error) {
+              vscode.window.showErrorMessage(
+                `${error.message}, STDOUT : ${_stdout}, STDERR : ${_stderr}`
+              );
+            } else {
+              vscode.window.showErrorMessage(
+                `Failed to resolve dependencies for ${npmListPath}`
+              );
+            }
+            outputChannelDep.showOutputChannel();
+            console.log('_stdout :' + _stdout);
+            console.log('_stderr :' + _stderr);
+            console.log('error :' + error);
             reject(false);
           }
         }

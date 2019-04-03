@@ -1,24 +1,24 @@
 'use strict';
 
-import { workspace } from 'vscode';
+import * as vscode from 'vscode';
 
 export namespace Utils {
   export function getMavenExecutable(): string {
-    const mavenPath: string = workspace
+    const mavenPath: string = vscode.workspace
       .getConfiguration('maven.executable')
       .get<string>('path');
     return mavenPath ? `"${mavenPath}"` : 'mvn';
   }
 
   export function getNodeExecutable(): string {
-    const npmPath: string = workspace
+    const npmPath: string = vscode.workspace
       .getConfiguration('npm.executable')
       .get<string>('path');
     return npmPath ? `"${npmPath}"` : 'npm';
   }
 
   export function getPypiExecutable(): string {
-    const pypiPath: string = workspace
+    const pypiPath: string = vscode.workspace
       .getConfiguration('python')
       .get('pythonPath');
     return pypiPath;

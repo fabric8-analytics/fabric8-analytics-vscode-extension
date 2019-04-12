@@ -5,12 +5,20 @@ import * as os from 'os';
 import { exec } from 'child_process';
 import { Utils } from './Utils';
 import { StatusMessages } from './statusMessages';
+import { outputChannelDep, initOutputChannel } from './extension';
 import { DepOutputChannel } from './DepOutputChannel';
 
 export module ProjectDataProvider {
+  export const isOutputChannelActivated = (): any => {
+    if (!outputChannelDep) {
+      return initOutputChannel();
+    } else {
+      return outputChannelDep;
+    }
+  };
   export const effectivef8Pom = (item, workspaceFolder) => {
     return new Promise((resolve, reject) => {
-      const outputChannelDep = new DepOutputChannel();
+      const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
       let vscodeRootpath = workspaceFolder.uri.fsPath;
       const filepath = paths.join(vscodeRootpath, 'target', 'dependencies.txt');
@@ -146,7 +154,7 @@ export module ProjectDataProvider {
   };
 
   export const getDependencyVersion = (item, manifestRootFolderPath) => {
-    const outputChannelDep = new DepOutputChannel();
+    const outputChannelDep = isOutputChannelActivated();
     outputChannelDep.clearOutputChannel();
     return new Promise((resolve, reject) => {
       let dir = paths.join(manifestRootFolderPath, 'target');

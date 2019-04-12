@@ -23,7 +23,7 @@ export class DepOutputChannel {
     this.outputChannel.clear();
   }
 
-  addMsgOutputChannel(msg: string) {
+  addMsgOutputChannel(msg: string): void {
     this.outputChannel.append(msg);
   }
 }

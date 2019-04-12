@@ -35,7 +35,7 @@
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.30.0"
   },
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
@@ -186,10 +186,10 @@
     "remap-istanbul": "^0.12.0"
   },
   "dependencies": {
-    "fabric8-analytics-lsp-server": "0.1.50",
+    "fabric8-analytics-lsp-server": "0.1.52",
     "fs": "0.0.1-security",
     "path": "0.12.7",
     "request": "2.88.0",
-    "vscode-languageclient": "4.1.4"
+    "vscode-languageclient": "5.2.1"
   }
 }

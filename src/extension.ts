@@ -13,11 +13,12 @@ import { Commands } from './commands';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
-import { Utils } from './Utils';
+import { DepOutputChannel } from './DepOutputChannel';
 
 let lspClient: LanguageClient;
 let diagCountInfo,
   onFileOpen = [];
+export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
   let disposableFullStack = vscode.commands.registerCommand(
@@ -26,24 +27,10 @@ export function activate(context: vscode.ExtensionContext) {
       multimanifestmodule.dependencyAnalyticsReportFlow(context, uri)
   );
 
-  let runCodeAction = (
-    document: vscode.TextDocument,
-    range: vscode.Range,
-    message: string
-  ) => {
-    let edit = new vscode.WorkspaceEdit();
-    let editor = vscode.window.activeTextEditor;
-    edit.replace(editor.document.uri, document['range'], document['newText']);
-    return vscode.workspace.applyEdit(edit);
-  };
-  let disposableLspEdit = vscode.commands.registerCommand(
-    Commands.TRIGGER_LSP_EDIT,
-    runCodeAction,
-    this
-  );
-
   authextension.authorize_f8_analytics(context).then(data => {
     if (data) {
+      // Create output channel
+      outputChannelDep = initOutputChannel();
       // The server is implemented in node
       let serverModule = context.asAbsolutePath(
         path.join('node_modules/fabric8-analytics-lsp-server', 'server.js')
@@ -134,11 +121,7 @@ export function activate(context: vscode.ExtensionContext) {
           );
         });
       });
-      context.subscriptions.push(
-        lspClient.start(),
-        disposableFullStack,
-        disposableLspEdit
-      );
+      context.subscriptions.push(lspClient.start(), disposableFullStack);
     }
   });
 
@@ -151,6 +134,11 @@ export function activate(context: vscode.ExtensionContext) {
         }
       });
   };
+}
+
+export function initOutputChannel(): any {
+  const outputChannelDepInit = new DepOutputChannel();
+  return outputChannelDepInit;
 }
 
 export function deactivate(): Thenable<void> {

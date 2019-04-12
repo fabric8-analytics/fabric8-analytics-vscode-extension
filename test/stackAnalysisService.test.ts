@@ -25,6 +25,7 @@ suite('stacknalysis Services', () => {
   const context: vscode.ExtensionContext = {
     extensionPath: 'path',
     storagePath: 'string',
+    logPath: 'string',
     // tslint:disable-next-line:no-empty
     subscriptions: { dispose(): any {} }[0],
     workspaceState: new DummyMemento(),

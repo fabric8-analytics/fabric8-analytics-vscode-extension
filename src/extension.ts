@@ -27,6 +27,17 @@ export function activate(context: vscode.ExtensionContext) {
       multimanifestmodule.dependencyAnalyticsReportFlow(context, uri)
   );
 
+  let disposableStackLogs = vscode.commands.registerCommand(
+    Commands.TRIGGER_STACK_LOGS,
+    () => {
+      if (outputChannelDep) {
+        outputChannelDep.showOutputChannel();
+      } else {
+        vscode.window.showInformationMessage(StatusMessages.WIN_SHOW_LOGS);
+      }
+    }
+  );
+
   authextension.authorize_f8_analytics(context).then(data => {
     if (data) {
       // Create output channel
@@ -121,7 +132,11 @@ export function activate(context: vscode.ExtensionContext) {
           );
         });
       });
-      context.subscriptions.push(lspClient.start(), disposableFullStack);
+      context.subscriptions.push(
+        lspClient.start(),
+        disposableFullStack,
+        disposableStackLogs
+      );
     }
   });
 

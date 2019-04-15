@@ -10,6 +10,7 @@ export namespace StatusMessages {
   export const WIN_SUCCESS_ANALYZE_DEPENDENCIES = `Generating dependency analytics report...`;
   export const WIN_FAILURE_ANALYZE_DEPENDENCIES = `Unable to generate stack report`;
   export const WIN_FAILURE_RESOLVE_DEPENDENCIES = `Unable to generate stack report`;
+  export const WIN_SHOW_LOGS = `No output channel has been created for Dependency Analytics`;
   export const LSP_INITIALIZE = `Initializing Language Server`;
   export const REPORT_TAB_TITLE = `Dependency Analytics Report`;
   export const NO_SUPPORTED_MANIFEST = `No supported manifest's file found to be analyzed.`;

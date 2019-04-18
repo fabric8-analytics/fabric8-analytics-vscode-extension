@@ -64,12 +64,13 @@ export module ProjectDataProvider {
       let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
       getDependencyVersion(item, vscodeRootpath)
         .then(() => {
-          /* let formPackagedependencyPromise = formPackagedependencyNpmList(
-            vscodeRootpath
-          ); */
-          let formPackagedependencyPromise = formPackagedependency(
+          let formPackagedependencyPromise = formPackagedependencyNpmList(
             vscodeRootpath
           );
+          /* let formPackagedependencyPromise = formPackagedependency(
+            item,
+            vscodeRootpath
+          ); */
           formPackagedependencyPromise
             .then(data => {
               resolve(data);
@@ -156,6 +157,68 @@ export module ProjectDataProvider {
     });
   };
 
+  export const formPackagedependency = (item, vscodeRootpath) => {
+    // let manifestRootFolderPath: string = vscodeRootpath;
+    let npmPkgPath = paths.join(item, 'package.json');
+    let npmListPath = paths.join(vscodeRootpath, 'target', 'npmlist.json');
+    let npmPkgWritePath = paths.join(vscodeRootpath, 'target', 'package.json');
+    // let npmPkgWritePath = paths.join(vscodeRootpath, 'target', 'npmlist.json');
+    //        manifestRootFolderPath = item.split('package.json')[0];
+    return new Promise((resolve, reject) => {
+      fs.readFile(npmPkgPath, { encoding: 'utf-8' }, function(err, data) {
+        if (data) {
+          let packageDependencies = JSON.parse(data);
+          fs.readFile(npmListPath, { encoding: 'utf-8' }, function(err, data) {
+            if (data) {
+              let packageListDependencies = JSON.parse(data);
+              let packageDepKeys = [];
+              if (
+                packageDependencies &&
+                packageDependencies.hasOwnProperty('dependencies')
+              ) {
+                packageDepKeys = Object.keys(packageDependencies.dependencies);
+              }
+              for (let i = 0; i < packageDepKeys.length; i++) {
+                if (
+                  packageListDependencies.dependencies[packageDepKeys[i]] &&
+                  packageListDependencies.dependencies[packageDepKeys[i]]
+                    .version
+                ) {
+                  packageDependencies.dependencies[packageDepKeys[i]] =
+                    packageListDependencies.dependencies[
+                      packageDepKeys[i]
+                    ].version;
+                }
+              }
+              fs.writeFile(
+                npmPkgWritePath,
+                JSON.stringify(packageDependencies),
+                function(err) {
+                  if (err) {
+                    vscode.window.showErrorMessage(
+                      `Unable to create ${npmPkgWritePath}`
+                    );
+                    reject(err);
+                  } else {
+                    resolve(npmPkgWritePath);
+                  }
+                }
+              );
+            } else {
+              vscode.window.showErrorMessage(
+                `Unable to parse ${resolve(npmListPath)}`
+              );
+              reject(err);
+            }
+          });
+        } else {
+          vscode.window.showErrorMessage(`Unable to parse ${npmPkgPath}`);
+          reject(err);
+        }
+      });
+    });
+  };
+
   export const getDependencyVersion = (item, manifestRootFolderPath) => {
     const outputChannelDep = isOutputChannelActivated();
     outputChannelDep.clearOutputChannel();
@@ -187,6 +250,7 @@ export module ProjectDataProvider {
         Utils.getNodeExecutable(),
         'list',
         `--prefix="${prefixPath}"`,
+        '--depth=0',
         '--prod',
         `-json >`,
         `"${npmListPath}"`,

@@ -48,12 +48,16 @@ suite('projectDataProvider Modules', () => {
     let stubExec = sandbox
       .stub(child_process, 'exec')
       .yields(null, 'success', 'success');
+    let stubFilterTrans = sandbox
+      .stub(ProjectDataProvider, 'filterTransitiveDeps')
+      .resolves('target/dependencies.txt');
     let effectivef8PomPR = await ProjectDataProvider.effectivef8Pom(
       'path/samplenodeapp/',
       workspaceFolder
     );
     expect(effectivef8PomPR).contains('target/dependencies.txt');
     expect(stubExec).callCount(1);
+    expect(stubFilterTrans).callCount(1);
   });
 
   test('effectivef8Package should return error', () => {

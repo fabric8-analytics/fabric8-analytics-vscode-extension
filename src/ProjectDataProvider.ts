@@ -51,10 +51,48 @@ export module ProjectDataProvider {
             outputChannelDep.showOutputChannel();
             reject(false);
           } else {
-            resolve(filepath);
+            //resolve(filepath);
+            filterTransitiveDeps(filepath)
+              .then(path => {
+                resolve(path);
+              })
+              .catch(err => {
+                vscode.window.showErrorMessage(`${err}`);
+                console.log('error :' + err);
+              });
           }
         }
       );
+    });
+  };
+
+  export const formatObjMvn = input => {
+    let keep;
+    return input.replace(
+      /^.*\s*digraph\s+("[^"]*")\s*\{|\s*("[^"]+")\s*->\s*"[^"]+"\s*;|([^])/gm,
+      (m, a, b, c) => ((a && (keep = a)) || b === keep || c ? m : '')
+    );
+  };
+
+  export const filterTransitiveDeps = filepath => {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filepath, { encoding: 'utf-8' }, function(err, data) {
+        if (data) {
+          let mavenListDependencies = `${data}`;
+          let mavenDependencies = formatObjMvn(mavenListDependencies);
+          fs.writeFile(filepath, mavenDependencies, function(err) {
+            if (err) {
+              vscode.window.showErrorMessage(`Unable to format ${filepath}`);
+              reject(err);
+            } else {
+              resolve(filepath);
+            }
+          });
+        } else {
+          vscode.window.showErrorMessage(`Unable to parse ${filepath}`);
+          reject(err);
+        }
+      });
     });
   };
 

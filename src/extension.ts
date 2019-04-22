@@ -17,7 +17,8 @@ import { DepOutputChannel } from './DepOutputChannel';
 
 let lspClient: LanguageClient;
 let diagCountInfo,
-  onFileOpen = [];
+  onFileOpen = [],
+  caNotif = false;
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -86,50 +87,49 @@ export function activate(context: vscode.ExtensionContext) {
 
       lspClient.onReady().then(() => {
         lspClient.onNotification('caNotification', respData => {
-          vscode.window.withProgress(
-            {
-              location: vscode.ProgressLocation.Window,
-              title: StatusMessages.EXT_TITLE
-            },
-            p => {
-              return new Promise((resolve, reject) => {
-                p.report({ message: respData.data });
-                if (
-                  respData &&
-                  respData.hasOwnProperty('diagCount') &&
-                  vscode.window.activeTextEditor &&
-                  ((respData.diagCount > 0 &&
-                    respData.diagCount !== diagCountInfo) ||
-                    !onFileOpen ||
-                    (onFileOpen &&
-                      onFileOpen.indexOf(
-                        vscode.window.activeTextEditor.document.fileName
-                      ) === -1))
-                ) {
+          if (
+            respData &&
+            respData.hasOwnProperty('diagCount') &&
+            vscode.window.activeTextEditor &&
+            ((respData.diagCount > 0 && respData.diagCount !== diagCountInfo) ||
+              !onFileOpen ||
+              (onFileOpen &&
+                onFileOpen.indexOf(
+                  vscode.window.activeTextEditor.document.fileName
+                ) === -1))
+          ) {
+            diagCountInfo = respData.diagCount;
+            onFileOpen.push(vscode.window.activeTextEditor.document.fileName);
+            showInfoOnfileOpen(respData.data);
+          }
+          if (!caNotif) {
+            vscode.window.withProgress(
+              {
+                location: vscode.ProgressLocation.Window,
+                title: StatusMessages.EXT_TITLE
+              },
+              progress => {
+                caNotif = true;
+                progress.report({
+                  message: 'Checking for security vulnerabilities ...'
+                });
+
+                setTimeout(() => {
+                  progress.report({
+                    message: respData.data
+                  });
+                }, 700);
+
+                let p = new Promise(resolve => {
                   setTimeout(() => {
+                    caNotif = false;
                     resolve();
-                  }, 1500);
-                  diagCountInfo = respData.diagCount;
-                  onFileOpen.push(
-                    vscode.window.activeTextEditor.document.fileName
-                  );
-                  showInfoOnfileOpen(respData.data);
-                } else if (
-                  respData &&
-                  respData.hasOwnProperty('diagCount') &&
-                  respData.diagCount > 0
-                ) {
-                  setTimeout(() => {
-                    resolve();
-                  }, 1500);
-                } else {
-                  setTimeout(() => {
-                    reject();
-                  }, 2500);
-                }
-              });
-            }
-          );
+                  }, 1300);
+                });
+                return p;
+              }
+            );
+          }
         });
       });
       context.subscriptions.push(

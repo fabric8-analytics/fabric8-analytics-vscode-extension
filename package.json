@@ -76,8 +76,8 @@
     "keybindings": [
       {
         "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "key": "shift+ctrl+r",
-        "mac": "shift+cmd+r"
+        "key": "shift+ctrl+d",
+        "mac": "shift+cmd+d"
       },
       {
         "command": "extension.fabric8AnalyticsStackLogs",

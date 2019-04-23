@@ -16,3 +16,8 @@ vsc-extension-quickstart.md
 **/**.tar.gz
 CONTRIBUTING.md
 **/**.vsix
+cico_run_tests.sh
+cico_setup.sh
+cico_build_deploy.sh
+coverage/**
+Jenkinsfile

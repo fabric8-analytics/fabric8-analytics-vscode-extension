@@ -170,6 +170,7 @@ export module ProjectDataProvider {
         'npmlist.json'
       );
       let prefixPath = trimTrailingChars(item);
+      let cmdList: string[];
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       } else if (fs.existsSync(`${npmListPath}`)) {
@@ -180,30 +181,42 @@ export module ProjectDataProvider {
         });
       }
       if (os.platform() === 'win32') {
-        npmPrefixPath = paths.join(item, 'node_modules');
-        if (!fs.existsSync(npmPrefixPath)) {
-          fs.mkdirSync(npmPrefixPath);
-        }
+        cmdList = [
+          Utils.getNodeExecutable(),
+          'install',
+          `"${prefixPath}"`,
+          `--quiet`,
+          '&&',
+          Utils.getNodeExecutable(),
+          'list',
+          `--prefix="${prefixPath}"`,
+          '--prod',
+          `-json >`,
+          `"${npmListPath}"`,
+          `--quiet`
+        ];
+      } else {
+        cmdList = [
+          Utils.getNodeExecutable(),
+          `--prefix="${npmPrefixPath}"`,
+          'install',
+          `"${prefixPath}"`,
+          `--quiet`,
+          '&&',
+          Utils.getNodeExecutable(),
+          'list',
+          `--prefix="${prefixPath}"`,
+          '--prod',
+          `-json >`,
+          `"${npmListPath}"`,
+          `--quiet`
+        ];
       }
-      const cmd: string = [
-        Utils.getNodeExecutable(),
-        `--prefix="${npmPrefixPath}"`,
-        'install',
-        `"${prefixPath}"`,
-        `--quiet`,
-        '&&',
-        Utils.getNodeExecutable(),
-        'list',
-        `--prefix="${prefixPath}"`,
-        '--prod',
-        `-json >`,
-        `"${npmListPath}"`,
-        `--quiet`
-      ].join(' ');
-      console.log('CMD : ' + cmd);
-      outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
+      const CMD: string = cmdList.join(' ');
+      console.log('CMD : ' + CMD);
+      outputChannelDep.addMsgOutputChannel('\n CMD :' + CMD);
       exec(
-        cmd,
+        CMD,
         { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
           let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
@@ -212,14 +225,6 @@ export module ProjectDataProvider {
             resolve(true);
           } else {
             if (error) {
-              vscode.window
-                .showErrorMessage(`${error.message}.`, 'Show Output Log ...')
-                .then((selection: any) => {
-                  if (selection === 'Show Output Log ...') {
-                    vscode.commands.executeCommand(Commands.TRIGGER_STACK_LOGS);
-                  }
-                });
-            } else {
               vscode.window
                 .showErrorMessage(`${error.message}.`, 'Show Output Log ...')
                 .then((selection: any) => {

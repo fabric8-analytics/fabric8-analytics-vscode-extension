@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.12 (April 23rd, 2019)
+## 0.0.12 (April 24th, 2019)
 
 - enhancement - Replace priview-html with VSCode webView APIs. See [#257](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/257)
 - enhancement - Shows error(STDOUT/ERR) in output channel. See [#284](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/284)
@@ -8,6 +8,8 @@
 - fixes - Unable to update dependency version. See [#274](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/274)
 - fixes - Unable to generate stack report for Maven pom.xml. See [#272](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/272)
 - fixes - Experiencing 504 Gateway Time-out for component-analyses. See [#270](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/270)
+- fixes - Switching to report page is slow. See [#89](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/89)
+- fixes - Generate application stack report for manifest file is throwing unable to parse error for package.json. See [#216](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/216)
 
 ## 0.0.11 (December 14th, 2018)
 

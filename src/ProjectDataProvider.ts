@@ -6,7 +6,7 @@ import { exec } from 'child_process';
 import { Utils } from './Utils';
 import { StatusMessages } from './statusMessages';
 import { outputChannelDep, initOutputChannel } from './extension';
-import { DepOutputChannel } from './DepOutputChannel';
+import { Commands } from './commands';
 
 export module ProjectDataProvider {
   export const isOutputChannelActivated = (): any => {
@@ -45,11 +45,16 @@ export module ProjectDataProvider {
           let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
           outputChannelDep.addMsgOutputChannel(outputMsg);
           if (error) {
-            vscode.window.showErrorMessage(`${error.message}`);
+            vscode.window
+              .showErrorMessage(`${error.message}.`, 'Show Output Log ...')
+              .then((selection: any) => {
+                if (selection === 'Show Output Log ...') {
+                  vscode.commands.executeCommand(Commands.TRIGGER_STACK_LOGS);
+                }
+              });
             console.log('_stdout :' + _stdout);
             console.log('_stderr :' + _stderr);
             console.log('error :' + error);
-            outputChannelDep.showOutputChannel();
             reject(false);
           } else {
             resolve(filepath);
@@ -167,6 +172,12 @@ export module ProjectDataProvider {
       let prefixPath = trimTrailingChars(item);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
+      } else if (fs.existsSync(`${npmListPath}`)) {
+        fs.unlink(npmListPath, err => {
+          if (err) {
+            console.log(`unable to delete npmlist. ${err}`);
+          }
+        });
       }
       if (os.platform() === 'win32') {
         npmPrefixPath = paths.join(item, 'node_modules');
@@ -201,15 +212,22 @@ export module ProjectDataProvider {
             resolve(true);
           } else {
             if (error) {
-              vscode.window.showErrorMessage(
-                `${error.message}, STDOUT : ${_stdout}, STDERR : ${_stderr}`
-              );
+              vscode.window
+                .showErrorMessage(`${error.message}.`, 'Show Output Log ...')
+                .then((selection: any) => {
+                  if (selection === 'Show Output Log ...') {
+                    vscode.commands.executeCommand(Commands.TRIGGER_STACK_LOGS);
+                  }
+                });
             } else {
-              vscode.window.showErrorMessage(
-                `Failed to resolve dependencies for ${npmListPath}`
-              );
+              vscode.window
+                .showErrorMessage(`${error.message}.`, 'Show Output Log ...')
+                .then((selection: any) => {
+                  if (selection === 'Show Output Log ...') {
+                    vscode.commands.executeCommand(Commands.TRIGGER_STACK_LOGS);
+                  }
+                });
             }
-            outputChannelDep.showOutputChannel();
             console.log('_stdout :' + _stdout);
             console.log('_stderr :' + _stderr);
             console.log('error :' + error);

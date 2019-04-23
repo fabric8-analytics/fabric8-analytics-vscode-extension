@@ -118,13 +118,13 @@ export function activate(context: vscode.ExtensionContext) {
                   progress.report({
                     message: respData.data
                   });
-                }, 700);
+                }, 1000);
 
                 let p = new Promise(resolve => {
                   setTimeout(() => {
                     caNotif = false;
                     resolve();
-                  }, 1300);
+                  }, 1600);
                 });
                 return p;
               }

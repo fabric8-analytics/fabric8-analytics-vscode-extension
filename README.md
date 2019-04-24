@@ -21,7 +21,6 @@ This extension assumes you have the following binaries on your `PATH`:
 
 - `mvn` (for analyzing Java applications)
 - `npm` (for analyzing Node applications)
-- `python` (for analyzing Python applications)
 
 > **NOTE** Dependency Analytics is an online service hosted and maintained by Red Hat. This open source software will access only your manifests and license file(s) to learn about application dependencies and licenses before giving you the report.
 

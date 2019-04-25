@@ -139,9 +139,7 @@ export module multimanifestmodule {
         uri.fsPath &&
         uri.fsPath.toLowerCase().indexOf('package.json') !== -1
       ) {
-        workspaceFolder = vscode.workspace.getWorkspaceFolder(
-          editor.document.uri
-        );
+        workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         stackanalysismodule.processStackAnalyses(
           context,
           workspaceFolder,

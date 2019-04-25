@@ -13,10 +13,8 @@
 - fixes - Switching to report page is slow. See [#89](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/89)
 - fixes - Generate application stack report for manifest file is throwing unable to parse error for package.json. See [#216](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/216)
 - fixes - Recommended version shown in component analyses and stack analyses are not Same. See [#292](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/292)
-- improvements - Response time reduced for services which enable code editing.
-- improvements - Response time reduced for services which enable dependency analytics report.
-- improvements - optimized the command used for maven project to resolve dependencies.
-- improvements - optimized the command used for node project to resolve dependencies.
+- improvements - Improved latency numbers to analyze your application dependencies.
+- improvements - Optimized resolving application dependencies.
 
 ## 0.0.11 (December 14th, 2018)
 

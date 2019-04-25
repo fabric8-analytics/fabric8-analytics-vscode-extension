@@ -16,12 +16,12 @@ export module ProjectDataProvider {
       return outputChannelDep;
     }
   };
-  export const effectivef8Pom = (item, workspaceFolder) => {
+  export const effectivef8Pom = item => {
     return new Promise((resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
-      let vscodeRootpath = workspaceFolder.uri.fsPath;
-      const filepath = paths.join(vscodeRootpath, 'target', 'dependencies.txt');
+      let tempTarget = item.replace('pom.xml', '');
+      const filepath = paths.join(tempTarget, 'target', 'dependencies.txt');
       const cmd: string = [
         Utils.getMavenExecutable(),
         `--quiet`,
@@ -64,24 +64,21 @@ export module ProjectDataProvider {
     });
   };
 
-  export const effectivef8Package = (item, workspaceFolder) => {
+  export const effectivef8Package = item => {
     return new Promise((resolve, reject) => {
-      let vscodeRootpath = paths.join(workspaceFolder.uri.fsPath);
-      getDependencyVersion(item, vscodeRootpath)
+      getDependencyVersion(item)
         .then(() => {
-          let formPackagedependencyPromise = formPackagedependencyNpmList(
-            vscodeRootpath
-          );
+          let formPackagedependencyPromise = formPackagedependencyNpmList(item);
           formPackagedependencyPromise
             .then(data => {
               resolve(data);
             })
-            .catch(() => {
-              reject(false);
+            .catch(err => {
+              reject(err);
             });
         })
-        .catch(() => {
-          reject();
+        .catch(err => {
+          reject(err);
         });
     });
   };
@@ -126,8 +123,8 @@ export module ProjectDataProvider {
     return (myObj = clearEmptyObject(myObj));
   }
 
-  export const formPackagedependencyNpmList = vscodeRootpath => {
-    let npmListPath = paths.join(vscodeRootpath, 'target', 'npmlist.json');
+  export const formPackagedependencyNpmList = item => {
+    let npmListPath = paths.join(item, 'target', 'npmlist.json');
     return new Promise((resolve, reject) => {
       fs.readFile(npmListPath, { encoding: 'utf-8' }, function(err, data) {
         if (data) {
@@ -152,23 +149,20 @@ export module ProjectDataProvider {
           );
         } else {
           vscode.window.showErrorMessage(`Unable to parse ${npmListPath}`);
-          reject(err);
+          reject(`Unable to parse ${npmListPath}`);
         }
       });
     });
   };
 
-  export const getDependencyVersion = (item, manifestRootFolderPath) => {
+  export const getDependencyVersion = item => {
     const outputChannelDep = isOutputChannelActivated();
     outputChannelDep.clearOutputChannel();
     return new Promise((resolve, reject) => {
-      let dir = paths.join(manifestRootFolderPath, 'target');
-      let npmPrefixPath = paths.join(manifestRootFolderPath);
-      let npmListPath = paths.join(
-        manifestRootFolderPath,
-        'target',
-        'npmlist.json'
-      );
+      let dir = paths.join(item, 'target');
+      let npmPrefixPath = paths.join(item);
+      let npmListPath = paths.join(item, 'target', 'npmlist.json');
+
       let prefixPath = trimTrailingChars(item);
       let cmdList: string[];
       if (!fs.existsSync(dir)) {
@@ -236,7 +230,10 @@ export module ProjectDataProvider {
             console.log('_stdout :' + _stdout);
             console.log('_stderr :' + _stderr);
             console.log('error :' + error);
-            reject(false);
+            let errMsg = error
+              ? error.message
+              : 'Unable to resolve dependencies';
+            reject(errMsg);
           }
         }
       );

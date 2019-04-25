@@ -49,10 +49,7 @@ suite('multimanifest module', () => {
     let savedErr: string;
     sandbox.stub(multimanifestmodule, 'manifestFileRead').rejects('err');
     try {
-      await multimanifestmodule.form_manifests_payload(
-        'path/file',
-        workspaceFolder
-      );
+      await multimanifestmodule.form_manifests_payload('path/file');
     } catch (err) {
       savedErr = err.name;
       return;
@@ -67,8 +64,7 @@ suite('multimanifest module', () => {
       filePath: 'path'
     });
     let form_manifests_payloadPR = await multimanifestmodule.form_manifests_payload(
-      'path/file',
-      workspaceFolder
+      'path/file'
     );
     expect(form_manifests_payloadPR).to.include({ origin: 'lsp' });
   });
@@ -76,9 +72,8 @@ suite('multimanifest module', () => {
   test('manifestFileRead should return error', async () => {
     let savedErr: string;
     sandbox.stub(fs, 'readFile').yields({ message: 'err' });
-    //sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns({'uri' : {'fsPath':'path/samplenodeapp', 'scheme':'file','authority':'','fragment':'', 'query': '', 'path': 'path/samplenodeapp'}});
     try {
-      await multimanifestmodule.manifestFileRead('path/file', workspaceFolder);
+      await multimanifestmodule.manifestFileRead('path/file');
     } catch (err) {
       savedErr = err;
       return;
@@ -90,17 +85,14 @@ suite('multimanifest module', () => {
   test('manifestFileRead should return data', async () => {
     let savedData: any, savedErr: string;
     sandbox.stub(fs, 'readFile').yields(null, true);
-    let filePath = workspaceFolder.uri.fsPath + 'path/file/package.json';
+    let filePath = 'path/target/npmlist.json';
     try {
-      savedData = await multimanifestmodule.manifestFileRead(
-        filePath,
-        workspaceFolder
-      );
+      savedData = await multimanifestmodule.manifestFileRead(filePath);
     } catch (err) {
       savedErr = err;
       return;
     }
-    expect(savedData.filePath).equals('path/file/package.json');
+    expect(savedData.filePath).equals('package.json');
   });
 
   test('triggerManifestWs should return error', async () => {

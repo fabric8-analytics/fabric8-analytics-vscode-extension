@@ -158,12 +158,6 @@
           "default": "",
           "description": "Specifies absolute path of npm executable.",
           "scope": "window"
-        },
-        "python.pythonPath": {
-          "type": "string",
-          "default": "",
-          "description": "Path (fully qualified) to python executable. Defaults to the value in settings.json",
-          "scope": "window"
         }
       }
     }

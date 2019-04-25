@@ -14,8 +14,7 @@ export module stackanalysismodule {
   export const stackAnalysesLifeCycle = (
     context,
     effectiveF8Var,
-    argumentList,
-    workspaceFolder
+    argumentList
   ) => {
     vscode.window.withProgress(
       {
@@ -26,7 +25,7 @@ export module stackanalysismodule {
         return new Promise((resolve, reject) => {
           p.report({ message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
 
-          ProjectDataProvider[effectiveF8Var](argumentList, workspaceFolder)
+          ProjectDataProvider[effectiveF8Var](argumentList)
             .then(async dataEpom => {
               await multimanifestmodule.triggerManifestWs(context);
               p.report({
@@ -36,8 +35,7 @@ export module stackanalysismodule {
             })
             .then(async dataEpom => {
               let formData = await multimanifestmodule.form_manifests_payload(
-                dataEpom,
-                workspaceFolder
+                dataEpom
               );
               return formData;
             })
@@ -128,12 +126,7 @@ export module stackanalysismodule {
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Package';
     }
-    stackAnalysesLifeCycle(
-      context,
-      effectiveF8Var,
-      argumentList,
-      workspaceFolder
-    );
+    stackAnalysesLifeCycle(context, effectiveF8Var, argumentList);
   };
 
   export const handleError = err => {

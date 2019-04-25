@@ -10,9 +10,9 @@ import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
 export module multimanifestmodule {
-  export const form_manifests_payload = (resultPath, workspaceFolder): any => {
+  export const form_manifests_payload = (resultPath): any => {
     return new Promise((resolve, reject) => {
-      manifestFileRead(resultPath, workspaceFolder)
+      manifestFileRead(resultPath)
         .then(item => {
           let form_data = {
             'manifest[]': [],
@@ -39,23 +39,14 @@ export module multimanifestmodule {
     });
   };
 
-  export const manifestFileRead = (fsPath, workspaceFolder) => {
+  export const manifestFileRead = fsPath => {
     let form_data = {
       manifest: '',
       filePath: '',
       license: ''
     };
     let manifestObj: any;
-    let manifest_mime_type: any = {
-      'requirements.txt': 'text/plain',
-      'package.json': 'application/json',
-      'pom.xml': 'text/plain',
-      'pylist.json': 'application/json',
-      'npmlist.json': 'application/json'
-    };
     let filePath: string = '';
-    let filePathList: any = [];
-    let projRootPath = workspaceFolder.uri.fsPath;
     return new Promise((resolve, reject) => {
       fs.readFile(fsPath, function(err, data) {
         if (data) {
@@ -66,48 +57,48 @@ export module multimanifestmodule {
               contentType: 'text/plain'
             }
           };
-          if (!fsPath.endsWith('LICENSE')) {
-            let filePathSplit = /(\/target|\/stackinfo|\/poms|)/g;
+          if (fsPath) {
+            let filePathSplit = /(\/target|)/g;
             let strSplit = '/';
             if (os.platform() === 'win32') {
-              filePathSplit = /(\\target|\\stackinfo|\\poms|)/g;
+              filePathSplit = /(\\target|)/g;
               strSplit = '\\';
             }
-            filePath = fsPath.split(projRootPath)[1].replace(filePathSplit, '');
-            filePathList = filePath.split(strSplit);
-
-            manifestObj.options.filename =
-              filePathList[filePathList.length - 1];
-            manifestObj.options.contentType =
-              manifest_mime_type[filePathList[filePathList.length - 1]];
-            manifestObj.value = data.toString();
-            form_data['manifest'] = manifestObj;
+            filePath = fsPath.replace(filePathSplit, '');
             if (
               filePath &&
               typeof filePath === 'string' &&
               filePath.indexOf('npmlist') !== -1
             ) {
-              form_data['filePath'] = filePath.replace('npmlist', 'package');
+              form_data['filePath'] = 'package.json';
+              manifestObj.options.filename = 'npmlist.json';
+              manifestObj.options.contentType = 'application/json';
+              manifestObj.value = data.toString();
+              form_data['manifest'] = manifestObj;
             } else if (
               filePath &&
               typeof filePath === 'string' &&
               filePath.indexOf('pylist.json') !== -1
             ) {
-              form_data['filePath'] = filePath.replace(
-                'pylist.json',
-                'requirements.txt'
-              );
+              form_data['filePath'] = 'requirements.txt';
+              manifestObj.options.filename = 'pylist.json';
+              manifestObj.options.contentType = 'application/json';
+              manifestObj.value = data.toString();
+              form_data['manifest'] = manifestObj;
             } else if (
               filePath &&
               typeof filePath === 'string' &&
               filePath.indexOf('dependencies.txt') !== -1
             ) {
-              form_data['filePath'] = filePath.replace(
-                'dependencies.txt',
-                'pom.xml'
-              );
+              form_data['filePath'] = 'pom.xml';
+              manifestObj.options.filename = 'dependencies.txt';
+              manifestObj.options.contentType = 'text/plain';
+              manifestObj.value = data.toString();
+              form_data['manifest'] = manifestObj;
             } else {
               form_data['filePath'] = filePath;
+              manifestObj.value = data.toString();
+              form_data['manifest'] = manifestObj;
             }
           }
           resolve(form_data);
@@ -124,7 +115,6 @@ export module multimanifestmodule {
    * multi root projects
    */
   export const dependencyAnalyticsReportFlow = async (context, uri = null) => {
-    let editor = vscode.window.activeTextEditor;
     let workspaceFolder: vscode.WorkspaceFolder;
     if (uri) {
       if (uri.fsPath && uri.fsPath.toLowerCase().indexOf('pom.xml') !== -1) {

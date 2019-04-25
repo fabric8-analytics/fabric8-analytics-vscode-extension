@@ -49,8 +49,7 @@ suite('projectDataProvider Modules', () => {
       .stub(child_process, 'exec')
       .yields(null, 'success', 'success');
     let effectivef8PomPR = await ProjectDataProvider.effectivef8Pom(
-      'path/samplenodeapp/',
-      workspaceFolder
+      'path/samplenodeapp/'
     );
     expect(effectivef8PomPR).contains('target/dependencies.txt');
     expect(stubExec).callCount(1);
@@ -61,10 +60,7 @@ suite('projectDataProvider Modules', () => {
     let stubGetDependencyVersion = sandbox
       .stub(ProjectDataProvider, 'getDependencyVersion')
       .rejects(false);
-    ProjectDataProvider.effectivef8Package(
-      'path/samplenodeapp/',
-      workspaceFolder
-    );
+    ProjectDataProvider.effectivef8Package('path/samplenodeapp/');
     expect(stubGetDependencyVersion).callCount(1);
   });
 
@@ -76,10 +72,7 @@ suite('projectDataProvider Modules', () => {
     let stubFormPackagedependencyNpmList = sandbox
       .stub(ProjectDataProvider, 'formPackagedependencyNpmList')
       .resolves('sample');
-    await ProjectDataProvider.effectivef8Package(
-      'path/samplenodeapp/',
-      workspaceFolder
-    );
+    await ProjectDataProvider.effectivef8Package('path/samplenodeapp/');
     expect(stubGetDependencyVersion).callCount(1);
     expect(stubFormPackagedependencyNpmList).callCount(1);
   });
@@ -126,8 +119,7 @@ suite('projectDataProvider Modules', () => {
       .yields(null, 'success', 'success');
     sandbox.stub(fs, 'existsSync').returns(true);
     let depVersionPromise = await ProjectDataProvider.getDependencyVersion(
-      'path/samplenodeapp/',
-      vscodeRootpath
+      'path/samplenodeapp/'
     );
     expect(depVersionPromise).equals(true);
     expect(stubExec).callCount(1);

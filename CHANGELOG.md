@@ -1,9 +1,11 @@
 # Change Log
 
-## 0.0.12 (April 24th, 2019)
+## 0.0.12 (April 25th, 2019)
 
 - enhancement - Replace priview-html with VSCode webView APIs. See [#257](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/257)
 - enhancement - Shows error(STDOUT/ERR) in output channel. See [#284](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/284)
+- enhancement - Support for Eclipse che/theia.
+- enhancement - codeAction returns command which does seems to be supported by all LSP implementations. See [#95](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/issues/95)
 - fixes - Issue with Dependency analytics report, if triggered via file explorer. [#279](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/279)
 - fixes - Unable to update dependency version. See [#274](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/274)
 - fixes - Unable to generate stack report for Maven pom.xml. See [#272](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/272)
@@ -11,6 +13,10 @@
 - fixes - Switching to report page is slow. See [#89](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/89)
 - fixes - Generate application stack report for manifest file is throwing unable to parse error for package.json. See [#216](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/216)
 - fixes - Recommended version shown in component analyses and stack analyses are not Same. See [#292](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/292)
+- improvements - Response time reduced for services which enable code editing.
+- improvements - Response time reduced for services which enable dependency analytics report.
+- improvements - optimized the command used for maven project to resolve dependencies.
+- improvements - optimized the command used for node project to resolve dependencies.
 
 ## 0.0.11 (December 14th, 2018)
 

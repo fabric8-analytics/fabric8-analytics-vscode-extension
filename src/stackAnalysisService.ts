@@ -23,7 +23,6 @@ export module stackAnalysisServices {
             let resp = JSON.parse(body);
             resolve(resp);
           } else if (httpResponse.statusCode === 401) {
-            clearContextInfo(context);
             errorMsg = `Failed :: ${httpResponse.statusMessage}, Status: ${
               httpResponse.statusCode
             }`;
@@ -39,7 +38,6 @@ export module stackAnalysisServices {
             );
             reject(httpResponse.statusCode);
           } else {
-            clearContextInfo(context);
             errorMsg = `Failed to trigger application's stack analysis, try in a while. Status: ${
               httpResponse.statusCode
             } - ${httpResponse.statusMessage}`;

@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.0.13 (April 26th, 2019)
+
+- enhancement - Resolved dependencies are stored in target in workspace root. See [#302](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/302)
+- fixes - Dependency Analytics Report not generated if triggered via file explorer. See [#299](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/299)
+- fixes - Stop polling for stack-report if it takes any longer than 120 secs. See [#304](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/304)
+
 ## 0.0.12 (April 25th, 2019)
 
 - enhancement - Replace priview-html with VSCode webView APIs. See [#257](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/257)

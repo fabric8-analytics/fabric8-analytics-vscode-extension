@@ -69,6 +69,7 @@ export module stackanalysismodule {
               }stack-analyses/${respId}?user_key=${
                 Apiendpoint.STACK_API_USER_KEY
               }`;
+              let couterGetSa = 0;
               const interval = setInterval(() => {
                 stackAnalysisServices
                   .getStackAnalysisService(options)
@@ -82,8 +83,19 @@ export module stackanalysismodule {
                         DependencyReportPanel.currentPanel.doUpdatePanel(data);
                       }
                       resolve();
+                    } else {
+                      couterGetSa++;
+                      if (couterGetSa >= 17) {
+                        let errMsg = `Failed to trigger application's stack analysis, try in a while.`;
+                        clearInterval(interval);
+                        p.report({
+                          message:
+                            StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                        });
+                        handleError(errMsg);
+                        reject();
+                      }
                     }
-                    // keep on waiting
                   })
                   .catch(error => {
                     clearInterval(interval);
@@ -93,7 +105,7 @@ export module stackanalysismodule {
                     handleError(error);
                     reject(error);
                   });
-              }, 6000);
+              }, 7000);
             })
             .catch(err => {
               p.report({

@@ -22,34 +22,13 @@ suite('projectDataProvider Modules', () => {
     sandbox.restore();
   });
 
-  let editor = {
-    document: {
-      uri: {
-        fsPath: '/Users/sampleNodeRepo/package.json',
-        path: '/Users/sampleNodeRepo/package.json',
-        scheme: 'file'
-      },
-      fileName: '/Users/sampleNodeRepo/package.json'
-    }
-  };
-
   test('effectivef8Pom should return success', async () => {
     let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns(<any>{
-      uri: {
-        fsPath: 'path/samplenodeapp',
-        scheme: 'file',
-        authority: '',
-        fragment: '',
-        query: '',
-        path: 'path/samplenodeapp'
-      }
-    });
     let stubExec = sandbox
       .stub(child_process, 'exec')
       .yields(null, 'success', 'success');
     let effectivef8PomPR = await ProjectDataProvider.effectivef8Pom(
-      'path/samplenodeapp/'
+      workspaceFolder.uri.fsPath
     );
     expect(effectivef8PomPR).contains('target/dependencies.txt');
     expect(stubExec).callCount(1);
@@ -60,7 +39,7 @@ suite('projectDataProvider Modules', () => {
     let stubGetDependencyVersion = sandbox
       .stub(ProjectDataProvider, 'getDependencyVersion')
       .rejects(false);
-    ProjectDataProvider.effectivef8Package('path/samplenodeapp/');
+    ProjectDataProvider.effectivef8Package(workspaceFolder.uri.fsPath);
     expect(stubGetDependencyVersion).callCount(1);
   });
 
@@ -72,7 +51,7 @@ suite('projectDataProvider Modules', () => {
     let stubFormPackagedependencyNpmList = sandbox
       .stub(ProjectDataProvider, 'formPackagedependencyNpmList')
       .resolves('sample');
-    await ProjectDataProvider.effectivef8Package('path/samplenodeapp/');
+    await ProjectDataProvider.effectivef8Package(workspaceFolder.uri.fsPath);
     expect(stubGetDependencyVersion).callCount(1);
     expect(stubFormPackagedependencyNpmList).callCount(1);
   });
@@ -122,6 +101,18 @@ suite('projectDataProvider Modules', () => {
       'path/samplenodeapp/'
     );
     expect(depVersionPromise).equals(true);
+    expect(stubExec).callCount(1);
+  });
+
+  test('effectivef8Pypi should return success', async () => {
+    let workspaceFolder = vscode.workspace.workspaceFolders[0];
+    let stubExec = sandbox
+      .stub(child_process, 'exec')
+      .yields(null, 'success', 'success');
+    let effectivef8PypiPR = await ProjectDataProvider.effectivef8Pypi(
+      workspaceFolder.uri.fsPath
+    );
+    expect(effectivef8PypiPR).contains('target/pylist.json');
     expect(stubExec).callCount(1);
   });
 });

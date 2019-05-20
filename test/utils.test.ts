@@ -24,7 +24,12 @@ suite('Utils module', () => {
   });
 
   test('getNodeExecutable should return npm', () => {
-    let mavenPath = Utils.getNodeExecutable();
-    expect(mavenPath).equals('npm');
+    let npmPath = Utils.getNodeExecutable();
+    expect(npmPath).equals('npm');
+  });
+
+  test('getPypiExecutable should return python', () => {
+    let pypiPath = Utils.getPypiExecutable();
+    expect(pypiPath).equals('python');
   });
 });

@@ -172,7 +172,7 @@ export module multimanifestmodule {
   ) => {
     const relativePattern = new vscode.RelativePattern(
       workspaceFolder,
-      '{pom.xml,**/package.json}'
+      '{pom.xml,**/package.json,requirements.txt}'
     );
     vscode.workspace.findFiles(relativePattern, '**/node_modules').then(
       (result: vscode.Uri[]) => {
@@ -186,6 +186,8 @@ export module multimanifestmodule {
               effective_pom_skip = false;
               pom_count += 1;
               ecosystem = 'maven';
+            } else if (item.fsPath.indexOf('requirements.txt') >= 0) {
+              ecosystem = 'pypi';
             }
           });
 

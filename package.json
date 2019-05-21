@@ -98,7 +98,7 @@
         },
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
-          "when": "resourceLangId == plaintext"
+          "when": "resourceLangId == pip-requirements"
         }
       ],
       "explorer/context": [

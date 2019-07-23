@@ -116,7 +116,7 @@ export module multimanifestmodule {
    */
   export const dependencyAnalyticsReportFlow = async (context, uri = null) => {
     let workspaceFolder: vscode.WorkspaceFolder;
-    if (uri) {
+    if (uri && uri.scheme && uri.scheme === 'file') {
       if (uri.fsPath && uri.fsPath.toLowerCase().indexOf('pom.xml') !== -1) {
         workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         stackanalysismodule.processStackAnalyses(
@@ -135,6 +135,10 @@ export module multimanifestmodule {
           workspaceFolder,
           'npm',
           uri
+        );
+      } else {
+        vscode.window.showInformationMessage(
+          `File ${uri.fsPath} is not supported!!`
         );
       }
     } else if (

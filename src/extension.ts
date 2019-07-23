@@ -24,8 +24,11 @@ export let outputChannelDep: any;
 export function activate(context: vscode.ExtensionContext) {
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
-    (uri: vscode.Uri) =>
-      multimanifestmodule.dependencyAnalyticsReportFlow(context, uri)
+    (uri: vscode.Uri) => {
+      // uri will be null in case user have use context menu/file explorer
+      const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+      multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+    }
   );
 
   let disposableStackLogs = vscode.commands.registerCommand(

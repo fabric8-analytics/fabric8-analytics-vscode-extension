@@ -49,7 +49,7 @@ suite('Fabric8 Analytics Extension', () => {
           assert.equal(reason.name, 'Error');
           assert.equal(
             reason.message,
-            `Running the contributed command:'extension.fabric8AnalyticsWidgetFullStack' failed.`
+            `Running the contributed command: 'extension.fabric8AnalyticsWidgetFullStack' failed.`
           );
         }
       );

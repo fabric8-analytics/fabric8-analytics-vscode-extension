@@ -245,11 +245,13 @@ export module ProjectDataProvider {
     return result;
   };
 
-  export const effectivef8Pypi = workspaceFolder => {
+  export const effectivef8Pypi = item => {
     return new Promise((resolve, reject) => {
-      let vscodeRootpath = workspaceFolder.uri.fsPath;
+      const outputChannelDep = isOutputChannelActivated();
+      outputChannelDep.clearOutputChannel();
+      let vscodeRootpath = item.replace('requirements.txt', '');
+      const filepath = paths.join(vscodeRootpath, 'target', 'pylist.json');
       let reqTxtFilePath = paths.join(vscodeRootpath, 'requirements.txt');
-      let filepath = paths.join(vscodeRootpath, 'target', 'pylist.json');
       let dir = paths.join(vscodeRootpath, 'target');
       let pyPiInterpreter = Utils.getPypiExecutable();
       if (
@@ -258,7 +260,7 @@ export module ProjectDataProvider {
       ) {
         pyPiInterpreter = pyPiInterpreter.replace(
           '${workspaceFolder}',
-          workspaceFolder.uri.fsPath
+          vscodeRootpath
         );
       }
 
@@ -291,24 +293,21 @@ export module ProjectDataProvider {
         ` ${reqTxtFilePath}`,
         ` ${filepath}`
       ].join(' ');
-      console.log('effectivef8Pypi ' + cmd);
+      console.log('CMD : ' + cmd);
+      outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
       exec(
         cmd,
         { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
+          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
+          outputChannelDep.addMsgOutputChannel(outputMsg);
           if (error) {
             vscode.window.showErrorMessage(_stderr);
             console.log(_stderr);
             console.log(error.message);
             reject(_stderr);
           } else {
-            let eReqPathList: any = reqTxtFilePath.split('requirements.txt');
-            if (eReqPathList.length > 0) {
-              let eReqPath: string = eReqPathList[0] + 'target/pylist.json';
-              resolve(eReqPath);
-            } else {
-              reject(StatusMessages.PYPI_FAILURE);
-            }
+            resolve(filepath);
           }
         }
       );

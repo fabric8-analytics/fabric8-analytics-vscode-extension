@@ -137,6 +137,11 @@ export module stackanalysismodule {
         ? uri.fsPath.split('package.json')[0]
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Package';
+    } else if (ecosystem === 'pypi') {
+      argumentList = uri
+        ? uri.fsPath.split('requirements.txt')[0]
+        : workspaceFolder.uri.fsPath;
+      effectiveF8Var = 'effectivef8Pypi';
     }
     stackAnalysesLifeCycle(context, effectiveF8Var, argumentList);
   };

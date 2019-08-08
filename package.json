@@ -40,7 +40,8 @@
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "workspaceContains:**/package.json",
-    "workspaceContains:**/pom.xml"
+    "workspaceContains:**/pom.xml",
+    "workspaceContains:**/requirements.txt"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -94,6 +95,10 @@
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceLangId == json"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceLangId == plaintext"
         }
       ],
       "explorer/context": [
@@ -104,6 +109,10 @@
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceFilename == pom.xml"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceFilename == requirements.txt"
         }
       ],
       "editor/context": [
@@ -114,6 +123,10 @@
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceFilename == pom.xml"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceFilename == requirements.txt"
         }
       ]
     },

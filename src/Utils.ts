@@ -21,6 +21,6 @@ export namespace Utils {
     const pypiPath: string = vscode.workspace
       .getConfiguration('python')
       .get('pythonPath');
-    return pypiPath;
+    return pypiPath ? `${pypiPath}` : 'python';
   }
 }

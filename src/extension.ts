@@ -10,6 +10,8 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
+import { GlobalState, extensionQualifiedId } from './constants';
+import { DependencyReportPanel } from './dependencyReportPanel';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -41,6 +43,9 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   );
+
+  // show welcome message after first install or upgrade
+  showUpdateNotification(context);
 
   authextension.authorize_f8_analytics(context).then(data => {
     if (data) {
@@ -167,4 +172,33 @@ export function deactivate(): Thenable<void> {
   }
   onFileOpen = [];
   return lspClient.stop();
+}
+
+async function showUpdateNotification(context: vscode.ExtensionContext) {
+  // Retrive current and previous version string to show welcome message
+  const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
+  const version = packageJSON.version;
+  const previousVersion = context.globalState.get<string>(GlobalState.Version);
+  // Nothing to display
+  if (version === previousVersion)
+    return;
+
+  // store current version into localStorage
+  context.globalState.update(GlobalState.Version, version);
+
+  const actions: vscode.MessageItem[] = [{ title: 'README' }, { title: 'Release Notes' }];
+
+  const displayName = packageJSON.displayName;
+  const result = await vscode.window.showInformationMessage(
+    `${displayName} has been updated to v${version} — check out what's new!`,
+    ...actions
+  );
+
+  if (result != null) {
+    if (result === actions[0]) {
+      await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(packageJSON.homepage));
+    } else if (result === actions[1]) {
+      await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/${version}`));
+    }
+  }
 }

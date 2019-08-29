@@ -48,6 +48,7 @@ export module stackanalysismodule {
               }stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               options['formData'] = payloadData;
               options['headers'] = {
+                showTransitiveReport: 'true',
                 origin: 'vscode',
                 ecosystem: Apiendpoint.API_ECOSYSTEM
               };

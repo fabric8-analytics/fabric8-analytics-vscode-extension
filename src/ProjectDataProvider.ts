@@ -286,12 +286,13 @@ export module ProjectDataProvider {
       }
       const cmd: string = [
         pyPiInterpreter,
-        `-m pip install -r `,
-        ` ${reqTxtFilePath};`,
+        `-m pip install -r`,
+        reqTxtFilePath,
+        `&&`,
         pyPiInterpreter,
         StatusMessages.PYPI_INTERPRETOR_CMD,
-        ` ${reqTxtFilePath}`,
-        ` ${filepath}`
+        reqTxtFilePath,
+        filepath
       ].join(' ');
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);

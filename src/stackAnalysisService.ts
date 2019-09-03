@@ -92,6 +92,11 @@ export module stackAnalysisServices {
               httpResponse.statusCode
             } - ${httpResponse.statusMessage} `;
             reject(errorMsg);
+          } else if (httpResponse.statusCode === 408) {
+            errorMsg = `Stack analysis request has timed out. Status:  ${
+              httpResponse.statusCode
+            } - ${httpResponse.statusMessage} `;
+            reject(errorMsg);
           } else {
             clearContextInfo(context);
             errorMsg = `Failed to trigger application's stack analysis, try in a while. Status: ${

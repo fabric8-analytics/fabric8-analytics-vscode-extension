@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import * as paths from 'path';
 
 import { Apiendpoint } from './apiendpoint';
+import { getRequestTimeout, getRequestPollInterval } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
@@ -70,7 +71,7 @@ export module stackanalysismodule {
               }stack-analyses/${respId}?user_key=${
                 Apiendpoint.STACK_API_USER_KEY
               }`;
-              let couterGetSa = 0;
+              let timeoutCounter = getRequestTimeout / getRequestPollInterval;
               const interval = setInterval(() => {
                 stackAnalysisServices
                   .getStackAnalysisService(options)
@@ -85,8 +86,9 @@ export module stackanalysismodule {
                       }
                       resolve();
                     } else {
-                      couterGetSa++;
-                      if (couterGetSa >= 17) {
+                      console.log(`Polling for stack report, remaining count:${timeoutCounter}`);
+                      --timeoutCounter;
+                      if (timeoutCounter <= 0) {
                         let errMsg = `Failed to trigger application's stack analysis, try in a while.`;
                         clearInterval(interval);
                         p.report({
@@ -106,7 +108,7 @@ export module stackanalysismodule {
                     handleError(error);
                     reject(error);
                   });
-              }, 7000);
+              }, getRequestPollInterval);
             })
             .catch(err => {
               p.report({

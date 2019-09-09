@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.13 (TDB)
+## 0.0.13 (September 9th, 2019)
 
 - enhancement - Resolved dependencies are stored in target in workspace root. See [#302](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/302)
 - enhancement - Show welcome message after upgrading to latest version. See [#334](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/334)

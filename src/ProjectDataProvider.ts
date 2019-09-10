@@ -284,13 +284,14 @@ export module ProjectDataProvider {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
+      const getPyPiDependencyGeneratorPath = paths.join(__dirname, 'generate-pypi-dep.py');
       const cmd: string = [
         pyPiInterpreter,
         `-m pip install -r`,
         reqTxtFilePath,
         `&&`,
         pyPiInterpreter,
-        StatusMessages.PYPI_INTERPRETOR_CMD,
+        getPyPiDependencyGeneratorPath,
         reqTxtFilePath,
         filepath
       ].join(' ');

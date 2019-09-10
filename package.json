@@ -176,8 +176,9 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
+    "copy-resources": "mkdir -p out/src && cp src/*py out/src",
+    "vscode:prepublish": "npm run copy-resources && tsc -p ./",
+    "compile": "npm run copy-resources && tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "CODE_TESTS_WORKSPACE='./test/resources/sampleNodeApp/' node ./node_modules/vscode/bin/test",
     "reinstall": "npm cache verify && npm install",

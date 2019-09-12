@@ -1,16 +1,13 @@
 # Change Log
 
-## 0.0.13 (September 9th, 2019)
+## 0.0.13 (September 12th, 2019)
 
-- enhancement - Resolved dependencies are stored in target in workspace root. See [#302](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/302)
+- enhancement - Add python support. See [#308](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/308)
+- enhancement - Enable transitive(indirect) dependency report by default. See [#330](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/330)
 - enhancement - Show welcome message after upgrading to latest version. See [#334](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/334)
-- enhancement - updates python support. See [#308](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/308)
+- enhancement - Resolved dependencies are stored in target in workspace root. See [#302](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/302)
 - fixes - Dependency Analytics Report not generated if triggered via file explorer. See [#299](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/299)
-- fixes - Enable transitive dependency report by default. See [#330](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/330)
-- fixes - Generate dependency graph only if pip install completes without error. See [#333](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/333)
-- fixes - Stack report polling frequency and duration. See [#338](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/338)
-- fixes - Stop polling for stack-report if it takes any longer than 120 secs. See [#304](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/304)
-- fixes - Use fabric8-analytics-lsp-server 0.1.56. See [#325](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/325)
+- fixes - Stop polling for stack-report if it takes any longer than 120 secs. See [#304](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/304) [#338](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/338)  [#352](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/352)
 - fixes - Issue with running manifest file without having a workspace. See [#314](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/314)
 
 ## 0.0.12 (April 25th, 2019)

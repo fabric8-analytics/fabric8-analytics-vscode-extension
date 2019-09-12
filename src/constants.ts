@@ -13,6 +13,6 @@ export const extensionId = 'fabric8-analytics';
 // publisher.name from package.json
 export const extensionQualifiedId = `redhat.${extensionId}`;
 // GET request timeout
-export const getRequestTimeout = 20 * 1000; // ms
+export const getRequestTimeout = 120 * 1000; // ms
 // GET request polling frequency
 export const getRequestPollInterval = 2 * 1000; // ms

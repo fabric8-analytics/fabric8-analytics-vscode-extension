@@ -288,7 +288,6 @@ export module ProjectDataProvider {
         pyPiInterpreter,
         `-m pip install`,
         `--user`,
-        `--ignore-installed`,
         `-r`,
         reqTxtFilePath,
         `&&`,

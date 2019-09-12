@@ -290,13 +290,13 @@ export module ProjectDataProvider {
         reqTxtFilePath,
         `&&`,
         pyPiInterpreter,
-        StatusMessages.PYPI_INTERPRETOR_CMD,
+        '-', // similar to `echo "print('hello')" | python - arg1 arg2`
         reqTxtFilePath,
         filepath
       ].join(' ');
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
-      exec(
+      const depGenerator = exec(
         cmd,
         { maxBuffer: 1024 * 1200 },
         (error: Error, _stdout: string, _stderr: string): void => {
@@ -312,6 +312,9 @@ export module ProjectDataProvider {
           }
         }
       );
+     console.log('SCRIPT -: ' + StatusMessages.PYPI_INTERPRETOR_CMD);
+     // write the dependency generator script into stdin
+     depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
     });
   };
 }

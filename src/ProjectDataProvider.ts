@@ -286,7 +286,9 @@ export module ProjectDataProvider {
       }
       const cmd: string = [
         pyPiInterpreter,
-        `-m pip install -r`,
+        `-m pip install`,
+        `--user`,
+        `-r`,
         reqTxtFilePath,
         `&&`,
         pyPiInterpreter,

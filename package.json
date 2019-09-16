@@ -178,9 +178,8 @@
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch",
-    "test-compile": "npm run compile",
-    "compile": "tsc -watch -p ./",
+    "webpack-dev": "webpack --mode development --watch --info-verbosity verbose",
+    "compile": "tsc -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "CODE_TESTS_WORKSPACE='./test/resources/sampleNodeApp/' node ./node_modules/vscode/bin/test",
     "reinstall": "npm cache verify && npm install",

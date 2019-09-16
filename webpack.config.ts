@@ -17,7 +17,7 @@ const config = {
     path: path.resolve(__dirname, 'out', 'src'),
     filename: '[name].js',
     libraryTarget: 'commonjs2',
-    devtoolModuleFilenameTemplate: '../[resource-path]'
+    devtoolModuleFilenameTemplate: '../../[resource-path]'
   },
   devtool: 'source-map',
   externals: {
@@ -32,7 +32,6 @@ const config = {
       {
         test: /\.ts$/,
         exclude: /node_modules/,
-        // include: [path.resolve(__dirname, 'node_modules', 'fabric8-analytics-lsp-server')],
         use: [
           {
             loader: 'ts-loader'

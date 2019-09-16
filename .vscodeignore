@@ -23,3 +23,7 @@ cico_setup.sh
 cico_build_deploy.sh
 coverage/**
 Jenkinsfile
+# ignore all src except server.js & extension.js
+out/src/**
+!out/src/server.js
+!out/src/extension.js

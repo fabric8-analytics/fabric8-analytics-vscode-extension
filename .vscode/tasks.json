@@ -24,7 +24,7 @@
     },
     {
       "type": "npm",
-      "script": "test-compile",
+      "script": "compile",
       "group": "build",
       "problemMatcher": ["$tsc"]
     },
@@ -36,7 +36,22 @@
         "isDefault": true
       },
       "isBackground": true,
-      "problemMatcher": ["$ts-webpack-watch"]
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern":[
+          {
+            "regexp": "\\[tsl\\] ERROR",
+            "file": 1,
+            "location": 2,
+            "message": 3
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Compilation \\w+ starting…",
+          "endsPattern": "Compilation\\s+finished"
+        }
+      },
     }
   ]
 }

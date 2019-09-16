@@ -8,11 +8,14 @@ const path = require('path');
 const config = {
   target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
 
-  entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+  entry: {
+    extension: './src/extension.ts',
+    server: './node_modules/fabric8-analytics-lsp-server/server.js'
+  }, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'out' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
     path: path.resolve(__dirname, 'out', 'src'),
-    filename: 'extension.js',
+    filename: '[name].js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]'
   },
@@ -29,6 +32,7 @@ const config = {
       {
         test: /\.ts$/,
         exclude: /node_modules/,
+        // include: [path.resolve(__dirname, 'node_modules', 'fabric8-analytics-lsp-server')],
         use: [
           {
             loader: 'ts-loader'

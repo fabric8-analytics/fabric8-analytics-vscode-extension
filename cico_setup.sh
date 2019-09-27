@@ -19,7 +19,7 @@ prep() {
     export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
     /usr/bin/Xvfb :99 -screen 0 1280x1024x24 &
     sleep 3;
-    curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -
+    curl -sL https://rpm.nodesource.com/setup_10.x | sudo -E bash -
     yum -y install nodejs
 }
 
@@ -70,6 +70,7 @@ build_project() {
 
 run_int_tests() {
     # Exec integration tests
+    npm run compile
     npm test --silent
 
     if [ $? -eq 0 ]; then

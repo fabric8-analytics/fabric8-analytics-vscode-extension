@@ -32,6 +32,7 @@ suite('multimanifest module', () => {
     subscriptions: { dispose(): any {} }[0],
     workspaceState: new DummyMemento(),
     globalState: new DummyMemento(),
+    globalStoragePath: 'path',
     asAbsolutePath(relativePath: string): string {
       return '';
     }

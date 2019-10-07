@@ -13,6 +13,11 @@
 	"exclude": [
 		"node_modules",
 		"ca-lsp-server",
+    "src",
 		".vscode-test"
-	]
+	],
+  "include": [
+    "test/index.ts",
+    "test/runTest.ts"
+  ]
 }

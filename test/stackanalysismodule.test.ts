@@ -11,7 +11,7 @@ import { stackAnalysisServices } from '../src/stackAnalysisService';
 const expect = chai.expect;
 chai.use(sinonChai);
 
-suite('stacknalysis module', () => {
+suite('stackanalysis module', () => {
   let sandbox: sinon.SinonSandbox;
   let dummyMomentoData = {};
   let editor = {

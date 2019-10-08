@@ -12,8 +12,7 @@ const config = {
   entry: {
     'src/extension': './src/extension.ts',
     'src/server': './node_modules/fabric8-analytics-lsp-server/server.js',
-    /* 'test/all.test': glob.sync('./test/*.test.ts') */
-    'test/all.test': ['./test/extension.test.ts', './test/ProjectDataProvider.test.ts']
+    'test/all.test': glob.sync('./test/*.test.ts')
   }, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'out' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
@@ -38,18 +37,6 @@ const config = {
         use: [
           {
             loader: 'ts-loader'
-          }
-        ]
-      },
-      {
-        test: /\test.ts$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'ts-loader'
-          },
-          {
-            loader: 'mocha-loader'
           }
         ]
       }

@@ -1,21 +1,21 @@
 {
-	"compilerOptions": {
-		"target": "es6",
-		"lib": [
-				"es6"
-		],
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"outDir": "out",
-		"sourceMap": true,
-		"rootDir": "."
-	},
-	"exclude": [
+  "compilerOptions": {
+    "target": "es6",
+    "lib": [
+      "es6"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "out",
+    "sourceMap": true,
+    "rootDir": "."
+  },
+  "exclude": [
     "src",
-		"node_modules",
-		"ca-lsp-server",
-		".vscode-test"
-	],
+    "node_modules",
+    "ca-lsp-server",
+    ".vscode-test"
+  ],
   "include": [
     "test/index.ts",
     "test/runTest.ts"

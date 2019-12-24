@@ -179,7 +179,7 @@
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-dev": "tsc -p ./ && webpack --mode development --watch --info-verbosity verbose",
-    "compile": "tsc -p ./ && npm run webpack",
+    "compile": "tsc -p ./",
     "test": "npm run compile && node ./out/test/runTest.js",
     "reinstall": "npm cache verify && npm install",
     "lint": "tslint -c tslint.json src/*.ts"

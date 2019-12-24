@@ -18,18 +18,6 @@
   "tasks": [
     {
       "type": "npm",
-      "script": "webpack",
-      "group": "build",
-      "problemMatcher": ["$ts-webpack"]
-    },
-    {
-      "type": "npm",
-      "script": "compile",
-      "group": "build",
-      "problemMatcher": ["$tsc"]
-    },
-    {
-      "type": "npm",
       "script": "webpack-dev",
       "group": {
         "kind": "build",

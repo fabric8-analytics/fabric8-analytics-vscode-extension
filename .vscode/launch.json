@@ -21,8 +21,8 @@
 			"args": ["${workspaceFolder}/test/resources/sampleNodeApp/", "--disable-extensions", "--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			"outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-			"preLaunchTask": "npm: webpack-dev"
+			"outFiles": ["${workspaceFolder}/out/test/**/*.js", "${workspaceFolder}/out/src/**/*.js"],
+			"preLaunchTask": "npm: compile"
 		},
 		{
 			"type": "node",

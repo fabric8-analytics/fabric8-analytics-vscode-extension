@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
   };
   // debug
   if (argv.mode !== 'production') {
-    entry['test/all.test'] = glob.sync('./test/*.test.ts');
+    /* entry['test/all.test'] = glob.sync('./test/*.test.ts'); */
   }
   /**@type {import('webpack').Configuration}*/
   const config = {

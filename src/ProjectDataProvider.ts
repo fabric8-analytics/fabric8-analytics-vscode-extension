@@ -126,7 +126,7 @@ export module ProjectDataProvider {
   export const formPackagedependencyNpmList = item => {
     let npmListPath = paths.join(item, 'target', 'npmlist.json');
     return new Promise((resolve, reject) => {
-      fs.readFile(npmListPath, { encoding: 'utf-8' }, function(err, data) {
+      fs.readFile(npmListPath, { encoding: 'utf-8' }, function (err, data) {
         if (data) {
           let packageListDependencies = JSON.parse(data);
           let packageDependencies = formatObj(packageListDependencies, [
@@ -136,7 +136,7 @@ export module ProjectDataProvider {
           fs.writeFile(
             npmListPath,
             JSON.stringify(packageDependencies),
-            function(err) {
+            function (err) {
               if (err) {
                 vscode.window.showErrorMessage(
                   `Unable to format ${npmListPath}`
@@ -251,7 +251,7 @@ export module ProjectDataProvider {
       outputChannelDep.clearOutputChannel();
       let vscodeRootpath = item.replace('requirements.txt', '');
       const filepath = paths.join(vscodeRootpath, 'target', 'pylist.json');
-      let reqTxtFilePath = paths.join(vscodeRootpath, 'requirements.txt');
+      const reqTxtFilePath = `'${paths.join(vscodeRootpath, 'requirements.txt')}'`;
       let dir = paths.join(vscodeRootpath, 'target');
       let pyPiInterpreter = Utils.getPypiExecutable();
       if (
@@ -314,9 +314,9 @@ export module ProjectDataProvider {
           }
         }
       );
-     console.log('SCRIPT -: ' + StatusMessages.PYPI_INTERPRETOR_CMD);
-     // write the dependency generator script into stdin
-     depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
+      console.log('SCRIPT -: ' + StatusMessages.PYPI_INTERPRETOR_CMD);
+      // write the dependency generator script into stdin
+      depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
     });
   };
 }

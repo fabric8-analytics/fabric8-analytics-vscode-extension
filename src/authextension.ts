@@ -43,7 +43,7 @@ export module authextension {
       let options = {};
       options['uri'] = `${
         Apiendpoint.THREE_SCALE_CONNECT_URL
-      }get-endpoints?user_key=${Apiendpoint.THREE_SCALE_CONNECT_KEY}`;
+        }get-endpoints?user_key=${Apiendpoint.THREE_SCALE_CONNECT_KEY}`;
       options['headers'] = { 'Content-Type': 'application/json' };
 
       stackAnalysisServices

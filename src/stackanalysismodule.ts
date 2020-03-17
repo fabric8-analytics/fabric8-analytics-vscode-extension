@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import * as paths from 'path';
 
 import { Apiendpoint } from './apiendpoint';
-import { getRequestTimeout, getRequestPollInterval } from './constants';
+import { getRequestTimeout, getRequestPollInterval, vendor, version } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
@@ -46,11 +46,13 @@ export module stackanalysismodule {
               let thatContext: any;
               options['uri'] = `${
                 Apiendpoint.STACK_API_URL
-              }stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                }stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
                 origin: 'vscode',
+                'security-vendor': vendor,
+                'plugin-version': version,
                 ecosystem: Apiendpoint.API_ECOSYSTEM
               };
               thatContext = context;
@@ -68,9 +70,9 @@ export module stackanalysismodule {
               const options = {};
               options['uri'] = `${
                 Apiendpoint.STACK_API_URL
-              }stack-analyses/${respId}?user_key=${
+                }stack-analyses/${respId}?user_key=${
                 Apiendpoint.STACK_API_USER_KEY
-              }`;
+                }`;
               let timeoutCounter = getRequestTimeout / getRequestPollInterval;
               const interval = setInterval(() => {
                 stackAnalysisServices

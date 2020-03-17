@@ -3,6 +3,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
+import { vendor, version } from '../src/constants';
 import { stackanalysismodule } from '../src/stackanalysismodule';
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
 import { multimanifestmodule } from '../src/multimanifestmodule';
@@ -40,7 +41,7 @@ suite('stacknalysis module', () => {
     storagePath: 'string',
     logPath: 'string',
     // tslint:disable-next-line:no-empty
-    subscriptions: { dispose(): any {} }[0],
+    subscriptions: { dispose(): any { } }[0],
     workspaceState: new DummyMemento(),
     globalState: new DummyMemento(),
     asAbsolutePath(relativePath: string): string {
@@ -92,7 +93,7 @@ suite('stacknalysis module', () => {
         .resolves(true);
       let stubFormManifestPayload = sandbox
         .stub(multimanifestmodule, 'form_manifests_payload')
-        .resolves({ orgin: 'vscode', ecosystem: 'npm' });
+        .resolves({ orgin: 'vscode', ecosystem: 'npm', 'security-vendor': vendor, 'plugin-version': version });
       let stubPostStackAnalysisService = sandbox
         .stub(stackAnalysisServices, 'postStackAnalysisService')
         .resolves('23445');

@@ -1,5 +1,7 @@
 'use strict';
 
+import * as vscode from 'vscode';
+
 /**
  * Commonly used constants
  */
@@ -16,3 +18,7 @@ export const extensionQualifiedId = `redhat.${extensionId}`;
 export const getRequestTimeout = 120 * 1000; // ms
 // GET request polling frequency
 export const getRequestPollInterval = 2 * 1000; // ms
+// Custom Header values
+export let vendor = "snyk";
+export const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
+export const version = packageJSON.version;

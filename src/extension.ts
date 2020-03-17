@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId } from './constants';
+import { GlobalState, vendor, version, packageJSON } from './constants';
 import { DependencyReportPanel } from './dependencyReportPanel';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
@@ -69,6 +69,9 @@ export function activate(context: vscode.ExtensionContext) {
           options: debugOptions
         }
       };
+
+      //Add Plugin-Version and Security-Vendor as custom header fields
+      process.env['CUSTOM_HEADER'] = '{"plugin_version":"' + version + '", "security_vendor":"' + vendor + '"}';
 
       // Options to control the language client
       let clientOptions: LanguageClientOptions = {
@@ -175,9 +178,7 @@ export function deactivate(): Thenable<void> {
 }
 
 async function showUpdateNotification(context: vscode.ExtensionContext) {
-  // Retrive current and previous version string to show welcome message
-  const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
-  const version = packageJSON.version;
+  // Compare current and previous version string to show welcome message
   const previousVersion = context.globalState.get<string>(GlobalState.Version);
   // Nothing to display
   if (version === previousVersion)

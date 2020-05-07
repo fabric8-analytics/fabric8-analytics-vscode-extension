@@ -27,9 +27,10 @@ suite('stacknalysis Services', () => {
     storagePath: 'string',
     logPath: 'string',
     // tslint:disable-next-line:no-empty
-    subscriptions: { dispose(): any {} }[0],
+    subscriptions: { dispose(): any { } }[0],
     workspaceState: new DummyMemento(),
     globalState: new DummyMemento(),
+    globalStoragePath: "",
     asAbsolutePath(relativePath: string): string {
       return '';
     }

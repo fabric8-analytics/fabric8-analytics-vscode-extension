@@ -203,7 +203,7 @@
     "vscode-test": "^1.3.0"
   },
   "dependencies": {
-    "fabric8-analytics-lsp-server": "0.1.56",
+    "fabric8-analytics-lsp-server": "file:../../ca/24May/fabric8-analytics-lsp-server/output/fabric8-analytics-lsp-server-0.0.0-development.tgz",
     "fs": "0.0.1-security",
     "path": "0.12.7",
     "request": "2.88.0",

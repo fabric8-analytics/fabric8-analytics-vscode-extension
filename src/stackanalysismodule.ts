@@ -46,12 +46,12 @@ export module stackanalysismodule {
               let thatContext: any;
               options['uri'] = `${
                 Apiendpoint.STACK_API_URL
-              }stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                }stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
                 origin: 'vscode',
-                ecosystem: Apiendpoint.API_ECOSYSTEM
+                'x-3scale-account-secret': 'not-set'
               };
               thatContext = context;
               let respId = await stackAnalysisServices.postStackAnalysisService(
@@ -68,14 +68,18 @@ export module stackanalysismodule {
               const options = {};
               options['uri'] = `${
                 Apiendpoint.STACK_API_URL
-              }stack-analyses/${respId}?user_key=${
+                }stack-analyses/${respId}?user_key=${
                 Apiendpoint.STACK_API_USER_KEY
-              }`;
+                }`;
+              options['headers'] = {
+                'x-3scale-account-secret': 'not-set'
+              };
               let timeoutCounter = getRequestTimeout / getRequestPollInterval;
               const interval = setInterval(() => {
                 stackAnalysisServices
                   .getStackAnalysisService(options)
                   .then(data => {
+                    console.log(data);
                     if (!data.hasOwnProperty('error')) {
                       clearInterval(interval);
                       p.report({

@@ -50,7 +50,6 @@ export module stackanalysismodule {
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
-                origin: 'vscode',
                 'x-3scale-account-secret': 'not-set'
               };
               thatContext = context;

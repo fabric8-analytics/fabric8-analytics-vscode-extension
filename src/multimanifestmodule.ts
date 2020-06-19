@@ -19,7 +19,6 @@ export module multimanifestmodule {
             'manifest': '',
             'file_path': '',
             'license[]': '',
-            origin: 'lsp',
             ecosystem: Apiendpoint.API_ECOSYSTEM
           };
           if (item && item['manifest'] && item['filePath']) {

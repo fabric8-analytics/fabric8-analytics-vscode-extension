@@ -50,7 +50,6 @@ export module stackanalysismodule {
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
-                'x-3scale-account-secret': 'not-set'
               };
               thatContext = context;
               let respId = await stackAnalysisServices.postStackAnalysisService(

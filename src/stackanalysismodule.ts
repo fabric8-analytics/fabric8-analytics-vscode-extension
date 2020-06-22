@@ -69,9 +69,6 @@ export module stackanalysismodule {
                 }stack-analyses/${respId}?user_key=${
                 Apiendpoint.STACK_API_USER_KEY
                 }`;
-              options['headers'] = {
-                'x-3scale-account-secret': 'not-set'
-              };
               let timeoutCounter = getRequestTimeout / getRequestPollInterval;
               const interval = setInterval(() => {
                 stackAnalysisServices

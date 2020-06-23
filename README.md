@@ -1,4 +1,4 @@
-# Dependency Analytics
+# Dependency Analytics 123
 
 [![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/redhat.fabric8-analytics.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
 

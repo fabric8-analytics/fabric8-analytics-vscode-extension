@@ -2,17 +2,21 @@
 
 import { Apiendpoint } from './apiendpoint';
 import { stackAnalysisServices } from './stackAnalysisService';
+import { stage_recommender_api_url, stage_three_scale_user_token } from './constants';
 
 export module authextension {
   export let setContextData: any;
 
   setContextData = (context_f8_access_routes, context_f8_3scale_user_key) => {
-    Apiendpoint.STACK_API_URL = context_f8_access_routes.prod + '/api/v2/';
-    Apiendpoint.STACK_API_USER_KEY = context_f8_3scale_user_key;
-    Apiendpoint.OSIO_ROUTE_URL = context_f8_access_routes.prod;
+    // Apiendpoint.STACK_API_URL = context_f8_access_routes.prod + '/api/v2/';
+    Apiendpoint.STACK_API_URL = Apiendpoint.STAGE_API_URL + '/api/v2/';
+    // Apiendpoint.STACK_API_USER_KEY = context_f8_3scale_user_key;
+    Apiendpoint.STACK_API_USER_KEY = stage_three_scale_user_token;
+    // Apiendpoint.OSIO_ROUTE_URL = context_f8_access_routes.prod;
+    Apiendpoint.OSIO_ROUTE_URL = Apiendpoint.STAGE_API_URL;
     process.env['RECOMMENDER_API_URL'] =
-      context_f8_access_routes.prod + '/api/v2';
-    process.env['THREE_SCALE_USER_TOKEN'] = context_f8_3scale_user_key;
+      stage_recommender_api_url + '/api/v2';
+    process.env['THREE_SCALE_USER_TOKEN'] = stage_three_scale_user_token;
   };
 
   export const authorize_f8_analytics = context => {

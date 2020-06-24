@@ -19,7 +19,7 @@ prep() {
     export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
     /usr/bin/Xvfb :99 -screen 0 1280x1024x24 &
     sleep 3;
-    curl -sL https://rpm.nodesource.com/setup_6.x | sudo -E bash -
+    curl -sL https://rpm.nodesource.com/setup_14.x | sudo -E bash -
     yum -y install nodejs
 }
 
@@ -27,9 +27,7 @@ install_dependencies() {
     # Build fabric8-analytics-vscode-extension
     npm install -g typescript
     npm install -g vsce
-    npm install -g rimraf
-    rimraf node_modules
-    npm install;
+    npm ci
 
     # fetch lsp latest release
     #. fetch_lsp.sh

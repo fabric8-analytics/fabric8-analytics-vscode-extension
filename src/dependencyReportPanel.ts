@@ -91,15 +91,16 @@ export class DependencyReportPanel {
   }
 
   public doUpdatePanel(data: any) {
-    if (data && data.request_id) {
+    if (data && data.external_request_id) {
       DependencyReportPanel.data = data;
       let r = header;
       let token_uri = undefined;
       portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${
-        data.request_id
-      }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
+        data.external_request_id
+        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
         Apiendpoint.OSIO_ROUTE_URL
-      }"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
+        }","ver":"v2"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
+      console.log("portal_uri", portal_uri);
       r += render_stack_iframe(portal_uri);
       r += footer;
       this._panel.webview.html = r;
@@ -132,14 +133,14 @@ export class DependencyReportPanel {
 
   private _renderHtmlForWebView() {
     let output = DependencyReportPanel.data;
-    if (output && output.request_id) {
+    if (output && output.external_request_id) {
       let r = header;
       let token_uri = undefined;
       portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${
-        output.request_id
-      }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
+        output.external_request_id
+        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
         Apiendpoint.OSIO_ROUTE_URL
-      }"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
+        }","ver":"v2"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
       r += render_stack_iframe(portal_uri);
       r += footer;
       return r;

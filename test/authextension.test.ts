@@ -53,13 +53,13 @@ suite('authextension Modules', () => {
       context_f8_access_routes,
       context_f8_3scale_user_key
     );
-    expect(process.env['RECOMMENDER_API_URL']).equals('http://prod/api/v1');
+    expect(process.env['RECOMMENDER_API_URL']).equals('http://prod/api/v2');
     expect(process.env['THREE_SCALE_USER_TOKEN']).equals('12345');
   });
 
   test('authorize_f8_analytics should return success', async () => {
     context.globalState.update('f8_access_routes', {
-      prod: 'http://prod/api/v1'
+      prod: 'http://prod/api/v2'
     });
     context.globalState.update('f8_3scale_user_key', '12345');
     let stubSetContextData = sandbox
@@ -108,7 +108,7 @@ suite('authextension Modules', () => {
     let stubGet3ScaleRouteService = sandbox
       .stub(stackAnalysisServices, 'get3ScaleRouteService')
       .resolves({
-        endpoints: { prod: 'http://prod/api/v1' },
+        endpoints: { prod: 'http://prod/api/v2' },
         user_key: '12345'
       });
     let promiseGet3scaleRoutes = await authextension.get_3scale_routes(context);

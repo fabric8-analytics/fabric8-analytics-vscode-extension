@@ -46,7 +46,7 @@ export module stackanalysismodule {
               let thatContext: any;
               options['uri'] = `${
                 Apiendpoint.STACK_API_URL
-                }stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                }stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',

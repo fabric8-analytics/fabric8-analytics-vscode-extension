@@ -8,7 +8,7 @@ export namespace Apiendpoint {
   export let STACK_API_URL: string = '';
   export let OSIO_ROUTE_URL: string = '';
   export const STACK_REPORT_URL: string =
-    'https://stack-analytics-report.prod-preview.openshift.io/';
+    'https://stack-analytics-report.openshift.io/';
   export const THREE_SCALE_CONNECT_URL: string =
     'https://f8a-connect-api-2445582058137.production.gw.apicast.io/';
   export const THREE_SCALE_CONNECT_KEY: string =

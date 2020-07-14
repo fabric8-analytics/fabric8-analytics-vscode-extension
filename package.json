@@ -8,6 +8,10 @@
   "preview": true,
   "contributors": [
     {
+      "name": "Jaivardhan Kumar",
+      "email": "jakumar@redhat.com"
+    },
+    {
       "name": "Arunprasad Rajkumar",
       "email": "arajkuma@redhat.com"
     }

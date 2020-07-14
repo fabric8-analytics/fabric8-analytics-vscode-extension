@@ -2,6 +2,8 @@
 
 [![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/redhat.fabric8-analytics.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
 
+Dependency Analytics is powered by [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/), it is the most advanced and accurate open source vulnerability database in the industry. That adds value with the latest, fastest and more number of vulnerabilities derived from numerous sources.
+
 'Dependency Analytics Report' with Insights about your application dependencies:
 
 - Flags a security vulnerability(CVE) and suggests a remedial version
@@ -48,7 +50,7 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
 
 1. Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt`) scans your application for security vulnerabilities, flag them along with 'quick fixes'.
 
-![ screencast ](images/compAnalysis.gif)
+![ screencast ](images/0.1.0/component-analysis.gif)
 
 2. Right click on a manifest file(`pom.xml` / `package.json` / `requirements.txt`) and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
 
@@ -57,11 +59,11 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
 - Suggests a project level license, check for conflicts between dependency licences
 - AI based guidance for additional,alternative dependencies
 
-![ screencast ](images/stackanalysis.gif)
+![ screencast ](images/0.1.0/stack-analysis.gif)
 
 3. **For multi module maven application** Right click on root `pom.xml` in editor window and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report for the entire application.
 
-![ screencast ](images/stackanalysis-multi.gif)
+![ screencast ](images/0.1.0/multi-stack-analysis.gif)
 
 ---
 

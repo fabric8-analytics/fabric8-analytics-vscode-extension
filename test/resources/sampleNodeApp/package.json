@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Dependency Analytics",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -10,6 +10,10 @@
     {
       "name": "Jaivardhan Kumar",
       "email": "jakumar@redhat.com"
+    },
+    {
+      "name": "Arunprasad Rajkumar",
+      "email": "arajkuma@redhat.com"
     }
   ],
   "license": "Apache-2.0",
@@ -19,7 +23,7 @@
   },
   "bugs": {
     "url": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues",
-    "email": "jakumar@redhat.com"
+    "email": "arajkuma@redhat.com"
   },
   "repository": {
     "type": "git",

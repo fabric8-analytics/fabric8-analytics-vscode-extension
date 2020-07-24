@@ -83,6 +83,11 @@ export class DependencyReportPanel {
           case 'alert':
             vscode.window.showErrorMessage(message.text);
             return;
+
+          case 'info':
+            // vscode.window.showInformationMessage(message.text);
+            vscode.env.openExternal(vscode.Uri.parse(message.text));
+            return;
         }
       },
       null,
@@ -158,5 +163,26 @@ let render_project_failure = () => {
 
 let render_stack_iframe = portaluri => {
   //const result = sa.result[0];
-  return `<iframe width="100%" height="100%" frameborder="0" src=${portaluri} id="frame2" name="frame2"></iframe>`;
+  return `<iframe id="frame" width="100%" height="100%" frameborder="0" src=${portaluri} sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"></iframe>
+  
+  <script>
+
+  var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+  var eventer = window[eventMethod];
+  var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+  const vscode = acquireVsCodeApi();
+
+  // Listen to message from child window
+  eventer(messageEvent,function(e) {
+    // console.log('parent received message!:  ',e.data);
+    vscode.postMessage({
+      command: 'info',
+      text: e.data
+    });  
+
+  },false);
+
+  </script>
+
+  `;
 };

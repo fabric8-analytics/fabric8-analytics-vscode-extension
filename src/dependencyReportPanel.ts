@@ -169,7 +169,6 @@ let render_stack_iframe = portaluri => {
 
   const vscode = acquireVsCodeApi();
   window.addEventListener('message', (e) => {
-    // console.log('parent received message!:  ',e.data);
     vscode.postMessage({
       command: 'launch-link-in-external-browser',
       url: e.data

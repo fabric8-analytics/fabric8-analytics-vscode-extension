@@ -163,7 +163,7 @@ let render_project_failure = () => {
 
 let render_stack_iframe = portaluri => {
   //const result = sa.result[0];
-  return `<iframe id="frame" width="100%" height="100%" frameborder="0" src=${portaluri} sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"></iframe>
+  return `<iframe id="frame" width="100%" height="100%" frameborder="0" src=${portaluri}></iframe>
   
   <script>
 

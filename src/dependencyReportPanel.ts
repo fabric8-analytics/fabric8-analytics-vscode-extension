@@ -85,7 +85,6 @@ export class DependencyReportPanel {
             return;
 
           case 'launch-link-in-external-browser':
-            // vscode.window.showInformationMessage(message.url);
             vscode.env.openExternal(vscode.Uri.parse(message.url));
             return;
         }

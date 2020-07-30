@@ -83,6 +83,10 @@ export class DependencyReportPanel {
           case 'alert':
             vscode.window.showErrorMessage(message.text);
             return;
+
+          case 'launch-link-in-external-browser':
+            vscode.env.openExternal(vscode.Uri.parse(message.url));
+            return;
         }
       },
       null,
@@ -158,5 +162,20 @@ let render_project_failure = () => {
 
 let render_stack_iframe = portaluri => {
   //const result = sa.result[0];
-  return `<iframe width="100%" height="100%" frameborder="0" src=${portaluri} id="frame2" name="frame2"></iframe>`;
+  return `<iframe id="frame" width="100%" height="100%" frameborder="0" src=${portaluri}></iframe>
+  
+  <script>
+
+  const vscode = acquireVsCodeApi();
+  window.addEventListener('message', (e) => {
+    vscode.postMessage({
+      command: 'launch-link-in-external-browser',
+      url: e.data
+    });  
+
+  }, false);
+
+  </script>
+
+  `;
 };

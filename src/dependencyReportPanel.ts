@@ -174,7 +174,7 @@ let render_stack_iframe = portaluri => {
       url: e.data
     });  
 
-  },false);
+  }, false);
 
   </script>
 

@@ -44,8 +44,7 @@ export module stackanalysismodule {
               let payloadData = formData;
               const options = {};
               let thatContext: any;
-              options['uri'] = `${
-                Apiendpoint.STACK_API_URL
+              options['uri'] = `${Apiendpoint.STACK_API_URL
                 }stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               options['formData'] = payloadData;
               options['headers'] = {
@@ -65,10 +64,8 @@ export module stackanalysismodule {
             .then(async respId => {
               console.log(`Analyzing your stack, id ${respId}`);
               const options = {};
-              options['uri'] = `${
-                Apiendpoint.STACK_API_URL
-                }stack-analyses/${respId}?user_key=${
-                Apiendpoint.STACK_API_USER_KEY
+              options['uri'] = `${Apiendpoint.STACK_API_URL
+                }stack-analyses/${respId}?user_key=${Apiendpoint.STACK_API_USER_KEY
                 }`;
               options['headers'] = {
                 uuid: process.env.UUID
@@ -147,6 +144,11 @@ export module stackanalysismodule {
         ? uri.fsPath.split('requirements.txt')[0]
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Pypi';
+    } else if (ecosystem === 'golang') {
+      argumentList = uri
+        ? uri.fsPath.split('go.mod')[0]
+        : workspaceFolder.uri.fsPath;
+      effectiveF8Var = 'effectivef8Golang';
     }
     stackAnalysesLifeCycle(context, effectiveF8Var, argumentList);
   };

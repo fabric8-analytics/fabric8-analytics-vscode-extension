@@ -23,4 +23,11 @@ export namespace Utils {
       .get('pythonPath');
     return pypiPath ? `${pypiPath}` : 'python';
   }
+
+  export function getGoExecutable(): string {
+    const goPath: string = vscode.workspace
+      .getConfiguration('go')
+      .get('goPath');
+    return goPath ? `${goPath}` : 'go';
+  }
 }

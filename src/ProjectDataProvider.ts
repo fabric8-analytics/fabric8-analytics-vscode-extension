@@ -16,7 +16,7 @@ export module ProjectDataProvider {
       return outputChannelDep;
     }
   };
-  export const effectivef8Pom = item => {
+  export const effectivef8Pom = (item) => {
     return new Promise((resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
@@ -34,7 +34,7 @@ export module ProjectDataProvider {
         `"${item}"`,
         `-DoutputFile="${filepath}"`,
         `-DoutputType=dot`,
-        `-DappendOutput=true`
+        `-DappendOutput=true`,
       ].join(' ');
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
@@ -64,20 +64,20 @@ export module ProjectDataProvider {
     });
   };
 
-  export const effectivef8Package = item => {
+  export const effectivef8Package = (item) => {
     return new Promise((resolve, reject) => {
       getDependencyVersion(item)
         .then(() => {
           let formPackagedependencyPromise = formPackagedependencyNpmList(item);
           formPackagedependencyPromise
-            .then(data => {
+            .then((data) => {
               resolve(data);
             })
-            .catch(err => {
+            .catch((err) => {
               reject(err);
             });
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err);
         });
     });
@@ -123,20 +123,20 @@ export module ProjectDataProvider {
     return (myObj = clearEmptyObject(myObj));
   }
 
-  export const formPackagedependencyNpmList = item => {
+  export const formPackagedependencyNpmList = (item) => {
     let npmListPath = paths.join(item, 'target', 'npmlist.json');
     return new Promise((resolve, reject) => {
-      fs.readFile(npmListPath, { encoding: 'utf-8' }, function(err, data) {
+      fs.readFile(npmListPath, { encoding: 'utf-8' }, function (err, data) {
         if (data) {
           let packageListDependencies = JSON.parse(data);
           let packageDependencies = formatObj(packageListDependencies, [
             'name',
-            'version'
+            'version',
           ]);
           fs.writeFile(
             npmListPath,
             JSON.stringify(packageDependencies),
-            function(err) {
+            function (err) {
               if (err) {
                 vscode.window.showErrorMessage(
                   `Unable to format ${npmListPath}`
@@ -155,7 +155,7 @@ export module ProjectDataProvider {
     });
   };
 
-  export const getDependencyVersion = item => {
+  export const getDependencyVersion = (item) => {
     const outputChannelDep = isOutputChannelActivated();
     outputChannelDep.clearOutputChannel();
     return new Promise((resolve, reject) => {
@@ -168,7 +168,7 @@ export module ProjectDataProvider {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       } else if (fs.existsSync(`${npmListPath}`)) {
-        fs.unlink(npmListPath, err => {
+        fs.unlink(npmListPath, (err) => {
           if (err) {
             console.log(`unable to delete npmlist. ${err}`);
           }
@@ -187,7 +187,7 @@ export module ProjectDataProvider {
           '--prod',
           `-json >`,
           `"${npmListPath}"`,
-          `--quiet`
+          `--quiet`,
         ];
       } else {
         cmdList = [
@@ -203,7 +203,7 @@ export module ProjectDataProvider {
           '--prod',
           `-json >`,
           `"${npmListPath}"`,
-          `--quiet`
+          `--quiet`,
         ];
       }
       const CMD: string = cmdList.join(' ');
@@ -240,12 +240,12 @@ export module ProjectDataProvider {
     });
   };
 
-  export const trimTrailingChars = s => {
+  export const trimTrailingChars = (s) => {
     let result = s.replace(/\\+$/, '');
     return result;
   };
 
-  export const effectivef8Pypi = item => {
+  export const effectivef8Pypi = (item) => {
     return new Promise((resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
@@ -270,7 +270,7 @@ export module ProjectDataProvider {
             StatusMessages.PYPI_INTERPRETOR_PATH,
             'More Details'
           )
-          .then(selection => {
+          .then((selection) => {
             vscode.commands.executeCommand(
               'vscode.open',
               vscode.Uri.parse(
@@ -294,7 +294,7 @@ export module ProjectDataProvider {
         pyPiInterpreter,
         '-', // similar to `echo "print('hello')" | python - arg1 arg2`
         `"${reqTxtFilePath}"`,
-        `"${filepath}"`
+        `"${filepath}"`,
       ].join(' ');
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
@@ -314,9 +314,58 @@ export module ProjectDataProvider {
           }
         }
       );
-     console.log('SCRIPT -: ' + StatusMessages.PYPI_INTERPRETOR_CMD);
-     // write the dependency generator script into stdin
-     depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
+      console.log('SCRIPT -: ' + StatusMessages.PYPI_INTERPRETOR_CMD);
+      // write the dependency generator script into stdin
+      depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
+    });
+  };
+
+  export const effectivef8Go = (item) => {
+    return new Promise((resolve, reject) => {
+      const outputChannelDep = isOutputChannelActivated();
+      outputChannelDep.clearOutputChannel();
+      let vscodeRootpath = item.replace('go.mod', '');
+      let targetDir = paths.join(vscodeRootpath, 'target');
+      const goGraphFilePath = paths.join(targetDir, 'gograph.txt');
+
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir);
+      }
+
+      const cmd: string = [
+        `cd`,
+        `"${vscodeRootpath}" &&`,
+        Utils.getGoExecutable(),
+        `mod`,
+        `graph`,
+        `>`,
+        `"${goGraphFilePath}"`,
+      ].join(' ');
+      console.log('CMD : ' + cmd);
+      outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
+      exec(
+        cmd,
+        { maxBuffer: 1024 * 1200 },
+        (error: Error, _stdout: string, _stderr: string): void => {
+          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
+          outputChannelDep.addMsgOutputChannel(outputMsg);
+          if (error) {
+            vscode.window
+              .showErrorMessage(`${error.message}.`, 'Show Output Log ...')
+              .then((selection: any) => {
+                if (selection === 'Show Output Log ...') {
+                  vscode.commands.executeCommand(Commands.TRIGGER_STACK_LOGS);
+                }
+              });
+            console.log('_stdout :' + _stdout);
+            console.log('_stderr :' + _stderr);
+            console.log('error :' + error);
+            reject(false);
+          } else {
+            resolve(goGraphFilePath);
+          }
+        }
+      );
     });
   };
 }

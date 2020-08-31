@@ -14,12 +14,12 @@ export module multimanifestmodule {
   export const form_manifests_payload = (resultPath): any => {
     return new Promise((resolve, reject) => {
       manifestFileRead(resultPath)
-        .then(item => {
+        .then((item) => {
           let form_data = {
-            'manifest': '',
-            'file_path': '',
+            manifest: '',
+            file_path: '',
             'license[]': '',
-            ecosystem: Apiendpoint.API_ECOSYSTEM
+            ecosystem: Apiendpoint.API_ECOSYSTEM,
           };
           if (item && item['manifest'] && item['filePath']) {
             form_data['manifest'] = item['manifest'];
@@ -34,17 +34,17 @@ export module multimanifestmodule {
           }
           resolve(form_data);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
   };
 
-  export const manifestFileRead = fsPath => {
+  export const manifestFileRead = (fsPath) => {
     let form_data = {
       manifest: '',
       filePath: '',
-      license: ''
+      license: '',
     };
     let manifestObj: any;
     let filePath: string = '';
@@ -55,8 +55,8 @@ export module multimanifestmodule {
             value: '',
             options: {
               filename: '',
-              contentType: 'text/plain'
-            }
+              contentType: 'text/plain',
+            },
           };
           if (fsPath) {
             let filePathSplit = /(\/target|)/g;
@@ -148,6 +148,17 @@ export module multimanifestmodule {
           'pypi',
           uri
         );
+      } else if (
+        uri.fsPath &&
+        uri.fsPath.toLowerCase().indexOf('go.mod') !== -1
+      ) {
+        workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+        stackanalysismodule.processStackAnalyses(
+          context,
+          workspaceFolder,
+          'go',
+          uri
+        );
       } else {
         vscode.window.showInformationMessage(
           `File ${uri.fsPath} is not supported!!`
@@ -158,7 +169,7 @@ export module multimanifestmodule {
       vscode.workspace['workspaceFolders'].length > 1
     ) {
       let workspaceFolder = await vscode.window.showWorkspaceFolderPick({
-        placeHolder: 'Pick Workspace Folder...'
+        placeHolder: 'Pick Workspace Folder...',
       });
       if (workspaceFolder) {
         triggerFullStackAnalyses(context, workspaceFolder);
@@ -186,7 +197,7 @@ export module multimanifestmodule {
           let effective_pom_skip = true;
           let ecosystem = 'npm';
           let pom_count = 0;
-          result.forEach(item => {
+          result.forEach((item) => {
             if (item.fsPath.indexOf('pom.xml') >= 0) {
               effective_pom_skip = false;
               pom_count += 1;
@@ -221,17 +232,17 @@ export module multimanifestmodule {
     );
   };
 
-  export const triggerManifestWs = context => {
+  export const triggerManifestWs = (context) => {
     return new Promise((resolve, reject) => {
       authextension
         .authorize_f8_analytics(context)
-        .then(data => {
+        .then((data) => {
           if (data) {
             DependencyReportPanel.createOrShow(context.extensionPath, null);
             resolve(true);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           reject(`Unable to authenticate.`);
         });
     });

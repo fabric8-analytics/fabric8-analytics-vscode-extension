@@ -20,33 +20,33 @@ export module stackanalysismodule {
     vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
-        title: StatusMessages.EXT_TITLE
+        title: StatusMessages.EXT_TITLE,
       },
-      p => {
+      (p) => {
         return new Promise((resolve, reject) => {
           p.report({ message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
 
           ProjectDataProvider[effectiveF8Var](argumentList)
-            .then(async dataEpom => {
+            .then(async (dataEpom) => {
               await multimanifestmodule.triggerManifestWs(context);
               p.report({
-                message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
+                message: StatusMessages.WIN_ANALYZING_DEPENDENCIES,
               });
               return dataEpom;
             })
-            .then(async dataEpom => {
+            .then(async (dataEpom) => {
               let formData = await multimanifestmodule.form_manifests_payload(
                 dataEpom
               );
               return formData;
             })
-            .then(async formData => {
+            .then(async (formData) => {
               let payloadData = formData;
               const options = {};
               let thatContext: any;
-              options['uri'] = `${
-                Apiendpoint.STACK_API_URL
-                }stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+              options[
+                'uri'
+              ] = `${Apiendpoint.STACK_API_URL}stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
@@ -57,60 +57,61 @@ export module stackanalysismodule {
                 thatContext
               );
               p.report({
-                message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
+                message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES,
               });
               return respId;
             })
-            .then(async respId => {
+            .then(async (respId) => {
               console.log(`Analyzing your stack, id ${respId}`);
               const options = {};
-              options['uri'] = `${
-                Apiendpoint.STACK_API_URL
-                }stack-analyses/${respId}?user_key=${
-                Apiendpoint.STACK_API_USER_KEY
-                }`;
+              options[
+                'uri'
+              ] = `${Apiendpoint.STACK_API_URL}stack-analyses/${respId}?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               let timeoutCounter = getRequestTimeout / getRequestPollInterval;
               const interval = setInterval(() => {
                 stackAnalysisServices
                   .getStackAnalysisService(options)
-                  .then(data => {
+                  .then((data) => {
                     if (!data.hasOwnProperty('error')) {
                       clearInterval(interval);
                       p.report({
-                        message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                        message:
+                          StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES,
                       });
                       if (DependencyReportPanel.currentPanel) {
                         DependencyReportPanel.currentPanel.doUpdatePanel(data);
                       }
                       resolve();
                     } else {
-                      console.log(`Polling for stack report, remaining count:${timeoutCounter}`);
+                      console.log(
+                        `Polling for stack report, remaining count:${timeoutCounter}`
+                      );
                       --timeoutCounter;
                       if (timeoutCounter <= 0) {
                         let errMsg = `Failed to trigger application's stack analysis, try in a while.`;
                         clearInterval(interval);
                         p.report({
                           message:
-                            StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                            StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES,
                         });
                         handleError(errMsg);
                         reject();
                       }
                     }
                   })
-                  .catch(error => {
+                  .catch((error) => {
                     clearInterval(interval);
                     p.report({
-                      message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                      message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES,
                     });
                     handleError(error);
                     reject(error);
                   });
               }, getRequestPollInterval);
             })
-            .catch(err => {
+            .catch((err) => {
               p.report({
-                message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
+                message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES,
               });
               handleError(err);
               reject();
@@ -143,11 +144,16 @@ export module stackanalysismodule {
         ? uri.fsPath.split('requirements.txt')[0]
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Pypi';
+    } else if (ecosystem === 'go') {
+      argumentList = uri
+        ? uri.fsPath.split('go.mod')[0]
+        : workspaceFolder.uri.fsPath;
+      effectiveF8Var = 'effectivef8Go';
     }
     stackAnalysesLifeCycle(context, effectiveF8Var, argumentList);
   };
 
-  export const handleError = err => {
+  export const handleError = (err) => {
     if (DependencyReportPanel.currentPanel) {
       DependencyReportPanel.currentPanel.doUpdatePanel('error');
     }

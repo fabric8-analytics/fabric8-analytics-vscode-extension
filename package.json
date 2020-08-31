@@ -45,7 +45,8 @@
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",
-    "workspaceContains:**/requirements.txt"
+    "workspaceContains:**/requirements.txt",
+    "workspaceContains:**/go.mod"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -103,6 +104,10 @@
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceLangId == plaintext"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceLangId == mod"
         }
       ],
       "explorer/context": [
@@ -117,6 +122,10 @@
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceFilename == go.mod"
         }
       ],
       "editor/context": [
@@ -131,6 +140,10 @@
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "when": "resourceFilename == go.mod"
         }
       ]
     },

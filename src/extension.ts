@@ -78,7 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'xml' },
           { scheme: 'file', language: 'plaintext' },
           { scheme: 'file', language: 'pip-requirements' }
-          { scheme: 'file', language: 'mod' }
+          { scheme: 'file', language: 'go' }
         ],
         synchronize: {
           // Synchronize the setting section 'dependencyAnalyticsServer' to the server

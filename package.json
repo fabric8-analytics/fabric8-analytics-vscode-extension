@@ -107,7 +107,7 @@
         },
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
-          "when": "resourceLangId == mod"
+          "when": "resourceLangId == go"
         }
       ],
       "explorer/context": [

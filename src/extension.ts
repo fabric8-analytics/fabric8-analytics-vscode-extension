@@ -77,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'json' },
           { scheme: 'file', language: 'xml' },
           { scheme: 'file', language: 'plaintext' },
-          { scheme: 'file', language: 'pip-requirements' }
+          { scheme: 'file', language: 'pip-requirements' },
           { scheme: 'file', language: 'go' }
         ],
         synchronize: {

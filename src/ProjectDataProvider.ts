@@ -126,7 +126,7 @@ export module ProjectDataProvider {
   export const formPackagedependencyNpmList = item => {
     let npmListPath = paths.join(item, 'target', 'npmlist.json');
     return new Promise((resolve, reject) => {
-      fs.readFile(npmListPath, { encoding: 'utf-8' }, function(err, data) {
+      fs.readFile(npmListPath, { encoding: 'utf-8' }, function (err, data) {
         if (data) {
           let packageListDependencies = JSON.parse(data);
           let packageDependencies = formatObj(packageListDependencies, [
@@ -136,7 +136,7 @@ export module ProjectDataProvider {
           fs.writeFile(
             npmListPath,
             JSON.stringify(packageDependencies),
-            function(err) {
+            function (err) {
               if (err) {
                 vscode.window.showErrorMessage(
                   `Unable to format ${npmListPath}`
@@ -320,7 +320,7 @@ export module ProjectDataProvider {
     });
   };
 
-  export const effectivef8Go = item => {
+  export const effectivef8Golang = item => {
     return new Promise((resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();

@@ -26,8 +26,8 @@ export namespace Utils {
 
   export function getGoExecutable(): string {
     const goPath: string = vscode.workspace
-      .getConfiguration('go')
-      .get('goPath');
+      .getConfiguration('go.executable')
+      .get<string>('path');
     return goPath ? `${goPath}` : 'go';
   }
 }

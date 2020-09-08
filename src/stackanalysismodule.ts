@@ -147,7 +147,7 @@ export module stackanalysismodule {
       argumentList = uri
         ? uri.fsPath.split('go.mod')[0]
         : workspaceFolder.uri.fsPath;
-      effectiveF8Var = 'effectivef8Go';
+      effectiveF8Var = 'effectivef8Golang';
     }
     stackAnalysesLifeCycle(context, effectiveF8Var, argumentList);
   };

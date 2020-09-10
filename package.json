@@ -209,6 +209,7 @@
   "dependencies": {
     "fabric8-analytics-lsp-server": "0.2.2",
     "fs": "0.0.1-security",
+    "node-fetch": "^2.6.0",
     "path": "0.12.7",
     "request": "2.88.0",
     "vscode-languageclient": "5.1.1"

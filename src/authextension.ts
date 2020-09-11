@@ -48,8 +48,6 @@ export module authextension {
         if (uuid) {
           context.globalState.update(GlobalState.UUID, uuid);
           setUUID(uuid);
-        } else {
-          return false;
         }
       }
 
@@ -70,7 +68,8 @@ export module authextension {
       let respData = await response.json();
       return respData['user_id'];
     } else {
-      throw (`${url} : ` + response.status);
+      console.log(`Unable to get UUID: ${url} , Status: ${response.status}`);
+      return null;
     }
   }
 

@@ -50,6 +50,7 @@ export module stackanalysismodule {
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
+                uuid: process.env.UUID
               };
               thatContext = context;
               let respId = await stackAnalysisServices.postStackAnalysisService(
@@ -69,6 +70,9 @@ export module stackanalysismodule {
                 }stack-analyses/${respId}?user_key=${
                 Apiendpoint.STACK_API_USER_KEY
                 }`;
+              options['headers'] = {
+                uuid: process.env.UUID
+              };
               let timeoutCounter = getRequestTimeout / getRequestPollInterval;
               const interval = setInterval(() => {
                 stackAnalysisServices

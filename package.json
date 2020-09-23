@@ -188,6 +188,12 @@
           "default": "",
           "description": "Specifies absolute path of npm executable.",
           "scope": "window"
+        },
+        "go.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of go executable.",
+          "scope": "window"
         }
       }
     }

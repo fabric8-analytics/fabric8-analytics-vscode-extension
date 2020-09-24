@@ -13,8 +13,8 @@ Dependency Analytics is powered by [Snyk Intel Vulnerability DB](https://snyk.io
 
 ## Supported Languages
 
-'Dependency Analytics' extension supports projects using Maven, projects build on npm (Node ecosystem) and projects using Python.
-Extending support for Golang and other languages is currently under progress.
+'Dependency Analytics' extension supports projects using Maven, projects build on npm (Node ecosystem), projects using Python and projects using Golang.
+Extending support for other languages is currently under progress.
 
 ## Prerequisites
 
@@ -23,8 +23,9 @@ This extension assumes you have the following binaries on your `PATH`:
 - `mvn` (for analyzing Java applications)
 - `npm` (for analyzing Node applications)
 - `python` (for analyzing Python applications)
+- `go` (for analyzing Golang applications)
 
-**Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that `mvn/npm` is found in your system environment `PATH`. For Python applications [Interpreter Path](https://code.visualstudio.com/docs/python/environments#_manually-specify-an-interpreter) is required to be provided as below.
+**Note:** By default, the `mvn/npm/go` command is executed directly in the terminal, which requires that `mvn/npm/go` is found in your system environment `PATH`. For Python applications [Interpreter Path](https://code.visualstudio.com/docs/python/environments#_manually-specify-an-interpreter) is required to be provided as below.
 You can do this via preferences in VS Code:
 File(Code on macOS) > Preferences > Settings to open your [Settings](https://code.visualstudio.com/docs/getstarted/settings) select Workspace (open settings.json) and add below.
 
@@ -34,6 +35,7 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
     "maven.executable.path": "/path-to-maven-home/bin/mvn"
     "npm.executable.path": "/path-to-npm-home/bin/npm"
     "python.pythonPath": "/path-to-python-home/bin/python"
+    "go.executable.path": "/path-to-go/bin/go"
     ...
 }
 ```
@@ -43,16 +45,16 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
 ## Quick Start
 
 - Install the extension.
-- Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt`) scans your application for security vulnerabilities.
-- Right click on a manifest file (`pom.xml`/`package.json` / `requirements.txt`) in the 'Vscode File explorer' or 'Vscode File editor' to display 'Dependency Analytics Report' for your application.
+- Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt` / `go.mod`) scans your application for security vulnerabilities.
+- Right click on a manifest file (`pom.xml`/`package.json` / `requirements.txt` / `go.mod`) in the 'Vscode File explorer' or 'Vscode File editor' to display 'Dependency Analytics Report' for your application.
 
 ## Features
 
-1. Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt`) scans your application for security vulnerabilities, flag them along with 'quick fixes'.
+1. Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt` / `go.mod`) scans your application for security vulnerabilities, flag them along with 'quick fixes'.
 
 ![ screencast ](images/0.1.0/component-analysis.gif)
 
-2. Right click on a manifest file(`pom.xml` / `package.json` / `requirements.txt`) and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
+2. Right click on a manifest file(`pom.xml` / `package.json` / `requirements.txt` / `go.mod`) and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
 
 - Flags a security vulnerability(CVE) and suggests a remedial version
 - Shows Github popularity metrics along with latest version

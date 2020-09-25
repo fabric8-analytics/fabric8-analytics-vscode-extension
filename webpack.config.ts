@@ -35,18 +35,23 @@ module.exports = (env, argv) => {
       extensions: ['.ts', '.js']
     },
     module: {
-        rules: [{
-            test: /\.ts$/,
-            exclude: /node_modules/,
-            use: [{
-                loader: 'ts-loader',
-                options: {
-                    compilerOptions: {
-                        "module": "es6" // override `tsconfig.json` so that TypeScript emits native JavaScript modules.
-                    }
-                }
-            }]
+      rules: [{
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [{
+          loader: 'ts-loader',
+          options: {
+            compilerOptions: {
+              "module": "es6" // override `tsconfig.json` so that TypeScript emits native JavaScript modules.
+            }
+          }
         }]
+      }]
     },
   };
   return config;

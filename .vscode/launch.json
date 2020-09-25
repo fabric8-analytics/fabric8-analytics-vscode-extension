@@ -33,7 +33,8 @@
 			"name": "Attach to Server",
 			"port": 6009,
 			"restart": true,
-			"outFiles": ["$${workspaceFolder}/node_modules/fabric8-analytics-lsp-server/**/*.js"]
+			"sourceMaps": true,
+			"outFiles": ["${workspaceFolder}/dist/server.js"]
 		}
 	]
 }

@@ -24,7 +24,7 @@ module.exports = (env, argv) => {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
       libraryTarget: 'commonjs2',
-      devtoolModuleFilenameTemplate: '../../[resource-path]'
+      devtoolModuleFilenameTemplate: '../[resource-path]'
     },
     devtool: 'source-map',
     externals: {

@@ -39,7 +39,7 @@
           "beginsPattern": "Compilation \\w+ starting…",
           "endsPattern": "Compilation\\s+finished"
         }
-      },
+      }
     }
   ]
 }

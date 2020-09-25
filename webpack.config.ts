@@ -7,8 +7,8 @@ const glob = require('glob');
 
 module.exports = (env, argv) => {
   let entry = {
-    'src/extension': './src/extension.ts',
-    'src/server': './node_modules/fabric8-analytics-lsp-server/server.js',
+    'extension': './src/extension.ts',
+    'server': './node_modules/fabric8-analytics-lsp-server/server.js',
   };
   // debug
   if (argv.mode !== 'production') {
@@ -21,7 +21,7 @@ module.exports = (env, argv) => {
     entry: entry, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
     output: {
       // the bundle is stored in the 'out' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
-      path: path.resolve(__dirname, 'out'),
+      path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
       libraryTarget: 'commonjs2',
       devtoolModuleFilenameTemplate: '../../[resource-path]'
@@ -35,18 +35,19 @@ module.exports = (env, argv) => {
       extensions: ['.ts', '.js']
     },
     module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          exclude: /node_modules/,
-          use: [
-            {
-              loader: 'ts-loader'
-            }
-          ]
-        }
-      ]
-    }
+        rules: [{
+            test: /\.ts$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: 'ts-loader',
+                options: {
+                    compilerOptions: {
+                        "module": "es6" // override `tsconfig.json` so that TypeScript emits native JavaScript modules.
+                    }
+                }
+            }]
+        }]
+    },
   };
   return config;
 };

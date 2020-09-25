@@ -46,12 +46,11 @@ export module stackanalysismodule {
               let thatContext: any;
               options['uri'] = `${
                 Apiendpoint.STACK_API_URL
-              }stack-analyses/?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+                }stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
-                origin: 'vscode',
-                ecosystem: Apiendpoint.API_ECOSYSTEM
+                uuid: process.env.UUID
               };
               thatContext = context;
               let respId = await stackAnalysisServices.postStackAnalysisService(
@@ -68,9 +67,12 @@ export module stackanalysismodule {
               const options = {};
               options['uri'] = `${
                 Apiendpoint.STACK_API_URL
-              }stack-analyses/${respId}?user_key=${
+                }stack-analyses/${respId}?user_key=${
                 Apiendpoint.STACK_API_USER_KEY
-              }`;
+                }`;
+              options['headers'] = {
+                uuid: process.env.UUID
+              };
               let timeoutCounter = getRequestTimeout / getRequestPollInterval;
               const interval = setInterval(() => {
                 stackAnalysisServices

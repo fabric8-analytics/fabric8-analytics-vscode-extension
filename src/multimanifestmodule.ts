@@ -8,6 +8,7 @@ import { stackanalysismodule } from './stackanalysismodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
+import { Apiendpoint } from './apiendpoint';
 
 export module multimanifestmodule {
   export const form_manifests_payload = (resultPath): any => {
@@ -15,14 +16,14 @@ export module multimanifestmodule {
       manifestFileRead(resultPath)
         .then(item => {
           let form_data = {
-            'manifest[]': [],
-            'filePath[]': [],
-            'license[]': [],
-            origin: 'lsp'
+            'manifest': '',
+            'file_path': '',
+            'license[]': '',
+            ecosystem: Apiendpoint.API_ECOSYSTEM
           };
           if (item && item['manifest'] && item['filePath']) {
-            form_data['manifest[]'].push(item['manifest']);
-            form_data['filePath[]'].push(item['filePath']);
+            form_data['manifest'] = item['manifest'];
+            form_data['file_path'] = item['filePath'];
           }
           //TODO : for logging 400 issue
           if (!item['manifest'] && !item['license']) {
@@ -48,7 +49,7 @@ export module multimanifestmodule {
     let manifestObj: any;
     let filePath: string = '';
     return new Promise((resolve, reject) => {
-      fs.readFile(fsPath, function(err, data) {
+      fs.readFile(fsPath, function (err, data) {
         if (data) {
           manifestObj = {
             value: '',

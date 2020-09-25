@@ -29,7 +29,7 @@ suite('multimanifest module', () => {
     storagePath: 'string',
     logPath: 'string',
     // tslint:disable-next-line:no-empty
-    subscriptions: { dispose(): any {} }[0],
+    subscriptions: { dispose(): any { } }[0],
     workspaceState: new DummyMemento(),
     globalState: new DummyMemento(),
     globalStoragePath: 'path',
@@ -67,7 +67,7 @@ suite('multimanifest module', () => {
     let form_manifests_payloadPR = await multimanifestmodule.form_manifests_payload(
       'path/file'
     );
-    expect(form_manifests_payloadPR).to.include({ origin: 'lsp' });
+    expect(form_manifests_payloadPR).to.include({ ecosystem: '' });
   });
 
   test('manifestFileRead should return error', async () => {

@@ -289,12 +289,12 @@ export module ProjectDataProvider {
         `-m pip install`,
         `--user`,
         `-r`,
-        reqTxtFilePath,
+        `"${reqTxtFilePath}"`,
         `&&`,
         pyPiInterpreter,
         '-', // similar to `echo "print('hello')" | python - arg1 arg2`
-        reqTxtFilePath,
-        filepath
+        `"${reqTxtFilePath}"`,
+        `"${filepath}"`
       ].join(' ');
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);

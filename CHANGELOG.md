@@ -1,5 +1,34 @@
 # Change Log
 
+## 0.1.0 (July 14th, 2020)
+
+- enhancement - Integration with [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/), it is the most advanced and accurate open source vulnerability database in the industry. That adds value with the latest, fastest and more number of vulnerabilities derived from numerous sources and also includes Snyk curated unique and pre-published security advisories that come with early stage of vulnerability detection.
+- enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.2.1](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.2.1)): See [#381](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/381)
+    - Different Underline color scheme for commonly known vulnerabilities and vulnerability unique to snyk. See [#118](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/118/files#diff-afd7474282d01269197c1d3f05651761R166-R172)
+    - Updated Diagnostic Message: See [#118](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/118)
+        - Number of Known Security Vulnerabilities and Security Advisories for each dependency.
+        - Highest Severity of vulnerabilities for each affected Dependency. (`Low`/`Medium`/`High`/`Critical`)
+        - Recommended version for dependencies having Known Security Vulnerabilities.
+        - Added Snyk attribution “Powered by Snyk” in the source of the Diagnostic. See [#121](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/121)
+        - Removed CVE-IDs from message.
+- enhancement - Upadated Stack Report UI: See [#142](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/142)
+    - Updated Security Issue Card content: See [#142](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/142/commits/37d61cf99c1e198c7f85d004b5009ef35d99ff9c)
+        - New headers for Security Issue.
+        - Added Transitives as a sub-tab in the particular Direct Dependency.
+        - Separate tabs for Commonly Known Vulnerabilities and Vulnerabilities Unique to Snyk.
+        - Added Snyk Vulnerability ID in place of CVE-ID.
+        - Added Vulnerability Titles with Severity (`Low`/`Medium`/`High`/`Critical`) and removed Tags.
+        - Added hyperlink to package name, Snyk Vulnerability ID, and Vulnerability Titles.
+    - Dependency Details card rearranged in order of preference.
+    - Attribution to Snyk “Powered by Snyk” with a `Sign UP`/`Sign In` Hyperlink to Snyk Login page.
+- fixes - Upgraded typescript to fix tsc-watch misbehave. See [#373](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/373)
+- fixes - Upgraded node version to 14.x LTS. See [#377](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/377)
+- fixes - Quick fixes on hover don't show associated code actions however click on version does. See [#297](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/297)
+- fixes - A direct dependency included in manifest should not be shown as transitive dependency. See [#337](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/337)
+- fixes - CVE IDs should be hyperlinks to NVD. See [#318](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/318)
+- fixes - Visual artifact seen after taking corrective action from lsp. See [#357](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/357)
+- fixes - Opening manifest file does not show the scanned results. See [#365](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/365)
+
 ## 0.0.13 (September 12th, 2019)
 
 - enhancement - Add python support. See [#308](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/308)

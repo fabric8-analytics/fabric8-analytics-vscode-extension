@@ -28,7 +28,7 @@ suite('DependencyReportPanel Modules', () => {
     storagePath: 'string',
     logPath: 'string',
     // tslint:disable-next-line:no-empty
-    subscriptions: { dispose(): any {} }[0],
+    subscriptions: { dispose(): any { } }[0],
     workspaceState: new DummyMemento(),
     globalState: new DummyMemento(),
     globalStoragePath: 'path',
@@ -47,8 +47,8 @@ suite('DependencyReportPanel Modules', () => {
 
   test('doUpdatePanel should render and update data', async () => {
     DependencyReportPanel.createOrShow(context.extensionPath, null);
-    DependencyReportPanel.currentPanel.doUpdatePanel({ request_id: '12345' });
-    expect(DependencyReportPanel.data.request_id).equals('12345');
+    DependencyReportPanel.currentPanel.doUpdatePanel({ external_request_id: '12345' });
+    expect(DependencyReportPanel.data.external_request_id).equals('12345');
   });
 
   test('dispose current panel', async () => {

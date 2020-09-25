@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
 import { DependencyReportPanel } from './dependencyReportPanel';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
       outputChannelDep = initOutputChannel();
       // The server is implemented in node
       let serverModule = context.asAbsolutePath(
-        path.join('out', 'src', 'server.js')
+        path.join('dist', 'server.js')
       );
       // The debug options for the server
       // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
@@ -152,7 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   let showInfoOnfileOpen = (msg: string) => {
     vscode.window
-      .showInformationMessage(`${msg}.`, 'Dependency Analytics Report ...')
+      .showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, 'Dependency Analytics Report ...')
       .then((selection: any) => {
         if (selection === 'Dependency Analytics Report ...') {
           vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);

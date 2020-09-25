@@ -251,7 +251,7 @@ export module ProjectDataProvider {
       outputChannelDep.clearOutputChannel();
       let vscodeRootpath = item.replace('requirements.txt', '');
       const filepath = paths.join(vscodeRootpath, 'target', 'pylist.json');
-      const reqTxtFilePath = `'${paths.join(vscodeRootpath, 'requirements.txt')}'`;
+      let reqTxtFilePath = paths.join(vscodeRootpath, 'requirements.txt');
       let dir = paths.join(vscodeRootpath, 'target');
       let pyPiInterpreter = Utils.getPypiExecutable();
       if (

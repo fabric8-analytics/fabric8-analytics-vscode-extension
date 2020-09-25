@@ -319,4 +319,53 @@ export module ProjectDataProvider {
       depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
     });
   };
+
+  export const effectivef8Golang = item => {
+    return new Promise((resolve, reject) => {
+      const outputChannelDep = isOutputChannelActivated();
+      outputChannelDep.clearOutputChannel();
+      let vscodeRootpath = item.replace('go.mod', '');
+      let targetDir = paths.join(vscodeRootpath, 'target');
+      const goGraphFilePath = paths.join(targetDir, 'gograph.txt');
+
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir);
+      }
+
+      const cmd: string = [
+        `cd`,
+        `"${vscodeRootpath}" &&`,
+        Utils.getGoExecutable(),
+        `mod`,
+        `graph`,
+        `>`,
+        `"${goGraphFilePath}"`,
+      ].join(' ');
+      console.log('CMD : ' + cmd);
+      outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
+      exec(
+        cmd,
+        { maxBuffer: 1024 * 1200 },
+        (error: Error, _stdout: string, _stderr: string): void => {
+          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
+          outputChannelDep.addMsgOutputChannel(outputMsg);
+          if (error) {
+            vscode.window
+              .showErrorMessage(`${error.message}.`, 'Show Output Log ...')
+              .then((selection: any) => {
+                if (selection === 'Show Output Log ...') {
+                  vscode.commands.executeCommand(Commands.TRIGGER_STACK_LOGS);
+                }
+              });
+            console.log('_stdout :' + _stdout);
+            console.log('_stderr :' + _stderr);
+            console.log('error :' + error);
+            reject(false);
+          } else {
+            resolve(goGraphFilePath);
+          }
+        }
+      );
+    });
+  };
 }

@@ -115,16 +115,4 @@ suite('projectDataProvider Modules', () => {
     expect(effectivef8PypiPR).contains('target/pylist.json');
     expect(stubExec).callCount(1);
   });
-
-  test('effectivef8Golang should return success', async () => {
-    let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    let stubExec = sandbox
-      .stub(child_process, 'exec')
-      .yields(null, 'success', 'success');
-    let effectivef8GolangPR = await ProjectDataProvider.effectivef8Golang(
-      workspaceFolder.uri.fsPath
-    );
-    expect(effectivef8GolangPR).contains('target/gograph.txt');
-    expect(stubExec).callCount(1);
-  });
 });

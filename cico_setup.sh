@@ -54,7 +54,6 @@ install_dependencies() {
 # }
 
 build_project() {
-    npm run vscode:prepublish
     vsce package
 
     if [ $? -eq 0 ]; then
@@ -67,6 +66,7 @@ build_project() {
 
 run_int_tests() {
     # Exec integration tests
+    npm run test-compile
     npm test --silent
 
     if [ $? -eq 0 ]; then

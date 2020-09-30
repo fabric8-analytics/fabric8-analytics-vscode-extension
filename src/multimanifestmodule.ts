@@ -96,16 +96,6 @@ export module multimanifestmodule {
               manifestObj.options.contentType = 'text/plain';
               manifestObj.value = data.toString();
               form_data['manifest'] = manifestObj;
-            } else if (
-              filePath &&
-              typeof filePath === 'string' &&
-              filePath.indexOf('gograph.txt') !== -1
-            ) {
-              form_data['filePath'] = 'go.mod';
-              manifestObj.options.filename = 'gograph.txt';
-              manifestObj.options.contentType = 'text/plain';
-              manifestObj.value = data.toString();
-              form_data['manifest'] = manifestObj;
             } else {
               form_data['filePath'] = filePath;
               manifestObj.value = data.toString();
@@ -156,17 +146,6 @@ export module multimanifestmodule {
           context,
           workspaceFolder,
           'pypi',
-          uri
-        );
-      } else if (
-        uri.fsPath &&
-        uri.fsPath.toLowerCase().indexOf('go.mod') !== -1
-      ) {
-        workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        stackanalysismodule.processStackAnalyses(
-          context,
-          workspaceFolder,
-          'golang',
           uri
         );
       } else {

@@ -7,6 +7,7 @@ out/test/**
 test/**
 src/**
 images/**
+node_modules/**
 **/target
 **/*.map
 .gitignore
@@ -22,3 +23,4 @@ cico_setup.sh
 cico_build_deploy.sh
 coverage/**
 Jenkinsfile
+out

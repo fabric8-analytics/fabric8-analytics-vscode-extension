@@ -1,18 +1,18 @@
 {
-	"compilerOptions": {
-		"target": "es6",
-		"lib": [
-				"es6"
-		],
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"outDir": "out",
-		"sourceMap": true,
-		"rootDir": "."
-	},
-	"exclude": [
-		"node_modules",
-		"ca-lsp-server",
-		".vscode-test"
-	]
+  "compilerOptions": {
+    "target": "es6",
+    "lib": [
+      "es6"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "out",
+    "sourceMap": true,
+    "rootDir": "."
+  },
+  "exclude": [
+    "node_modules",
+    "ca-lsp-server",
+    ".vscode-test"
+  ]
 }

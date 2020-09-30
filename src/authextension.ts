@@ -3,7 +3,7 @@
 import { Apiendpoint } from './apiendpoint';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { GlobalState } from './constants';
-import * as fetch from 'node-fetch'
+import fetch from 'node-fetch'
 
 export module authextension {
   export let setContextData: any;
@@ -59,8 +59,7 @@ export module authextension {
   };
 
   export async function getUUID(): Promise<string> {
-    const url = `${
-      Apiendpoint.OSIO_ROUTE_URL
+    const url = `${Apiendpoint.OSIO_ROUTE_URL
       }/user?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
 
     const response = await fetch(url, { method: 'POST' });
@@ -76,8 +75,7 @@ export module authextension {
   export const get_3scale_routes = context => {
     return new Promise((resolve, reject) => {
       let options = {};
-      options['uri'] = `${
-        Apiendpoint.THREE_SCALE_CONNECT_URL
+      options['uri'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL
         }get-endpoints?user_key=${Apiendpoint.THREE_SCALE_CONNECT_KEY}`;
       options['headers'] = { 'Content-Type': 'application/json' };
 

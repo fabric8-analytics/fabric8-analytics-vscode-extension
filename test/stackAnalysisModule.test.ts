@@ -11,7 +11,7 @@ import { stackAnalysisServices } from '../src/stackAnalysisService';
 const expect = chai.expect;
 chai.use(sinonChai);
 
-suite('stacknalysis module', () => {
+suite('stackanalysis module', () => {
   let sandbox: sinon.SinonSandbox;
   let dummyMomentoData = {};
   let editor = {
@@ -43,7 +43,7 @@ suite('stacknalysis module', () => {
     subscriptions: { dispose(): any { } }[0],
     workspaceState: new DummyMemento(),
     globalState: new DummyMemento(),
-    globalStoragePath: "",
+    globalStoragePath: 'path',
     asAbsolutePath(relativePath: string): string {
       return '';
     }

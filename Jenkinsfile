@@ -27,6 +27,7 @@ node('rhel7'){
 
 	stage 'Test fabric8-analytics-vscode-extension for staging'
 	wrap([$class: 'Xvnc']) {
+		sh "npm run test-compile"
 		sh "npm test --silent"
 	}
 

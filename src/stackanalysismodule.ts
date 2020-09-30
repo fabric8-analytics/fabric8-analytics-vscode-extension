@@ -147,11 +147,6 @@ export module stackanalysismodule {
         ? uri.fsPath.split('requirements.txt')[0]
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Pypi';
-    } else if (ecosystem === 'golang') {
-      argumentList = uri
-        ? uri.fsPath.split('go.mod')[0]
-        : workspaceFolder.uri.fsPath;
-      effectiveF8Var = 'effectivef8Golang';
     }
     stackAnalysesLifeCycle(context, effectiveF8Var, argumentList);
   };

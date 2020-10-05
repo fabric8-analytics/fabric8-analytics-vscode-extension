@@ -71,7 +71,11 @@
     "commands": [
       {
         "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "title": "Dependency Analytics Report ..."
+        "title": "Dependency Analytics Report ...",
+        "icon": {
+          "light": "icon/report-icon.png",
+          "dark": "icon/report-icon.png"
+        }
       },
       {
         "command": "extension.fabric8AnalyticsStackLogs",
@@ -94,15 +98,18 @@
       "editor/title": [
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
-          "when": "resourceLangId == xml"
+          "when": "resourceFilename == pom.xml",
+          "group": "navigation"
         },
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
-          "when": "resourceLangId == json"
+          "when": "resourceFilename == package.json",
+          "group": "navigation"
         },
         {
           "command": "extension.fabric8AnalyticsWidgetFullStack",
-          "when": "resourceLangId == plaintext"
+          "when": "resourceFilename == requirements.txt",
+          "group": "navigation"
         }
       ],
       "explorer/context": [

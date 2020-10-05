@@ -4,7 +4,7 @@ def installBuildRequirements(){
 	def nodeHome = tool 'nodejs-7.7.4'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	sh "npm install -g vsce"
+	sh "npm install -g vsce@1.80.0"
 }
 
 def buildVscodeExtension(){

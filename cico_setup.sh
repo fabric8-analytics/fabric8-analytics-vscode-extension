@@ -26,7 +26,7 @@ prep() {
 install_dependencies() {
     # Build fabric8-analytics-vscode-extension
     npm install -g typescript
-    npm install -g vsce
+    npm install -g vsce@1.80.0
     npm ci
 
     # fetch lsp latest release
@@ -54,23 +54,6 @@ install_dependencies() {
 # }
 
 build_project() {
-    vsce package
-
-    if [ $? -eq 0 ]; then
-        echo 'CICO: vsce prepublish OK'
-    else
-        echo 'CICO: vsce prepublish FAIL'
-        exit 2
-    fi
-}
-
-fallback_build_project(){
-
-    echo 'CICO: inside fallback'
-
-    npm uninstall -g vsce
-    npm install -g vsce@1.80.0
-
     vsce package
 
     if [ $? -eq 0 ]; then

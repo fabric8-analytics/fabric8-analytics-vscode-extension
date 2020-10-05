@@ -26,7 +26,7 @@ prep() {
 install_dependencies() {
     # Build fabric8-analytics-vscode-extension
     npm install -g typescript
-    npm install -g vsce
+    npm install -g vsce@1.80.0
     npm ci
 
     # fetch lsp latest release

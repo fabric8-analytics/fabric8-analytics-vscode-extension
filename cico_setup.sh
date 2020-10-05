@@ -64,6 +64,23 @@ build_project() {
     fi
 }
 
+fallback_build_project(){
+    
+    echo 'CICO: inside fallback'
+
+    npm uninstall -g vsce
+    npm install -g vsce@1.80.0
+
+    vsce package
+
+    if [ $? -eq 0 ]; then
+        echo 'CICO: vsce prepublish OK'
+    else
+        echo 'CICO: vsce prepublish FAIL'
+        exit 2
+    fi
+}
+
 run_int_tests() {
     # Exec integration tests
     npm run test-compile

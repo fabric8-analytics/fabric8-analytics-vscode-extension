@@ -6,6 +6,6 @@ set -ex
 
 install_dependencies
 
-build_project
+build_project || fallback_build_project
 
 run_int_tests

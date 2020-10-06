@@ -1,5 +1,21 @@
 # Change Log
 
+## 0.2.0 (October 6th, 2020)
+
+- enhancement - Integration of user management to connect Snyk account with Dependency Analytics report, which enables advance vulnerability analysis for publicly known exploits and Snyk curated unique and pre-published security advisories.
+- enhancement - Add shortcut icon for Dependency Analytics Report in editor groups. See [#418](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/418)
+- enhancement - Use webpack to reduce extension loading time. See [#359](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/359)
+- enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.3.2](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.3.2)): See [#420](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/420)
+    - Using component-analysis batch API with POST request method. See [#125](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/125)
+    - Update Diagnostic Message. See [#146](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/146)
+    - Show exploitable vulnerability count in Diagnostic Message. See [#137](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/137)
+- enhancement - Upadated Stack Report UI:
+    - Snyk token submission modal to connect Snyk account with Dependency Analytics Report. See [#161](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/161)
+    - View premium fields after connecting Snyk account with Dependency Analytics Report. See [#157](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/157)
+    - Remove Github stats and Licenses details from Security Issues card. See [#166](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/166)
+- fixes - Can not navigate to Synk: Added postMessage to handle url click. See [#403](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/403)
+- fixes - Rename notification button with 'Click here for Detailed Vulnerability Report'. See [#423](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/423)
+
 ## 0.1.0 (July 14th, 2020)
 
 - enhancement - Integration with [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/), it is the most advanced and accurate open source vulnerability database in the industry. That adds value with the latest, fastest and more number of vulnerabilities derived from numerous sources and also includes Snyk curated unique and pre-published security advisories that come with early stage of vulnerability detection.

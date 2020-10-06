@@ -30,12 +30,12 @@
     "Other"
   ],
   "keywords": [
-    "dependencies",
+    "security",
     "vulnerability",
-    "license",
+    "dependency scan",
     "node",
     "java",
-    "multi-root ready"
+    "python"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {

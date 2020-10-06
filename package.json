@@ -35,7 +35,7 @@
     "dependency scan",
     "node",
     "java",
-    "python"
+    "multi-root ready"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
@@ -54,6 +54,7 @@
         "id": "security",
         "aliases": [
           "CVE",
+          "python",
           "pom.xml",
           "package.json",
           "requirements.txt"

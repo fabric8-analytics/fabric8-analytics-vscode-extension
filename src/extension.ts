@@ -152,7 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   let showInfoOnfileOpen = (msg: string) => {
     vscode.window
-      .showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, 'Dependency Analytics Report ...')
+      .showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, 'Click here for Detailed Vulnerability Report')
       .then((selection: any) => {
         if (selection === 'Dependency Analytics Report ...') {
           vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);

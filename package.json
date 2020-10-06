@@ -55,7 +55,8 @@
         "aliases": [
           "CVE",
           "pom.xml",
-          "package.json"
+          "package.json",
+          "requirements.txt"
         ]
       },
       {

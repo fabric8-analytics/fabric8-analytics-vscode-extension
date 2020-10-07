@@ -154,7 +154,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window
       .showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, 'Click here for Detailed Vulnerability Report')
       .then((selection: any) => {
-        if (selection === 'Dependency Analytics Report ...') {
+        if (selection === 'Click here for Detailed Vulnerability Report') {
           vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
         }
       });

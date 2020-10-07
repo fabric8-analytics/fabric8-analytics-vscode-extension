@@ -15,18 +15,19 @@
     - Remove Github stats and Licenses details from Security Issues card. See [#166](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/166)
 - fixes - Can not navigate to Synk: Added postMessage to handle url click. See [#403](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/403)
 - fixes - Rename notification button with 'Click here for Detailed Vulnerability Report'. See [#423](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/423)
+- fixes - Update tags for extension to enable better prioritization in marketplace search. See [#427](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/427)
 
 ## 0.1.0 (July 14th, 2020)
 
 - enhancement - Integration with [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/), it is the most advanced and accurate open source vulnerability database in the industry. That adds value with the latest, fastest and more number of vulnerabilities derived from numerous sources and also includes Snyk curated unique and pre-published security advisories that come with early stage of vulnerability detection.
 - enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.2.1](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.2.1)): See [#381](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/381)
-    - Different Underline color scheme for commonly known vulnerabilities and vulnerability unique to snyk. See [#118](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/118/files#diff-afd7474282d01269197c1d3f05651761R166-R172)
-    - Updated Diagnostic Message: See [#118](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/118)
-        - Number of Known Security Vulnerabilities and Security Advisories for each dependency.
-        - Highest Severity of vulnerabilities for each affected Dependency. (`Low`/`Medium`/`High`/`Critical`)
-        - Recommended version for dependencies having Known Security Vulnerabilities.
-        - Added Snyk attribution “Powered by Snyk” in the source of the Diagnostic. See [#121](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/121)
-        - Removed CVE-IDs from message.
+  - Different Underline color scheme for commonly known vulnerabilities and vulnerability unique to snyk. See [#118](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/118/files#diff-afd7474282d01269197c1d3f05651761R166-R172)
+  - Updated Diagnostic Message: See [#118](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/118)
+    - Number of Known Security Vulnerabilities and Security Advisories for each dependency.
+    - Highest Severity of vulnerabilities for each affected Dependency. (`Low`/`Medium`/`High`/`Critical`)
+    - Recommended version for dependencies having Known Security Vulnerabilities.
+    - Added Snyk attribution “Powered by Snyk” in the source of the Diagnostic. See [#121](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/121)
+    - Removed CVE-IDs from message.
 - enhancement - Upadated Stack Report UI: See [#142](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/142)
     - Updated Security Issue Card content: See [#142](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/142/commits/37d61cf99c1e198c7f85d004b5009ef35d99ff9c)
         - New headers for Security Issue.

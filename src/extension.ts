@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
       outputChannelDep = initOutputChannel();
       // The server is implemented in node
       let serverModule = context.asAbsolutePath(
-        path.join('node_modules/fabric8-analytics-lsp-server', 'server.js')
+        path.join('dist', 'server.js')
       );
       // The debug options for the server
       // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
@@ -152,9 +152,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   let showInfoOnfileOpen = (msg: string) => {
     vscode.window
-      .showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, 'Dependency Analytics Report ...')
+      .showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, 'Click here for Detailed Vulnerability Report')
       .then((selection: any) => {
-        if (selection === 'Dependency Analytics Report ...') {
+        if (selection === 'Click here for Detailed Vulnerability Report') {
           vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
         }
       });

@@ -31,7 +31,7 @@ suite('DependencyReportPanel Modules', () => {
     subscriptions: { dispose(): any { } }[0],
     workspaceState: new DummyMemento(),
     globalState: new DummyMemento(),
-    globalStoragePath: "",
+    globalStoragePath: 'path',
     asAbsolutePath(relativePath: string): string {
       return '';
     }

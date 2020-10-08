@@ -83,6 +83,10 @@ export class DependencyReportPanel {
           case 'alert':
             vscode.window.showErrorMessage(message.text);
             return;
+
+          case 'launch-link-in-external-browser':
+            vscode.env.openExternal(vscode.Uri.parse(message.url));
+            return;
         }
       },
       null,
@@ -99,7 +103,7 @@ export class DependencyReportPanel {
         data.external_request_id
         }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
         Apiendpoint.OSIO_ROUTE_URL
-        }","ver":"v2"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
+        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
       console.log("portal_uri", portal_uri);
       r += render_stack_iframe(portal_uri);
       r += footer;
@@ -140,7 +144,7 @@ export class DependencyReportPanel {
         output.external_request_id
         }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
         Apiendpoint.OSIO_ROUTE_URL
-        }","ver":"v2"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
+        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
       r += render_stack_iframe(portal_uri);
       r += footer;
       return r;
@@ -158,5 +162,20 @@ let render_project_failure = () => {
 
 let render_stack_iframe = portaluri => {
   //const result = sa.result[0];
-  return `<iframe width="100%" height="100%" frameborder="0" src=${portaluri} id="frame2" name="frame2"></iframe>`;
+  return `<iframe id="frame" width="100%" height="100%" frameborder="0" src=${portaluri}></iframe>
+  
+  <script>
+
+  const vscode = acquireVsCodeApi();
+  window.addEventListener('message', (e) => {
+    vscode.postMessage({
+      command: 'launch-link-in-external-browser',
+      url: e.data
+    });  
+
+  }, false);
+
+  </script>
+
+  `;
 };

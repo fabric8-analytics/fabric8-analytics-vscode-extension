@@ -8,7 +8,7 @@ suite('Fabric8 Analytics Extension', () => {
     assert.ok(vscode.extensions.getExtension('redhat.fabric8-analytics'));
   });
 
-  test('should activate', function() {
+  test('should activate', function () {
     this.timeout(1 * 60 * 1000);
     return vscode.extensions
       .getExtension('redhat.fabric8-analytics')
@@ -18,13 +18,13 @@ suite('Fabric8 Analytics Extension', () => {
       });
   });
 
-  test('should register all fabric8 commands', function() {
+  test('should register all fabric8 commands', function () {
     return vscode.commands.getCommands(true).then(commands => {
       const FABRIC8_COMMANDS: string[] = [
         Commands.TRIGGER_FULL_STACK_ANALYSIS,
         Commands.TRIGGER_STACK_LOGS
       ];
-      let foundFabric8Commands = commands.filter(function(value) {
+      let foundFabric8Commands = commands.filter(function (value) {
         return (
           FABRIC8_COMMANDS.indexOf(value) >= 0 ||
           value.startsWith('extension.fabric8')

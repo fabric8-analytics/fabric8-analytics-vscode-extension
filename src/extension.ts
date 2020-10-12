@@ -141,6 +141,7 @@ export function activate(context: vscode.ExtensionContext) {
             );
           }
         });
+
         lspClient.onNotification('caError', respData => {
           if (
             respData &&

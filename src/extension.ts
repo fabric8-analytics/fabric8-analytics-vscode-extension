@@ -141,6 +141,17 @@ export function activate(context: vscode.ExtensionContext) {
             );
           }
         });
+
+        lspClient.onNotification('caError', respData => {
+          if (
+            respData &&
+            respData.hasOwnProperty('data') &&
+            vscode.window.activeTextEditor
+          ) {
+            onFileOpen.push(vscode.window.activeTextEditor.document.fileName);
+            showErrorOnfileOpen(respData.data);
+          }
+        });
       });
       context.subscriptions.push(
         lspClient.start(),
@@ -158,6 +169,10 @@ export function activate(context: vscode.ExtensionContext) {
           vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
         }
       });
+  };
+
+  let showErrorOnfileOpen = (msg: string) => {
+    vscode.window.showErrorMessage(`${msg}. Powered by [Snyk](${registrationURL})`)
   };
 }
 

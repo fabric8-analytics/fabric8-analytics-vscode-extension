@@ -15,6 +15,7 @@ export module authextension {
     process.env['RECOMMENDER_API_URL'] =
       context_f8_access_routes.prod + '/api/v2';
     process.env['THREE_SCALE_USER_TOKEN'] = context_f8_3scale_user_key;
+    process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
   };
 
   export function setUUID(uuid) {

@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.2.1 (November 4th, 2020)
+
+- enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.4.1](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.4.1)): See [#435](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/435)
+    - Code-action to trigger Dependency Analytics Report. See [#149](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/149)
+- fixes - Report generation fails with virtualenv enabled python. See [#404](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/404)
+- fixes - Propagate errors from lsp server to client. See [#432](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/432)
+
 ## 0.2.0 (October 6th, 2020)
 
 - enhancement - Integration of user management to connect Snyk account with Dependency Analytics report, which enables advance vulnerability analysis for publicly known exploits and Snyk curated unique and pre-published security advisories.

@@ -48,11 +48,15 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
 
 ## Features
 
-1. Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt`) scans your application for security vulnerabilities, flag them along with 'quick fixes'.
+1. Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt`) scans your application for security vulnerabilities, flag them along with 'Quick Fix'.
 
 ![ screencast ](images/0.2.0/component-analysis.gif)
 
-2. Right click on a manifest file(`pom.xml` / `package.json` / `requirements.txt`) and choose 'Dependency Analytics Report ...' OR click on ![icon](images/0.2.0/icon.png) icon in editor group to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
+2. 'Quick Fix' provides single click option to `Switch to the recommended version` for vulnerability remediation, it also provides option for `Detailed Vulnerability Report` to display 'Dependency Analytics' report with detailed vulnerabilty analysis.
+
+![ screencast ](images/0.2.1/quick-fix.gif)
+
+3. Right click on a manifest file(`pom.xml` / `package.json` / `requirements.txt`) and choose 'Dependency Analytics Report ...' OR click on ![icon](images/0.2.0/icon.png) icon in editor group to display 'Dependency Analytics' report. This report covers deeper insights into your application dependencies:
 
 - Flags a security vulnerability(CVE) and suggests a remedial version
 - Shows Github popularity metrics along with latest version
@@ -61,7 +65,7 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
 
 ![ screencast ](images/0.2.0/stack-analysis.gif)
 
-3. **For multi module maven application** Right click on root `pom.xml` in editor window and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report for the entire application.
+4. **For multi module maven application** Right click on root `pom.xml` in editor window and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report for the entire application.
 
 ![ screencast ](images/0.2.0/multi-stack-analysis.gif)
 

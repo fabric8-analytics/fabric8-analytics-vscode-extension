@@ -1,8 +1,8 @@
 # Change Log
 
-## 0.2.1 (November 4th, 2020)
+## 0.2.1 (November 9th, 2020)
 
-- enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.4.1](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.4.1)): See [#435](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/435)
+- enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.4.2](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.4.2)): See [#440](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/440)
     - Code-action to trigger Dependency Analytics Report. See [#149](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/149)
 - fixes - Report generation fails with virtualenv enabled python. See [#404](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/404)
 - fixes - Propagate errors from lsp server to client. See [#432](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/432)

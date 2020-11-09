@@ -99,10 +99,10 @@ export module multimanifestmodule {
             } else if (
               filePath &&
               typeof filePath === 'string' &&
-              filePath.indexOf('gograph.txt') !== -1
+              filePath.indexOf('golist.json') !== -1
             ) {
               form_data['filePath'] = 'go.mod';
-              manifestObj.options.filename = 'gograph.txt';
+              manifestObj.options.filename = 'golist.json';
               manifestObj.options.contentType = 'text/plain';
               manifestObj.value = data.toString();
               form_data['manifest'] = manifestObj;

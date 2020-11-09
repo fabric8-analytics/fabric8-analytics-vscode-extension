@@ -124,7 +124,7 @@ suite('projectDataProvider Modules', () => {
     let effectivef8GolangPR = await ProjectDataProvider.effectivef8Golang(
       workspaceFolder.uri.fsPath
     );
-    expect(effectivef8GolangPR).contains('target/gograph.txt');
+    expect(effectivef8GolangPR).contains('target/golist.json');
     expect(stubExec).callCount(1);
   });
 });

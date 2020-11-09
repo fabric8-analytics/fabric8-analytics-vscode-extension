@@ -325,7 +325,7 @@ export module ProjectDataProvider {
       outputChannelDep.clearOutputChannel();
       let vscodeRootpath = item.replace('go.mod', '');
       let targetDir = paths.join(vscodeRootpath, 'target');
-      const goGraphFilePath = paths.join(targetDir, 'gograph.txt');
+      const goGraphFilePath = paths.join(targetDir, 'golist.json');
 
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
@@ -335,11 +335,12 @@ export module ProjectDataProvider {
         `cd`,
         `"${vscodeRootpath}" &&`,
         Utils.getGoExecutable(),
-        `mod`,
-        `graph`,
-        `>`,
+        `run`,
+        `github.com/fabric8-analytics/cli-tools/gomanifest`,
+        `.`,
         `"${goGraphFilePath}"`,
       ].join(' ');
+
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
       exec(

@@ -1,8 +1,10 @@
 name: Tests
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+  # Controls when the action will run. Triggers the workflow on push or pull request
+  # events but only for the master branch
 on:
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -32,6 +34,10 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:

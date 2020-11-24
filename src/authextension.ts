@@ -4,6 +4,7 @@ import { Apiendpoint } from './apiendpoint';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { GlobalState } from './constants';
 import fetch from 'node-fetch'
+import { Utils } from './Utils';
 
 export module authextension {
   export let setContextData: any;
@@ -16,6 +17,7 @@ export module authextension {
       Apiendpoint.STAGE_API_URL + '/api/v2';
     process.env['THREE_SCALE_USER_TOKEN'] = Apiendpoint.STAGE_THREE_SCALE_USER_TOKEN;
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
+    process.env['GOLANG_EXECUTABLE'] = Utils.getGoExecutable();
   };
 
   export function setUUID(uuid) {

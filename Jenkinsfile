@@ -37,7 +37,7 @@ node('rhel7'){
 
 	stage 'Upload fabric8-analytics-vscode-extension to staging'
 	def vsix = findFiles(glob: '**.vsix')
-	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/stable/vscode-analytics/"
+	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/stable/vscode-dependency-analytics/"
 	stash name:'vsix', includes:vsix[0].path
 }
 

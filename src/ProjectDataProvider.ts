@@ -333,11 +333,11 @@ export module ProjectDataProvider {
 
       const cmd: string = [
         `cd`,
-        `"${vscodeRootpath}" &&`,
+        `&&`,
         Utils.getGoExecutable(),
         `run`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
-        `.`,
+        `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
       ].join(' ');
 

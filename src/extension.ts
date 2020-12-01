@@ -174,7 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   let showErrorOnfileOpen = (msg: string) => {
-    vscode.window.showErrorMessage(`${msg}. Powered by [Snyk](${registrationURL})`)
+    vscode.window.showErrorMessage(`${msg}.`)
   };
 }
 

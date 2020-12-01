@@ -332,7 +332,10 @@ export module ProjectDataProvider {
       }
 
       const cmd: string = [
-        `cd`,
+        Utils.getGoExecutable(),
+        `get`,
+        `-u`,
+        `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `&&`,
         Utils.getGoExecutable(),
         `run`,

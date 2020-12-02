@@ -342,6 +342,7 @@ export module ProjectDataProvider {
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
+        `"${Utils.getGoExecutable()}"`
       ].join(' ');
 
       console.log('CMD : ' + cmd);

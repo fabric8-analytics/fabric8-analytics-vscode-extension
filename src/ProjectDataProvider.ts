@@ -332,13 +332,17 @@ export module ProjectDataProvider {
       }
 
       const cmd: string = [
-        `cd`,
+        Utils.getGoExecutable(),
+        `get`,
+        `-u`,
+        `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `&&`,
         Utils.getGoExecutable(),
         `run`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
+        `"${Utils.getGoExecutable()}"`
       ].join(' ');
 
       console.log('CMD : ' + cmd);

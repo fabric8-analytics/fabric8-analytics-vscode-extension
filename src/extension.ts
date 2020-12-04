@@ -11,11 +11,11 @@ import * as path from 'path';
 
 import { Commands } from './commands';
 import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
-import { DependencyReportPanel } from './dependencyReportPanel';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 import { caStatusBarProvider } from './caStatusBarProvider';
+import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
 
 let lspClient: LanguageClient;
@@ -98,10 +98,9 @@ export function activate(context: vscode.ExtensionContext) {
 
       lspClient.onReady().then(() => {
         const notifiedFiles = new Set<string>();
-        const canShowPopup = (respData: any): boolean => {
+        const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(vscode.window.activeTextEditor.document.fileName);
-          const zeroVuln = (respData.diagCount || 0) == 0;
-          return !zeroVuln && !hasAlreadyShown;
+          return notification.hasWarning() && !hasAlreadyShown;
         }
 
         const showVulnerabilityFoundPrompt = async (msg: string) => {
@@ -111,20 +110,18 @@ export function activate(context: vscode.ExtensionContext) {
           }
         };
 
-        const showStatusMessage = (respData: any): void => {
-        };
-
         lspClient.onNotification('caNotification', respData => {
-          if (canShowPopup(respData)) {
-            showVulnerabilityFoundPrompt(respData.data);
+          const notification = new CANotification(respData);
+          caStatusBarProvider.showSummary(notification.statusText());
+          if (canShowPopup(notification)) {
+            showVulnerabilityFoundPrompt(notification.popupText());
             // prevent further popups.
             notifiedFiles.add(vscode.window.activeTextEditor.document.fileName);
           }
-          showStatusMessage(respData);
-          caStatusBarProvider.showSummary(respData.data);
         });
 
         lspClient.onNotification('caError', respData => {
+          caStatusBarProvider.setError();
           if (canShowPopup(respData)) {
             vscode.window.showErrorMessage(`${respData.dat}.`);
             // prevent further popups.

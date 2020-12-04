@@ -18,40 +18,21 @@ class CAStatusBarProvider implements Disposable {
             title: StatusMessages.FULL_STACK_PROMPT_BUTTON,
             command: Commands.TRIGGER_FULL_STACK_ANALYSIS,
         };
-        this.statusBarItem.tooltip = `Dependency Analytics, ${StatusMessages.FULL_STACK_PROMPT_BUTTON}`;
+        this.statusBarItem.tooltip = StatusMessages.FULL_STACK_PROMPT_BUTTON;
         this.statusBarItem.show();
     }
 
-    public updateText(text: string): void {
-        this.statusBarItem.text = text;
-    }
-
-    public setBusy(): void {
-        this.statusBarItem.text = StatusIcon.Busy;
-    }
-
     public setError(): void {
-        this.statusBarItem.text = StatusIcon.Error;
-    }
-
-    public setReady(): void {
-        this.statusBarItem.text = StatusIcon.Ready;
-    }
-
-    public updateTooltip(tooltip: string): void {
-        this.statusBarItem.tooltip = tooltip;
+        this.statusBarItem.text = `$(thumbsdown) analysis failed due to error`;
+        this.statusBarItem.command = {
+            title: StatusMessages.FULL_STACK_PROMPT_BUTTON,
+            command: Commands.TRIGGER_STACK_LOGS,
+        };
     }
 
     public dispose(): void {
         this.statusBarItem.dispose();
     }
-}
-
-enum StatusIcon {
-    LightWeight = "$(rocket)",
-    Busy = "$(sync~spin)",
-    Ready = "$(thumbsup)",
-    Error = "$(thumbsdown)"
 }
 
 export const caStatusBarProvider: CAStatusBarProvider = new CAStatusBarProvider();

@@ -1,43 +1,16 @@
-import * as vscode from 'vscode';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
+import { context } from './vscontext.mock';
 import { authextension } from '../src/authextension';
 import { stackAnalysisServices } from '../src/stackAnalysisService';
-import { GlobalState } from '../src/constants';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
 suite('authextension Modules', () => {
   let sandbox: sinon.SinonSandbox;
-
-  let dummyMomentoData = {};
-
-  class DummyMemento implements vscode.Memento {
-    get<T>(key: string): Promise<T | undefined> {
-      return dummyMomentoData[key];
-    }
-    update(key: string, value: any): Promise<any> {
-      dummyMomentoData[key] = value;
-      return Promise.resolve(dummyMomentoData);
-    }
-  }
-
-  const context: vscode.ExtensionContext = {
-    extensionPath: 'path',
-    storagePath: 'string',
-    logPath: 'string',
-    // tslint:disable-next-line:no-empty
-    subscriptions: { dispose(): any { } }[0],
-    workspaceState: new DummyMemento(),
-    globalState: new DummyMemento(),
-    globalStoragePath: 'path',
-    asAbsolutePath(relativePath: string): string {
-      return '';
-    }
-  };
 
   setup(() => {
     sandbox = sinon.createSandbox();

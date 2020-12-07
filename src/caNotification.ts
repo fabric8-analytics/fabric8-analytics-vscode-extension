@@ -31,11 +31,11 @@ class CANotification {
 
   public statusText(): string {
     if (!this.isDone()) {
-      return `$(sync~spin) vuln analysis inprogress`;
+      return `$(sync~spin) vuln analysis in progress`;
     }
     if (this.hasWarning()) {
       const finalStatus = [this.vulnCountText(), this.exploitCountText()].filter(t => t.length > 0).join(`, `);
-      return `$(warning) ${finalStatus} found in ${this.respData.depCount}`;
+      return `$(warning) ${finalStatus} found in ${this.respData.depCount} deps`;
     }
     return `$(thumbsup) no vulns found in ${this.respData.depCount} deps`;
   }

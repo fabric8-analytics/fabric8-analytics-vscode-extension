@@ -4,6 +4,7 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
+import { context } from './vscontext.mock';
 import { multimanifestmodule } from '../src/multimanifestmodule';
 import { authextension } from '../src/authextension';
 
@@ -12,31 +13,7 @@ chai.use(sinonChai);
 
 suite('multimanifest module', () => {
   let sandbox: sinon.SinonSandbox;
-  let dummyMomentoData = {};
   let workspaceFolder = vscode.workspace.workspaceFolders[0];
-  class DummyMemento implements vscode.Memento {
-    get<T>(key: string): Promise<T | undefined> {
-      return dummyMomentoData[key];
-    }
-    update(key: string, value: any): Promise<any> {
-      dummyMomentoData[key] = value;
-      return Promise.resolve(dummyMomentoData);
-    }
-  }
-
-  const context: vscode.ExtensionContext = {
-    extensionPath: 'path',
-    storagePath: 'string',
-    logPath: 'string',
-    // tslint:disable-next-line:no-empty
-    subscriptions: { dispose(): any { } }[0],
-    workspaceState: new DummyMemento(),
-    globalState: new DummyMemento(),
-    globalStoragePath: 'path',
-    asAbsolutePath(relativePath: string): string {
-      return '';
-    }
-  };
 
   setup(() => {
     sandbox = sinon.createSandbox();

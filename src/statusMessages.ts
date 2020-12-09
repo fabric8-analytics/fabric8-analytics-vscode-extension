@@ -4,6 +4,7 @@
  * Commonly used messages
  */
 export namespace StatusMessages {
+  export const FULL_STACK_PROMPT_BUTTON = `Click here for Detailed Vulnerability Report`;
   export const EXT_TITLE = `Dependency Analytics`;
   export const WIN_RESOLVING_DEPENDENCIES = `Resolving application dependencies...`;
   export const WIN_ANALYZING_DEPENDENCIES = `Analyzing application dependencies...`;

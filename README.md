@@ -98,6 +98,26 @@ providing Insights(security, licenses, AI based guidance) for applications and h
 
 - [GitHub Organization](https://github.com/fabric8-analytics)
 
+# Common Errors and FAQ
+
+1. VScode output says "Go executable not found".
+
+    **Suggestion:** Try adding your go executable path to your vscode's settings.json file
+
+    **E.g.:** `"go.executable.path": "/path-to-go/bin/go"`
+
+2. Failed to run golist command.
+
+    **Suggestion:** Resolve the error thrown by `go mod tidy` and `go list` for the project and try again. 
+
+3. Stack analysis fails after applying the recommended version.
+
+    **Suggestion:** Not all recommended versions work directly, developers need to resolve dependencies for the recommended version using `go mod tidy` or manually.
+
+4. Plugin does not highlight vulnerabilities in vendor code.
+
+    **Suggestion:** Currently plugin does not support vendor (or local) code vulnerabilities scanning. Switch to go.mod to express your project dependencies.
+
 # Feedback & Questions
 
 - File a bug in [GitHub Issues](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues)

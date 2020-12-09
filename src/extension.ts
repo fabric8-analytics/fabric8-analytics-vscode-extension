@@ -99,7 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
       lspClient.onReady().then(() => {
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
-          const hasAlreadyShown = notifiedFiles.has(vscode.window.activeTextEditor.document.fileName);
+          const hasAlreadyShown = notifiedFiles.has(notification.origin());
           return notification.hasWarning() && !hasAlreadyShown;
         }
 
@@ -116,16 +116,17 @@ export function activate(context: vscode.ExtensionContext) {
           if (canShowPopup(notification)) {
             showVulnerabilityFoundPrompt(notification.popupText());
             // prevent further popups.
-            notifiedFiles.add(vscode.window.activeTextEditor.document.fileName);
+            notifiedFiles.add(notification.origin());
           }
         });
 
         lspClient.onNotification('caError', respData => {
+          const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           if (canShowPopup(respData)) {
             vscode.window.showErrorMessage(respData.data);
             // prevent further popups.
-            notifiedFiles.add(vscode.window.activeTextEditor.document.fileName);
+            notifiedFiles.add(notification.origin());
           }
         });
       });

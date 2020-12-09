@@ -7,6 +7,10 @@ class CANotification {
     this.respData = respData;
   }
 
+  public origin(): string {
+    return this.respData.uri;
+  }
+
   public isDone(): boolean {
     return this.respData.done === true;
   }

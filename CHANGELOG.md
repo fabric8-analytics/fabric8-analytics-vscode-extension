@@ -2,11 +2,11 @@
 
 ## 0.3.0-beta (December 9th, 2020)
 - enhancement - Support for Golang ecosystem. Plugin can now scan and identify vulnerability within module and package for golang software stacks. See [#436](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/436)
-	- Identify direct and transitive vulnerability for modules and packages
-	- Support for semver and pseudo version format
-	- Provide early access to vulnerability data for modules and packages
-	- Highlight and provide vulnerability details using alerts & messages
-	- Recommend a non vulnerable version (if available)
+    - Identify direct and transitive vulnerability for modules and packages
+    - Support for semver and pseudo version format
+    - Provide early access to vulnerability data for modules and packages
+    - Highlight and provide vulnerability details using alerts & messages
+    - Recommend a non vulnerable version (if available)
 - enhancement - Show status bar text based on component analysis status. See [#459](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/459)
     - Notification will be shown only once per manifest in single session.
     - Further changes will be updated only via status bar.

@@ -1,5 +1,23 @@
 # Change Log
 
+## 0.3.0 (December 9th, 2020)
+- enhancement - Support for Golang ecosystem. Plugin can now scan and identify vulnerability within module and package for golang software stacks. See [#436](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/436)
+    - Identify direct and transitive vulnerability for modules and packages
+    - Support for semver and pseudo version format
+    - Provide early access to vulnerability data for modules and packages
+    - Highlight and provide vulnerability details using alerts & messages
+    - Recommend a non vulnerable version (if available)
+- enhancement - Show status bar text based on component analysis status. See [#459](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/459)
+    - Notification will be shown only once per manifest in single session.
+    - Further changes will be updated only via status bar.
+- enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.4.15](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.4.15)): See [#459](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/459)
+    - Golang CA support from LSP. See [#148](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/148)
+    - Handle replace directive from go.mod. See [#162](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/162)
+- fixes - Propagate errors from lsp server to client. See [#432](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/432)
+- fixes - Dependency UTM encoding issue. See [#460](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/460)
+- fixes - VsCode Extension: Dependency Details card needs minor improvements. See [#295](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/295)
+- fixes - Sort dependencies shown in stack report. See [#260](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/260)
+
 ## 0.2.1 (November 9th, 2020)
 
 - enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.4.2](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.4.2)): See [#440](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/440)

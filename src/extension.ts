@@ -11,16 +11,15 @@ import * as path from 'path';
 
 import { Commands } from './commands';
 import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
-import { DependencyReportPanel } from './dependencyReportPanel';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
+import { caStatusBarProvider } from './caStatusBarProvider';
+import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
 
 let lspClient: LanguageClient;
-let diagCountInfo,
-  onFileOpen = [],
-  caNotif = false;
+
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -98,84 +97,47 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       lspClient.onReady().then(() => {
-        lspClient.onNotification('caNotification', respData => {
-          if (
-            respData &&
-            respData.hasOwnProperty('diagCount') &&
-            vscode.window.activeTextEditor &&
-            ((respData.diagCount > 0 && respData.diagCount !== diagCountInfo) ||
-              !onFileOpen ||
-              (onFileOpen &&
-                onFileOpen.indexOf(
-                  vscode.window.activeTextEditor.document.fileName
-                ) === -1))
-          ) {
-            diagCountInfo = respData.diagCount;
-            onFileOpen.push(vscode.window.activeTextEditor.document.fileName);
-            showInfoOnfileOpen(respData.data);
+        const notifiedFiles = new Set<string>();
+        const canShowPopup = (notification: CANotification): boolean => {
+          const hasAlreadyShown = notifiedFiles.has(notification.origin());
+          return notification.hasWarning() && !hasAlreadyShown;
+        }
+
+        const showVulnerabilityFoundPrompt = async (msg: string) => {
+          const selection = await vscode.window.showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_BUTTON);
+          if (selection === StatusMessages.FULL_STACK_PROMPT_BUTTON) {
+            vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
           }
-          if (!caNotif) {
-            vscode.window.withProgress(
-              {
-                location: vscode.ProgressLocation.Window,
-                title: StatusMessages.EXT_TITLE
-              },
-              progress => {
-                caNotif = true;
-                progress.report({
-                  message: 'Checking for security vulnerabilities ...'
-                });
+        };
 
-                setTimeout(() => {
-                  progress.report({
-                    message: respData.data
-                  });
-                }, 1000);
-
-                let p = new Promise(resolve => {
-                  setTimeout(() => {
-                    caNotif = false;
-                    resolve();
-                  }, 1600);
-                });
-                return p;
-              }
-            );
+        lspClient.onNotification('caNotification', respData => {
+          const notification = new CANotification(respData);
+          caStatusBarProvider.showSummary(notification.statusText());
+          if (canShowPopup(notification)) {
+            showVulnerabilityFoundPrompt(notification.popupText());
+            // prevent further popups.
+            notifiedFiles.add(notification.origin());
           }
         });
 
         lspClient.onNotification('caError', respData => {
-          if (
-            respData &&
-            respData.hasOwnProperty('data') &&
-            vscode.window.activeTextEditor
-          ) {
-            onFileOpen.push(vscode.window.activeTextEditor.document.fileName);
-            showErrorOnfileOpen(respData.data);
+          const notification = new CANotification(respData);
+          caStatusBarProvider.setError();
+          if (canShowPopup(respData)) {
+            vscode.window.showErrorMessage(respData.data);
+            // prevent further popups.
+            notifiedFiles.add(notification.origin());
           }
         });
       });
       context.subscriptions.push(
         lspClient.start(),
         disposableFullStack,
-        disposableStackLogs
+        disposableStackLogs,
+        caStatusBarProvider,
       );
     }
   });
-
-  let showInfoOnfileOpen = (msg: string) => {
-    vscode.window
-      .showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, 'Click here for Detailed Vulnerability Report')
-      .then((selection: any) => {
-        if (selection === 'Click here for Detailed Vulnerability Report') {
-          vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-        }
-      });
-  };
-
-  let showErrorOnfileOpen = (msg: string) => {
-    vscode.window.showErrorMessage(`${msg}.`)
-  };
 }
 
 export function initOutputChannel(): any {
@@ -187,7 +149,6 @@ export function deactivate(): Thenable<void> {
   if (!lspClient) {
     return undefined;
   }
-  onFileOpen = [];
   return lspClient.stop();
 }
 

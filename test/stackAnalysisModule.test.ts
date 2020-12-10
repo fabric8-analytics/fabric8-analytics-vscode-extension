@@ -3,6 +3,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
+import { context } from './vscontext.mock';
 import { stackanalysismodule } from '../src/stackanalysismodule';
 import { ProjectDataProvider } from '../src/ProjectDataProvider';
 import { multimanifestmodule } from '../src/multimanifestmodule';
@@ -13,7 +14,6 @@ chai.use(sinonChai);
 
 suite('stackanalysis module', () => {
   let sandbox: sinon.SinonSandbox;
-  let dummyMomentoData = {};
   let editor = {
     document: {
       uri: {
@@ -22,30 +22,6 @@ suite('stackanalysis module', () => {
         scheme: 'file'
       },
       fileName: '/Users/sampleNodeRepo/package.json'
-    }
-  };
-
-  class DummyMemento implements vscode.Memento {
-    get<T>(key: string): Promise<T | undefined> {
-      return dummyMomentoData[key];
-    }
-    update(key: string, value: any): Promise<any> {
-      dummyMomentoData[key] = value;
-      return Promise.resolve(dummyMomentoData);
-    }
-  }
-
-  const context: vscode.ExtensionContext = {
-    extensionPath: 'path',
-    storagePath: 'string',
-    logPath: 'string',
-    // tslint:disable-next-line:no-empty
-    subscriptions: { dispose(): any { } }[0],
-    workspaceState: new DummyMemento(),
-    globalState: new DummyMemento(),
-    globalStoragePath: 'path',
-    asAbsolutePath(relativePath: string): string {
-      return '';
     }
   };
 

@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.3.0-beta (December 9th, 2020)
+## 0.3.0 (December 9th, 2020)
 - enhancement - Support for Golang ecosystem. Plugin can now scan and identify vulnerability within module and package for golang software stacks. See [#436](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/436)
     - Identify direct and transitive vulnerability for modules and packages
     - Support for semver and pseudo version format
@@ -17,7 +17,6 @@
 - fixes - Dependency UTM encoding issue. See [#460](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/460)
 - fixes - VsCode Extension: Dependency Details card needs minor improvements. See [#295](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/295)
 - fixes - Sort dependencies shown in stack report. See [#260](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/260)
-- fixes - Question: Are there plans to support Golang? See [#436](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/436)
 
 ## 0.2.1 (November 9th, 2020)
 

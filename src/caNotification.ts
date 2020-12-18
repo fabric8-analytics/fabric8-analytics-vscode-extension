@@ -13,7 +13,7 @@ class CANotification {
   constructor(respData: any) {
     this.diagCount = respData.diagCount || 0;
     this.done = respData.done === true;
-    const vulnCount = respData.vulnCount || {vulnerabilityCount: 0, advisoryCount: 0, exploitCount: 0};
+    const vulnCount = respData.vulnCount || { vulnerabilityCount: 0, advisoryCount: 0, exploitCount: 0 };
     this.vulnerabilityCount = vulnCount.vulnerabilityCount;
     this.advisoryCount = vulnCount.advisoryCount;
     this.exploitCount = vulnCount.exploitCount;
@@ -40,22 +40,22 @@ class CANotification {
 
   private vulnCountText(): string {
     const vulns = this.vulnerabilityCount + this.advisoryCount;
-    return vulns > 0 ? `${vulns} vulns` : ``;
+    return vulns > 0 ? `${vulns} ${vulns == 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
   }
 
   private exploitCountText(): string {
-    return this.exploitCount > 0 ? `${this.exploitCount} exploits` : ``;
+    return this.exploitCount > 0 ? `${this.exploitCount} exploit${this.exploitCount == 1 ? '' : 's'}` : ``;
   }
 
   public statusText(): string {
     if (!this.isDone()) {
-      return `$(sync~spin) vuln analysis in progress`;
+      return `$(sync~spin) Dependency analysis in progress`;
     }
     if (this.hasWarning()) {
       const finalStatus = [this.vulnCountText(), this.exploitCountText()].filter(t => t.length > 0).join(`, `);
-      return `$(warning) ${finalStatus} found in ${this.depCount} deps`;
+      return `$(warning) Found ${finalStatus}`;
     }
-    return `$(thumbsup) no vulns found in ${this.depCount} deps`;
+    return `$(shield)$(check)`;
   }
 }
 

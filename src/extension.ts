@@ -123,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
         lspClient.onNotification('caError', respData => {
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
-          if (canShowPopup(respData)) {
+          if (canShowPopup(notification)) {
             vscode.window.showErrorMessage(respData.data);
             // prevent further popups.
             notifiedFiles.add(notification.origin());

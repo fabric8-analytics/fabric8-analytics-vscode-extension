@@ -55,7 +55,7 @@ class CANotification {
       const finalStatus = [this.vulnCountText(), this.exploitCountText()].filter(t => t.length > 0).join(`, `);
       return `$(warning) Found ${finalStatus}`;
     }
-    return `$(check) No known vulnerabilties`;
+    return `$(shield)$(check)`;
   }
 }
 

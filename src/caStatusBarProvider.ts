@@ -23,7 +23,7 @@ class CAStatusBarProvider implements Disposable {
     }
 
     public setError(): void {
-        this.statusBarItem.text = `$(error) Dependency Analysis has failed`;
+        this.statusBarItem.text = `$(error) Dependency analysis has failed`;
         this.statusBarItem.command = {
             title: StatusMessages.FULL_STACK_PROMPT_BUTTON,
             command: Commands.TRIGGER_STACK_LOGS,

@@ -49,7 +49,7 @@ class CANotification {
 
   public statusText(): string {
     if (!this.isDone()) {
-      return `$(sync~spin) Dependency Analysis in progress`;
+      return `$(sync~spin) Dependency analysis in progress`;
     }
     if (this.hasWarning()) {
       const finalStatus = [this.vulnCountText(), this.exploitCountText()].filter(t => t.length > 0).join(`, `);

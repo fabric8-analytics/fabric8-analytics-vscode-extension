@@ -2,12 +2,12 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
-import { Utils } from '../src/Utils';
+import { Config } from '../src/config';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
-suite('Utils module', () => {
+suite('Config module', () => {
   let sandbox: sinon.SinonSandbox;
 
   setup(() => {
@@ -19,17 +19,17 @@ suite('Utils module', () => {
   });
 
   test('getMavenExecutable should return mvn', () => {
-    let mavenPath = Utils.getMavenExecutable();
+    let mavenPath = Config.getMavenExecutable();
     expect(mavenPath).equals('mvn');
   });
 
   test('getNodeExecutable should return npm', () => {
-    let npmPath = Utils.getNodeExecutable();
+    let npmPath = Config.getNodeExecutable();
     expect(npmPath).equals('npm');
   });
 
   test('getPypiExecutable should return python', () => {
-    let pypiPath = Utils.getPypiExecutable();
+    let pypiPath = Config.getPypiExecutable();
     expect(pypiPath).equals('python');
   });
 });

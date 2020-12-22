@@ -27,7 +27,7 @@ suite('multimanifest module', () => {
     let savedErr: string;
     sandbox.stub(multimanifestmodule, 'manifestFileRead').rejects('err');
     try {
-      await multimanifestmodule.form_manifests_payload('path/file');
+      await multimanifestmodule.form_manifests_payload('path/file', 'maven');
     } catch (err) {
       savedErr = err.name;
       return;
@@ -42,7 +42,7 @@ suite('multimanifest module', () => {
       filePath: 'path'
     });
     let form_manifests_payloadPR = await multimanifestmodule.form_manifests_payload(
-      'path/file'
+      'path/file', ''
     );
     expect(form_manifests_payloadPR).to.include({ ecosystem: '' });
   });

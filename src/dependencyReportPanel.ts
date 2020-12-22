@@ -2,12 +2,13 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { Templates } from './template';
-import { Apiendpoint } from './apiendpoint';
+import { Config } from './config';
 
 const loader = Templates.LOADER_TEMPLATE;
 const header = Templates.HEADER_TEMPLATE;
 const footer = Templates.FOOTER_TEMPLATE;
 let portal_uri: string = '';
+const apiConfig = Config.getApiConfig();
 
 /**
  * Manages cat coding webview panels
@@ -99,11 +100,9 @@ export class DependencyReportPanel {
       DependencyReportPanel.data = data;
       let r = header;
       let token_uri = undefined;
-      portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${
-        data.external_request_id
-        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
-        Apiendpoint.OSIO_ROUTE_URL
-        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
+      portal_uri = `${apiConfig.stackReportUIHost}#/analyze/${data.external_request_id
+        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${apiConfig.host
+        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${apiConfig.apiKey}"}`;
       console.log("portal_uri", portal_uri);
       r += render_stack_iframe(portal_uri);
       r += footer;
@@ -140,11 +139,9 @@ export class DependencyReportPanel {
     if (output && output.external_request_id) {
       let r = header;
       let token_uri = undefined;
-      portal_uri = `${Apiendpoint.STACK_REPORT_URL}#/analyze/${
-        output.external_request_id
-        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${
-        Apiendpoint.OSIO_ROUTE_URL
-        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${Apiendpoint.STACK_API_USER_KEY}"}`;
+      portal_uri = `${apiConfig.stackReportUIHost}#/analyze/${output.external_request_id
+        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${apiConfig.host
+        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${apiConfig.apiKey}"}`;
       r += render_stack_iframe(portal_uri);
       r += footer;
       return r;

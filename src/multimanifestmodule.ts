@@ -8,7 +8,8 @@ import { stackanalysismodule } from './stackanalysismodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
-import { Apiendpoint } from './apiendpoint';
+import { Config } from './Config';
+import { config } from 'process';
 
 export module multimanifestmodule {
   export const form_manifests_payload = (resultPath): any => {
@@ -19,7 +20,7 @@ export module multimanifestmodule {
             'manifest': '',
             'file_path': '',
             'license[]': '',
-            ecosystem: Apiendpoint.API_ECOSYSTEM
+            ecosystem: Config.API_ECOSYSTEM
           };
           if (item && item['manifest'] && item['filePath']) {
             form_data['manifest'] = item['manifest'];

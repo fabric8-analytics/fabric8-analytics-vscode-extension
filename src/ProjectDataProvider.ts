@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as paths from 'path';
 import * as os from 'os';
 import { exec } from 'child_process';
-import { Utils } from './Utils';
+import { Config } from './Config';
 import { StatusMessages } from './statusMessages';
 import { outputChannelDep, initOutputChannel } from './extension';
 import { Commands } from './commands';
@@ -23,11 +23,11 @@ export module ProjectDataProvider {
       let tempTarget = item.replace('pom.xml', '');
       const filepath = paths.join(tempTarget, 'target', 'dependencies.txt');
       const cmd: string = [
-        Utils.getMavenExecutable(),
+        Config.getMavenExecutable(),
         `--quiet`,
         `clean -f`,
         `"${item}" &&`,
-        Utils.getMavenExecutable(),
+        Config.getMavenExecutable(),
         `--quiet`,
         'org.apache.maven.plugins:maven-dependency-plugin:3.0.2:tree',
         '-f',
@@ -176,12 +176,12 @@ export module ProjectDataProvider {
       }
       if (os.platform() === 'win32') {
         cmdList = [
-          Utils.getNodeExecutable(),
+          Config.getNodeExecutable(),
           'install',
           `"${prefixPath}"`,
           `--quiet`,
           '&&',
-          Utils.getNodeExecutable(),
+          Config.getNodeExecutable(),
           'list',
           `--prefix="${prefixPath}"`,
           '--prod',
@@ -191,13 +191,13 @@ export module ProjectDataProvider {
         ];
       } else {
         cmdList = [
-          Utils.getNodeExecutable(),
+          Config.getNodeExecutable(),
           `--prefix="${npmPrefixPath}"`,
           'install',
           `"${prefixPath}"`,
           `--quiet`,
           '&&',
-          Utils.getNodeExecutable(),
+          Config.getNodeExecutable(),
           'list',
           `--prefix="${prefixPath}"`,
           '--prod',
@@ -253,7 +253,7 @@ export module ProjectDataProvider {
       const filepath = paths.join(vscodeRootpath, 'target', 'pylist.json');
       let reqTxtFilePath = paths.join(vscodeRootpath, 'requirements.txt');
       let dir = paths.join(vscodeRootpath, 'target');
-      let pyPiInterpreter = Utils.getPypiExecutable();
+      let pyPiInterpreter = Config.getPypiExecutable();
       if (
         pyPiInterpreter &&
         pyPiInterpreter.indexOf('${workspaceFolder}') !== -1
@@ -332,17 +332,17 @@ export module ProjectDataProvider {
       }
 
       const cmd: string = [
-        Utils.getGoExecutable(),
+        Config.getGoExecutable(),
         `get`,
         `-u`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `&&`,
-        Utils.getGoExecutable(),
+        Config.getGoExecutable(),
         `run`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
-        `"${Utils.getGoExecutable()}"`
+        `"${Config.getGoExecutable()}"`
       ].join(' ');
 
       console.log('CMD : ' + cmd);

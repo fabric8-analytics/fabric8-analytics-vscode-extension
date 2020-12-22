@@ -129,28 +129,4 @@ suite('stacknalysis Services', () => {
     expect(stubRequestPost).callCount(1);
     expect(spyClearContextInfo).callCount(1);
   });
-
-  test('get3ScaleRouteService should return success with statuscode 200', () => {
-    const options = {};
-    let sampleBody = { result: 'sucess' };
-    options['uri'] = 'https://abc.com';
-    let stubRequestGet = sandbox
-      .stub(request, 'get')
-      .yields(null, { statusCode: 200 }, JSON.stringify(sampleBody));
-    stackAnalysisServices.get3ScaleRouteService(options);
-    expect(stubRequestGet).callCount(1);
-  });
-
-  test('get3ScaleRouteService should return err', () => {
-    const options = {};
-    let sampleBody = { result: 'forbidden' };
-    let showErrMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
-    options['uri'] = 'https://abc.com';
-    let stubRequestGet = sandbox
-      .stub(request, 'get')
-      .yields(null, { statusCode: 403 }, JSON.stringify(sampleBody));
-    stackAnalysisServices.get3ScaleRouteService(options);
-    expect(stubRequestGet).callCount(1);
-    expect(showErrMessageSpy).callCount(1);
-  });
 });

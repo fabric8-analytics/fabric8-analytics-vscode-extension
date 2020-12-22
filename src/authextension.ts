@@ -1,23 +1,18 @@
 'use strict';
 
-import { Apiendpoint } from './apiendpoint';
-import { stackAnalysisServices } from './stackAnalysisService';
 import { GlobalState } from './constants';
 import fetch from 'node-fetch'
-import { Utils } from './Utils';
+import { Config } from './Config';
 
 export module authextension {
   export let setContextData: any;
 
-  setContextData = (context_f8_access_routes, context_f8_3scale_user_key) => {
-    Apiendpoint.STACK_API_URL = context_f8_access_routes.prod + '/api/v2/';
-    Apiendpoint.STACK_API_USER_KEY = context_f8_3scale_user_key;
-    Apiendpoint.OSIO_ROUTE_URL = context_f8_access_routes.prod;
+  setContextData = (apiConfig) => {
     process.env['RECOMMENDER_API_URL'] =
-      context_f8_access_routes.prod + '/api/v2';
-    process.env['THREE_SCALE_USER_TOKEN'] = context_f8_3scale_user_key;
+      apiConfig.host + '/api/v2';
+    process.env['THREE_SCALE_USER_TOKEN'] = apiConfig.apiKey;
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
-    process.env['GOLANG_EXECUTABLE'] = Utils.getGoExecutable();
+    process.env['GOLANG_EXECUTABLE'] = Config.getGoExecutable();
   };
 
   export function setUUID(uuid) {
@@ -26,21 +21,7 @@ export module authextension {
 
   export const authorize_f8_analytics = async context => {
     try {
-      let context_f8_access_routes = context.globalState.get(
-        'f8_access_routes'
-      );
-      let context_f8_3scale_user_key = context.globalState.get(
-        'f8_3scale_user_key'
-      );
-
-      if (context_f8_access_routes && context_f8_3scale_user_key) {
-        setContextData(context_f8_access_routes, context_f8_3scale_user_key);
-      } else {
-        let respData = await get_3scale_routes(context);
-        if (!respData) {
-          return false;
-        }
-      }
+      setContextData(Config.apiConfig);
 
       let uuid = context.globalState.get(GlobalState.UUID);
 
@@ -62,8 +43,8 @@ export module authextension {
   };
 
   export async function getUUID(): Promise<string> {
-    const url = `${Apiendpoint.OSIO_ROUTE_URL
-      }/user?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+    const url = `${Config.apiConfig.host
+      }/user?user_key=${Config.apiConfig.apiKey}`;
 
     const response = await fetch(url, { method: 'POST' });
     if (response.ok) {
@@ -74,37 +55,4 @@ export module authextension {
       return null;
     }
   }
-
-  export const get_3scale_routes = context => {
-    return new Promise((resolve, reject) => {
-      let options = {};
-      options['uri'] = `${Apiendpoint.THREE_SCALE_CONNECT_URL
-        }get-endpoints?user_key=${Apiendpoint.THREE_SCALE_CONNECT_KEY}`;
-      options['headers'] = { 'Content-Type': 'application/json' };
-
-      stackAnalysisServices
-        .get3ScaleRouteService(options)
-        .then(respData => {
-          let resp = respData;
-          if (resp && resp['endpoints']) {
-            context.globalState.update('f8_access_routes', resp['endpoints']);
-            context.globalState.update('f8_3scale_user_key', resp['user_key']);
-            let context_f8_access_routes = context.globalState.get(
-              'f8_access_routes'
-            );
-            let context_f8_3scale_user_key = context.globalState.get(
-              'f8_3scale_user_key'
-            );
-            setContextData(
-              context_f8_access_routes,
-              context_f8_3scale_user_key
-            );
-            resolve(true);
-          }
-        })
-        .catch(err => {
-          reject(null);
-        });
-    });
-  };
 }

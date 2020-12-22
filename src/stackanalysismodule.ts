@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as paths from 'path';
 
-import { Apiendpoint } from './apiendpoint';
+import { Config } from './Config';
 import { getRequestTimeout, getRequestPollInterval } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
@@ -44,8 +44,8 @@ export module stackanalysismodule {
               let payloadData = formData;
               const options = {};
               let thatContext: any;
-              options['uri'] = `${Apiendpoint.STACK_API_URL
-                }stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+              options['uri'] = `${Config.apiConfig.host
+                }/api/v2/stack-analyses?user_key=${Config.apiConfig.apiKey}`;
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
@@ -64,8 +64,8 @@ export module stackanalysismodule {
             .then(async respId => {
               console.log(`Analyzing your stack, id ${respId}`);
               const options = {};
-              options['uri'] = `${Apiendpoint.STACK_API_URL
-                }stack-analyses/${respId}?user_key=${Apiendpoint.STACK_API_USER_KEY
+              options['uri'] = `${Config.apiConfig.host
+                }/api/v2/stack-analyses/${respId}?user_key=${Config.apiConfig.apiKey
                 }`;
               options['headers'] = {
                 uuid: process.env.UUID
@@ -128,7 +128,7 @@ export module stackanalysismodule {
     uri = null
   ) => {
     let effectiveF8Var: string, argumentList: string;
-    Apiendpoint.API_ECOSYSTEM = ecosystem;
+    Config.API_ECOSYSTEM = ecosystem;
     if (ecosystem === 'maven') {
       argumentList = uri
         ? uri.fsPath

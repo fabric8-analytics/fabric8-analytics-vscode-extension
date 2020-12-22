@@ -2,7 +2,12 @@
 
 import * as vscode from 'vscode';
 
-export namespace Utils {
+export namespace Config {
+
+  export const apiConfig = vscode.workspace.getConfiguration('dependencyAnalytics');
+
+  export let API_ECOSYSTEM: string = '';
+
   export function getMavenExecutable(): string {
     const mavenPath: string = vscode.workspace
       .getConfiguration('maven.executable')

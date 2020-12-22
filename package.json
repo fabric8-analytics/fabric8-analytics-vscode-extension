@@ -242,7 +242,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "fabric8-analytics-lsp-server": "0.4.15",
+    "fabric8-analytics-lsp-server": "^0.4.19",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",
     "path": "0.12.7",

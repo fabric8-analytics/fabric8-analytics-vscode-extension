@@ -104,7 +104,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         const showVulnerabilityFoundPrompt = async (msg: string) => {
-          const selection = await vscode.window.showInformationMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_BUTTON);
+          const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_BUTTON);
           if (selection === StatusMessages.FULL_STACK_PROMPT_BUTTON) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
           }
@@ -114,7 +114,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.showSummary(notification.statusText());
           if (canShowPopup(notification)) {
-            showVulnerabilityFoundPrompt(notification.popupText());
+            showVulnerabilityFoundPrompt(notification.plainStatusText());
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }

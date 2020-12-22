@@ -39,12 +39,20 @@ class CANotification {
   }
 
   private vulnCountText(): string {
-    const vulns = this.vulnerabilityCount + this.advisoryCount;
-    return vulns > 0 ? `${vulns} ${vulns == 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
+    return this.vulnerabilityCount > 0 ? `${this.vulnerabilityCount} ${this.vulnerabilityCount == 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
   }
 
   private exploitCountText(): string {
     return this.exploitCount > 0 ? `${this.exploitCount} exploit${this.exploitCount == 1 ? '' : 's'}` : ``;
+  }
+
+  private advisoryText(): string {
+    return this.advisoryCount > 0 ? `${this.advisoryCount} ${this.advisoryCount == 1 ? 'advisory' : 'advisories'}` : ``;
+  }
+
+  public plainStatusText(): string {
+    // replace texts inside $(..)
+    return this.statusText().replace(/\$\((.*?)\)/g, '');
   }
 
   public statusText(): string {
@@ -52,7 +60,8 @@ class CANotification {
       return `$(sync~spin) Dependency analysis in progress`;
     }
     if (this.hasWarning()) {
-      const finalStatus = [this.vulnCountText(), this.exploitCountText()].filter(t => t.length > 0).join(`, `);
+      let finalStatus = [this.vulnCountText(), this.advisoryText(), this.exploitCountText()].filter(t => t.length > 0).join(`, `);
+      finalStatus = finalStatus.replace(/(\b,\s\b)(?!.*\1)/g, ' & ');
       return `$(warning) Found ${finalStatus}`;
     }
     return `$(shield)$(check)`;

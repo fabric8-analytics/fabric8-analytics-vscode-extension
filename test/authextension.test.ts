@@ -27,6 +27,8 @@ suite('authextension Modules', () => {
       context_f8_access_routes,
       context_f8_3scale_user_key
     );
+    expect(process.env['RECOMMENDER_API_URL']).equals('http://prod/api/v2');
+    expect(process.env['THREE_SCALE_USER_TOKEN']).equals('12345');
   });
 
   test('call to setUUID should set env variable', async () => {

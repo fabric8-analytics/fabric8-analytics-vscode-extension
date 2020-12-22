@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
-import { Config } from '../src/Config';
+import { Config } from '../src/config';
 
 const expect = chai.expect;
 chai.use(sinonChai);

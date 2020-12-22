@@ -79,7 +79,8 @@ suite('stackanalysis module', () => {
       await stackanalysismodule.stackAnalysesLifeCycle(
         context,
         'effectivef8Package',
-        'path/samplenodeapp'
+        'path/samplenodeapp',
+        'maven'
       );
       expect(stubEffectivef8Package).callCount(1);
       expect(stubTriggerManifestWs).callCount(1);
@@ -93,7 +94,8 @@ suite('stackanalysis module', () => {
         await stackanalysismodule.stackAnalysesLifeCycle(
           context,
           'effectivef8Package',
-          'path/samplenodeapp'
+          'path/samplenodeapp',
+          'maven'
         );
       } catch (err) {
         return;

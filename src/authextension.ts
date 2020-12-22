@@ -2,9 +2,10 @@
 
 import { GlobalState } from './constants';
 import fetch from 'node-fetch'
-import { Config } from './Config';
+import { Config } from './config';
 
 export module authextension {
+  const apiConfig = Config.getApiConfig();
   export let setContextData: any;
 
   setContextData = (apiConfig) => {
@@ -21,7 +22,7 @@ export module authextension {
 
   export const authorize_f8_analytics = async context => {
     try {
-      setContextData(Config.apiConfig);
+      setContextData(apiConfig);
 
       let uuid = context.globalState.get(GlobalState.UUID);
 
@@ -43,8 +44,8 @@ export module authextension {
   };
 
   export async function getUUID(): Promise<string> {
-    const url = `${Config.apiConfig.host
-      }/user?user_key=${Config.apiConfig.apiKey}`;
+    const url = `${apiConfig.host
+      }/user?user_key=${apiConfig.apiKey}`;
 
     const response = await fetch(url, { method: 'POST' });
     if (response.ok) {

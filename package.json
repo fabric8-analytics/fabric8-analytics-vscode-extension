@@ -190,19 +190,19 @@
         "dependencyAnalytics.host": {
           "type": "string",
           "default": "https://f8a-analytics-2445582058137.production.gw.apicast.io",
-          "description": "Specifies host api-route.",
+          "description": "Host name of Dependency Analytics server.",
           "scope": "window"
         },
         "dependencyAnalytics.apiKey": {
           "type": "string",
           "default": "9e7da76708fe374d8c10fa752e72989f",
-          "description": "Specifies host api-key.",
+          "description": "3scale user_key to access dependencyAnalytics.host",
           "scope": "window"
         },
         "dependencyAnalytics.stackReportUIHost": {
           "type": "string",
           "default": "https://stack-analytics-report.openshift.io/",
-          "description": "Specifies host for Stack Report UI",
+          "description": "Host name of the stack report UI.",
           "scope": "window"
         },
         "maven.executable.path": {

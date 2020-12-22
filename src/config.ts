@@ -4,9 +4,9 @@ import * as vscode from 'vscode';
 
 export namespace Config {
 
-  export const apiConfig = vscode.workspace.getConfiguration('dependencyAnalytics');
-
-  export let API_ECOSYSTEM: string = '';
+  export function getApiConfig(): any {
+    return vscode.workspace.getConfiguration('dependencyAnalytics');
+  }
 
   export function getMavenExecutable(): string {
     const mavenPath: string = vscode.workspace

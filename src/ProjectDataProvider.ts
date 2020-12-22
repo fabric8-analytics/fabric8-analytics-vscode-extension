@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as paths from 'path';
 import * as os from 'os';
 import { exec } from 'child_process';
-import { Config } from './Config';
+import { Config } from './config';
 import { StatusMessages } from './statusMessages';
 import { outputChannelDep, initOutputChannel } from './extension';
 import { Commands } from './commands';

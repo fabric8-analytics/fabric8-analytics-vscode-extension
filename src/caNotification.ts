@@ -35,7 +35,8 @@ class CANotification {
   }
 
   public popupText(): string {
-    return this.text;
+    // replace texts inside $(..)
+    return this.statusText().replace(/\$\((.*?)\)/g, '');
   }
 
   private vulnCountText(): string {

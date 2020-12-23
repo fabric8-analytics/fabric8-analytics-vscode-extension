@@ -8,10 +8,9 @@ import { stackanalysismodule } from './stackanalysismodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
-import { Apiendpoint } from './apiendpoint';
 
 export module multimanifestmodule {
-  export const form_manifests_payload = (resultPath): any => {
+  export const form_manifests_payload = (resultPath, ecosystem): any => {
     return new Promise((resolve, reject) => {
       manifestFileRead(resultPath)
         .then(item => {
@@ -19,7 +18,7 @@ export module multimanifestmodule {
             'manifest': '',
             'file_path': '',
             'license[]': '',
-            ecosystem: Apiendpoint.API_ECOSYSTEM
+            ecosystem: ecosystem
           };
           if (item && item['manifest'] && item['filePath']) {
             form_data['manifest'] = item['manifest'];

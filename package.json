@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Dependency Analytics",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.3.0-2020-12-03",
+  "version": "0.3.0-2020-12-23",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -187,6 +187,24 @@
           "default": "off",
           "description": "Traces the communication between VSCode and the dependencyAnalyticsServer service."
         },
+        "dependencyAnalytics.host": {
+          "type": "string",
+          "default": "https://f8a-analytics-2445582058137.production.gw.apicast.io",
+          "description": "Host name of Dependency Analytics server.",
+          "scope": "window"
+        },
+        "dependencyAnalytics.apiKey": {
+          "type": "string",
+          "default": "9e7da76708fe374d8c10fa752e72989f",
+          "description": "3scale user_key to access dependencyAnalytics.host",
+          "scope": "window"
+        },
+        "dependencyAnalytics.stackReportUIHost": {
+          "type": "string",
+          "default": "https://stack-analytics-report.openshift.io/",
+          "description": "Host name of the stack report UI.",
+          "scope": "window"
+        },
         "maven.executable.path": {
           "type": "string",
           "default": "",
@@ -242,7 +260,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "fabric8-analytics-lsp-server": "0.4.15",
+    "fabric8-analytics-lsp-server": "^0.4.19",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",
     "path": "0.12.7",

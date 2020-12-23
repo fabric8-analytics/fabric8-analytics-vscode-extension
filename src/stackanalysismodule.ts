@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as paths from 'path';
 
-import { Apiendpoint } from './apiendpoint';
+import { Config } from './config';
 import { getRequestTimeout, getRequestPollInterval } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
@@ -12,10 +12,12 @@ import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
 export module stackanalysismodule {
+  const apiConfig = Config.getApiConfig();
   export const stackAnalysesLifeCycle = (
     context,
     effectiveF8Var,
-    argumentList
+    argumentList,
+    ecosystem
   ) => {
     vscode.window.withProgress(
       {
@@ -36,7 +38,7 @@ export module stackanalysismodule {
             })
             .then(async dataEpom => {
               let formData = await multimanifestmodule.form_manifests_payload(
-                dataEpom
+                dataEpom, ecosystem
               );
               return formData;
             })
@@ -44,8 +46,8 @@ export module stackanalysismodule {
               let payloadData = formData;
               const options = {};
               let thatContext: any;
-              options['uri'] = `${Apiendpoint.STACK_API_URL
-                }stack-analyses?user_key=${Apiendpoint.STACK_API_USER_KEY}`;
+              options['uri'] = `${apiConfig.host
+                }/api/v2/stack-analyses?user_key=${apiConfig.apiKey}`;
               options['formData'] = payloadData;
               options['headers'] = {
                 showTransitiveReport: 'true',
@@ -64,8 +66,8 @@ export module stackanalysismodule {
             .then(async respId => {
               console.log(`Analyzing your stack, id ${respId}`);
               const options = {};
-              options['uri'] = `${Apiendpoint.STACK_API_URL
-                }stack-analyses/${respId}?user_key=${Apiendpoint.STACK_API_USER_KEY
+              options['uri'] = `${apiConfig.host
+                }/api/v2/stack-analyses/${respId}?user_key=${apiConfig.apiKey
                 }`;
               options['headers'] = {
                 uuid: process.env.UUID
@@ -128,7 +130,6 @@ export module stackanalysismodule {
     uri = null
   ) => {
     let effectiveF8Var: string, argumentList: string;
-    Apiendpoint.API_ECOSYSTEM = ecosystem;
     if (ecosystem === 'maven') {
       argumentList = uri
         ? uri.fsPath
@@ -150,7 +151,7 @@ export module stackanalysismodule {
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Golang';
     }
-    stackAnalysesLifeCycle(context, effectiveF8Var, argumentList);
+    stackAnalysesLifeCycle(context, effectiveF8Var, argumentList, ecosystem);
   };
 
   export const handleError = err => {

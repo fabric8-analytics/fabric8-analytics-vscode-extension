@@ -15,17 +15,17 @@ class CAStatusBarProvider implements Disposable {
     public showSummary(text: string): void {
         this.statusBarItem.text = text;
         this.statusBarItem.command = {
-            title: StatusMessages.FULL_STACK_PROMPT_STATUS_BAR_TEXT,
+            title: StatusMessages.FULL_STACK_PROMPT_TEXT,
             command: Commands.TRIGGER_FULL_STACK_ANALYSIS,
         };
-        this.statusBarItem.tooltip = StatusMessages.FULL_STACK_PROMPT_STATUS_BAR_TEXT;
+        this.statusBarItem.tooltip = StatusMessages.FULL_STACK_PROMPT_TEXT;
         this.statusBarItem.show();
     }
 
     public setError(): void {
         this.statusBarItem.text = `$(error) Dependency analysis has failed`;
         this.statusBarItem.command = {
-            title: StatusMessages.FULL_STACK_PROMPT_BUTTON,
+            title: StatusMessages.LSP_FAILURE_TEXT,
             command: Commands.TRIGGER_STACK_LOGS,
         };
     }

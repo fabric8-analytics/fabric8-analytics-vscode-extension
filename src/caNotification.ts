@@ -40,7 +40,8 @@ class CANotification {
   }
 
   private vulnCountText(): string {
-    return this.vulnerabilityCount > 0 ? `${this.vulnerabilityCount} ${this.vulnerabilityCount == 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
+    const vulns = this.vulnerabilityCount + this.advisoryCount;
+    return vulns > 0 ? `${vulns} ${vulns == 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
   }
 
   private exploitCountText(): string {

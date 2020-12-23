@@ -85,18 +85,6 @@
         "title": "Dependency Analytics Logs ..."
       }
     ],
-    "keybindings": [
-      {
-        "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "key": "shift+ctrl+d",
-        "mac": "shift+cmd+d"
-      },
-      {
-        "command": "extension.fabric8AnalyticsStackLogs",
-        "key": "shift+ctrl+l",
-        "mac": "shift+cmd+l"
-      }
-    ],
     "menus": {
       "editor/title": [
         {

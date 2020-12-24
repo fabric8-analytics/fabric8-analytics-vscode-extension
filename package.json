@@ -39,7 +39,7 @@
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
-    "vscode": "^1.47.0"
+    "vscode": "^1.49.0"
   },
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",

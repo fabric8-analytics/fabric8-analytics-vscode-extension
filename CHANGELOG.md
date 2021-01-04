@@ -7,13 +7,16 @@
     - Provide early access to vulnerability data for modules and packages
     - Highlight and provide vulnerability details using alerts & messages
     - Recommend a non vulnerable version (if available)
+- enhancement - Use concise text for component analysis notification. See [#472](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/472)
 - enhancement - Show status bar text based on component analysis status. See [#459](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/459)
     - Notification will be shown only once per manifest in single session.
     - Further changes will be updated only via status bar.
 - enhancement - Updated fabric8-analytics-lsp-server to latest version (v[0.4.19](https://www.npmjs.com/package/fabric8-analytics-lsp-server/v/0.4.19)): See [#469](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/469)
     - Golang CA support from LSP. See [#148](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/148)
     - Handle replace directive from go.mod. See [#162](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/162)
-    - Use concise text for CA popup. See [#472](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/472)
+    - Property tag support for pom.xml. See [#172](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/172)
+    - Cache batch requests and avoid repeated api call for better user experience. See [176](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/176)
+    - Clear diagnostics before generating new set of diagnostics. See [#177](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/177)
 - fixes - Propagate errors from lsp server to client. See [#432](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/432)
 - fixes - Dependency UTM encoding issue. See [#460](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/460)
 - fixes - VsCode Extension: Dependency Details card needs minor improvements. See [#295](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/295)
@@ -21,7 +24,8 @@
 - fixes - Stop showing notification if no security vulnerability found. See [#434](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/434)
 - fixes - Extension overrides default keybinding for opening the debugger view. See [#442](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/442)
 - fixes - Output log opens everytime requirements.txt is opened. See [#458](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/458)
-- fixes - Clear diagnostics before generating new set of diagnostics. See [#465](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/465)
+- fixes - Diagnostics are not cleared when all vulnerabilities are removed. See [#465](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/465)
+- fixes - Property based versions are ignored on LS for maven. See [#258](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/258)
 
 ## 0.2.1 (November 9th, 2020)
 

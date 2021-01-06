@@ -1,6 +1,6 @@
 'use strict';
 
-import { StatusBarItem, window, StatusBarAlignment } from "vscode";
+import { StatusBarItem, window, StatusBarAlignment, Uri } from "vscode";
 import { Disposable } from "vscode-languageclient";
 import { StatusMessages } from "./statusMessages";
 import { Commands } from "./commands";
@@ -12,11 +12,12 @@ class CAStatusBarProvider implements Disposable {
         this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left, 0);
     }
 
-    public showSummary(text: string): void {
+    public showSummary(text: string, uri: string): void {
         this.statusBarItem.text = text;
         this.statusBarItem.command = {
             title: StatusMessages.FULL_STACK_PROMPT_TEXT,
             command: Commands.TRIGGER_FULL_STACK_ANALYSIS,
+            arguments: [Uri.parse(uri)]
         };
         this.statusBarItem.tooltip = StatusMessages.FULL_STACK_PROMPT_TEXT;
         this.statusBarItem.show();

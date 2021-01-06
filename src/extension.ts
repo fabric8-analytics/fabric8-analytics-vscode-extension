@@ -112,7 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         lspClient.onNotification('caNotification', respData => {
           const notification = new CANotification(respData);
-          caStatusBarProvider.showSummary(notification.statusText());
+          caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (canShowPopup(notification)) {
             showVulnerabilityFoundPrompt(notification.popupText());
             // prevent further popups.

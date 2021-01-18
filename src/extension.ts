@@ -5,7 +5,7 @@ import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
-  TransportKind,
+  TransportKind
 } from 'vscode-languageclient';
 import * as path from 'path';
 
@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
           module: serverModule,
           transport: TransportKind.ipc,
           options: debugOptions
-        },
+        }
       };
 
       // Options to control the language client
@@ -104,7 +104,7 @@ export function activate(context: vscode.ExtensionContext) {
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
           return notification.hasWarning() && !hasAlreadyShown;
-        };
+        }
 
         const showVulnerabilityFoundPrompt = async (msg: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
@@ -113,7 +113,7 @@ export function activate(context: vscode.ExtensionContext) {
           }
         };
 
-        lspClient.onNotification('caNotification', (respData) => {
+        lspClient.onNotification('caNotification', respData => {
           const notification = new CANotification(respData);
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (canShowPopup(notification)) {
@@ -157,7 +157,7 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   const version = packageJSON.version;
   const previousVersion = context.globalState.get<string>(GlobalState.Version);
   // Nothing to display
-  if (version === previousVersion) 
+  if (version === previousVersion)
     return;
 
   // store current version into localStorage

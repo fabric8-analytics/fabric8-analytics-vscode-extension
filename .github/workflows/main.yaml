@@ -30,6 +30,8 @@ jobs:
         run: npm run test-compile
       - name: VSCE prepublish
         run: vsce package
+      - name: Invoke LSP entrypoint(server.js)
+        run: node dist/server.js
       - name: Run headless test
         uses: GabrielBB/xvfb-action@v1
         with:

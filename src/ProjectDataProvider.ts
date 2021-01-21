@@ -4,6 +4,7 @@ import * as paths from 'path';
 import * as os from 'os';
 import { exec } from 'child_process';
 import { Config } from './config';
+import { getSelectedInterpreterPath } from './msPythonExtension';
 import { StatusMessages } from './statusMessages';
 import { outputChannelDep, initOutputChannel } from './extension';
 import { Commands } from './commands';
@@ -246,23 +247,15 @@ export module ProjectDataProvider {
   };
 
   export const effectivef8Pypi = item => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
       let vscodeRootpath = item.replace('requirements.txt', '');
       const filepath = paths.join(vscodeRootpath, 'target', 'pylist.json');
       let reqTxtFilePath = paths.join(vscodeRootpath, 'requirements.txt');
       let dir = paths.join(vscodeRootpath, 'target');
-      let pyPiInterpreter = Config.getPypiExecutable();
-      if (
-        pyPiInterpreter &&
-        pyPiInterpreter.indexOf('${workspaceFolder}') !== -1
-      ) {
-        pyPiInterpreter = pyPiInterpreter.replace(
-          '${workspaceFolder}',
-          vscodeRootpath
-        );
-      }
+      const uri = vscode.Uri.parse(reqTxtFilePath);
+      const pyPiInterpreter = await getSelectedInterpreterPath(outputChannelDep.getOutputChannel(), uri);
 
       if (!pyPiInterpreter) {
         vscode.window

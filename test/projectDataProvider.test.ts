@@ -113,7 +113,7 @@ suite('projectDataProvider Modules', () => {
       workspaceFolder.uri.fsPath
     );
     expect(effectivef8PypiPR).contains('target/pylist.json');
-    expect(stubExec).callCount(1);
+    expect(stubExec).called;
   });
 
   test('effectivef8Golang should return success', async () => {

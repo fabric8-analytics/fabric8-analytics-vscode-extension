@@ -2,9 +2,8 @@
 
 ## 0.3.1 (January 21st, 2021)
 
-- fixes - status bar icon tries to open a report for the currently opened file.  See [#478](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/478) [#479](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/479)
-. See [#404](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/404)
-- fixes - LSP failure on latest vscode(node >= 12.16.0). See [#481](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/481) [#483](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/483)
+- fixes - status bar icon tries to open a report for the currently opened file. See [#478](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/478) [#479](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/479)
+- fixes - LSP failure on vscode-insider and Che(node >= 12.16.0). See [#481](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/481) [#483](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/483)
 
 ## 0.3.0 (January 4th, 2021)
 - enhancement - Support for Golang ecosystem. Plugin can now scan and identify vulnerability within module and package for golang software stacks. See [#436](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/436)

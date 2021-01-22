@@ -1,5 +1,4 @@
 import { OutputChannel, Uri, extensions } from 'vscode';
-import { Config } from './config';
 
 export async function getSelectedInterpreterPath(
   outputChannel: OutputChannel,
@@ -28,7 +27,7 @@ export async function getSelectedInterpreterPath(
         outputChannel.appendLine(`Received pythonPath from Python extension: ${result}`);
       }
 
-      return result || Config.getPypiExecutable();
+      return result;
     }
   } catch (error) {
     outputChannel.appendLine(
@@ -36,5 +35,5 @@ export async function getSelectedInterpreterPath(
     );
   }
 
-  return Config.getPypiExecutable();
+  return undefined;
 }

@@ -255,7 +255,7 @@ export module ProjectDataProvider {
       let reqTxtFilePath = paths.join(vscodeRootpath, 'requirements.txt');
       let dir = paths.join(vscodeRootpath, 'target');
       const uri = vscode.Uri.parse(reqTxtFilePath);
-      const pyPiInterpreter = await getSelectedInterpreterPath(outputChannelDep.getOutputChannel(), uri);
+      const pyPiInterpreter = await getSelectedInterpreterPath(outputChannelDep.getOutputChannel(), uri) || Config.getPythonExecutable();
 
       if (!pyPiInterpreter) {
         vscode.window

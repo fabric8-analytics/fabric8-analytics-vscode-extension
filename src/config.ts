@@ -22,7 +22,7 @@ export namespace Config {
     return npmPath ? `"${npmPath}"` : 'npm';
   }
 
-  export function getPypiExecutable(): string {
+  export function getPythonExecutable(): string {
     const pypiPath: string = vscode.workspace
       .getConfiguration('python')
       .get('pythonPath');

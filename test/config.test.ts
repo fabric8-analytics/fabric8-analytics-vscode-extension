@@ -29,7 +29,7 @@ suite('Config module', () => {
   });
 
   test('getPypiExecutable should return python', () => {
-    let pypiPath = Config.getPypiExecutable();
-    expect(pypiPath).equals('python');
+    let python = Config.getPythonExecutable();
+    expect(python).equals('python');
   });
 });

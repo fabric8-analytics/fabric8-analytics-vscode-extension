@@ -10,13 +10,14 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL, notificationPopupDismissed, reportOpenedNotificationPopup } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
+import { record } from './redhatTelemetry'
 
 let lspClient: LanguageClient;
 
@@ -105,9 +106,19 @@ export function activate(context: vscode.ExtensionContext) {
 
         const showVulnerabilityFoundPrompt = async (msg: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
+          // telemetry
+          let event = {
+            type: 'track', // type of telemetry event such as : identify, track, page, etc.
+            name: '',
+          }
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
+            event.name = reportOpenedNotificationPopup;
           }
+          else {
+            event.name = notificationPopupDismissed;
+          }
+          record(event);
         };
 
         lspClient.onNotification('caNotification', respData => {

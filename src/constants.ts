@@ -20,7 +20,3 @@ export const getRequestTimeout = 120 * 1000; // ms
 export const getRequestPollInterval = 2 * 1000; // ms
 // UTM
 export const registrationURL = "https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register";
-
-//telemetry event names
-export const reportOpenedNotificationPopup = 'Notification pop-up - Open report Clicked'
-export const notificationPopupDismissed = 'Notification pop-up - Dismissed'

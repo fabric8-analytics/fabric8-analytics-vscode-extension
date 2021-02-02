@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL, notificationPopupDismissed, reportOpenedNotificationPopup } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -158,8 +158,6 @@ export function initOutputChannel(): any {
 }
 
 export function deactivate(): Thenable<void> {
-  console.log("i am in deactivate lol");
-  
   // record shutdown
   shutDown();
   if (!lspClient) {

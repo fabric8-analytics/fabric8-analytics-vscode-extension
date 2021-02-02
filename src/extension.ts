@@ -17,13 +17,15 @@ import { StatusMessages } from './statusMessages';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
-import { record } from './redhatTelemetry'
+import { record, shutDown, startUp } from './redhatTelemetry'
+import { TelemetryEvent } from '@redhat-developer/vscode-redhat-telemetry/lib';
 
 let lspClient: LanguageClient;
 
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
+  startUp()
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
@@ -107,16 +109,19 @@ export function activate(context: vscode.ExtensionContext) {
         const showVulnerabilityFoundPrompt = async (msg: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           // telemetry
-          let event = {
+          let event:TelemetryEvent = {
             type: 'track', // type of telemetry event such as : identify, track, page, etc.
-            name: '',
+            name: 'vulnerability_report_popup',
+            properties: {
+              opened: ''
+            },
           }
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            event.name = reportOpenedNotificationPopup;
+            event.properties.opened = true;
           }
           else {
-            event.name = notificationPopupDismissed;
+            event.properties.opened = false;
           }
           record(event);
         };
@@ -153,6 +158,10 @@ export function initOutputChannel(): any {
 }
 
 export function deactivate(): Thenable<void> {
+  console.log("i am in deactivate lol");
+  
+  // record shutdown
+  shutDown();
   if (!lspClient) {
     return undefined;
   }

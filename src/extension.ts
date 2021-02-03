@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL, ActionName, commandMapping } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL, ActionName } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -44,19 +44,23 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   );
-  
-  for (const action in commandMapping) {
-    if (Object.prototype.hasOwnProperty.call(commandMapping, action)) {
-      const command = commandMapping[action];
-      context.subscriptions.push(
-        vscode.commands.registerCommand(command,
-          (uri : vscode.Uri)=>{
-            record(ActionName[action]);
-            const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-            multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
-      }));
-    }
-  }
+
+const invokeFullStackReport = (uri : vscode.Uri) => {
+  const fileUri = uri || vscode.window.activeTextEditor.document.uri;
+  multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+};
+
+const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
+  record(origin);
+  invokeFullStackReport(uri);
+};
+
+const stackAnalysisCommands = [
+  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, recordAndInvoke.bind(null, ActionName.vulnerabilityReportEditor)),
+  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, recordAndInvoke.bind(null, ActionName.vulnerabilityReportExplorer)),
+  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, recordAndInvoke.bind(null, ActionName.vulnerabilityReportPieBtn)),
+  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, recordAndInvoke.bind(null, ActionName.vulnerabilityReportStatusBar)),
+];
 
 
   // show welcome message after first install or upgrade
@@ -152,6 +156,7 @@ export function activate(context: vscode.ExtensionContext) {
         disposableFullStack,
         disposableStackLogs,
         caStatusBarProvider,
+        ...stackAnalysisCommands,
       );
     }
   });

@@ -30,10 +30,3 @@ export enum ActionName {
   vulnerabilityReportPieBtn = 'vulnerability_report_pie_btn',
   vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
 }
-
-export const commandMapping = {
-  vulnerabilityReportEditor : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
-  vulnerabilityReportExplorer : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
-  vulnerabilityReportPieBtn : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
-  vulnerabilityReportStatusBar : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
-};

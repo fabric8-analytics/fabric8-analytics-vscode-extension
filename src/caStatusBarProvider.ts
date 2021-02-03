@@ -16,7 +16,7 @@ class CAStatusBarProvider implements Disposable {
         this.statusBarItem.text = text;
         this.statusBarItem.command = {
             title: StatusMessages.FULL_STACK_PROMPT_TEXT,
-            command: Commands.TRIGGER_FULL_STACK_ANALYSIS,
+            command: Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
             arguments: [Uri.parse(uri)]
         };
         this.statusBarItem.tooltip = StatusMessages.FULL_STACK_PROMPT_TEXT;

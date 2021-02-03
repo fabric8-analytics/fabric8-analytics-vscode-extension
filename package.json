@@ -6,7 +6,6 @@
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
-  "segmentWriteKey": "Ga2frlNQ8nsYjF8PEGsbdjhCy3VJdncB",
   "contributors": [
     {
       "name": "Jaivardhan Kumar",
@@ -75,11 +74,23 @@
     "commands": [
       {
         "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "title": "Dependency Analytics Report ...",
+        "title": "Dependency Analytics Report ..."
+      },
+      {
+        "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
+        "title": "Open Vulnerability Report",
         "icon": {
           "light": "icon/report-icon.png",
           "dark": "icon/report-icon.png"
         }
+      },
+      {
+        "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
+        "title": "Dependency Analytics Report..."
+      },
+      {
+        "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
+        "title": "Dependency Analytics Report..."
       },
       {
         "command": "extension.fabric8AnalyticsStackLogs",
@@ -89,59 +100,59 @@
     "menus": {
       "editor/title": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
           "when": "resourceFilename == pom.xml",
           "group": "navigation"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
           "when": "resourceFilename == package.json",
           "group": "navigation"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
           "when": "resourceFilename == requirements.txt",
           "group": "navigation"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
           "when": "resourceFilename == go.mod",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
           "when": "resourceFilename == requirements.txt"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
           "when": "resourceFilename == go.mod"
         }
       ],
       "editor/context": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
           "when": "resourceFilename == requirements.txt"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack",
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
           "when": "resourceFilename == go.mod"
         }
       ]
@@ -178,19 +189,19 @@
         },
         "dependencyAnalytics.host": {
           "type": "string",
-          "default": "https://f8a-analytics-preview-2445582058137.staging.gw.apicast.io",
+          "default": "https://f8a-analytics-2445582058137.production.gw.apicast.io",
           "description": "Host name of Dependency Analytics server.",
           "scope": "window"
         },
         "dependencyAnalytics.apiKey": {
           "type": "string",
-          "default": "3e42fa66f65124e6b1266a23431e3d08",
+          "default": "9e7da76708fe374d8c10fa752e72989f",
           "description": "3scale user_key to access dependencyAnalytics.host",
           "scope": "window"
         },
         "dependencyAnalytics.stackReportUIHost": {
           "type": "string",
-          "default": "https://stack-analytics-report.prod-preview.openshift.io/",
+          "default": "https://stack-analytics-report.openshift.io/",
           "description": "Host name of the stack report UI.",
           "scope": "window"
         },
@@ -249,7 +260,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@redhat-developer/vscode-redhat-telemetry": "0.0.9",
+    "@redhat-developer/vscode-redhat-telemetry": "0.0.11",
     "fabric8-analytics-lsp-server": "^0.4.20",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",

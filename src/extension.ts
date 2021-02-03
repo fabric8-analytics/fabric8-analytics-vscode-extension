@@ -25,7 +25,9 @@ let lspClient: LanguageClient;
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
+  // record extension startup 
   startUp()
+
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
@@ -45,6 +47,10 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   );
+  
+  //register separate stack report record commands for trigger point
+  registerStackReportCommands(context); 
+
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
@@ -100,6 +106,9 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       lspClient.onReady().then(() => {
+        // record CA
+        record('component_analysis_triggered');
+        
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
@@ -108,22 +117,13 @@ export function activate(context: vscode.ExtensionContext) {
 
         const showVulnerabilityFoundPrompt = async (msg: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
-          // telemetry
-          let event:TelemetryEvent = {
-            type: 'track', // type of telemetry event such as : identify, track, page, etc.
-            name: 'vulnerability_report_popup',
-            properties: {
-              opened: ''
-            },
-          }
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            event.properties.opened = true;
+            record('vulnerability_report_popup',{opened:true});
           }
           else {
-            event.properties.opened = false;
+            record('vulnerability_report_popup',{opened:false});
           }
-          record(event);
         };
 
         lspClient.onNotification('caNotification', respData => {
@@ -193,4 +193,44 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/${version}`));
     }
   }
+}
+
+function registerStackReportCommands(context:vscode.ExtensionContext) {
+  
+  let disposableFullStackStatusBar = vscode.commands.registerCommand(
+    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, 
+    (uri :vscode.Uri) => {
+    record('vulnerability_report_status_bar');
+    const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+    multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+  });
+
+  let disposableFullStackExplorer = vscode.commands.registerCommand(
+    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, 
+    (uri :vscode.Uri) => {
+    record('vulnerability_report_explorer');
+    const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+    multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+  });
+
+  let disposableFullStackPieBtn = vscode.commands.registerCommand(
+    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, 
+    () => {
+    record('vulnerability_report_pie_btn');
+    multimanifestmodule.dependencyAnalyticsReportFlow(context);
+  });
+
+  let disposableFullStackEditor = vscode.commands.registerCommand(
+    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, 
+    () => {
+    record('vulnerability_report_editor');
+    multimanifestmodule.dependencyAnalyticsReportFlow(context);
+  });
+
+  context.subscriptions.push(
+    disposableFullStackStatusBar,
+    disposableFullStackPieBtn,
+    disposableFullStackEditor,
+    disposableFullStackExplorer,
+  )
 }

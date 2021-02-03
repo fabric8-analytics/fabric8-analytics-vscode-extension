@@ -41,6 +41,7 @@
   "engines": {
     "vscode": "^1.49.0"
   },
+  "extensionDependencies": ["redhat.vscode-commons"],
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
     "workspaceContains:**/package.json",

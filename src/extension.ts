@@ -24,7 +24,6 @@ let lspClient: LanguageClient;
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
-  // record extension startup 
   startUp()
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
@@ -115,10 +114,10 @@ export function activate(context: vscode.ExtensionContext) {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record('vulnerability_report_popup',{opened:true});
+            record('vulnerability_report_popup_opened');
           }
           else {
-            record('vulnerability_report_popup',{opened:false});
+            record('vulnerability_report_popup_ignored');
           }
         };
 
@@ -154,7 +153,6 @@ export function initOutputChannel(): any {
 }
 
 export function deactivate(): Thenable<void> {
-  // record shutdown
   shutDown();
   if (!lspClient) {
     return undefined;
@@ -191,7 +189,7 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   }
 }
 
-function registerStackReportCommands(context:vscode.ExtensionContext) {
+function registerStackReportCommands(context: vscode.ExtensionContext) {
   
   let disposableFullStackStatusBar = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, 

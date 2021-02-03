@@ -14,13 +14,15 @@ export async function record(eventName: string, properties?: object) {
     name: eventName,
     properties: properties
   }
-  telemetryService.send(event);
+  await telemetryService.send(event);
 }
+
 export async function startUp() {
   const telemetryService: TelemetryService = await getTelemetryService("redhat.fabric8-analytics")
-  telemetryService.sendStartupEvent();
+  await telemetryService.sendStartupEvent();
 }
+
 export async function shutDown() {
   const telemetryService: TelemetryService = await getTelemetryService("redhat.fabric8-analytics")
-  telemetryService.sendShutdownEvent();
+  await telemetryService.sendShutdownEvent();
 }

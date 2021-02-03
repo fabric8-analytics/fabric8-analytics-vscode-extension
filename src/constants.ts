@@ -21,9 +21,6 @@ export const getRequestPollInterval = 2 * 1000; // ms
 // UTM
 export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
 
-/* 
-tracking event names
-*/
 export enum ActionName {
   componentAnalysisTriggered = 'component_analysis_triggered',
   vulnerabilityReportEditor = 'vulnerability_report_editor',
@@ -34,9 +31,6 @@ export enum ActionName {
   vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
 }
 
-/* 
-action-name and command mapping
-*/
 export const commandMapping = {
   vulnerabilityReportEditor : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
   vulnerabilityReportExplorer : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,

@@ -45,7 +45,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
   
-  //register separate stack report command and record actions
   for (const action in commandMapping) {
     if (Object.prototype.hasOwnProperty.call(commandMapping, action)) {
       const command = commandMapping[action];

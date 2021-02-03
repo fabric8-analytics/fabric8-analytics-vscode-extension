@@ -47,7 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
   
-  //register separate stack report record commands for trigger point
+  //register separate stack report command trigger points
   registerStackReportCommands(context); 
 
 
@@ -107,7 +107,6 @@ export function activate(context: vscode.ExtensionContext) {
       lspClient.onReady().then(() => {
         // record CA
         record('component_analysis_triggered');
-        
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());

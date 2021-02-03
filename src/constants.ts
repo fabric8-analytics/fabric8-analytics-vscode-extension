@@ -37,7 +37,7 @@ export enum ActionName {
 /* 
 action-name and command mapping
 */
-export const commandsMapping = {
+export const commandMapping = {
   vulnerabilityReportEditor : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
   vulnerabilityReportExplorer : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
   vulnerabilityReportPieBtn : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,

@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL, ActionName, commandsMapping } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL, ActionName, commandMapping } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -46,9 +46,9 @@ export function activate(context: vscode.ExtensionContext) {
   );
   
   //register separate stack report command and record actions
-  for (const action in commandsMapping) {
-    if (Object.prototype.hasOwnProperty.call(commandsMapping, action)) {
-      const command = commandsMapping[action];
+  for (const action in commandMapping) {
+    if (Object.prototype.hasOwnProperty.call(commandMapping, action)) {
+      const command = commandMapping[action];
       context.subscriptions.push(
         vscode.commands.registerCommand(command,
           (uri : vscode.Uri)=>{

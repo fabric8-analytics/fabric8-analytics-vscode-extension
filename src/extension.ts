@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL, ActionName } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL, ActionName, commandsMapping } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -45,8 +45,20 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
   
-  //register separate stack report command trigger points
-  registerStackReportCommands(context); 
+  //register separate stack report command and record actions
+  for (const action in commandsMapping) {
+    if (Object.prototype.hasOwnProperty.call(commandsMapping, action)) {
+      const command = commandsMapping[action];
+      context.subscriptions.push(
+        vscode.commands.registerCommand(command,
+          (uri : vscode.Uri)=>{
+            record(ActionName[action]);
+            const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+            multimanifestmodule.dependencyAnalyticsReportFlow(context,fileUri);
+      }))
+    }
+  }
+
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
@@ -186,44 +198,4 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/${version}`));
     }
   }
-}
-
-function registerStackReportCommands(context: vscode.ExtensionContext) {
-  
-  let disposableFullStackStatusBar = vscode.commands.registerCommand(
-    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, 
-    (uri :vscode.Uri) => {
-    record(ActionName.vulnerabilityReportStatusBar);
-    const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-    multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
-  });
-
-  let disposableFullStackExplorer = vscode.commands.registerCommand(
-    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, 
-    (uri :vscode.Uri) => {
-    record(ActionName.vulnerabilityReportExplorer);
-    const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-    multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
-  });
-
-  let disposableFullStackPieBtn = vscode.commands.registerCommand(
-    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, 
-    () => {
-    record(ActionName.vulnerabilityReportPieBtn);
-    multimanifestmodule.dependencyAnalyticsReportFlow(context);
-  });
-
-  let disposableFullStackEditor = vscode.commands.registerCommand(
-    Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, 
-    () => {
-    record(ActionName.vulnerabilityReportEditor);
-    multimanifestmodule.dependencyAnalyticsReportFlow(context);
-  });
-
-  context.subscriptions.push(
-    disposableFullStackStatusBar,
-    disposableFullStackPieBtn,
-    disposableFullStackEditor,
-    disposableFullStackExplorer,
-  )
 }

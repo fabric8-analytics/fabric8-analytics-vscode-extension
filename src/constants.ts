@@ -1,5 +1,5 @@
 'use strict';
-
+import { Commands } from "./commands";
 /**
  * Commonly used constants
  */
@@ -32,4 +32,14 @@ export enum ActionName {
   vulnerabilityReportPopupIgnored = 'vulnerability_report_popup_ignored',
   vulnerabilityReportPieBtn = 'vulnerability_report_pie_btn',
   vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
+}
+
+/* 
+action-name and command mapping
+*/
+export const commandsMapping = {
+  vulnerabilityReportEditor : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
+  vulnerabilityReportExplorer : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
+  vulnerabilityReportPieBtn : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
+  vulnerabilityReportStatusBar : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
 }

@@ -54,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
           (uri : vscode.Uri)=>{
             record(ActionName[action]);
             const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-            multimanifestmodule.dependencyAnalyticsReportFlow(context,fileUri);
+            multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
       }))
     }
   }

@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL, ActionName } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -102,8 +102,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       lspClient.onReady().then(() => {
-        // record CA
-        record('component_analysis_triggered');
+        record(ActionName.componentAnalysisTriggered);
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
@@ -114,10 +113,10 @@ export function activate(context: vscode.ExtensionContext) {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record('vulnerability_report_popup_opened');
+            record(ActionName.vulnerabilityReportPopupOpened);
           }
           else {
-            record('vulnerability_report_popup_ignored');
+            record(ActionName.vulnerabilityReportPopupIgnored);
           }
         };
 
@@ -194,7 +193,7 @@ function registerStackReportCommands(context: vscode.ExtensionContext) {
   let disposableFullStackStatusBar = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, 
     (uri :vscode.Uri) => {
-    record('vulnerability_report_status_bar');
+    record(ActionName.vulnerabilityReportStatusBar);
     const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
     multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
   });
@@ -202,7 +201,7 @@ function registerStackReportCommands(context: vscode.ExtensionContext) {
   let disposableFullStackExplorer = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, 
     (uri :vscode.Uri) => {
-    record('vulnerability_report_explorer');
+    record(ActionName.vulnerabilityReportExplorer);
     const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
     multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
   });
@@ -210,14 +209,14 @@ function registerStackReportCommands(context: vscode.ExtensionContext) {
   let disposableFullStackPieBtn = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, 
     () => {
-    record('vulnerability_report_pie_btn');
+    record(ActionName.vulnerabilityReportPieBtn);
     multimanifestmodule.dependencyAnalyticsReportFlow(context);
   });
 
   let disposableFullStackEditor = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, 
     () => {
-    record('vulnerability_report_editor');
+    record(ActionName.vulnerabilityReportEditor);
     multimanifestmodule.dependencyAnalyticsReportFlow(context);
   });
 

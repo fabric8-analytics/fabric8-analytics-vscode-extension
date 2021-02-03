@@ -20,3 +20,16 @@ export const getRequestTimeout = 120 * 1000; // ms
 export const getRequestPollInterval = 2 * 1000; // ms
 // UTM
 export const registrationURL = "https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register";
+
+/* 
+tracking event names
+*/
+export enum ActionName {
+  componentAnalysisTriggered = 'component_analysis_triggered',
+  vulnerabilityReportEditor = 'vulnerability_report_editor',
+  vulnerabilityReportExplorer = 'vulnerability_report_explorer',
+  vulnerabilityReportPopupOpened = 'vulnerability_report_popup_opened',
+  vulnerabilityReportPopupIgnored = 'vulnerability_report_popup_ignored',
+  vulnerabilityReportPieBtn = 'vulnerability_report_pie_btn',
+  vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
+}

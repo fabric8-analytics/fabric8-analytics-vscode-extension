@@ -41,11 +41,11 @@ class CANotification {
 
   private vulnCountText(): string {
     const vulns = this.vulnerabilityCount + this.advisoryCount;
-    return vulns > 0 ? `${vulns} ${vulns == 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
+    return vulns > 0 ? `${vulns} ${vulns === 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
   }
 
   private exploitCountText(): string {
-    return this.exploitCount > 0 ? `${this.exploitCount} exploit${this.exploitCount == 1 ? '' : 's'}` : ``;
+    return this.exploitCount > 0 ? `${this.exploitCount} exploit${this.exploitCount === 1 ? '' : 's'}` : ``;
   }
 
   public statusText(): string {

@@ -1,5 +1,5 @@
 'use strict';
-import { Commands } from "./commands";
+import { Commands } from './commands';
 /**
  * Commonly used constants
  */
@@ -19,7 +19,7 @@ export const getRequestTimeout = 120 * 1000; // ms
 // GET request polling frequency
 export const getRequestPollInterval = 2 * 1000; // ms
 // UTM
-export const registrationURL = "https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register";
+export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
 
 /* 
 tracking event names
@@ -42,4 +42,4 @@ export const commandMapping = {
   vulnerabilityReportExplorer : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
   vulnerabilityReportPieBtn : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
   vulnerabilityReportStatusBar : Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
-}
+};

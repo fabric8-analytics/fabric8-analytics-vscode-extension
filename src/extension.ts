@@ -17,14 +17,14 @@ import { StatusMessages } from './statusMessages';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
-import { record, shutDown, startUp } from './redhatTelemetry'
+import { record, shutDown, startUp } from './redhatTelemetry';
 
 let lspClient: LanguageClient;
 
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
-  startUp()
+  startUp();
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
             record(ActionName[action]);
             const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
             multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
-      }))
+      }));
     }
   }
 
@@ -119,7 +119,7 @@ export function activate(context: vscode.ExtensionContext) {
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
           return notification.hasWarning() && !hasAlreadyShown;
-        }
+        };
 
         const showVulnerabilityFoundPrompt = async (msg: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
@@ -177,8 +177,9 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   const version = packageJSON.version;
   const previousVersion = context.globalState.get<string>(GlobalState.Version);
   // Nothing to display
-  if (version === previousVersion)
+  if (version === previousVersion){
     return;
+  }
 
   // store current version into localStorage
   context.globalState.update(GlobalState.Version, version);
@@ -191,7 +192,7 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
     ...actions
   );
 
-  if (result != null) {
+  if (result !== null) {
     if (result === actions[0]) {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(packageJSON.homepage));
     } else if (result === actions[1]) {

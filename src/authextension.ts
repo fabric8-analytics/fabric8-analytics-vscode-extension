@@ -1,7 +1,7 @@
 'use strict';
 
 import { GlobalState } from './constants';
-import fetch from 'node-fetch'
+import fetch from 'node-fetch';
 import { Config } from './config';
 
 export module authextension {
@@ -18,7 +18,7 @@ export module authextension {
 
   export function setUUID(uuid) {
     process.env['UUID'] = uuid;
-  };
+  }
 
   export const authorize_f8_analytics = async context => {
     try {
@@ -26,7 +26,7 @@ export module authextension {
 
       let uuid = context.globalState.get(GlobalState.UUID);
 
-      if (uuid && uuid != '') {
+      if (uuid && uuid !== '') {
         setUUID(uuid);
       } else {
         uuid = await getUUID();

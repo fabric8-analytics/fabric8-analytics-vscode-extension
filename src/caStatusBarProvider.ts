@@ -1,9 +1,9 @@
 'use strict';
 
-import { StatusBarItem, window, StatusBarAlignment, Uri } from "vscode";
-import { Disposable } from "vscode-languageclient";
-import { StatusMessages } from "./statusMessages";
-import { Commands } from "./commands";
+import { StatusBarItem, window, StatusBarAlignment, Uri } from 'vscode';
+import { Disposable } from 'vscode-languageclient';
+import { StatusMessages } from './statusMessages';
+import { Commands } from './commands';
 
 class CAStatusBarProvider implements Disposable {
     private statusBarItem: StatusBarItem;

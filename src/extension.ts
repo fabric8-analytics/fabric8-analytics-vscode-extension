@@ -18,7 +18,6 @@ import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
 import { record, shutDown, startUp } from './redhatTelemetry'
-import { TelemetryEvent } from '@redhat-developer/vscode-redhat-telemetry/lib';
 
 let lspClient: LanguageClient;
 

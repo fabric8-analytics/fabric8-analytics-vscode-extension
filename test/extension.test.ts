@@ -22,6 +22,10 @@ suite('Fabric8 Analytics Extension', () => {
     return vscode.commands.getCommands(true).then(commands => {
       const FABRIC8_COMMANDS: string[] = [
         Commands.TRIGGER_FULL_STACK_ANALYSIS,
+        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
+        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
+        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
+        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
         Commands.TRIGGER_STACK_LOGS
       ];
       let foundFabric8Commands = commands.filter(function (value) {

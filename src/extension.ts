@@ -26,7 +26,6 @@ export let outputChannelDep: any;
 export function activate(context: vscode.ExtensionContext) {
   // record extension startup 
   startUp()
-
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
@@ -49,7 +48,6 @@ export function activate(context: vscode.ExtensionContext) {
   
   //register separate stack report command trigger points
   registerStackReportCommands(context); 
-
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);

@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * Commonly used constants
  */
@@ -19,4 +18,4 @@ export const getRequestTimeout = 120 * 1000; // ms
 // GET request polling frequency
 export const getRequestPollInterval = 2 * 1000; // ms
 // UTM
-export const registrationURL = "https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register";
+export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';

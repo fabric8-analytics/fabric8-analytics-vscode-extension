@@ -103,7 +103,7 @@ export class DependencyReportPanel {
       portal_uri = `${apiConfig.stackReportUIHost}#/analyze/${data.external_request_id
         }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${apiConfig.host
         }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${apiConfig.apiKey}"}`;
-      console.log("portal_uri", portal_uri);
+      console.log('portal_uri', portal_uri);
       r += render_stack_iframe(portal_uri);
       r += footer;
       this._panel.webview.html = r;

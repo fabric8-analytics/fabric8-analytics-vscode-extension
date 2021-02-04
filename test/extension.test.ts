@@ -5,8 +5,7 @@ import { Commands } from '../src/commands';
 
 suite('Fabric8 Analytics Extension', () => {
   test('Extension should be present', () => {
-    const analytics = vscode.extensions.getExtension('redhat.fabric8-analytics')
-    assert.ok(analytics);
+    assert.ok(vscode.extensions.getExtension('redhat.fabric8-analytics'));
   });
 
   test('should activate', async function () {

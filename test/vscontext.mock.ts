@@ -12,7 +12,7 @@ class DummyMemento implements vscode.Memento {
   }
   public setKeysForSync(keys: string[]): void {
     return;
-}
+  }
 }
 
 export const context: vscode.ExtensionContext = {

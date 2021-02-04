@@ -11,14 +11,11 @@ async function main() {
         // The folder containing the Extension Manifest package.json
         // Passed to `--extensionDevelopmentPath`
         const extensionDevelopmentPath = path.resolve(__dirname, '../../');
-        
         // The path to the extension test script
         // Passed to --extensionTestsPath
         const extensionTestsPath = path.resolve(__dirname, './');
-        
         const vscodeExecutablePath = await downloadAndUnzipVSCode('1.50.0');
-        const cliPath = resolveCliPathFromVSCodeExecutablePath(vscodeExecutablePath);
-    
+        const cliPath = resolveCliPathFromVSCodeExecutablePath(vscodeExecutablePath)
         // Use cp.spawn / cp.exec for custom setup
         cp.spawnSync(cliPath, ['--install-extension', 'redhat.vscode-commons'], {
           encoding: 'utf-8',

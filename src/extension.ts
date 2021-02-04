@@ -10,14 +10,14 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL, ActionName } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
-import { record, shutDown, startUp } from './redhatTelemetry';
+import { record, shutDown, startUp, TelemetryActions } from './redhatTelemetry';
 
 let lspClient: LanguageClient;
 
@@ -45,29 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-const invokeFullStackReport = (uri : vscode.Uri) => {
-  const fileUri = uri || vscode.window.activeTextEditor.document.uri;
-  multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
-};
-
-const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
-  record(origin);
-  invokeFullStackReport(uri);
-};
-
-const registerCommand = (cmd: string, action: Action) => {
-    return vscode.commands.registerCommand(cmd, recordAndInvoke.bind(null, action));
-};
-
-const stackAnalysisCommands = [
-  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, Action.vulnerabilityReportEditor),
-  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, Action.vulnerabilityReportExplorer),
-  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, Action.vulnerabilityReportPieBtn),
-  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, Action.vulnerabilityReportStatusBar),
-];
-
-
-
+  registerStackAnalysisCommands(context);
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
@@ -123,7 +101,7 @@ const stackAnalysisCommands = [
       );
 
       lspClient.onReady().then(() => {
-        record(ActionName.componentAnalysisTriggered);
+        record(TelemetryActions.componentAnalysisTriggered);
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
@@ -134,10 +112,10 @@ const stackAnalysisCommands = [
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record(ActionName.vulnerabilityReportPopupOpened);
+            record(TelemetryActions.vulnerabilityReportPopupOpened);
           }
           else {
-            record(ActionName.vulnerabilityReportPopupIgnored);
+            record(TelemetryActions.vulnerabilityReportPopupIgnored);
           }
         };
 
@@ -162,7 +140,6 @@ const stackAnalysisCommands = [
         disposableFullStack,
         disposableStackLogs,
         caStatusBarProvider,
-        ...stackAnalysisCommands,
       );
     }
   });
@@ -209,4 +186,29 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/${version}`));
     }
   }
+}
+
+function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
+  const invokeFullStackReport = (uri : vscode.Uri) => {
+    const fileUri = uri || vscode.window.activeTextEditor.document.uri;
+    multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+  };
+
+  const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
+    record(origin);
+    invokeFullStackReport(uri);
+  };
+
+  const registerCommand = (cmd: string, action: TelemetryActions) => {
+      return vscode.commands.registerCommand(cmd, recordAndInvoke.bind(null, action));
+  };
+
+  const stackAnalysisCommands = [
+    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, TelemetryActions.vulnerabilityReportEditor),
+    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, TelemetryActions.vulnerabilityReportExplorer),
+    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, TelemetryActions.vulnerabilityReportPieBtn),
+    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, TelemetryActions.vulnerabilityReportStatusBar),
+  ];
+
+  context.subscriptions.push(...stackAnalysisCommands);
 }

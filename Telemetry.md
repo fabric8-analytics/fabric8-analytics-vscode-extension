@@ -1,7 +1,6 @@
-## [Dependency Analytics](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
+## [Dependency Analytics](https://github.com/fabric8-analytics)
 
 ### Usage Data
-
 
 * when extension is started
 * when extension analyse dependency file for vulnerability(s)  

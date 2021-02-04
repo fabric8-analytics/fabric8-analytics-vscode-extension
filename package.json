@@ -6,7 +6,7 @@
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
-  "extensionDependencies": [
+  "extensionPack": [
     "redhat.vscode-commons"
   ],
   "contributors": [

@@ -55,12 +55,18 @@ const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
   invokeFullStackReport(uri);
 };
 
+const registerCommand = (cmd: string, action: Action) => {
+    return vscode.commands.registerCommand(cmd, recordAndInvoke.bind(null, action));
+};
+
 const stackAnalysisCommands = [
-  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, recordAndInvoke.bind(null, ActionName.vulnerabilityReportEditor)),
-  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, recordAndInvoke.bind(null, ActionName.vulnerabilityReportExplorer)),
-  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, recordAndInvoke.bind(null, ActionName.vulnerabilityReportPieBtn)),
-  vscode.commands.registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, recordAndInvoke.bind(null, ActionName.vulnerabilityReportStatusBar)),
+  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, Action.vulnerabilityReportEditor),
+  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, Action.vulnerabilityReportExplorer),
+  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, Action.vulnerabilityReportPieBtn),
+  registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, Action.vulnerabilityReportStatusBar),
 ];
+
+
 
 
   // show welcome message after first install or upgrade

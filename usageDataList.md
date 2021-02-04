@@ -2,7 +2,6 @@
 
 ### Usage Data
 
-list of Actions recorded
 
 * when extension is started
 * when extension analyse dependency file for vulnerability(s)  

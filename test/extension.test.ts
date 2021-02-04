@@ -3,9 +3,15 @@ import * as vscode from 'vscode';
 
 import { Commands } from '../src/commands';
 
+const sleep = (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 suite('Fabric8 Analytics Extension', () => {
   test('Extension should be present', () => {
-    assert.ok(vscode.extensions.getExtension('redhat.fabric8-analytics'));
+    const analytics = vscode.extensions.getExtension('redhat.fabric8-analytics')
+    sleep(10000)
+    assert.ok(analytics);
   });
 
   test('should activate', async function () {
@@ -15,6 +21,7 @@ suite('Fabric8 Analytics Extension', () => {
       .activate();
     assert.ok(true);
   });
+
 
   test('should register all fabric8 commands', async function () {
     const commands = await vscode.commands.getCommands(true);

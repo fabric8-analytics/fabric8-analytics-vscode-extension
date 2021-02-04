@@ -49,6 +49,7 @@
     "workspaceContains:**/go.mod"
   ],
   "main": "./dist/extension",
+  "extensionDependencies": ["redhat.vscode-commons"],
   "contributes": {
     "languages": [
       {

@@ -3,14 +3,9 @@ import * as vscode from 'vscode';
 
 import { Commands } from '../src/commands';
 
-const sleep = (ms: number): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-
 suite('Fabric8 Analytics Extension', () => {
   test('Extension should be present', () => {
     const analytics = vscode.extensions.getExtension('redhat.fabric8-analytics')
-    sleep(10000)
     assert.ok(analytics);
   });
 

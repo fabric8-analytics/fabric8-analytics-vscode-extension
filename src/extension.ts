@@ -128,7 +128,6 @@ export function activate(context: vscode.ExtensionContext) {
           }
           notification.isDone() &&
           record(TelemetryActions.componentAnalysisTriggered, {depFileName: path.basename(vscode.window.activeTextEditor.document.fileName)});
-          
         });
 
         lspClient.onNotification('caError', respData => {

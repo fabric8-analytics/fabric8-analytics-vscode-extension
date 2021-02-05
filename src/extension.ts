@@ -127,14 +127,14 @@ export function activate(context: vscode.ExtensionContext) {
             notifiedFiles.add(notification.origin());
           }
           notification.isDone() &&
-          record(TelemetryActions.componentAnalysisTriggered, {depFileName: path.basename(vscode.window.activeTextEditor.document.fileName)});
+          record(TelemetryActions.componentAnalysisTriggered, {fileName: notification.origin().split('/').reverse()[0]});
         });
 
         lspClient.onNotification('caError', respData => {
-          record(TelemetryActions.componentAnalysisFailed, {depFileName: path.basename(vscode.window.activeTextEditor.document.fileName), error: respData.data});
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);
+          record(TelemetryActions.componentAnalysisFailed, {fileName: notification.origin().split('/').reverse()[0]});
         });
       });
       context.subscriptions.push(

@@ -2,6 +2,7 @@ import { getTelemetryService, TelemetryEvent, TelemetryService } from '@redhat-d
 
 export enum TelemetryActions {
   componentAnalysisTriggered = 'component_analysis_triggered',
+  componentAnalysisFailed = 'component_analysis_failed',
   vulnerabilityReportEditor = 'vulnerability_report_editor',
   vulnerabilityReportExplorer = 'vulnerability_report_explorer',
   vulnerabilityReportPopupOpened = 'vulnerability_report_popup_opened',

@@ -101,7 +101,6 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       lspClient.onReady().then(() => {
-        record(TelemetryActions.componentAnalysisTriggered, {depFileName: vscode.window.activeTextEditor.document.uri.fsPath.split('/').reverse()[0]});
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
@@ -127,9 +126,13 @@ export function activate(context: vscode.ExtensionContext) {
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }
+          if (notification.isDone()) {
+          record(TelemetryActions.componentAnalysisTriggered, {depFileName: path.basename(vscode.window.activeTextEditor.document.fileName)});
+          }
         });
 
         lspClient.onNotification('caError', respData => {
+          record(TelemetryActions.componentAnalysisFailed, {error: respData.error});
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);

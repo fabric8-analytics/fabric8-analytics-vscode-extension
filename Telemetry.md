@@ -4,6 +4,7 @@
 
 * when extension is started
 * when extension analyse dependency file for vulnerability(s) and file name 
+* when extension analyse dependency file fails and error message
 * when extension vulnerability summary pop-up is closed
 * when extension launches vulnerability report from notification pop-up 
 * when extension launches vulnerability report from editor right click

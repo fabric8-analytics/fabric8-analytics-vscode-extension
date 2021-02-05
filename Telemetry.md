@@ -3,7 +3,7 @@
 ### Usage Data
 
 * when extension is started
-* when extension analyse dependency file for vulnerability(s)  
+* when extension analyse dependency file for vulnerability(s) and file name 
 * when extension vulnerability summary pop-up is closed
 * when extension launches vulnerability report from notification pop-up 
 * when extension launches vulnerability report from editor right click

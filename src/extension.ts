@@ -126,9 +126,9 @@ export function activate(context: vscode.ExtensionContext) {
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }
-          if (notification.isDone()) {
+          notification.isDone() &&
           record(TelemetryActions.componentAnalysisTriggered, {depFileName: path.basename(vscode.window.activeTextEditor.document.fileName)});
-          }
+          
         });
 
         lspClient.onNotification('caError', respData => {

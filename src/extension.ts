@@ -134,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);
-          record(TelemetryActions.componentAnalysisFailed, {fileName: notification.origin().split('/').reverse()[0]});
+          record(TelemetryActions.componentAnalysisFailed, {fileName: notification.origin().split('/').reverse()[0], error: respData.data});
         });
       });
       context.subscriptions.push(

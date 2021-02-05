@@ -131,7 +131,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
 
         lspClient.onNotification('caError', respData => {
-          record(TelemetryActions.componentAnalysisFailed, {error: respData.error});
+          record(TelemetryActions.componentAnalysisFailed, {depFileName: path.basename(vscode.window.activeTextEditor.document.fileName), error: respData.data});
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);

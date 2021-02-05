@@ -101,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       lspClient.onReady().then(() => {
-        record(TelemetryActions.componentAnalysisTriggered);
+        record(TelemetryActions.componentAnalysisTriggered, {depFileName: vscode.window.activeTextEditor.document.uri.fsPath.split('/').reverse()[0]});
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());

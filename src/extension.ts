@@ -127,7 +127,7 @@ export function activate(context: vscode.ExtensionContext) {
             notifiedFiles.add(notification.origin());
           }
           notification.isDone() &&
-          record(TelemetryActions.componentAnalysisTriggered, {fileName: path.basename(notification.origin())});
+          record(TelemetryActions.componentAnalysisDone, {fileName: path.basename(notification.origin())});
         });
 
         lspClient.onNotification('caError', respData => {

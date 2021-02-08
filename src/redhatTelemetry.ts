@@ -13,7 +13,7 @@ export enum TelemetryActions {
 
 let telemetryServiceObj: TelemetryService;
 async function telemetryService(): Promise<TelemetryService> {
-  if(!telemetryService) {
+  if(!telemetryServiceObj) {
     telemetryServiceObj = await getTelemetryService('redhat.fabric8-analytics');
   }
   return telemetryServiceObj;

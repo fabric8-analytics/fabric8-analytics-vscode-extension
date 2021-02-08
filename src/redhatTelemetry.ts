@@ -1,7 +1,7 @@
 import { getTelemetryService, TelemetryEvent, TelemetryService } from '@redhat-developer/vscode-redhat-telemetry';
 
 export enum TelemetryActions {
-  componentAnalysisTriggered = 'component_analysis_triggered',
+  componentAnalysisDone = 'component_analysis_done',
   componentAnalysisFailed = 'component_analysis_failed',
   vulnerabilityReportEditor = 'vulnerability_report_editor',
   vulnerabilityReportExplorer = 'vulnerability_report_explorer',

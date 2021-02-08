@@ -101,7 +101,6 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       lspClient.onReady().then(() => {
-        record(TelemetryActions.componentAnalysisTriggered);
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
@@ -127,12 +126,14 @@ export function activate(context: vscode.ExtensionContext) {
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }
+          record(TelemetryActions.componentAnalysisTriggered, {fileName: path.basename(notification.origin()), completed: notification.isDone()});
         });
 
         lspClient.onNotification('caError', respData => {
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);
+          record(TelemetryActions.componentAnalysisFailed, {fileName: path.basename(notification.origin()), error: respData.data});
         });
       });
       context.subscriptions.push(

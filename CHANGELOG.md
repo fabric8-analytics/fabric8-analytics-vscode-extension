@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.3.2 (February 9th, 2021)
+- enhancement - Usage data collection to enhance extension. For more details view [privacy statement](https://developers.redhat.com/article/tool-data-collection) and [usage data doc](Telemetry.md). See [#489](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/486) [#487](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/487) [#488](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/488)
 ## 0.3.1 (January 21st, 2021)
 
 - fixes - status bar icon tries to open a report for the currently opened file. See [#478](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/478) [#479](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/479)

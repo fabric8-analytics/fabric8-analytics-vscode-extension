@@ -17,7 +17,6 @@ suite('Fabric8 Analytics Extension', () => {
 
 
   test('should register all fabric8 commands', async function () {
-    const commands = await vscode.commands.getCommands(true);
     const FABRIC8_COMMANDS: string[] = [
       Commands.TRIGGER_FULL_STACK_ANALYSIS,
       Commands.TRIGGER_STACK_LOGS,
@@ -26,13 +25,7 @@ suite('Fabric8 Analytics Extension', () => {
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
     ];
-    let foundFabric8Commands = commands.filter(function (value) {
-      return (
-        FABRIC8_COMMANDS.indexOf(value) >= 0 ||
-        value.startsWith('extension.fabric8')
-      );
-    });
-    assert.deepStrictEqual(FABRIC8_COMMANDS, foundFabric8Commands);
+    assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
   });
 
   test('should trigger fabric8-analytics full stack report activate', async () => {

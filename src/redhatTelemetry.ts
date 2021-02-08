@@ -20,14 +20,16 @@ async function telemetryService(): Promise<TelemetryService> {
 }
 
 export async function record(eventName: string, properties?: object) {
+  const telemetryServiceObj: TelemetryService = await telemetryService();
   let event:TelemetryEvent={
     type: 'track',
     name: eventName,
     properties: properties
   };
-  await (await telemetryService())?.send(event);
+  await telemetryServiceObj?.send(event);
 }
 
 export async function startUp() {
-  await (await telemetryService())?.sendStartupEvent();
+  const telemetryServiceObj: TelemetryService = await telemetryService();
+  await telemetryServiceObj?.sendStartupEvent();
 }

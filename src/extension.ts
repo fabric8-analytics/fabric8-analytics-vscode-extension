@@ -17,7 +17,7 @@ import { StatusMessages } from './statusMessages';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
-import { record, shutDown, startUp, TelemetryActions } from './redhatTelemetry';
+import { record, startUp, TelemetryActions } from './redhatTelemetry';
 
 let lspClient: LanguageClient;
 
@@ -153,7 +153,6 @@ export function initOutputChannel(): any {
 }
 
 export function deactivate(): Thenable<void> {
-  shutDown();
   if (!lspClient) {
     return undefined;
   }

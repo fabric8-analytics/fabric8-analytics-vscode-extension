@@ -6,6 +6,9 @@
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
+  "extensionDependencies": [
+    "redhat.vscode-commons"
+  ],
   "contributors": [
     {
       "name": "Jaivardhan Kumar",
@@ -39,7 +42,7 @@
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
-    "vscode": "^1.49.0"
+    "vscode": "^1.50.0"
   },
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
@@ -240,7 +243,7 @@
     "@types/mocha": "^5.2.0",
     "@types/node": "^12.12.0",
     "@types/sinon": "^7.5.0",
-    "@types/vscode": "^1.47.0",
+    "@types/vscode": "^1.50.0",
     "chai": "^4.1.2",
     "decache": "^4.4.0",
     "glob": "^7.1.3",

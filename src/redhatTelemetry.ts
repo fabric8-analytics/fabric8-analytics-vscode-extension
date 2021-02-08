@@ -11,9 +11,9 @@ export enum TelemetryActions {
   vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
 }
 
+let telemetryServiceObj: TelemetryService;
 async function telemetryService(): Promise<TelemetryService> {
-  let telemetryServiceObj: TelemetryService;
-  if(telemetryService) {
+  if(!telemetryService) {
     telemetryServiceObj = await getTelemetryService('redhat.fabric8-analytics');
   }
   return telemetryServiceObj;
@@ -30,8 +30,4 @@ export async function record(eventName: string, properties?: object) {
 
 export async function startUp() {
   await (await telemetryService())?.sendStartupEvent();
-}
-
-export async function shutDown() {
-  await (await telemetryService())?.sendShutdownEvent();
 }

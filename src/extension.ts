@@ -152,7 +152,6 @@ export function initOutputChannel(): any {
 }
 
 export function deactivate(): Thenable<void> {
-  shutDown();
   if (!lspClient) {
     return undefined;
   }

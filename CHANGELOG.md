@@ -1,6 +1,7 @@
 # Change Log
 
 ## 0.3.2 (February 9th, 2021)
+- enhancement - Get python path from ms-python extension. See [#485](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/485) 
 - enhancement - Usage data collection to enhance extension. For more details view [privacy statement](https://developers.redhat.com/article/tool-data-collection) and [usage data doc](Telemetry.md). See [#489](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/486) [#487](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/487) [#488](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/488)
 ## 0.3.1 (January 21st, 2021)
 

@@ -8,38 +8,25 @@ suite('Fabric8 Analytics Extension', () => {
     assert.ok(vscode.extensions.getExtension('redhat.fabric8-analytics'));
   });
 
-  test('should activate', function () {
-    this.timeout(1 * 60 * 1000);
-    return vscode.extensions
+  test('should activate', async () => {
+    const api = await vscode.extensions
       .getExtension('redhat.fabric8-analytics')
-      .activate()
-      .then(api => {
-        assert.ok(true);
-      });
-  });
+      .activate();
+    assert.ok(true);
+  }).timeout(1 * 60 * 1000);
 
-  test('should register all fabric8 commands', function () {
-    return vscode.commands.getCommands(true).then(commands => {
-      const FABRIC8_COMMANDS: string[] = [
-        Commands.TRIGGER_FULL_STACK_ANALYSIS,
-        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
-        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
-        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
-        Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
-        Commands.TRIGGER_STACK_LOGS
-      ];
-      let foundFabric8Commands = commands.filter(function (value) {
-        return (
-          FABRIC8_COMMANDS.indexOf(value) >= 0 ||
-          value.startsWith('extension.fabric8')
-        );
-      });
-      assert.equal(
-        foundFabric8Commands.length,
-        FABRIC8_COMMANDS.length,
-        'Some fabric8 commands are not registered properly or a new command is not added to the test'
-      );
-    });
+  
+  test('should register all fabric8 commands', async function () {
+    const FABRIC8_COMMANDS: string[] = [
+      Commands.TRIGGER_FULL_STACK_ANALYSIS,
+      Commands.TRIGGER_STACK_LOGS,
+      Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
+      Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
+      Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
+      Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
+    ];
+    // @ts-ignore
+    assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
   });
 
   test('should trigger fabric8-analytics full stack report activate', async () => {

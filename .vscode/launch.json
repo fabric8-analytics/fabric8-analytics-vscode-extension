@@ -10,10 +10,14 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceFolder}" ],
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			"outFiles": ["${workspaceFolder}/dist/*.js"],
+			"outFiles": [
+				"${workspaceFolder}/dist/*.js"
+			],
 			"preLaunchTask": "npm: webpack-dev"
 		},
 		{
@@ -21,10 +25,16 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"args": ["${workspaceFolder}/test/resources/sampleNodeApp/", "--disable-extensions", "--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
+			"args": [
+				"${workspaceFolder}/test/resources/sampleNodeApp/",
+				"--extensionDevelopmentPath=${workspaceRoot}",
+				"--extensionTestsPath=${workspaceRoot}/out/test"
+			],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			"outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+			"outFiles": [
+				"${workspaceFolder}/out/test/**/*.js"
+			],
 			"preLaunchTask": "npm: test-compile"
 		},
 		{
@@ -34,7 +44,9 @@
 			"port": 6009,
 			"restart": true,
 			"sourceMaps": true,
-			"outFiles": ["${workspaceFolder}/dist/server.js"]
+			"outFiles": [
+				"${workspaceFolder}/dist/server.js"
+			]
 		}
 	]
 }

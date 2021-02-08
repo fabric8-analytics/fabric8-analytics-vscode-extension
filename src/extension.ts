@@ -17,7 +17,7 @@ import { StatusMessages } from './statusMessages';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
-import { record, shutDown, startUp, TelemetryActions } from './redhatTelemetry';
+import { record, startUp, TelemetryActions } from './redhatTelemetry';
 
 let lspClient: LanguageClient;
 
@@ -126,7 +126,8 @@ export function activate(context: vscode.ExtensionContext) {
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }
-          record(TelemetryActions.componentAnalysisTriggered, {fileName: path.basename(notification.origin()), completed: notification.isDone()});
+          notification.isDone() &&
+          record(TelemetryActions.componentAnalysisDone, {fileName: path.basename(notification.origin())});
         });
 
         lspClient.onNotification('caError', respData => {
@@ -152,7 +153,6 @@ export function initOutputChannel(): any {
 }
 
 export function deactivate(): Thenable<void> {
-  shutDown();
   if (!lspClient) {
     return undefined;
   }

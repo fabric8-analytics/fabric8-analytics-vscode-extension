@@ -15,7 +15,7 @@ suite('Fabric8 Analytics Extension', () => {
     assert.ok(true);
   }).timeout(1 * 60 * 1000);
 
-
+  
   test('should register all fabric8 commands', async function () {
     const FABRIC8_COMMANDS: string[] = [
       Commands.TRIGGER_FULL_STACK_ANALYSIS,
@@ -25,6 +25,7 @@ suite('Fabric8 Analytics Extension', () => {
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
     ];
+    // @ts-ignore
     assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
   });
 

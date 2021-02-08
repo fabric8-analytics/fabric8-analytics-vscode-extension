@@ -6,6 +6,9 @@
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
+  "extensionDependencies": [
+    "redhat.vscode-commons"
+  ],
   "contributors": [
     {
       "name": "Jaivardhan Kumar",
@@ -39,7 +42,7 @@
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
-    "vscode": "^1.49.0"
+    "vscode": "^1.50.0"
   },
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidgetFullStack",
@@ -240,7 +243,7 @@
     "@types/mocha": "^5.2.0",
     "@types/node": "^12.12.0",
     "@types/sinon": "^7.5.0",
-    "@types/vscode": "^1.47.0",
+    "@types/vscode": "^1.50.0",
     "chai": "^4.1.2",
     "decache": "^4.4.0",
     "glob": "^7.1.3",
@@ -260,7 +263,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@redhat-developer/vscode-redhat-telemetry": "0.0.12",
+    "@redhat-developer/vscode-redhat-telemetry": "0.0.13",
     "fabric8-analytics-lsp-server": "^0.4.20",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",

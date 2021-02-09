@@ -8,7 +8,7 @@ const glob = require('glob');
 module.exports = (env, argv) => {
   let entry = {
     'extension': './src/extension.ts',
-    'server': './node_modules/fabric8-analytics-lsp-server/server.js',
+    'server': './node_modules/fabric8-analytics-lsp-server/dist/server.js',
   };
   // debug
   if (argv.mode !== 'production') {

@@ -14,10 +14,19 @@ export module authextension {
     process.env['THREE_SCALE_USER_TOKEN'] = apiConfig.apiKey;
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
     process.env['GOLANG_EXECUTABLE'] = Config.getGoExecutable();
+    process.env['user_agent'] = 'vs-code';
   };
 
   export function setUUID(uuid) {
     process.env['UUID'] = uuid;
+  }
+
+  export function setRequestID(request_id) {
+    process.env['request_id'] = request_id;
+  }
+
+  export function setManifestHash(manifest_hash) {
+    process.env['manifest_hash'] = manifest_hash;
   }
 
   export const authorize_f8_analytics = async context => {

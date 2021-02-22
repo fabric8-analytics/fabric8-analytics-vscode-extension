@@ -21,10 +21,6 @@ export module authextension {
     process.env['UUID'] = uuid;
   }
 
-  export function setRequestID(request_id) {
-    process.env['request_id'] = request_id;
-  }
-
   export function setManifestHash(manifest_hash) {
     process.env['manifest_hash'] = manifest_hash;
   }

@@ -65,6 +65,7 @@ export module multimanifestmodule {
               strSplit = '\\';
             }
             filePath = fsPath.replace(filePathSplit, '');
+            authextension.setManifestHash(filePath);
             if (
               filePath &&
               typeof filePath === 'string' &&

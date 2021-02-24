@@ -2,7 +2,6 @@
 
 import { GlobalState } from './constants';
 import fetch from 'node-fetch';
-import * as crypto from "crypto";
 import { Config } from './config';
 
 export module authextension {
@@ -20,16 +19,6 @@ export module authextension {
 
   export function setUUID(uuid) {
     process.env['UUID'] = uuid;
-    console.log(uuid)
-    console.log("...................................................")
-  }
-
-  export function setManifestHash(manifest_path) {
-    //process.env['manifest_hash'] = crypto
-    //.createHash("sha1").update(manifest_path).digest("hex");
-    process.env['manifest_hash'] = manifest_path
-    console.log(manifest_path)
-    console.log("...................................................")
   }
 
   export const authorize_f8_analytics = async context => {

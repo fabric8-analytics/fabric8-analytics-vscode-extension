@@ -192,7 +192,7 @@
         },
         "dependencyAnalytics.host": {
           "type": "string",
-          "default": "http://bayesian-api-rafiu-code-ready-development-analytics.apps.ocp.lab.psi.redhat.com",
+          "default": "https: //f8a-analytics-2445582058137.production.gw.apicast.io",
           "description": "Host name of Dependency Analytics server.",
           "scope": "window"
         },
@@ -264,7 +264,7 @@
   },
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "0.0.13",
-    "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server/fabric8-analytics-lsp-server-0.0.0-development.tgz",
+    "fabric8-analytics-lsp-server": "^0.4.24",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",
     "path": "0.12.7",

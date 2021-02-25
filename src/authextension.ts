@@ -15,6 +15,7 @@ export module authextension {
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
     process.env['GOLANG_EXECUTABLE'] = Config.getGoExecutable();
     process.env['user_agent'] = 'vs-code';
+    process.env['source'] = 'vs-code';
   };
 
   export function setUUID(uuid) {

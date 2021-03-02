@@ -14,7 +14,6 @@ export module authextension {
     process.env['THREE_SCALE_USER_TOKEN'] = apiConfig.apiKey;
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
     process.env['GOLANG_EXECUTABLE'] = Config.getGoExecutable();
-    process.env['user_agent'] = 'vs-code';
     process.env['source'] = 'vs-code';
   };
 

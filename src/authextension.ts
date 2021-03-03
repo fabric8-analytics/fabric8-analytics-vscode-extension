@@ -25,9 +25,12 @@ export module authextension {
   export async function getTelemetryid() {
     process.env['TELEMETRY_ID'] = await getRedHatUUID();
   }
+
   export const authorize_f8_analytics = async context => {
     try {
       setContextData(apiConfig);
+
+      getTelemetryid();
 
       let uuid = context.globalState.get(GlobalState.UUID);
 

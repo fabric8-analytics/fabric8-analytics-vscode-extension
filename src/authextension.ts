@@ -15,7 +15,7 @@ export module authextension {
     process.env['THREE_SCALE_USER_TOKEN'] = apiConfig.apiKey;
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
     process.env['GOLANG_EXECUTABLE'] = Config.getGoExecutable();
-    process.env['UTM_SOURCE'] = 'vs-code';
+    process.env['UTM_SOURCE'] = 'vscode';
   };
 
   export function setUUID(uuid) {
@@ -30,7 +30,7 @@ export module authextension {
     try {
       setContextData(apiConfig);
 
-      getTelemetryid();
+      await getTelemetryid();
 
       let uuid = context.globalState.get(GlobalState.UUID);
 

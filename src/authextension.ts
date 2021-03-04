@@ -28,9 +28,9 @@ export module authextension {
 
   export const authorize_f8_analytics = async context => {
     try {
-      setContextData(apiConfig);
-
       await getTelemetryid();
+
+      setContextData(apiConfig);
 
       let uuid = context.globalState.get(GlobalState.UUID);
 

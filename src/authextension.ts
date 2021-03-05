@@ -22,13 +22,13 @@ export module authextension {
     process.env['UUID'] = uuid;
   }
 
-  export async function getTelemetryid() {
+  export async function setTelemetryid() {
     process.env['TELEMETRY_ID'] = await getRedHatUUID();
   }
 
   export const authorize_f8_analytics = async context => {
     try {
-      await getTelemetryid();
+      await setTelemetryid();
 
       setContextData(apiConfig);
 

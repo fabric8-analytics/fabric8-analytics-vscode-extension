@@ -3,6 +3,7 @@
 import { GlobalState } from './constants';
 import fetch from 'node-fetch';
 import { Config } from './config';
+import { getRedHatUUID } from '@redhat-developer/vscode-redhat-telemetry/lib';
 
 export module authextension {
   const apiConfig = Config.getApiConfig();
@@ -14,14 +15,21 @@ export module authextension {
     process.env['THREE_SCALE_USER_TOKEN'] = apiConfig.apiKey;
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
     process.env['GOLANG_EXECUTABLE'] = Config.getGoExecutable();
+    process.env['UTM_SOURCE'] = 'vscode';
   };
 
   export function setUUID(uuid) {
     process.env['UUID'] = uuid;
   }
 
+  export async function setTelemetryid() {
+    process.env['TELEMETRY_ID'] = await getRedHatUUID();
+  }
+
   export const authorize_f8_analytics = async context => {
     try {
+      await setTelemetryid();
+
       setContextData(apiConfig);
 
       let uuid = context.globalState.get(GlobalState.UUID);

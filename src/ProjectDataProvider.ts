@@ -247,7 +247,7 @@ export module ProjectDataProvider {
   };
 
   export const effectivef8Pypi = item => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
       let vscodeRootpath = item.replace('requirements.txt', '');
@@ -325,11 +325,6 @@ export module ProjectDataProvider {
       }
 
       const cmd: string = [
-        Config.getGoExecutable(),
-        `get`,
-        `-u`,
-        `github.com/fabric8-analytics/cli-tools/gomanifest`,
-        `&&`,
         Config.getGoExecutable(),
         `run`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,

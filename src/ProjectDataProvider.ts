@@ -307,7 +307,7 @@ export module ProjectDataProvider {
         }
       );
       console.log('SCRIPT -: ' + StatusMessages.PYPI_INTERPRETOR_CMD);
-      // write the dependency generator script into stdin
+      // write the dependency generator script into STDIN
       depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
     });
   };

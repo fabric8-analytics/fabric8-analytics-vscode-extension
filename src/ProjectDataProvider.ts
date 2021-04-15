@@ -319,18 +319,35 @@ export module ProjectDataProvider {
       let vscodeRootpath = item.replace('go.mod', '');
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
+      const goManifestPath = paths.join(paths.join(targetDir, 'bin'), 'gomanifest');
 
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
       }
 
       const cmd: string = [
+        `export`,
+        `CRDA_GOPATH=$GOPATH`,
+        `&&`,
+        `export`,
+        `GOPATH=${targetDir}`,
+        `&&`,
         Config.getGoExecutable(),
-        `run`,
+        `get`,
+        `-u`,
+        `-f`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
+        `&&`,
+        `${goManifestPath}`,
         `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
-        `"${Config.getGoExecutable()}"`
+        `"${Config.getGoExecutable()}"`,
+        `&&`,
+        `export`,
+        `GOPATH=$CRDA_GOPATH`,
+        `&&`,
+        `export`,
+        `CRDA_GOPATH=`
       ].join(' ');
 
       console.log('CMD : ' + cmd);

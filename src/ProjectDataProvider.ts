@@ -307,7 +307,7 @@ export module ProjectDataProvider {
         }
       );
       console.log('SCRIPT -: ' + StatusMessages.PYPI_INTERPRETOR_CMD);
-      // write the dependency generator script into STDIN
+      // write the dependency generator script into stdin
       depGenerator.stdin.end(StatusMessages.PYPI_INTERPRETOR_CMD);
     });
   };
@@ -319,42 +319,35 @@ export module ProjectDataProvider {
       let vscodeRootpath = item.replace('go.mod', '');
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
-      const goManifestPath = paths.join(paths.join(targetDir, 'bin'), 'gomanifest');
+
+      const goPath = paths.join(os.tmpdir(), 'gomanifest');
+      const goManifestPath = paths.join(paths.join(goPath, 'bin'), 'gomanifest');
+
 
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
       }
 
       const cmd: string = [
-        `export`,
-        `CRDA_GOPATH=$GOPATH`,
-        `&&`,
-        `export`,
-        `GOPATH=${targetDir}`,
-        `&&`,
         Config.getGoExecutable(),
         `get`,
         `-u`,
-        `-f`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `&&`,
         `${goManifestPath}`,
         `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
         `"${Config.getGoExecutable()}"`,
-        `&&`,
-        `export`,
-        `GOPATH=$CRDA_GOPATH`,
-        `&&`,
-        `export`,
-        `CRDA_GOPATH=`
       ].join(' ');
 
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
+      let env = process.env
+      env.GOPATH = goPath;
+      outputChannelDep.addMsgOutputChannel('\n env.GOPATH : ' + env.GOPATH);
       exec(
         cmd,
-        { maxBuffer: 1024 * 1200 },
+        { maxBuffer: 1024 * 1200, env: env },
         (error: Error, _stdout: string, _stderr: string): void => {
           let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
           outputChannelDep.addMsgOutputChannel(outputMsg);

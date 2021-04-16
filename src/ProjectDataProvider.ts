@@ -342,12 +342,9 @@ export module ProjectDataProvider {
 
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
-      let env = process.env
-      env.GOPATH = goPath;
-      outputChannelDep.addMsgOutputChannel('\n env.GOPATH : ' + env.GOPATH);
       exec(
         cmd,
-        { maxBuffer: 1024 * 1200, env: env },
+        { maxBuffer: 1024 * 1200, env: Object.assign({}, process.env, { "GOPATH": goPath }) },
         (error: Error, _stdout: string, _stderr: string): void => {
           let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
           outputChannelDep.addMsgOutputChannel(outputMsg);

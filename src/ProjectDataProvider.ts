@@ -247,7 +247,7 @@ export module ProjectDataProvider {
   };
 
   export const effectivef8Pypi = item => {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
       let vscodeRootpath = item.replace('requirements.txt', '');
@@ -320,6 +320,9 @@ export module ProjectDataProvider {
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
 
+      const goPath = paths.join(os.tmpdir(), 'gomanifest');
+      const goManifestPath = paths.join(paths.join(goPath, 'bin'), 'gomanifest');
+
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
       }
@@ -330,19 +333,17 @@ export module ProjectDataProvider {
         `-u`,
         `github.com/fabric8-analytics/cli-tools/gomanifest`,
         `&&`,
-        Config.getGoExecutable(),
-        `run`,
-        `github.com/fabric8-analytics/cli-tools/gomanifest`,
+        `${goManifestPath}`,
         `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
-        `"${Config.getGoExecutable()}"`
+        `"${Config.getGoExecutable()}"`,
       ].join(' ');
 
       console.log('CMD : ' + cmd);
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
       exec(
         cmd,
-        { maxBuffer: 1024 * 1200 },
+        { maxBuffer: 1024 * 1200, env: Object.assign({}, process.env, { "GOPATH": goPath }) },
         (error: Error, _stdout: string, _stderr: string): void => {
           let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
           outputChannelDep.addMsgOutputChannel(outputMsg);

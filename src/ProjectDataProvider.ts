@@ -323,7 +323,6 @@ export module ProjectDataProvider {
       const goPath = paths.join(os.tmpdir(), 'gomanifest');
       const goManifestPath = paths.join(paths.join(goPath, 'bin'), 'gomanifest');
 
-
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
       }

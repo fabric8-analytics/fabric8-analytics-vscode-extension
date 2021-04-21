@@ -317,7 +317,7 @@ export module ProjectDataProvider {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
       // Remove trailling '/' or '\' in order to provide perfect folder path to gomanifest
-      let vscodeRootpath = item.substring(0, item.length - 1);
+      let vscodeRootpath = item.replace(/[\/|\\]$/, '');
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
 

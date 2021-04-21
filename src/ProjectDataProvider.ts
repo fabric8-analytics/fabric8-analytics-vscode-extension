@@ -316,7 +316,8 @@ export module ProjectDataProvider {
     return new Promise((resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
-      let vscodeRootpath = item.replace('go.mod', '');
+      // Remove trailling '/' or '\' in order to provide perfect folder path to gomanifest
+      let vscodeRootpath = item.substring(0, item.length - 1);
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
 
@@ -345,7 +346,7 @@ export module ProjectDataProvider {
         cmd,
         { maxBuffer: 1024 * 1200, env: Object.assign({}, process.env, { "GOPATH": goPath }) },
         (error: Error, _stdout: string, _stderr: string): void => {
-          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
+          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr} \n error : ${error}`;
           outputChannelDep.addMsgOutputChannel(outputMsg);
           if (error) {
             vscode.window

@@ -147,7 +147,7 @@ export module stackanalysismodule {
       effectiveF8Var = 'effectivef8Pypi';
     } else if (ecosystem === 'golang') {
       argumentList = uri
-        ? uri.fsPath.split('go.mod')[0]
+        ? uri.fsPath
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Golang';
     }

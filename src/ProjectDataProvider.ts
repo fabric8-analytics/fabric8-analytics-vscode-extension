@@ -8,6 +8,7 @@ import { getSelectedInterpreterPath } from './msPythonExtension';
 import { StatusMessages } from './statusMessages';
 import { outputChannelDep, initOutputChannel } from './extension';
 import { Commands } from './commands';
+import { dirname } from 'path';
 
 export module ProjectDataProvider {
   export const isOutputChannelActivated = (): any => {
@@ -312,12 +313,11 @@ export module ProjectDataProvider {
     });
   };
 
-  export const effectivef8Golang = item => {
+  export const effectivef8Golang = manifestPath => {
     return new Promise((resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
-      // Remove trailling '/' or '\' in order to provide perfect folder path to gomanifest
-      let vscodeRootpath = item.replace(/[\/|\\]$/, '');
+      let vscodeRootpath = dirname(manifestPath);
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
 

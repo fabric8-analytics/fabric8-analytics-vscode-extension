@@ -122,7 +122,7 @@ suite('projectDataProvider Modules', () => {
       .stub(child_process, 'exec')
       .yields(null, 'success', 'success');
     let effectivef8GolangPR = await ProjectDataProvider.effectivef8Golang(
-      workspaceFolder.uri.fsPath
+      paths.join(workspaceFolder.uri.fsPath, "go.mod")
     );
     expect(effectivef8GolangPR).contains('target/golist.json');
     expect(stubExec).callCount(1);

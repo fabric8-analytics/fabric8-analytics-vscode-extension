@@ -8,6 +8,7 @@ import { getSelectedInterpreterPath } from './msPythonExtension';
 import { StatusMessages } from './statusMessages';
 import { outputChannelDep, initOutputChannel } from './extension';
 import { Commands } from './commands';
+import { dirname } from 'path';
 
 export module ProjectDataProvider {
   export const isOutputChannelActivated = (): any => {
@@ -312,11 +313,11 @@ export module ProjectDataProvider {
     });
   };
 
-  export const effectivef8Golang = item => {
+  export const effectivef8Golang = manifestPath => {
     return new Promise((resolve, reject) => {
       const outputChannelDep = isOutputChannelActivated();
       outputChannelDep.clearOutputChannel();
-      let vscodeRootpath = item.replace('go.mod', '');
+      let vscodeRootpath = dirname(manifestPath);
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
 
@@ -345,7 +346,7 @@ export module ProjectDataProvider {
         cmd,
         { maxBuffer: 1024 * 1200, env: Object.assign({}, process.env, { "GOPATH": goPath }) },
         (error: Error, _stdout: string, _stderr: string): void => {
-          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr}`;
+          let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr} \n error : ${error}`;
           outputChannelDep.addMsgOutputChannel(outputMsg);
           if (error) {
             vscode.window

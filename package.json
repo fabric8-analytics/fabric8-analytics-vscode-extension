@@ -77,7 +77,8 @@
     "commands": [
       {
         "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "title": "Dependency Analytics Report ..."
+        "title": "Dependency Analytics Report...",
+        "category": "Dependency Analytics"
       },
       {
         "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
@@ -97,7 +98,8 @@
       },
       {
         "command": "extension.fabric8AnalyticsStackLogs",
-        "title": "Dependency Analytics Logs ..."
+        "title": "Dependency Analytics Logs...",
+        "category": "Dependency Analytics"
       }
     ],
     "menus": {

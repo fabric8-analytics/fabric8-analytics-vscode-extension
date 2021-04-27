@@ -1,10 +1,15 @@
 # Change Log
+## 0.3.4 (April 27th 2021)
+- enhancement - upgrade dev deps to fix vulns. See [#514](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/514)
+- fixes - [BUG] go run github.com/fabric8-analytics/cli-tools/gomanifest doesn't work, but gomanifest itself does, and the extension is trying for go run. See [#505](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/504)
+- fixes - [BUG] Message 'Unable to execute 'go list'' command, run 'go mod tidy' to know more' keeps appearing. See [#506](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/506)
+
 ## 0.3.3 (March 9th, 2021)
-- enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497) 
+- enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497)
 - enhancement - Use lsp 0.4.26 to pass more data to api-server.See [#186](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/186)
 
 ## 0.3.2 (February 9th, 2021)
-- enhancement - Get python path from ms-python extension. See [#485](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/485) 
+- enhancement - Get python path from ms-python extension. See [#485](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/485)
 - enhancement - Usage data collection to enhance extension. For more details view [privacy statement](https://developers.redhat.com/article/tool-data-collection) and [usage data doc](Telemetry.md). See [#489](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/486) [#487](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/487) [#488](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/488)
 - fixes - Use lsp 0.4.24 to fix bug with empty manifests. See [#493](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/493) [#494](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/494)
 

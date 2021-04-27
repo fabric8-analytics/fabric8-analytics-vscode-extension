@@ -158,6 +158,20 @@
           "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
           "when": "resourceFilename == go.mod"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
+          "when": "false"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
+          "when": "false"
+        },
+        {
+          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
+          "when": "false"
+        }
       ]
     },
     "configurationAttributes": {

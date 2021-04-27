@@ -10,9 +10,13 @@ class CANotification {
   private depCount: number;
   private uri: string;
   private text: string;
+  private cacheHitCount: number;
+  private cacheMissCount: number;
   constructor(respData: any) {
     this.diagCount = respData.diagCount || 0;
     this.done = respData.done === true;
+    this.cacheHitCount = respData?.cacheHitCount || 0;
+    this.cacheMissCount = respData?.cacheMissCount || 0;
     const vulnCount = respData.vulnCount || { vulnerabilityCount: 0, advisoryCount: 0, exploitCount: 0 };
     this.vulnerabilityCount = vulnCount.vulnerabilityCount;
     this.advisoryCount = vulnCount.advisoryCount;
@@ -28,6 +32,10 @@ class CANotification {
 
   public isDone(): boolean {
     return this.done;
+  }
+
+  public didCallBackend(): boolean {
+    return this.cacheMissCount > 0;
   }
 
   public hasWarning(): boolean {

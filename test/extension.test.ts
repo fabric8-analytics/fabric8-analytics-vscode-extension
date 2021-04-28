@@ -25,9 +25,7 @@ suite('Fabric8 Analytics Extension', () => {
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
     ];
     // @ts-ignore
-    assert.ok(
-      (await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS)
-    );
+    assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
   });
 
   test('should trigger fabric8-analytics full stack report activate', async () => {

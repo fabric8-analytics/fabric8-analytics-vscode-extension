@@ -49,8 +49,8 @@
     "vscode": "^1.12.0"
   },
   "activationEvents": [
-    "onCommand:extension.fabric8AnalyticsWidget",
-    "onCommand:extension.fabric8AnalyticsWidgetFullStack",
+    "onCommand:fabric8.fabric8AnalyticsWidget",
+    "onCommand:fabric8.stackAnalysis",
     "onLanguage:xml",
     "onLanguage:json"
   ],
@@ -93,40 +93,40 @@
     "commands": [
       {
         "key": "ctrl+j",
-        "command": "extension.fabric8AnalyticsWidget",
+        "command": "fabric8.fabric8AnalyticsWidget",
         "title": "Generate application stack report on manifest file"
       },
       {
         "key": "ctrl+k",
-        "command": "extension.fabric8AnalyticsWidgetFullStack",
+        "command": "fabric8.stackAnalysis",
         "title": "Generate application stack report on Workspace"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "extension.fabric8AnalyticsWidget",
+          "command": "fabric8.fabric8AnalyticsWidget",
           "when": "resourceLangId == xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "fabric8.stackAnalysis"
         }
       ],
       "explorer/context": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "fabric8.stackAnalysis"
         }
       ],
       "editor/context": [
         {
-          "command": "extension.fabric8AnalyticsWidget",
+          "command": "fabric8.fabric8AnalyticsWidget",
           "when": "resourceLangId == xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "fabric8.stackAnalysis"
         },
         {
-          "command": "extension.fabric8AnalyticsWidget",
+          "command": "fabric8.fabric8AnalyticsWidget",
           "when": "resourceFilename == package.json"
         }
       ]

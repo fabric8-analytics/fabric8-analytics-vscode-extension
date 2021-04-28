@@ -45,7 +45,7 @@
     "vscode": "^1.50.0"
   },
   "activationEvents": [
-    "onCommand:extension.fabric8AnalyticsWidgetFullStack",
+    "onCommand:fabric8.stackAnalysis",
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",
     "workspaceContains:**/requirements.txt",
@@ -76,11 +76,12 @@
     ],
     "commands": [
       {
-        "command": "extension.fabric8AnalyticsWidgetFullStack",
-        "title": "Dependency Analytics Report ..."
+        "command": "fabric8.stackAnalysis",
+        "title": "Stack Report...",
+        "category": "Dependency Analytics"
       },
       {
-        "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
+        "command": "fabric8.stackAnalysisFromPieBtn",
         "title": "Open Vulnerability Report",
         "icon": {
           "light": "icon/report-icon.png",
@@ -88,75 +89,90 @@
         }
       },
       {
-        "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
+        "command": "fabric8.stackAnalysisFromEditor",
         "title": "Dependency Analytics Report..."
       },
       {
-        "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
+        "command": "fabric8.stackAnalysisFromExplorer",
         "title": "Dependency Analytics Report..."
       },
       {
-        "command": "extension.fabric8AnalyticsStackLogs",
-        "title": "Dependency Analytics Logs ..."
+        "command": "fabric8.fabric8AnalyticsStackLogs",
+        "title": "Debug logs",
+        "category": "Dependency Analytics"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
+          "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == pom.xml",
           "group": "navigation"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
+          "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == package.json",
           "group": "navigation"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
+          "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == requirements.txt",
           "group": "navigation"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromPieBtn",
+          "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == go.mod",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
+          "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
+          "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
+          "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == requirements.txt"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromExplorer",
+          "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == go.mod"
         }
       ],
       "editor/context": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
+          "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
+          "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
+          "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStackFromEditor",
+          "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == go.mod"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "fabric8.stackAnalysisFromPieBtn",
+          "when": "false"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromEditor",
+          "when": "false"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromExplorer",
+          "when": "false"
         }
       ]
     },

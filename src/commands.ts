@@ -7,16 +7,15 @@ export namespace Commands {
   /**
    * Triggers Stack Analysis
    */
-  export const TRIGGER_FULL_STACK_ANALYSIS =
-    'extension.fabric8AnalyticsWidgetFullStack';
+  export const TRIGGER_FULL_STACK_ANALYSIS = 'extension.stackAnalysis';
   export const TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR =
-    'extension.fabric8AnalyticsWidgetFullStackFromStatusBar';
+    'extension.stackAnalysisFromStatusBar';
   export const TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER =
-    'extension.fabric8AnalyticsWidgetFullStackFromExplorer';
+    'extension.stackAnalysisFromExplorer';
   export const TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN =
-    'extension.fabric8AnalyticsWidgetFullStackFromPieBtn';
+    'extension.stackAnalysisFromPieBtn';
   export const TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR =
-    'extension.fabric8AnalyticsWidgetFullStackFromEditor';
+    'extension.stackAnalysisFromEditor';
   export const TRIGGER_LSP_EDIT = 'lsp.applyTextEdit';
   export const TRIGGER_STACK_LOGS = 'extension.fabric8AnalyticsStackLogs';
 }

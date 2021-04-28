@@ -15,8 +15,8 @@ class CANotification {
   constructor(respData: any) {
     this.diagCount = respData.diagCount || 0;
     this.done = respData.done === true;
-    this.cacheHitCount = respData?.cacheHitCount || 0;
-    this.cacheMissCount = respData?.cacheMissCount || 0;
+    this.cacheHitCount = respData.cacheHitCount || 0;
+    this.cacheMissCount = respData.cacheMissCount || 0;
     const vulnCount = respData.vulnCount || { vulnerabilityCount: 0, advisoryCount: 0, exploitCount: 0 };
     this.vulnerabilityCount = vulnCount.vulnerabilityCount;
     this.advisoryCount = vulnCount.advisoryCount;

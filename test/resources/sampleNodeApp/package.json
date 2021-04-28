@@ -50,7 +50,7 @@
   },
   "activationEvents": [
     "onCommand:extension.fabric8AnalyticsWidget",
-    "onCommand:extension.fabric8AnalyticsWidgetFullStack",
+    "onCommand:extension.stackAnalysis",
     "onLanguage:xml",
     "onLanguage:json"
   ],
@@ -98,7 +98,7 @@
       },
       {
         "key": "ctrl+k",
-        "command": "extension.fabric8AnalyticsWidgetFullStack",
+        "command": "extension.stackAnalysis",
         "title": "Generate application stack report on Workspace"
       }
     ],
@@ -109,12 +109,12 @@
           "when": "resourceLangId == xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "extension.stackAnalysis"
         }
       ],
       "explorer/context": [
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "extension.stackAnalysis"
         }
       ],
       "editor/context": [
@@ -123,7 +123,7 @@
           "when": "resourceLangId == xml"
         },
         {
-          "command": "extension.fabric8AnalyticsWidgetFullStack"
+          "command": "extension.stackAnalysis"
         },
         {
           "command": "extension.fabric8AnalyticsWidget",

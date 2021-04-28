@@ -15,7 +15,6 @@ suite('Fabric8 Analytics Extension', () => {
     assert.ok(true);
   }).timeout(1 * 60 * 1000);
 
-  
   test('should register all fabric8 commands', async function () {
     const FABRIC8_COMMANDS: string[] = [
       Commands.TRIGGER_FULL_STACK_ANALYSIS,
@@ -26,21 +25,23 @@ suite('Fabric8 Analytics Extension', () => {
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
     ];
     // @ts-ignore
-    assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
+    assert.ok(
+      (await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS)
+    );
   });
 
   test('should trigger fabric8-analytics full stack report activate', async () => {
     await vscode.commands
       .executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS)
       .then(
-        res => {
+        (res) => {
           assert.ok(true);
         },
         (reason: any) => {
           assert.equal(reason.name, 'Error');
           assert.equal(
             reason.message,
-            `Running the contributed command: 'extension.fabric8AnalyticsWidgetFullStack' failed.`
+            `Running the contributed command: 'extension.stackAnalysis' failed.`
           );
         }
       );

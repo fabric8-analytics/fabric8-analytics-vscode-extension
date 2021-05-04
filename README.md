@@ -132,4 +132,4 @@ The Red Hat Dependency Analytics Extension for Visual Studio Code collects anony
 
 ---
 
-> **Disclaimer** : Dependency Analytics does not analyse dev/test dependencies associated with the Stack.
+**Disclaimer** : Dependency Analytics does not analyse dev/test dependencies associated with the Stack.

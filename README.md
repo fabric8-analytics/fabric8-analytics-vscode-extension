@@ -13,7 +13,7 @@ Dependency Analytics is powered by [Snyk Intel Vulnerability DB](https://snyk.io
 - Suggests a project level license, check for conflicts between dependency licences
 - AI based guidance for additional, alternative dependencies
 
- > :warning: **Disclaimer**: Dependency Analytics does not analyse **dev/test** dependencies.
+> **Disclaimer**: Dependency Analytics does not analyse **dev/test** dependencies.
 
 ## Supported Languages
 

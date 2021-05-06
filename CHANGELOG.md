@@ -1,5 +1,7 @@
 # Change Log
 ## 0.3.4 (May 6th 2021)
+- enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497) 
+- enhancement - Use lsp 0.4.26 to pass more data to api-server.See [#186](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/186)
 - enhancement - upgrade dev deps to fix vulns. See [#514](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/514)
 - enhancement - add dev-dependency disclaimer. See [#519](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/519)
 - fixes - [BUG] go run github.com/fabric8-analytics/cli-tools/gomanifest doesn't work, but gomanifest itself does, and the extension is trying for go run. See [#504](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/504) [#517](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/507)
@@ -7,10 +9,6 @@
 - fixes - [BUG] Analysis is triggered way too often (each keystroke). See [#509](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/509) [#516](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/516)
 - fixes - [BUG] Duplicate "Dependency Analytics Report..." commands in command palette. See [#512](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/512) [#517](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/517)
 - fixes - [BUG] Ignore unparseable files from telemetry reporting. See [#513](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/513) [#191](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/191)
-
-## 0.3.3 (March 9th, 2021)
-- enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497) 
-- enhancement - Use lsp 0.4.26 to pass more data to api-server.See [#186](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/186)
 
 ## 0.3.2 (February 9th, 2021)
 - enhancement - Get python path from ms-python extension. See [#485](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/485) 

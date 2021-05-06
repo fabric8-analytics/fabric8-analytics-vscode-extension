@@ -1,5 +1,5 @@
 # Change Log
-## 0.3.4 (May 6th 2021)
+## 0.3.3 (May 6th 2021)
 - enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497) 
 - enhancement - Use lsp 0.4.26 to pass more data to api-server.See [#186](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/186)
 - enhancement - upgrade dev deps to fix vulns. See [#514](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/514)

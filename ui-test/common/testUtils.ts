@@ -111,6 +111,17 @@ function checkCAInEditor(folderName, fileName, rowNo, colNo) {
     // }).timeout(10000);
 
     // delay(2000)
+
+    it('check problems view is not empty', async function () {
+        const bottomBarPanel = new BottomBarPanel()
+        const problemsView = await bottomBarPanel.openProblemsView();
+        const markers = await problemsView.getAllMarkers(MarkerType.Any);
+        await bottomBarPanel.toggle(false);
+        let len = markers.length;
+        expect(len).to.not.equal(0);
+    }).timeout(10000);
+
+    delay(2000)
 }
 
 function checkForDetailedReportAndTargetFolder(folderName, fileName) {

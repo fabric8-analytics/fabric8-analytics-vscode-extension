@@ -35,7 +35,7 @@ export function goWithVulnsUITest() {
 
         describe('check CA in editor', () => {
             let rowNo = 7;
-            let colNo = 38;
+            let colNo = 43;
             checkCAInEditor(folderName, fileName, rowNo, colNo);
         });
 

@@ -16,6 +16,7 @@ import { mavenWithoutVulnsUITest } from "./manifestFileTests/mavenWithoutVulns";
 import { goWithVulnsUITest } from "./manifestFileTests/goWithVulns";
 import { mavenWithVulnsUITest } from "./manifestFileTests/mavenWithVulns";
 import { checkPIEBTN, checkStatusBarBTN } from "./common/negativeTests";
+import { testWithoutVulns, testWithVulns } from "./common/mainTestUtils";
 var assert = require('assert');
 
 describe('Fabric8-Analytics-VSCode-Extension UI tests', function () {
@@ -38,12 +39,9 @@ describe('Fabric8-Analytics-VSCode-Extension UI tests', function () {
         })
     });
 
-    describe('negative test 1 : statusbar btn absent before opening manifest file', checkStatusBarBTN)
+    describe('negative test 1 : statusbar btn absent before opening manifest file', checkStatusBarBTN);
 
-    describe('pypi tests with vulns', pypiWithVulnsUITest)
-    describe('npm tests with vulns', npmWithVulnsUITest)
-    describe('go tests with vulns', goWithVulnsUITest)
-    describe('maven tests with vulns', mavenWithVulnsUITest)
+    describe('test with vulns', testWithVulns);
 
     describe('change workspace', function () {
         it('remove manifests folder from workspace and add manifest1 folder', async function () {
@@ -64,24 +62,13 @@ describe('Fabric8-Analytics-VSCode-Extension UI tests', function () {
         delay(2000);
     });
 
-    describe('pypi tests without vulns', pypiWithoutVulnsUITest);
-    describe('npm tests without vulns', npmWithoutVulnsUITest);
-    describe('go tests without vulns', goWithoutVulnsUITest);
-    describe('maven tests without vulns', mavenWithoutVulnsUITest);
+    describe('test without vulns', testWithoutVulns);
 
-    describe('negative test 3 : PIE btn absent after closing manifest file', checkPIEBTN)
-
-    describe('after tests', function () {
-        delay(2000);
-
-        it('assert true', async function () {
-            assert.ok(true);
-        })
-
-        delay(2000);
-    });
+    describe('negative test 3 : PIE btn absent after closing manifest file', checkPIEBTN);
 
     after(async function (done) {
-        done();
+        setTimeout(function () {
+            done();
+        }, 1500);
     });
 });

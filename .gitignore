@@ -16,3 +16,8 @@ target/
 test/resources/**/package-lock.json
 test/resources/**/node_modules
 test-resources/
+manifests/go.sum
+manifests1/go.sum
+manifests/package-lock.json
+manifests1/package-lock.json
+

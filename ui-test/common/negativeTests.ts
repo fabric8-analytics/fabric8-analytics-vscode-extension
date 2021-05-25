@@ -69,7 +69,7 @@ function checkDependencyNotificationAfterSATrigger() {
             const notification = notifications[0];
             await notification.takeAction('Open the detailed vulnerability report');
             // await center.clearAllNotifications(); // optional
-            assert.fail("PIE btn is present before manifest file")
+            assert.fail("notification got triggered again")
         }
         catch (err) {
             const center = await new Workbench().openNotificationsCenter();

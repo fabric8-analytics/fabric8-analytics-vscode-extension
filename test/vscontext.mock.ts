@@ -19,8 +19,6 @@ export const context: vscode.ExtensionContext = {
   extensionPath: 'path',
   storagePath: 'string',
   logPath: 'string',
-  // secrets: undefined,
-  // extension: undefined,
   // tslint:disable-next-line:no-empty
   subscriptions: { dispose(): any { } }[0],
   workspaceState: new DummyMemento(),

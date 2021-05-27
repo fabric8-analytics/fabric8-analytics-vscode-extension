@@ -66,9 +66,7 @@ describe('Fabric8-Analytics-VSCode-Extension UI tests', function () {
 
     describe('negative test 3 : PIE btn absent after closing manifest file', checkPIEBTN);
 
-    after(async function (done) {
-        setTimeout(function () {
-            done();
-        }, 1500);
+    after(async function () {
+        await new Promise(cb => setTimeout(cb, 1500));
     });
 });

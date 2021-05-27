@@ -19,7 +19,7 @@ import { checkPIEBTN, checkStatusBarBTN } from "./common/negativeTests";
 import { testWithoutVulns, testWithVulns } from "./common/mainTestUtils";
 var assert = require('assert');
 
-describe('Fabric8-Analytics-VSCode-Extension UI tests', function () {
+describe('UI tests', function () {
     let driver: WebDriver;
     let homedir: string;
     let dir = path.resolve("./manifests");
@@ -32,14 +32,14 @@ describe('Fabric8-Analytics-VSCode-Extension UI tests', function () {
     });
 
     describe('checking workspace section', function () {
-        it('workspace sections should not be null for manifests', async function () {
+        it('workspace sections should not be empty', async function () {
             this.timeout(5000);
             const sections = new SideBarView().getContent().getSections();
             expect(sections).not.to.be.null;
         })
     });
 
-    describe('negative test 1 : statusbar btn absent before opening manifest file', checkStatusBarBTN);
+    describe('negative test 1: statusbar btn absent before opening manifest file', checkStatusBarBTN);
 
     describe('test with vulns', testWithVulns);
 
@@ -53,7 +53,7 @@ describe('Fabric8-Analytics-VSCode-Extension UI tests', function () {
             removeFolderFromWorkspace(path.resolve("./manifests"))
         });
 
-        it('workspace sections should not be null for manifests', async function () {
+        it('workspace sections should not be empty', async function () {
             this.timeout(5000);
             const sections = new SideBarView().getContent().getSections();
             expect(sections).not.to.be.null;

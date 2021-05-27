@@ -136,7 +136,7 @@ function checkForDetailedReportAndTargetFolder(folderName, fileName) {
         homedir = dir
     });
 
-    it('check if detailed vuln report is opened', async function () {
+    it('check for detailed report', async function () {
         const editorView = new EditorView();
         const titles = await editorView.getOpenEditorTitles();
         let len = titles.length;

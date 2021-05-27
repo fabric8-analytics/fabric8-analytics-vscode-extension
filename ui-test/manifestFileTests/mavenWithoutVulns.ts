@@ -37,13 +37,13 @@ export function mavenWithoutVulnsUITest() {
         describe('trigger SA report', () => {
             describe('negative test 2 : no notification triggered again', checkDependencyNotificationAfterSATrigger);
 
-            describe('trigger SA report from statusbar', () => {
+            describe('from statusbar', () => {
                 // 2. Statusbar
                 triggerStatusBar(folderName, fileName);
                 delay(500)
             });
 
-            describe('trigger SA report from PIE btn', () => {
+            describe('from PIE btn', () => {
                 // 3. Titlebar
                 triggerPIEbtn(folderName, fileName);
                 delay(500)

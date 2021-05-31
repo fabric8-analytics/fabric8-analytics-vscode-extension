@@ -47,8 +47,6 @@ describe('UI tests', function () {
         it('remove manifests folder from workspace and add manifest1 folder', async function () {
             dir = path.resolve("./manifests1");
             homedir = dir
-            // const control = await new ActivityBar().getViewControl('Explorer');
-            // const explorerView = await control.openView();
             addFolderToWorkspace(homedir);
             removeFolderFromWorkspace(path.resolve("./manifests"))
         });

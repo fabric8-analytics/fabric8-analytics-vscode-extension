@@ -68,7 +68,6 @@ function checkDependencyNotificationAfterSATrigger() {
             const notifications = await center.getNotifications(NotificationType.Warning);
             const notification = notifications[0];
             await notification.takeAction('Open the detailed vulnerability report');
-            // await center.clearAllNotifications(); // optional
             assert.fail("notification got triggered again")
         }
         catch (err) {

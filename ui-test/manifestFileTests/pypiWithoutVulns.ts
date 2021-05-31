@@ -25,27 +25,22 @@ export async function pypiWithoutVulnsUITest() {
         });
 
         after(function () {
-            this.timeout(10000) // 10 second timeout for setup
+            this.timeout(10000)
         })
-
-        // delay(2000)
 
         describe('open manifest file', () => {
             openManifestFile(folderName, fileName);
         });
 
-
         describe('trigger SA report', () => {
             describe('negative test 2 : no notification triggered again', checkDependencyNotificationAfterSATrigger);
 
             describe('from statusbar', () => {
-                // 2. Statusbar
                 triggerStatusBar(folderName, fileName);
                 delay(500)
             });
 
             describe('from PIE btn', () => {
-                // 3. Titlebar
                 triggerPIEbtn(folderName, fileName);
                 delay(500)
             });

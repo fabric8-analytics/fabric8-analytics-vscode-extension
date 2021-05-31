@@ -103,15 +103,6 @@ function checkCAInEditor(folderName, fileName, rowNo, colNo) {
 
     delay(2000)
 
-    // it('check if popup is there for vulns', async function () {
-    //     const element = (await driver.findElements(By.className("mtk6")))[0]
-    //     driver.actions().mouseMove(element).perform()
-    //     // expect('true').equals('true');
-    //     expect(element).to.not.be.undefined;
-    // }).timeout(10000);
-
-    // delay(2000)
-
     it('check problems view is not empty', async function () {
         const bottomBarPanel = new BottomBarPanel()
         const problemsView = await bottomBarPanel.openProblemsView();
@@ -184,9 +175,6 @@ function checkForDetailedReportAndTargetFolder(folderName, fileName) {
             fs.rmdirSync(targetdir, { recursive: true });
         }
         assert.ok(true)
-        // else {
-        //     assert.fail("target folder not created")
-        // }
     }).timeout(10000);
 
     delay(2000)

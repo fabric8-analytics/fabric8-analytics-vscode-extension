@@ -27,7 +27,6 @@ async function openCommandPrompt(timeout: number = 6000): Promise<InputBox> {
     const driver = VSBrowser.instance.driver;
 
     return driver.wait(async () => {
-        // if cannot interact with vscode, return null
         if (!await VSBrowser.instance.driver.actions().sendKeys(Key.F1).perform().then(() => true).catch(() => false)) {
             return null;
         }
@@ -137,7 +136,6 @@ async function convertArrayObjectsToTextAndDescription<T extends QuickPickItem>(
     for (let index = 0; index < array.length; index++) {
         const label = await array[index].getLabel();
         const description = await array[index].getDescription();
-        // const description = await array[index].findElement(By.className("label-description")).getText();
         options.push(label + " " + description);
     }
     return options;

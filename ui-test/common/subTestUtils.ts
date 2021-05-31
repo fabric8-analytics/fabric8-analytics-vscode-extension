@@ -31,7 +31,6 @@ function triggerNotification(folderName, fileName) {
             const notifications = await center.getNotifications(NotificationType.Warning);
             const notification = notifications[0];
             await notification.takeAction('Open the detailed vulnerability report');
-            // await center.clearAllNotifications(); // optional
             await center.close();
             expect(notification).to.not.be.undefined;
         }).timeout(20000);
@@ -60,7 +59,7 @@ function triggerStatusBar(folderName, fileName) {
 
     describe('click on statusbar', () => {
         it('from statusbar', async function () {
-            await driver.findElement(By.id("redhat.fabric8-analytics")).click(); // both this one and below will work same but below one will work for sure
+            await driver.findElement(By.id("redhat.fabric8-analytics")).click();
             assert.ok(true)
         }).timeout(20000);
 

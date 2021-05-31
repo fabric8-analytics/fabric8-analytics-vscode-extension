@@ -41,7 +41,7 @@ describe('UI tests', function () {
 
     describe('negative test 1: statusbar btn absent before opening manifest file', checkStatusBarBTN);
 
-    describe('test with vulns', testWithVulns);
+    testWithVulns();
 
     describe('change workspace', function () {
         it('remove manifests folder from workspace and add manifest1 folder', async function () {
@@ -60,7 +60,7 @@ describe('UI tests', function () {
         delay(2000);
     });
 
-    describe('test without vulns', testWithoutVulns);
+    testWithoutVulns();
 
     describe('negative test 3 : PIE btn absent after closing manifest file', checkPIEBTN);
 

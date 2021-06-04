@@ -20,6 +20,17 @@ function openManifestFile(folderName, fileName) {
         browser = VSBrowser.instance;
         homedir = dir
     });
+
+    if (fileName == "go.mod") {
+        it('execute go get command', async function () {
+            const terminalView = await new BottomBarPanel().openTerminalView();
+            await terminalView.executeCommand('go get');
+            expect(terminalView).to.not.be.undefined;
+        }).timeout(10000);
+
+        delay(2000)
+    }
+
     it('open manifest file', async function () {
         await driver.wait(until.elementLocated(By.className('monaco-workbench')), 6000);
         await new Promise(cb => setTimeout(cb, 2000))

@@ -28,7 +28,7 @@ function openManifestFile(folderName, fileName) {
             expect(terminalView).to.not.be.undefined;
         }).timeout(10000);
 
-        delay(2000)
+        delay(6000)
     }
 
     it('open manifest file', async function () {

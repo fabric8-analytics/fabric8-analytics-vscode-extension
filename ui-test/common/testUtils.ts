@@ -22,9 +22,9 @@ function openManifestFile(folderName, fileName) {
     });
 
     if (fileName == "go.mod") {
-        it('execute go get command', async function () {
+        it('execute vendor cmd', async function () {
             const terminalView = await new BottomBarPanel().openTerminalView();
-            await terminalView.executeCommand('go get');
+            await terminalView.executeCommand('go mod vendor');
             expect(terminalView).to.not.be.undefined;
         }).timeout(10000);
 

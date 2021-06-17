@@ -15,12 +15,13 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
-    environment: 
-      name: Staging
-      url: 'https://f8a-analytics-preview-2445582058137.staging.gw.apicast.io/?user_key=3e42fa66f65124e6b1266a23431e3d08'
-
     steps:
       - uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell to change apiEndPoint.ts content to 
+      # change env from prod to stage
+      - name: Change env from Prod to Stage
+        run: sed -i 's/"https://f8a-connect-api-2445582058137.production.gw.apicast.io/"/"https://f8a-analytics-preview-2445582058137.staging.gw.apicast.io/"/g' fabric8-analytics-vscode-extension/src/apiendpoint.ts && sed -i 's/"ad467b765e5c8a8a5ca745a1f32b8487"/"3e42fa66f65124e6b1266a23431e3d08"/g' fabric8-analytics-vscode-extension/src/apiendpoint.ts
         
       - name: Run UI tests
         uses: GabrielBB/xvfb-action@v1.5

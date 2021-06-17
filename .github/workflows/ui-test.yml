@@ -20,9 +20,40 @@ jobs:
 
       # Runs a single command using the runners shell to change apiEndPoint.ts content to 
       # change env from prod to stage
-      - name: Change env from Prod to Stage
-        run: sed -i 's/"https://f8a-connect-api-2445582058137.production.gw.apicast.io/"/"https://f8a-analytics-preview-2445582058137.staging.gw.apicast.io/"/g' fabric8-analytics-vscode-extension/src/apiendpoint.ts && sed -i 's/"ad467b765e5c8a8a5ca745a1f32b8487"/"3e42fa66f65124e6b1266a23431e3d08"/g' fabric8-analytics-vscode-extension/src/apiendpoint.ts
+      - name: print content of apiendpoint.ts file in Linux - Before
+        if: ${{ runner.os == 'Linux'}}
+        run: cat /home/runner/work/fabric8-analytics-vscode-extension/fabric8-analytics-vscode-extension/src/apiendpoint.ts
+
+      - name: Change env from Prod to Stage for Linux
+        if: ${{ runner.os == 'Linux'}}
+        run: sed -i 's/connect-api-2445582058137.production/analytics-preview-2445582058137.staging/g' /home/runner/work/fabric8-analytics-vscode-extension/fabric8-analytics-vscode-extension/src/apiendpoint.ts && sed -i 's/ad467b765e5c8a8a5ca745a1f32b8487/3e42fa66f65124e6b1266a23431e3d08/g' /home/runner/work/fabric8-analytics-vscode-extension/fabric8-analytics-vscode-extension/src/apiendpoint.ts
+
+      - name: print content of apiendpoint.ts file in Linux - After
+        if: ${{ runner.os == 'Linux'}}
+        run: cat /home/runner/work/fabric8-analytics-vscode-extension/fabric8-analytics-vscode-extension/src/apiendpoint.ts
+
+
+      - name: print content of apiendpoint.ts file in Windows - Before
+        if: ${{ runner.os != 'Linux'}}
+        run: more D:\a\fabric8-analytics-vscode-extension\fabric8-analytics-vscode-extension\src\apiendpoint.ts
+
+      - name: Change env from Prod to Stage for Windows-1
+        if: ${{ runner.os != 'Linux'}}
+        run: (Get-Content "D:\a\fabric8-analytics-vscode-extension\fabric8-analytics-vscode-extension\src\apiendpoint.ts") | 
+          Foreach-Object {$_ -replace "connect-api-2445582058137.production", "analytics-preview-2445582058137.staging" } |  
+          Set-Content "D:\a\fabric8-analytics-vscode-extension\fabric8-analytics-vscode-extension\src\apiendpoint.ts"
         
+      - name: Change env from Prod to Stage for Windows-2
+        if: ${{ runner.os != 'Linux'}}
+        run: (Get-Content "D:\a\fabric8-analytics-vscode-extension\fabric8-analytics-vscode-extension\src\apiendpoint.ts") | 
+          Foreach-Object {$_ -replace "ad467b765e5c8a8a5ca745a1f32b8487", "3e42fa66f65124e6b1266a23431e3d08" } |  
+          Set-Content "D:\a\fabric8-analytics-vscode-extension\fabric8-analytics-vscode-extension\src\apiendpoint.ts"
+
+      - name: print content of apiendpoint.ts file in Windows - After
+        if: ${{ runner.os != 'Linux'}}
+        run: more D:\a\fabric8-analytics-vscode-extension\fabric8-analytics-vscode-extension\src\apiendpoint.ts
+
+
       - name: Run UI tests
         uses: GabrielBB/xvfb-action@v1.5
         with:

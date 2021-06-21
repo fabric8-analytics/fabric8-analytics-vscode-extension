@@ -40,11 +40,21 @@ jobs:
         with:
           run: npm run ui-test
 
-      - name: Upload screenshots
+      - name: Upload screenshots - Linux
         uses: actions/upload-artifact@v2
         if: failure()
         with: 
-          name: screenshots
+          name: screenshots - Linux
+          if: ${{ runner.os == 'Linux'}}
           path: ~/work/fabric8-analytics-vscode-extension/screenshots/*
+          retention-days: 2
+      
+      - name: Upload screenshots - Windows
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with: 
+          name: screenshots - Windows
+          if: ${{ runner.os != 'Linux'}}
+          path: D:\a\fabric8-analytics-vscode-extension\screenshots\*
           retention-days: 2
   

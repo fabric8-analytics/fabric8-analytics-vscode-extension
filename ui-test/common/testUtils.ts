@@ -23,12 +23,16 @@ function openManifestFile(folderName, fileName) {
 
     if (fileName == "go.mod") {
         it('execute vendor cmd', async function () {
-            const terminalView = await new BottomBarPanel().openTerminalView();
+            const bottomBar = new BottomBarPanel();
+            const terminalView = await bottomBar.openTerminalView();
             await terminalView.executeCommand('go mod vendor');
+            setTimeout(() => {
+                terminalView.executeCommand('go mod tidy');
+            }, 5000)
             expect(terminalView).to.not.be.undefined;
         }).timeout(10000);
 
-        delay(6000)
+        delay(3000)
     }
 
     it('open manifest file', async function () {

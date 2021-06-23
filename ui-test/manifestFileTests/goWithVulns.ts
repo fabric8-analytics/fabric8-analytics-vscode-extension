@@ -31,11 +31,13 @@ export function goWithVulnsUITest() {
             openManifestFile(folderName, fileName);
         });
 
-        describe('check CA in editor', () => {
-            let rowNo = 7;
-            let colNo = 43;
-            checkCAInEditor(folderName, fileName, rowNo, colNo);
-        });
+        if (os.type() == 'Linux') {
+            describe('check CA in editor', () => {
+                let rowNo = 7;
+                let colNo = 43;
+                checkCAInEditor(folderName, fileName, rowNo, colNo);
+            });
+        }
 
         describe('trigger SA report', () => {
             describe('from notification', () => {

@@ -29,7 +29,12 @@ function openManifestFile(folderName, fileName) {
             setTimeout(() => {
                 terminalView.executeCommand('go mod tidy');
             }, 5000)
-            expect(terminalView).to.not.be.undefined;
+
+            setTimeout(() => {
+                bottomBar.toggle(false);
+                assert.ok(true);
+            }, 3000)
+            assert.ok(true);
         }).timeout(10000);
 
         delay(3000)

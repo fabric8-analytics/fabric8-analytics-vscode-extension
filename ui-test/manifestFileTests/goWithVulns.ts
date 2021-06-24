@@ -38,8 +38,11 @@ export function goWithVulnsUITest() {
                 checkCAInEditor(folderName, fileName, rowNo, colNo);
             });
         }
-
-        delay(5000)
+        else {
+            describe('ignore CA and wait 8 sec', () => {
+                delay(8000)
+            });
+        }
 
         describe('trigger SA report', () => {
             describe('from notification', () => {

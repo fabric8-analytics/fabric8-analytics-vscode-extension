@@ -1,0 +1,34 @@
+name: Automated Tests - PR - Linux
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Change env THREE_SCALE_CONNECT_URL and THREE_SCALE_CONNECT_KEY from Prod to Stage - Linux
+        run: sed -i 's/connect-api-2445582058137.production/analytics-preview-2445582058137.staging/g' /home/runner/work/fabric8-analytics-vscode-extension/fabric8-analytics-vscode-extension/src/apiendpoint.ts && sed -i 's/ad467b765e5c8a8a5ca745a1f32b8487/3e42fa66f65124e6b1266a23431e3d08/g' /home/runner/work/fabric8-analytics-vscode-extension/fabric8-analytics-vscode-extension/src/apiendpoint.ts
+
+      - name: Run UI tests
+        uses: GabrielBB/xvfb-action@v1.5
+        with:
+          run: npm run ui-test
+
+      - name: Upload screenshots - Linux
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with: 
+          name: screenshots - Linux
+          path: ~/work/fabric8-analytics-vscode-extension/screenshots/*
+          retention-days: 2
+      

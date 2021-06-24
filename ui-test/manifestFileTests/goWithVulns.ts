@@ -38,6 +38,9 @@ export function goWithVulnsUITest() {
                 checkCAInEditor(folderName, fileName, rowNo, colNo);
             });
         }
+        else {
+            delay(5000)
+        }
 
         describe('trigger SA report', () => {
             describe('from notification', () => {

@@ -1,4 +1,7 @@
-import { getTelemetryService, TelemetryEvent, TelemetryService } from '@redhat-developer/vscode-redhat-telemetry';
+import { getRedHatService, getTelemetryService, TelemetryEvent, TelemetryService } from '@redhat-developer/vscode-redhat-telemetry';
+import * as vscode from 'vscode';
+
+let telemetryServiceObject: TelemetryService = null;
 
 export enum TelemetryActions {
   componentAnalysisDone = 'component_analysis_done',
@@ -29,7 +32,8 @@ export async function record(eventName: string, properties?: object) {
   await telemetryServiceObj?.send(event);
 }
 
-export async function startUp() {
-  const telemetryServiceObj: TelemetryService = await telemetryService();
-  await telemetryServiceObj?.sendStartupEvent();
+export async function startUp(context: vscode.ExtensionContext) {
+  const redhatService = await getRedHatService(context);  
+  telemetryServiceObject = await redhatService.getTelemetryService();
+  telemetryServiceObject.sendStartupEvent();
 }

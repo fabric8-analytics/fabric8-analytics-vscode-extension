@@ -18,7 +18,10 @@
 			"outFiles": [
 				"${workspaceFolder}/dist/*.js"
 			],
-			"preLaunchTask": "npm: webpack-dev"
+			"preLaunchTask": "npm: webpack-dev",
+			"env": {
+				"VSCODE_REDHAT_TELEMETRY_DEBUG":"true"
+			  }
 		},
 		{
 			"name": "Launch Tests",

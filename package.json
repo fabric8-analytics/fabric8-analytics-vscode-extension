@@ -191,6 +191,12 @@
       "type": "object",
       "title": "Openshift.io configuration",
       "properties": {
+        "redhat.telemetry.enabled": {
+          "type": "boolean",
+          "default": null,
+          "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
+          "scope": "window"
+        },
         "dependencyAnalyticsServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
@@ -284,7 +290,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@redhat-developer/vscode-redhat-telemetry": "0.0.13",
+    "@redhat-developer/vscode-redhat-telemetry": "^0.2.0",
     "fabric8-analytics-lsp-server": "^0.4.29",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",

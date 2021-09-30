@@ -290,7 +290,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@redhat-developer/vscode-redhat-telemetry": "^0.2.0",
+    "@redhat-developer/vscode-redhat-telemetry": "0.4.2",
     "fabric8-analytics-lsp-server": "^0.4.29",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",

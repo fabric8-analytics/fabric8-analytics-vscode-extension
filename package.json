@@ -208,7 +208,7 @@
         },
         "dependencyAnalytics.host": {
           "type": "string",
-          "default": "https://gw.api.openshift.io/",
+          "default": "https://gw.api.openshift.io",
           "description": "Host name of Dependency Analytics server.",
           "scope": "window"
         },

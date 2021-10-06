@@ -1,7 +1,6 @@
 # Change Log
 ## 0.3.4 (October 6th 2021)
-
-- fixes -[ISSUE] letsencrypted issue by moving to selfhosted. See [#542](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/542)
+- fixes - [ISSUE] letsencrypted issue by moving to selfhosted. See [#542](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/542)
 ## 0.3.3 (May 6th 2021)
 - enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497) 
 - enhancement - Use lsp 0.4.26 to pass more data to api-server.See [#186](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/186)

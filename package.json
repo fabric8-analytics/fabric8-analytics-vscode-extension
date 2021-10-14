@@ -6,9 +6,6 @@
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
-  "extensionDependencies": [
-    "redhat.vscode-commons"
-  ],
   "contributors": [
     {
       "name": "Jaivardhan Kumar",

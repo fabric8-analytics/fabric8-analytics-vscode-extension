@@ -1,5 +1,0 @@
-{
-    "typescript.updateImportsOnFileMove.enabled": "always",
-    "workbench.editor.enablePreview": true,
-    "security.workspace.trust.enabled": false
-}

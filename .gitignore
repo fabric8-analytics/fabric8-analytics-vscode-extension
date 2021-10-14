@@ -15,4 +15,3 @@ coverage/
 target/
 test/resources/**/package-lock.json
 test/resources/**/node_modules
-test-resources/

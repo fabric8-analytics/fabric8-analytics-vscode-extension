@@ -1,6 +1,7 @@
 # Change Log
+## 0.3.4 (October 6th 2021)
+- fixes - [ISSUE] letsencrypted issue by moving to selfhosted. See [#542](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/542)
 ## 0.3.3 (May 6th 2021)
-
 - enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497) 
 - enhancement - Use lsp 0.4.26 to pass more data to api-server.See [#186](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/186)
 - enhancement - upgrade dev deps to fix vulns. See [#514](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/514)
@@ -12,7 +13,6 @@
 - fixes - [BUG] Ignore unparseable files from telemetry reporting. See [#513](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/513) [#191](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/191)
 
 ## 0.3.2 (February 9th, 2021)
-
 - enhancement - Get python path from ms-python extension. See [#485](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/485) 
 - enhancement - Usage data collection to enhance extension. For more details view [privacy statement](https://developers.redhat.com/article/tool-data-collection) and [usage data doc](Telemetry.md). See [#489](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/486) [#487](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/487) [#488](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/488)
 - fixes - Use lsp 0.4.24 to fix bug with empty manifests. See [#493](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/493) [#494](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/494)
@@ -23,7 +23,6 @@
 - fixes - LSP failure on vscode-insider and Che(node >= 12.16.0). See [#481](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/481) [#483](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/483)
 
 ## 0.3.0 (January 4th, 2021)
-
 - enhancement - Support for Golang ecosystem. Plugin can now scan and identify vulnerability within module and package for golang software stacks. See [#436](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/436)
     - Identify direct and transitive vulnerability for modules and packages
     - Support for semver and pseudo version format

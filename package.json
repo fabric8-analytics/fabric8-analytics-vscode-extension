@@ -42,7 +42,7 @@
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
-    "vscode": "^1.50.0"
+    "vscode": "^1.61.0"
   },
   "activationEvents": [
     "onCommand:fabric8.stackAnalysis",
@@ -83,10 +83,7 @@
       {
         "command": "fabric8.stackAnalysisFromPieBtn",
         "title": "Open Vulnerability Report",
-        "icon": {
-          "light": "icon/report-icon.png",
-          "dark": "icon/report-icon.png"
-        }
+        "icon": "$(pie-chart)"
       },
       {
         "command": "fabric8.stackAnalysisFromEditor",
@@ -260,7 +257,7 @@
     "@types/mocha": "^5.2.0",
     "@types/node": "^12.12.0",
     "@types/sinon": "^7.5.0",
-    "@types/vscode": "^1.50.0",
+    "@types/vscode": "^1.61.0",
     "chai": "^4.1.2",
     "debug": "^3.2.6",
     "decache": "^4.4.0",

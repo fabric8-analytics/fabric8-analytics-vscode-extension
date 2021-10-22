@@ -1,23 +1,18 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "downlevelIteration": true,
     "lib": [
-      "es6",
-      "DOM",
-      "DOM.Iterable"
+      "es6"
     ],
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "out",
     "sourceMap": true,
-    "rootDir": ".",
-    "skipLibCheck": true
+    "rootDir": "."
   },
   "exclude": [
     "node_modules",
     "ca-lsp-server",
-    ".vscode-test",
-    "test-resources"
+    ".vscode-test"
   ]
 }

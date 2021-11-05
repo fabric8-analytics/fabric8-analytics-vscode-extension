@@ -18,7 +18,16 @@ export enum TelemetryActions {
   vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
 }
 
-let telemetryServiceObj: TelemetryService;
+export async function record(eventName: string, properties?: object) {
+  if (telemetryServiceObject) {
+    let event: TelemetryEvent = {
+      type: 'track',
+      name: eventName,
+      properties: properties,
+    };
+    await telemetryServiceObject?.send(event);
+  }
+}
 
 export async function startUp(context: vscode.ExtensionContext) {
   const redhatService = await getRedHatService(context);

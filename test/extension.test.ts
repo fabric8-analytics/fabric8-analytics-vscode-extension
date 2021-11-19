@@ -36,8 +36,8 @@ suite('Fabric8 Analytics Extension', () => {
           assert.ok(true);
         },
         (reason: any) => {
-          assert.strictEqual(reason.name, 'TypeError');
-          assert.strictEqual(
+          assert.equal(reason.name, 'TypeError');
+          assert.equal(
             reason.message,
             `Running the contributed command: 'fabric8.stackAnalysis' failed.`
           );

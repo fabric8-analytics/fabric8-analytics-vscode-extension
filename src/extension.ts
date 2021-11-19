@@ -24,7 +24,7 @@ let lspClient: LanguageClient;
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
-  startUp();
+  startUp(context);
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
@@ -111,10 +111,10 @@ export function activate(context: vscode.ExtensionContext) {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record(TelemetryActions.vulnerabilityReportPopupOpened);
+            record(context, TelemetryActions.vulnerabilityReportPopupOpened);
           }
           else {
-            record(TelemetryActions.vulnerabilityReportPopupIgnored);
+            record(context, TelemetryActions.vulnerabilityReportPopupIgnored);
           }
         };
 
@@ -123,11 +123,9 @@ export function activate(context: vscode.ExtensionContext) {
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (canShowPopup(notification)) {
             showVulnerabilityFoundPrompt(notification.popupText());
+            record(context, TelemetryActions.componentAnalysisDone, {fileName: path.basename(notification.origin())});
             // prevent further popups.
             notifiedFiles.add(notification.origin());
-          }
-          if (notification.didCallBackend()) {
-            record(TelemetryActions.componentAnalysisDone, {fileName: path.basename(notification.origin())});
           }
         });
 
@@ -135,7 +133,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);
-          record(TelemetryActions.componentAnalysisFailed, {fileName: path.basename(notification.origin()), error: respData.data});
+          record(context, TelemetryActions.componentAnalysisFailed, {fileName: path.basename(notification.origin()), error: respData.data});
         });
       });
       context.subscriptions.push(
@@ -197,7 +195,7 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   };
 
   const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
-    record(origin);
+    record(context, origin);
     invokeFullStackReport(uri);
   };
 

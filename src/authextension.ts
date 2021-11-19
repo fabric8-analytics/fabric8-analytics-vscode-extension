@@ -3,7 +3,7 @@
 import { GlobalState } from './constants';
 import fetch from 'node-fetch';
 import { Config } from './config';
-import { getRedHatUUID } from '@redhat-developer/vscode-redhat-telemetry/lib';
+import { getRedHatService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 
 export module authextension {
   const apiConfig = Config.getApiConfig();
@@ -22,13 +22,17 @@ export module authextension {
     process.env['UUID'] = uuid;
   }
 
-  export async function setTelemetryid() {
-    process.env['TELEMETRY_ID'] = await getRedHatUUID();
+  export async function setTelemetryid(context) {
+    const redhatService = await getRedHatService(context);
+    const REDHAT_UUID = await (
+      await redhatService.getIdManager()
+    ).getRedHatUUID();
+    process.env['TELEMETRY_ID'] = REDHAT_UUID;
   }
 
   export const authorize_f8_analytics = async context => {
     try {
-      await setTelemetryid();
+      await setTelemetryid(context);
 
       setContextData(apiConfig);
 

@@ -22,8 +22,8 @@ jobs:
         with:
           # Version Spec of the version to use.  Examples: 12.x, 10.15.1, >=10.15.0
           node-version: 12.x
-      - name: Install vsce
-        run: npm i -g vsce
+      - name: Install vsce@1.83.0
+        run: npm i -g vsce@1.83.0
       - name: Install Dependencies
         run: npm ci
       - name: Compile for test

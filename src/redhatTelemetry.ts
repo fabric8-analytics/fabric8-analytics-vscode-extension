@@ -1,4 +1,5 @@
-import { getTelemetryService, TelemetryEvent, TelemetryService } from '@redhat-developer/vscode-redhat-telemetry';
+import * as vscode from 'vscode';
+import { getRedHatService, TelemetryEvent, TelemetryService } from '@redhat-developer/vscode-redhat-telemetry';
 
 export enum TelemetryActions {
   componentAnalysisDone = 'component_analysis_done',
@@ -11,16 +12,17 @@ export enum TelemetryActions {
   vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
 }
 
-let telemetryServiceObj: TelemetryService;
-async function telemetryService(): Promise<TelemetryService> {
+let telemetryServiceObj: TelemetryService = null;
+async function telemetryService(context: vscode.ExtensionContext): Promise<TelemetryService> {
   if(!telemetryServiceObj) {
-    telemetryServiceObj = await getTelemetryService('redhat.fabric8-analytics');
+    const redhatService = await getRedHatService(context);  
+    telemetryServiceObj = await redhatService.getTelemetryService();
   }
   return telemetryServiceObj;
 }
 
-export async function record(eventName: string, properties?: object) {
-  const telemetryServiceObj: TelemetryService = await telemetryService();
+export async function record(context: vscode.ExtensionContext, eventName: string, properties?: object) {
+  const telemetryServiceObj: TelemetryService = await telemetryService(context);
   let event:TelemetryEvent={
     type: 'track',
     name: eventName,
@@ -29,7 +31,7 @@ export async function record(eventName: string, properties?: object) {
   await telemetryServiceObj?.send(event);
 }
 
-export async function startUp() {
-  const telemetryServiceObj: TelemetryService = await telemetryService();
+export async function startUp(context: vscode.ExtensionContext) {
+  const telemetryServiceObj: TelemetryService = await telemetryService(context);
   await telemetryServiceObj?.sendStartupEvent();
 }

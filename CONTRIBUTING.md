@@ -22,7 +22,7 @@ There are only a few guidelines that we need contributors to follow.
 
 1. Install `vsce` - A command line tool you'll use to publish extensions to the Extension Marketplace.
     ```bash
-    $ npm install -g vsce
+    $ npm install -g vsce@1.83.0
     ```
 2. From root folder, run the below command.
     ```bash

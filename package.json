@@ -2,13 +2,10 @@
   "name": "fabric8-analytics",
   "displayName": "Dependency Analytics",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
-  "extensionDependencies": [
-    "redhat.vscode-commons"
-  ],
   "contributors": [
     {
       "name": "Jaivardhan Kumar",
@@ -188,6 +185,12 @@
       "type": "object",
       "title": "Openshift.io configuration",
       "properties": {
+        "redhat.telemetry.enabled": {
+          "type": "boolean",
+          "default": null,
+          "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
+          "scope": "window"
+        },
         "dependencyAnalyticsServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
@@ -276,7 +279,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@redhat-developer/vscode-redhat-telemetry": "0.0.13",
+    "@redhat-developer/vscode-redhat-telemetry": "0.4.2",
     "fabric8-analytics-lsp-server": "^0.4.29",
     "fs": "0.0.1-security",
     "node-fetch": "^2.6.0",

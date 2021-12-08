@@ -4,7 +4,7 @@ def installBuildRequirements(){
 	def nodeHome = tool 'nodejs-12.20.0'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	sh "npm install -g vsce"
+	sh "npm install -g vsce@1.83.0"
 }
 
 def buildVscodeExtension(){
@@ -43,7 +43,7 @@ node('rhel8'){
 
 node('rhel8'){
 	timeout(time:5, unit:'DAYS') {
-		input message:'Approve deployment?', submitter: 'arajkuma'
+		input message:'Approve deployment?', submitter: 'shumathu'
 	}
 
 	stage "Publish to Marketplace"

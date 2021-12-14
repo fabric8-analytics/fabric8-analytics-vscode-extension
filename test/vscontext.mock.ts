@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 let dummyMomentoData = {};
 
 class DummyMemento implements vscode.Memento {
+  keys: () => ReadonlyArray<string>;
   get<T>(key: string): Promise<T | undefined> {
     return dummyMomentoData[key];
   }
@@ -32,7 +33,7 @@ export const context: vscode.ExtensionContext = {
   extensionMode: vscode.ExtensionMode.Test,
   storageUri: undefined,
   logUri: undefined,
-  globalStorageUri: undefined
+  globalStorageUri: undefined,
+  secrets: undefined,
+  extension: undefined
 };
-
-

@@ -99,18 +99,22 @@ If a user wishes to ignore all the vulnerabilities, or a specific set of securit
 
 Ignore all the security vulnerabilities present in the flask package in a pypi manifest file.
 
+```
 flask==1.0 #crdaignore
 fastapi==0.36.0 
-sceptre==2.2.1 
+sceptre==2.2.1
+```
+ 
 
 Example 2: Ignore a specific set of security vulnerabilities present in the flask package in a pypi manifest file.
-
+```
 flask==1.0 #crdaignore [vulnerability1, vulnerability2, ..., vulnerability n]
 fastapi==0.36.0 
 sceptre==2.2.1 
+```
 
 Ignore all the security vulnerabilities present in the "ginkgo" and "pax-go" dependencies in a golang manifest file.
-
+```
 module github.com/fabric8-analytics/acceptance_tests/data
 
 go 1.14
@@ -123,9 +127,9 @@ require (
 	github.com/onsi/gomega v1.10.3 // indirect 
 )
 
-
+```
 Ignore all vulnerabilities of "pax-go", and ignore a specific set of security vulnerabilities present in the "gingko" dependency in a golang manifest file.
-
+```
 module github.com/fabric8-analytics/acceptance_tests/data
 
 go 1.14
@@ -137,9 +141,9 @@ require (
 	github.com/onsi/ginkgo v1.14.2 // indirect crdaignore [vulnerability 1, vulnerability 2]
 	github.com/onsi/gomega v1.10.3 // indirect 
 )
-
+```
 Ignore all vulnerabilities of the dependency "junit:junit". 
-
+```
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.redhat.bayessian.test</groupId>
@@ -153,11 +157,11 @@ Ignore all vulnerabilities of the dependency "junit:junit".
     </dependency>
   </dependencies>
 </project>
-
+```
 Note: To ignore vulnerabilities for a dependency in a maven manifest file, insert "crdaignore" in comments against the group id, artifact id, or version of that particular dependency.
 
 Ignore "vulnerability 1" and "vulnerability 2" of the dependency "junit:junit". 
-
+```
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.redhat.bayessian.test</groupId>
@@ -171,9 +175,9 @@ Ignore "vulnerability 1" and "vulnerability 2" of the dependency "junit:junit".
     </dependency>
   </dependencies>
 </project>
-
+```
 Ignore vulnerabilities of packages in an npm manifest file - To Ignore vulnerabilities of npm packages, insert the "crdaignore" JSON object. The "crdaignore" object consists of the object "packages", which consists of the packages to ignore as keys, and the list of vulnerabilities to ignore as values. To ignore all the security vulnerabilities of an npm package, insert "*" in the list of vulnerabilities to ignore as shown in the example below. The below example ignores all the vulnerabilities of "bootstrap" and "vulnerability 1" of the lodash package.
-
+```
 "crdaignore": {
 			"packages": {
 				"bootstrap": [
@@ -182,9 +186,9 @@ Ignore vulnerabilities of packages in an npm manifest file - To Ignore vulnerabi
 				"lodash": ["vulnerability 1"]
 			}
 	},
-
+```
 A sample npm manifest file with the ignore vulnerabilities feature:
-
+```
 {
 		"name": "node-js-sample",
 		"version": "0.2.0",
@@ -229,7 +233,7 @@ A sample npm manifest file with the ignore vulnerabilities feature:
 		],
 		"license": "MIT"
 }
-
+```
 
 # Know more about Dependency Analytics Platform
 

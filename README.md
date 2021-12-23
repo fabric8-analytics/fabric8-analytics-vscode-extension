@@ -93,6 +93,144 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
 
 ![ screencast ](images/0.3.0/reg-stack-analysis.gif)
 
+## Using the CRDA Ignore Vulnerability Feature
+
+If a user wishes to ignore all the vulnerabilities, or a specific set of security vulnerabilities of a particular dependency, or set of dependencies, it can be done by adding "crdaignore" followed by an optional list consisting of the security vulnerabilities to ignore as comments in the manifest file for that particular dependency for the maven, pypi and golang ecosystems, or by adding a JSON "crdaignore" object to an npm manifest file as shown in the examples below.
+
+Ignore all the security vulnerabilities present in the flask package in a pypi manifest file.
+
+flask==1.0 #crdaignore
+fastapi==0.36.0 
+sceptre==2.2.1 
+
+Example 2: Ignore a specific set of security vulnerabilities present in the flask package in a pypi manifest file.
+
+flask==1.0 #crdaignore [vulnerability1, vulnerability2, ..., vulnerability n]
+fastapi==0.36.0 
+sceptre==2.2.1 
+
+Ignore all the security vulnerabilities present in the "ginkgo" and "pax-go" dependencies in a golang manifest file.
+
+module github.com/fabric8-analytics/acceptance_tests/data
+
+go 1.14
+
+require (
+	code.cloudfoundry.org/archiver v0.0.0-20170223024658-7291196139d7
+	github.com/googleapis/gax-go v1.0.3 crdaignore
+	github.com/googleapis/gax-go/v2 v2.0.5
+	github.com/onsi/ginkgo v1.14.2 // indirect crdaignore
+	github.com/onsi/gomega v1.10.3 // indirect 
+)
+
+
+Ignore all vulnerabilities of "pax-go", and ignore a specific set of security vulnerabilities present in the "gingko" dependency in a golang manifest file.
+
+module github.com/fabric8-analytics/acceptance_tests/data
+
+go 1.14
+
+require (
+	code.cloudfoundry.org/archiver v0.0.0-20170223024658-7291196139d7
+	github.com/googleapis/gax-go v1.0.3 crdaignore
+	github.com/googleapis/gax-go/v2 v2.0.5
+	github.com/onsi/ginkgo v1.14.2 // indirect crdaignore [vulnerability 1, vulnerability 2]
+	github.com/onsi/gomega v1.10.3 // indirect 
+)
+
+Ignore all vulnerabilities of the dependency "junit:junit". 
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.redhat.bayessian.test</groupId>
+  <artifactId>test-app-junit-dependency</artifactId>
+  <version>1.0</version>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>  <!--crdaignore-->
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+    </dependency>
+  </dependencies>
+</project>
+
+Note: To ignore vulnerabilities for a dependency in a maven manifest file, insert "crdaignore" in comments against the group id, artifact id, or version of that particular dependency.
+
+Ignore "vulnerability 1" and "vulnerability 2" of the dependency "junit:junit". 
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.redhat.bayessian.test</groupId>
+  <artifactId>test-app-junit-dependency</artifactId>
+  <version>1.0</version>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>  
+      <artifactId>junit</artifactId>   <!--crdaignore [vulnerability 1, vulnerability 2]-->
+      <version>3.8.1</version>
+    </dependency>
+  </dependencies>
+</project>
+
+Ignore vulnerabilities of packages in an npm manifest file - To Ignore vulnerabilities of npm packages, insert the "crdaignore" JSON object. The "crdaignore" object consists of the object "packages", which consists of the packages to ignore as keys, and the list of vulnerabilities to ignore as values. To ignore all the security vulnerabilities of an npm package, insert "*" in the list of vulnerabilities to ignore as shown in the example below. The below example ignores all the vulnerabilities of "bootstrap" and "vulnerability 1" of the lodash package.
+
+"crdaignore": {
+			"packages": {
+				"bootstrap": [
+					"*"
+				],
+				"lodash": ["vulnerability 1"]
+			}
+	},
+
+A sample npm manifest file with the ignore vulnerabilities feature:
+
+{
+		"name": "node-js-sample",
+		"version": "0.2.0",
+		"description": "A sample Node.js app using Express 4",
+		"main": "index.js",
+		"scripts": {
+				"start": "node index.js"
+		},
+		"dependencies": {
+				"ansi-styles": "3.2.1",
+				"escape-string-regexp": "1.0.5",
+				"supports-color": "5.5.0",
+				"cordova-plugin-camera": "4.1.0",
+				"bootstrap": "4.1.1",
+				"libnmap": "0.4.15",
+				"lodash": "4.17.11",
+				"html-purify": "1.1.0"
+		},
+		"engines": {
+				"node": "4.0.0"
+		},
+		"crdaignore": {
+			"packages": {
+				"bootstrap": [
+					"*"
+				],
+				"lodash": ["vulnerability 1"]
+			}
+		},
+		"repository": {
+				"type": "git",
+				"url": "https://github.com/heroku/node-js-sample"
+		},
+		"keywords": [
+				"node",
+				"heroku",
+				"express"
+		],
+		"author": "Mark Pundsack",
+		"contributors": [
+				"Zeke Sikelianos <zeke@sikelianos.com> (http://zeke.sikelianos.com)"
+		],
+		"license": "MIT"
+}
+
+
 # Know more about Dependency Analytics Platform
 
 The mission of this project is to significantly enhance developer experience:

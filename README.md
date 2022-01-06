@@ -4,21 +4,21 @@
 ![CI Build](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/Tests/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
-Dependency Analytics is powered by [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/), it is the most advanced and accurate open source vulnerability database in the industry. That adds value with the latest, fastest and more number of vulnerabilities derived from numerous sources.
+Dependency Analytics is powered by [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/). It is the most advanced and accurate open source vulnerability database in the industry and adds value with the latest, fastest, and numerous vulnerabilities derived from multiple sources.
 
 'Dependency Analytics Report' with Insights about your application dependencies:
 
 - Flags a security vulnerability(CVE) and suggests a remedial version
-- Shows Github popularity metrics along with latest version
-- Suggests a project level license, check for conflicts between dependency licences
-- AI based guidance for additional, alternative dependencies
+- Shows Github popularity metrics along with the latest version
+- Suggests a project level license, check for conflicts between dependency licenses
+- AI-based guidance for additional, alternative dependencies
 
 > **Disclaimer**: Dependency Analytics does not analyse **dev/test** dependencies.
 
 ## Supported Languages
 
-'Dependency Analytics' extension supports projects using Maven, projects build on npm (Node ecosystem), projects using Python and projects using Golang.
-Extending support for other languages is currently under progress.
+'Dependency Analytics' extension supports projects using Maven, npm (Node ecosystem), Python, and Golang.
+Extending support for other languages is currently in progress.
 
 ## Prerequisites
 
@@ -58,45 +58,45 @@ File(Code on macOS) > Preferences > Settings to open your [Settings](https://cod
 
 ![ screencast ](images/0.3.0/component-analysis.gif)
 
-2. 'Quick Fix' provides single click option to `Switch to the recommended version` for vulnerability remediation, it also provides option for `Detailed Vulnerability Report` to display 'Dependency Analytics' report with detailed vulnerabilty analysis.
+2. 'Quick Fix' provides a single-click option to `Switch to the recommended version` for vulnerability remediation. It also provides an option for `Detailed Vulnerability Report` to display 'Dependency Analytics' report with detailed vulnerability analysis.
 
 ![ screencast ](images/0.3.0/quick-fix.gif)
 
-3. Right click on a manifest file(`pom.xml` / `package.json` / `requirements.txt`) and choose 'Dependency Analytics Report ...' OR click on ![icon](images/0.2.0/icon.png) icon in editor group OR click on status bar message to display 'Dependency Analytics' report as shown below. This report covers deeper insights into your application dependencies:
+3. Right-click on a manifest file(`pom.xml` / `package.json` / `requirements.txt`) and choose 'Dependency Analytics Report ...' OR click on ![icon](images/0.2.0/icon.png) icon in editor group OR click on status bar message to display 'Dependency Analytics' report as shown below. This report covers deeper insights into your application dependencies:
 
 - Flags a security vulnerability(CVE) and suggests a remedial version
-- Shows Github popularity metrics along with latest version
-- Suggests a project level license, check for conflicts between dependency licences
-- AI based guidance for additional,alternative dependencies
+- Shows Github popularity metrics along with the latest version
+- Suggests a project level license, check for conflicts between dependency licenses
+- AI-based guidance for additional, alternative dependencies
 
 ![ screencast ](images/0.3.0/stack-analysis.gif)
 
-4. **For multi module maven application** Right click on root `pom.xml` in editor window and choose 'Dependency Analytics Report ...' to display 'Dependency Analytics' report for the entire application.
+4. **For multi-module maven application** Right-click on root `pom.xml` in the editor window and choose Dependency Analytics Report ...' so display 'Dependency Analytics' report for the entire application.
 
 ![ screencast ](images/0.3.0/multi-stack-analysis.gif)
 
 ---
 
-**Note** It creates a folder `target` in workspace which is used for processing of manifest files, needed for generating stack report. So kindly add `target` in `.gitignore`.
+**Note** It creates a folder `target` in the workspace, used to process manifest files needed for generating stack reports. Please add `target` in `.gitignore`.
 
 ## Register for a free Snyk Account and Connect Snyk to your Red Hat Dependency Analytics
 
-1. Clicking on the `Sign up for a free Snyk account` from 'Dependency Analytics report' will take you to the Snyk sign up page for a free Snyk account. After signing up for a free Snyk account it goes to the 'Snyk's Landing page' which shows `Snyk token` to connect Snyk with your Red Hat Dependency Analytics. Copy and paste the Snyk token into Red Hat Dependency Analytics Report as shown below.
+1. Clicking on the `Sign up for a free Snyk account` from 'Dependency Analytics report' will take you to the Snyk sign-up page for a free Snyk account. After signing up for a free Snyk account, it goes to the 'Snyk's Landing page', which shows `Snyk token` to connect Snyk with your Red Hat Dependency Analytics. Copy and paste the Snyk token into Red Hat Dependency Analytics Report below.
 
 ![ screencast ](images/0.2.0/snyk-sign-up.gif)
 
-2. Look for ![snyk button](images/0.2.0/snyk-button.png) in Dependency Analytics Report and click on the button to enter your Snyk Token. Paste your snyk token and click on the `Submit button`.
+2. Look for ![snyk button](images/0.2.0/snyk-button.png) in Dependency Analytics Report and click on the button to enter your Snyk Token. Paste your Snyk token and click on the `Submit button`.
 
 ![ screencast ](images/0.2.0/snyk-token.gif)
 
-3. After successfully entering the Snyk token the Dependency Analyitcs report will be updated with detailed information about security vulnerabilities unique to Snyk and vulnerabilities having publicly known exploits.
+3. After successfully entering the Snyk token, the Dependency Analytics report updates with detailed information about security vulnerabilities unique to Snyk and vulnerabilities having publicly known exploits.
 
 ![ screencast ](images/0.3.0/reg-stack-analysis.gif)
 
 ## Ignoring Vulnerabilities during analysis
 
-If users wish to ignore vulnerabilities for a dependency, it can be done by adding "crdaignore" as a comment in manifest file for Python, Maven, Golang and as a JSON for Node ecosystem because Node manifest files dont support comments hence it has to be given inside a JSON.
-If "crdaignore" is followed by a list of comma separated Snyk vulnerability IDs then only listed vulnerabilities will be ignored during analysis, in case "crdaignore" is not followed by any list all vulnerabilities present in package will be ignored.
+If users wish to ignore vulnerabilities for a dependency, it can be done by adding "crdaignore" as a comment in the manifest file for Python, Maven, Golang. Node manifest files don't support comments; hence "crdaignore" must be given inside a JSON.
+If "crdaignore" is followed by a list of comma-separated Snyk vulnerability IDs, only listed vulnerabilities ignored during analysis, in case "crdaignore" is not followed by any list, all vulnerabilities present in a package will be ignored.
 
 # Examples
 
@@ -189,10 +189,15 @@ A sample npm manifest file with the security vulnerabilities to ignore during an
 		"license": "MIT"
 }
 ```
+# Using Dependency Analytics on your CI Builds
+
+## GitHub Actions 
+You can use the [CodeReady Dependency Analytics GitHub Action](https://github.com/marketplace/actions/codeready-dependency-analytics) to
+ automate analysis of vulnerabilities in a project's dependencies. Refer to action's documentation or [this article](https://developers.redhat.com/articles/2021/11/30/automate-dependency-analytics-github-actions#) on how to set it up for your projects.
 
 # Know more about Dependency Analytics Platform
 
-The mission of this project is to significantly enhance developer experience:
+The mission of this project is to enhance developer experience significantly:
 providing Insights(security, licenses, AI based guidance) for applications and helping developers, Enterprises.
 
 - [GitHub Organization](https://github.com/fabric8-analytics)

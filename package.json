@@ -35,7 +35,8 @@
     "dependency scan",
     "node",
     "java",
-    "multi-root ready"
+    "multi-root ready",
+    "CVE"
   ],
   "icon": "icon/openshift_logo.png",
   "engines": {
@@ -50,26 +51,6 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "languages": [
-      {
-        "id": "security",
-        "aliases": [
-          "CVE",
-          "pom.xml",
-          "package.json",
-          "requirements.txt"
-        ]
-      },
-      {
-        "id": "analytics",
-        "aliases": [
-          "AI",
-          "artificial intelligence",
-          "deep learning",
-          "suggest dependencies"
-        ]
-      }
-    ],
     "commands": [
       {
         "command": "fabric8.stackAnalysis",

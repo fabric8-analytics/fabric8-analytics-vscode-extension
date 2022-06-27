@@ -43,7 +43,7 @@ node('rhel8'){
 
 node('rhel8'){
 	timeout(time:5, unit:'DAYS') {
-		input message:'Approve deployment?', submitter: 'shumathu'
+		input message:'Approve deployment?', submitter: 'jparsai'
 	}
 
 	stage "Publish to Marketplace"

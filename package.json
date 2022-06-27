@@ -55,7 +55,6 @@
         "id": "security",
         "aliases": [
           "CVE",
-          "python",
           "pom.xml",
           "package.json",
           "requirements.txt"

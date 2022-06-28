@@ -35,30 +35,38 @@ node('rhel8'){
 	def packageJson = readJSON file: 'package.json'
 	sh "vsce package -o fabric8-analytics-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
 
-	stage 'Upload fabric8-analytics-vscode-extension to staging'
 	def vsix = findFiles(glob: '**.vsix')
-	sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-dependency-analytics/ <<< \$'put -p ${vsix[0].path}'"
-	stash name:'vsix', includes:vsix[0].path
-}
+	
+	stage 'Upload fabric8-analytics-vscode-extension to snapshots'
+	sh "sftp -C ${UPLOAD_LOCATION}/snapshots/vscode-dependency-analytics/ <<< \$'put -p ${vsix[0].path}'"
+	
+	// Publishing part
+	if(publishToMarketPlace.equals('true')){
+		timeout(time:5, unit:'DAYS') {
+			input message:'Approve deployment?', submitter: 'jparsai'
+		}
+		
+		stage "Publish to Marketplace"
 
-node('rhel8'){
-	timeout(time:5, unit:'DAYS') {
-		input message:'Approve deployment?', submitter: 'jparsai'
+		// VS Code Marketplace
+		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+			sh 'vsce publish -p ${TOKEN} --packagePath' + " ${vsix[0].path}"
+		}
+		
+		stage 'Upload fabric8-analytics-vscode-extension to stable'
+		
+		// jboss tools download locations
+		sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-dependency-analytics/ <<< \$'put -p ${vsix[0].path}'"
 	}
 
-	stage "Publish to Marketplace"
-	unstash 'vsix';
-
-	def vsix = findFiles(glob: '**.vsix')
-	// VS Code Marketplace
-	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-		sh 'vsce publish -p ${TOKEN} --packagePath' + " ${vsix[0].path}"
-	}
-
-	// Open-vsx Marketplace
-	sh "npm install -g ovsx"
-	withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
-		sh 'ovsx publish -p ${OVSX_TOKEN}' + " ${vsix[0].path}"
+	if(publishToOVSX.equals('true')){
+		
+		stage "Publish to OVSX"
+		
+		sh "npm install -g ovsx"
+		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
+			sh 'ovsx publish -p ${OVSX_TOKEN}' + " ${vsix[0].path}"
+		}
 	}
 
 	archive includes:"**.vsix"

@@ -37,7 +37,7 @@ node('rhel8'){
 
 	stage 'Upload fabric8-analytics-vscode-extension to staging'
 	def vsix = findFiles(glob: '**.vsix')
-	sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-dependency-analytics/ <<< \$'put -p *.vsix*'"
+	sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-dependency-analytics/ <<< \$'put -p ${vsix[0].path}'"
 	stash name:'vsix', includes:vsix[0].path
 }
 

@@ -20,7 +20,7 @@ Dependency Analytics is powered by [Snyk Intel Vulnerability DB](https://snyk.io
 'Dependency Analytics' extension supports projects using Maven, npm (Node ecosystem), Python, and Golang.
 Extending support for other languages is currently in progress.
 
-## Prerequisites
+## Pré requisites
 
 This extension assumes you have the following binaries on your `PATH`:
 

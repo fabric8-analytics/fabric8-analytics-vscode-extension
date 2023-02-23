@@ -321,8 +321,8 @@ export module ProjectDataProvider {
       let targetDir = paths.join(vscodeRootpath, 'target');
       const goGraphFilePath = paths.join(targetDir, 'golist.json');
 
-      const goPath = paths.join(os.tmpdir(), 'gomanifest');
-      const goManifestPath = paths.join(paths.join(goPath, 'bin'), 'gomanifest');
+      const goBin = paths.join(os.tmpdir(), 'gomanifest', 'bin');
+      const goManifestPath = paths.join(goBin, 'gomanifest');
 
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir);
@@ -330,9 +330,8 @@ export module ProjectDataProvider {
 
       const cmd: string = [
         Config.getGoExecutable(),
-        `get`,
-        `-u`,
-        `github.com/fabric8-analytics/cli-tools/gomanifest`,
+        `install`,
+        `github.com/fabric8-analytics/cli-tools/gomanifest@latest`,
         `&&`,
         `${goManifestPath}`,
         `"${vscodeRootpath}"`,
@@ -344,7 +343,7 @@ export module ProjectDataProvider {
       outputChannelDep.addMsgOutputChannel('\n CMD :' + cmd);
       exec(
         cmd,
-        { maxBuffer: 1024 * 1200, env: Object.assign({}, process.env, { "GOPATH": goPath }) },
+        { maxBuffer: 1024 * 1200, env: Object.assign({}, process.env, { "GOBIN": goBin }) },
         (error: Error, _stdout: string, _stderr: string): void => {
           let outputMsg = `\n STDOUT : ${_stdout} \n STDERR : ${_stderr} \n error : ${error}`;
           outputChannelDep.addMsgOutputChannel(outputMsg);

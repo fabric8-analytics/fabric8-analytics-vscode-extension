@@ -10,8 +10,6 @@ import { outputChannelDep, initOutputChannel } from './extension';
 import { Commands } from './commands';
 import { dirname } from 'path';
 
-const GOMANIFEST_PKG = "github.com/fabric8-analytics/cli-tools/gomanifest";
-
 export module ProjectDataProvider {
   export const isOutputChannelActivated = (): any => {
     if (!outputChannelDep) {
@@ -329,13 +327,10 @@ export module ProjectDataProvider {
 
       const cmd: string = [
         Config.getGoExecutable(),
-        `get`,
-        `-u`,
-        `"${GOMANIFEST_PKG}"`,
+        `install`,
+        `github.com/fabric8-analytics/cli-tools/gomanifest@latest`,
         `&&`,
-        Config.getGoExecutable(),
-        `run`,
-        `"${GOMANIFEST_PKG}"`,
+        `gomanifest`,
         `"${vscodeRootpath}"`,
         `"${goGraphFilePath}"`,
         `"${Config.getGoExecutable()}"`,

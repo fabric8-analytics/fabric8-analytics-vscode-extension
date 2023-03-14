@@ -3,6 +3,9 @@
 import * as vscode from 'vscode';
 import * as request from 'request';
 
+const MAX_RETRIES = 5;
+const INITIAL_DELAY = 1000; // in milliseconds
+
 export module stackAnalysisServices {
   export const clearContextInfo = context => {
     context.globalState.update('f8_3scale_user_key', '');
@@ -11,10 +14,19 @@ export module stackAnalysisServices {
 
   export const getStackAnalysisService = options => {
     let errorMsg: string;
-    return new Promise((resolve, reject) => {
+    let retryCount = 0;
+
+    const getRequestWithExponentialBackoff = (resolve, reject) => {
       request.get(options, (err, httpResponse, body) => {
         if (err) {
-          reject(err);
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            const delay = INITIAL_DELAY * Math.pow(2, retryCount); // calculate delay time
+            console.log(`Retry ${retryCount} in ${delay}ms`);
+            setTimeout(() => getRequestWithExponentialBackoff(resolve, reject), delay);
+          } else {
+            reject(err);
+          }
         } else {
           if (
             httpResponse.statusCode === 200 ||
@@ -26,6 +38,11 @@ export module stackAnalysisServices {
             errorMsg = `Failed :: ${httpResponse.statusMessage}, Status: ${httpResponse.statusCode
               }`;
             reject(errorMsg);
+          } else if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            const delay = INITIAL_DELAY * Math.pow(2, retryCount); // calculate delay time
+            console.log(`Retry ${retryCount} in ${delay}ms`);
+            setTimeout(() => getRequestWithExponentialBackoff(resolve, reject), delay);
           } else if (
             httpResponse.statusCode === 429 ||
             httpResponse.statusCode === 403
@@ -42,13 +59,16 @@ export module stackAnalysisServices {
           }
         }
       });
+    };
+
+    return new Promise((resolve, reject) => {
+      getRequestWithExponentialBackoff(resolve, reject);
     });
+
   };
 
   export const postStackAnalysisService = (options, context) => {
     let errorMsg: string;
-    const MAX_RETRIES = 5;
-    const INITIAL_DELAY = 1000; // in milliseconds
     let retryCount = 0;
 
     const postRequestWithExponentialBackoff = (resolve, reject) => {
@@ -111,7 +131,7 @@ export module stackAnalysisServices {
           }
         }
       });
-    }
+    };
 
     return new Promise((resolve, reject) => {
       console.log('Options', options && options.formData);

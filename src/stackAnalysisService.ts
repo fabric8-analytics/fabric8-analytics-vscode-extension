@@ -12,16 +12,15 @@ export module stackAnalysisServices {
     context.globalState.update('f8_access_routes', '');
   };
 
-  export const getStackAnalysisService = options => {
+  export const getStackAnalysisService = (options, retryCount = 0) => {
     let errorMsg: string;
-    let retryCount = 0;
 
     const getRequestWithExponentialBackoff = (resolve, reject) => {
       request.get(options, (err, httpResponse, body) => {
         if (err) {
           if (retryCount < MAX_RETRIES) {
             retryCount++;
-            invokeExponentialBackoff(retryCount, getRequestWithExponentialBackoff, resolve, reject)
+            invokeExponentialBackoff(retryCount, getRequestWithExponentialBackoff, resolve, reject);
           } else {
             reject(err);
           }
@@ -38,7 +37,7 @@ export module stackAnalysisServices {
             reject(errorMsg);
           } else if (retryCount < MAX_RETRIES) {
             retryCount++;
-            invokeExponentialBackoff(retryCount, getRequestWithExponentialBackoff, resolve, reject)
+            invokeExponentialBackoff(retryCount, getRequestWithExponentialBackoff, resolve, reject);
           } else if (
             httpResponse.statusCode === 429 ||
             httpResponse.statusCode === 403
@@ -63,9 +62,8 @@ export module stackAnalysisServices {
 
   };
 
-  export const postStackAnalysisService = (options, context) => {
+  export const postStackAnalysisService = (options, context, retryCount = 0) => {
     let errorMsg: string;
-    let retryCount = 0;
 
     const postRequestWithExponentialBackoff = (resolve, reject) => {
       request.post(options, (err, httpResponse, body) => {
@@ -73,7 +71,7 @@ export module stackAnalysisServices {
           console.log('error', err);
           if (retryCount < MAX_RETRIES) {
             retryCount++;
-            invokeExponentialBackoff(retryCount, postRequestWithExponentialBackoff, resolve, reject)
+            invokeExponentialBackoff(retryCount, postRequestWithExponentialBackoff, resolve, reject);
           } else {
             clearContextInfo(context);
             reject(err);
@@ -103,7 +101,7 @@ export module stackAnalysisServices {
             reject(errorMsg);
           } else if (retryCount < MAX_RETRIES) {
             retryCount++;
-            invokeExponentialBackoff(retryCount, postRequestWithExponentialBackoff, resolve, reject)
+            invokeExponentialBackoff(retryCount, postRequestWithExponentialBackoff, resolve, reject);
           } else if (
             httpResponse.statusCode === 429 ||
             httpResponse.statusCode === 403
@@ -137,5 +135,5 @@ export module stackAnalysisServices {
     const delay = INITIAL_DELAY * Math.pow(2, retryCount); // calculate delay time
     console.log(`Retry ${retryCount} in ${delay}ms`);
     setTimeout(() => requestFunc(resolve, reject), delay);
-  }
+  };
 }

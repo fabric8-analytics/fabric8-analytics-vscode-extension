@@ -103,7 +103,7 @@ suite('stacknalysis Services', () => {
   });
 
   test('postStackAnalysisService should return success with statuscode 500 and call ClearContextInfo', () => {
-    let retryCount = 999;
+    let retryCount = Number.MAX_VALUE;
     const options = {};
     options['uri'] = 'https://abc.com';
     let spyClearContextInfo = sandbox.spy(
@@ -119,7 +119,7 @@ suite('stacknalysis Services', () => {
   });
 
   test('postStackAnalysisService should return error', () => {
-    let retryCount = 999;
+    let retryCount = Number.MAX_VALUE;
     const options = {};
     options['uri'] = 'https://abc.com';
     let spyClearContextInfo = sandbox.spy(

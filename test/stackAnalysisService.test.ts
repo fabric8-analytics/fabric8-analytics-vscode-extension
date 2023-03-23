@@ -103,6 +103,7 @@ suite('stacknalysis Services', () => {
   });
 
   test('postStackAnalysisService should return success with statuscode 500 and call ClearContextInfo', () => {
+    let retryCount = Number.MAX_VALUE;
     const options = {};
     options['uri'] = 'https://abc.com';
     let spyClearContextInfo = sandbox.spy(
@@ -112,12 +113,13 @@ suite('stacknalysis Services', () => {
     let stubRequestPost = sandbox
       .stub(request, 'post')
       .yields(null, { statusCode: 500 });
-    stackAnalysisServices.postStackAnalysisService(options, context);
+    stackAnalysisServices.postStackAnalysisService(options, context, retryCount);
     expect(stubRequestPost).callCount(1);
     expect(spyClearContextInfo).callCount(1);
   });
 
   test('postStackAnalysisService should return error', () => {
+    let retryCount = Number.MAX_VALUE;
     const options = {};
     options['uri'] = 'https://abc.com';
     let spyClearContextInfo = sandbox.spy(
@@ -125,7 +127,7 @@ suite('stacknalysis Services', () => {
       'clearContextInfo'
     );
     let stubRequestPost = sandbox.stub(request, 'post').yields('err');
-    stackAnalysisServices.postStackAnalysisService(options, context);
+    stackAnalysisServices.postStackAnalysisService(options, context, retryCount);
     expect(stubRequestPost).callCount(1);
     expect(spyClearContextInfo).callCount(1);
   });

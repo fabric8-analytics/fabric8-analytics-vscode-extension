@@ -107,14 +107,14 @@ export function activate(context: vscode.ExtensionContext) {
           return notification.hasWarning() && !hasAlreadyShown;
         };
 
-        const showVulnerabilityFoundPrompt = async (msg: string) => {
+        const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record(context, TelemetryActions.vulnerabilityReportPopupOpened);
+            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { fileName: fileName });
           }
           else {
-            record(context, TelemetryActions.vulnerabilityReportPopupIgnored);
+            record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { fileName: fileName });
           }
         };
 
@@ -122,7 +122,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (canShowPopup(notification)) {
-            showVulnerabilityFoundPrompt(notification.popupText());
+            showVulnerabilityFoundPrompt(notification.popupText(), path.basename(notification.origin()));
             record(context, TelemetryActions.componentAnalysisDone, {fileName: path.basename(notification.origin())});
             // prevent further popups.
             notifiedFiles.add(notification.origin());
@@ -195,7 +195,7 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   };
 
   const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
-    record(context, origin);
+    record(context, origin, { fileName: uri.fsPath.split('/').pop() });
     invokeFullStackReport(uri);
   };
 

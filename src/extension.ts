@@ -111,10 +111,10 @@ export function activate(context: vscode.ExtensionContext) {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { fileName: fileName });
+            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName:fileName });
           }
           else {
-            record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { fileName: fileName });
+            record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
           }
         };
 
@@ -123,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (canShowPopup(notification)) {
             showVulnerabilityFoundPrompt(notification.popupText(), path.basename(notification.origin()));
-            record(context, TelemetryActions.componentAnalysisDone, {fileName: path.basename(notification.origin())});
+            record(context, TelemetryActions.componentAnalysisDone, {manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin())});
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }
@@ -133,7 +133,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);
-          record(context, TelemetryActions.componentAnalysisFailed, {fileName: path.basename(notification.origin()), error: respData.data});
+          record(context, TelemetryActions.componentAnalysisFailed, {manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: respData.data});
         });
       });
       context.subscriptions.push(
@@ -195,7 +195,7 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   };
 
   const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
-    record(context, origin, { fileName: uri.fsPath.split('/').pop() });
+    record(context, origin, { manifest: uri.fsPath.split('/').pop(), fileName: uri.fsPath.split('/').pop() });
     invokeFullStackReport(uri);
   };
 

@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import * as paths from 'path';
 import * as fs from 'fs';
+import { Apiendpoint } from './apiendpoint'
 
 import { Config } from './config';
 import { getRequestTimeout, getRequestPollInterval } from './constants';
@@ -49,7 +50,7 @@ export module stackanalysismodule {
               let thatContext: any;
 
               if (ecosystem === 'maven') {
-                options['uri'] = `http://crda-backend-crda.apps.sssc-cl01.appeng.rhecoeng.com/api/v3/dependency-analysis?user_key=${apiConfig.apiKey}`;
+                options['uri'] = `${Apiendpoint.STACK_REPORT_URL_1_5}?user_key=${apiConfig.apiKey}`;
                 options['body'] = payloadData['manifest']['value'];
                 options['headers'] = {
                   'Accept': 'text/html',

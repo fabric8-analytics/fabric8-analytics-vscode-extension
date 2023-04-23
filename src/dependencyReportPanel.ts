@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 
 import { Templates } from './template';
 import { Config } from './config';
+import * as fs from 'fs';
 
 const loader = Templates.LOADER_TEMPLATE;
 const header = Templates.HEADER_TEMPLATE;
@@ -107,6 +108,9 @@ export class DependencyReportPanel {
       r += render_stack_iframe(portal_uri);
       r += footer;
       this._panel.webview.html = r;
+    } else if (data && /<\s*html[^>]*>/i.test(data.report)) {
+      DependencyReportPanel.data = data;
+      this._panel.webview.html = data.report;
     } else if (data && data === 'error') {
       let r = header;
       r += render_project_failure();
@@ -120,6 +124,11 @@ export class DependencyReportPanel {
 
     // Clean up our resources
     this._panel.dispose();
+    if (DependencyReportPanel.data && DependencyReportPanel.data.reportFilePath && fs.existsSync(DependencyReportPanel.data.reportFilePath)) {
+      // Delete temp StackAnalysis file
+      fs.unlinkSync(DependencyReportPanel.data.reportFilePath);
+      console.log(`File ${DependencyReportPanel.data.reportFilePath} has been deleted.`);
+    }
     DependencyReportPanel.data = null;
     while (this._disposables.length) {
       const x = this._disposables.pop();

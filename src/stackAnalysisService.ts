@@ -82,13 +82,25 @@ export module stackAnalysisServices {
             httpResponse.statusCode === 200 ||
             httpResponse.statusCode === 202
           ) {
-            let resp = JSON.parse(body);
-            if (resp.error === undefined && resp.status === 'success') {
-              resolve(resp.id);
+            if (/<\s*html[^>]*>/i.test(body)) {
+              console.log('Response is HTML');
+              resolve(body);
             } else {
-              errorMsg = `Failed :: ${resp.error}, Status: ${httpResponse.statusCode
-                }`;
-              reject(errorMsg);
+              try {
+                let resp = JSON.parse(body);
+                console.log('Response is JSON');
+                if (resp.error === undefined && resp.status === 'success') {
+                  resolve(resp.id);
+                } else {
+                  errorMsg = `Failed :: ${resp.error}, Status: ${httpResponse.statusCode
+                    }`;
+                  reject(errorMsg);
+                }
+              } catch (err) {
+                console.log('Response is of unknown type');
+                errorMsg = `Failed :: Response is of unknown type, Status: ${httpResponse.statusCode}`;
+                reject(errorMsg);
+              }
             }
           } else if (httpResponse.statusCode === 400) {
             errorMsg = `Manifest file(s) are not proper. Status:  ${httpResponse.statusCode

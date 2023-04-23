@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as paths from 'path';
+import * as fs from 'fs';
 
 import { Config } from './config';
 import { getRequestTimeout, getRequestPollInterval } from './constants';
@@ -46,70 +47,101 @@ export module stackanalysismodule {
               let payloadData = formData;
               const options = {};
               let thatContext: any;
-              options['uri'] = `${apiConfig.host
-                }/api/v2/stack-analyses?user_key=${apiConfig.apiKey}`;
-              options['formData'] = payloadData;
-              options['headers'] = {
-                showTransitiveReport: 'true',
-                uuid: process.env.UUID
-              };
+
+              if (ecosystem === 'maven') {
+                options['uri'] = `http://crda-backend-crda.apps.sssc-cl01.appeng.rhecoeng.com/api/v3/dependency-analysis?user_key=${apiConfig.apiKey}`;
+                options['body'] = payloadData['manifest']['value'];
+                options['headers'] = {
+                  'Accept': 'text/html',
+                  'Content-Type': 'text/vnd.graphviz',
+                };
+              } else {
+                options['uri'] = `${apiConfig.host
+                  }/api/v2/stack-analyses?user_key=${apiConfig.apiKey}`;
+                options['formData'] = payloadData;
+                options['headers'] = {
+                  showTransitiveReport: 'true',
+                  uuid: process.env.UUID
+                };
+              }
               thatContext = context;
-              let respId = await stackAnalysisServices.postStackAnalysisService(
+              let resp = await stackAnalysisServices.postStackAnalysisService(
                 options,
                 thatContext
               );
               p.report({
                 message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
               });
-              return respId;
+              return resp;
             })
-            .then(async respId => {
-              console.log(`Analyzing your stack, id ${respId}`);
-              const options = {};
-              options['uri'] = `${apiConfig.host
-                }/api/v2/stack-analyses/${respId}?user_key=${apiConfig.apiKey
-                }`;
-              options['headers'] = {
-                uuid: process.env.UUID
-              };
-              let timeoutCounter = getRequestTimeout / getRequestPollInterval;
-              const interval = setInterval(() => {
-                stackAnalysisServices
-                  .getStackAnalysisService(options)
-                  .then(data => {
-                    if (!data.hasOwnProperty('error')) {
+            .then(async resp => {
+              if (ecosystem === 'maven') {
+                const data = {
+                  report: resp,
+                  reportFilePath: '/tmp/stackAnalysisReport.html',
+                };
+                fs.writeFile(data.reportFilePath, data.report, (err) => {
+                  if (err) {
+                    handleError(err);
+                    reject();
+                  }
+                  console.log(`File saved to ${data.reportFilePath}`);
+                  p.report({
+                    message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                  });
+                  if (DependencyReportPanel.currentPanel) {
+                    DependencyReportPanel.currentPanel.doUpdatePanel(data);
+                  }
+                  resolve();
+                });
+              } else {
+                console.log(`Analyzing your stack, id ${resp}`);
+                const options = {};
+                options['uri'] = `${apiConfig.host
+                  }/api/v2/stack-analyses/${resp}?user_key=${apiConfig.apiKey
+                  }`;
+                options['headers'] = {
+                  uuid: process.env.UUID
+                };
+                let timeoutCounter = getRequestTimeout / getRequestPollInterval;
+                const interval = setInterval(() => {
+                  stackAnalysisServices
+                    .getStackAnalysisService(options)
+                    .then(data => {
+                      if (!data.hasOwnProperty('error')) {
+                        clearInterval(interval);
+                        p.report({
+                          message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                        });
+                        if (DependencyReportPanel.currentPanel) {
+                          DependencyReportPanel.currentPanel.doUpdatePanel(data);
+                        }
+                        resolve();
+                      } else {
+                        console.log(`Polling for stack report, remaining count:${timeoutCounter}`);
+                        --timeoutCounter;
+                        if (timeoutCounter <= 0) {
+                          let errMsg = `Failed to trigger application's stack analysis, try in a while.`;
+                          clearInterval(interval);
+                          p.report({
+                            message:
+                              StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                          });
+                          handleError(errMsg);
+                          reject();
+                        }
+                      }
+                    })
+                    .catch(error => {
                       clearInterval(interval);
                       p.report({
                         message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                       });
-                      if (DependencyReportPanel.currentPanel) {
-                        DependencyReportPanel.currentPanel.doUpdatePanel(data);
-                      }
-                      resolve();
-                    } else {
-                      console.log(`Polling for stack report, remaining count:${timeoutCounter}`);
-                      --timeoutCounter;
-                      if (timeoutCounter <= 0) {
-                        let errMsg = `Failed to trigger application's stack analysis, try in a while.`;
-                        clearInterval(interval);
-                        p.report({
-                          message:
-                            StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                        });
-                        handleError(errMsg);
-                        reject();
-                      }
-                    }
-                  })
-                  .catch(error => {
-                    clearInterval(interval);
-                    p.report({
-                      message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                      handleError(error);
+                      reject(error);
                     });
-                    handleError(error);
-                    reject(error);
-                  });
-              }, getRequestPollInterval);
+                }, getRequestPollInterval);
+              }
             })
             .catch(err => {
               p.report({

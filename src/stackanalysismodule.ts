@@ -50,7 +50,7 @@ export module stackanalysismodule {
               let thatContext: any;
 
               if (ecosystem === 'maven') {
-                options['uri'] = `${Apiendpoint.STACK_REPORT_URL_1_5}?user_key=${apiConfig.apiKey}`;
+                options['uri'] = `${Apiendpoint.STACK_REPORT_URL_1_5}/${ecosystem}?user_key=${apiConfig.apiKey}`;
                 options['body'] = payloadData['manifest']['value'];
                 options['headers'] = {
                   'Accept': 'text/html',

@@ -154,6 +154,8 @@ export class DependencyReportPanel {
       r += render_stack_iframe(portal_uri);
       r += footer;
       return r;
+    } else if (output && /<\s*html[^>]*>/i.test(output.report)) {
+      return output.report;
     } else {
       return loader;
     }

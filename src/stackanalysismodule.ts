@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { Apiendpoint } from './apiendpoint'
 
 import { Config } from './config';
-import { getRequestTimeout, getRequestPollInterval } from './constants';
+import { getRequestTimeout, getRequestPollInterval, stackAnalysisReportFilePath } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
@@ -77,21 +77,17 @@ export module stackanalysismodule {
             })
             .then(async resp => {
               if (ecosystem === 'maven') {
-                const data = {
-                  report: resp,
-                  reportFilePath: '/tmp/stackAnalysisReport.html',
-                };
-                fs.writeFile(data.reportFilePath, data.report, (err) => {
+                fs.writeFile(stackAnalysisReportFilePath, resp, (err) => {
                   if (err) {
                     handleError(err);
                     reject();
                   }
-                  console.log(`File saved to ${data.reportFilePath}`);
+                  console.log(`File saved to ${stackAnalysisReportFilePath}`);
                   p.report({
                     message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                   });
                   if (DependencyReportPanel.currentPanel) {
-                    DependencyReportPanel.currentPanel.doUpdatePanel(data);
+                    DependencyReportPanel.currentPanel.doUpdatePanel(resp);
                   }
                   resolve();
                 });

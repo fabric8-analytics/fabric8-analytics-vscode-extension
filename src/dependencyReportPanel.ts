@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
+import { stackAnalysisReportFilePath } from './constants';
 import { Templates } from './template';
 import { Config } from './config';
 import * as fs from 'fs';
@@ -108,9 +109,9 @@ export class DependencyReportPanel {
       r += render_stack_iframe(portal_uri);
       r += footer;
       this._panel.webview.html = r;
-    } else if (data && /<\s*html[^>]*>/i.test(data.report)) {
+    } else if (data && /<\s*html[^>]*>/i.test(data)) {
       DependencyReportPanel.data = data;
-      this._panel.webview.html = data.report;
+      this._panel.webview.html = data;
     } else if (data && data === 'error') {
       let r = header;
       r += render_project_failure();
@@ -124,10 +125,10 @@ export class DependencyReportPanel {
 
     // Clean up our resources
     this._panel.dispose();
-    if (DependencyReportPanel.data && DependencyReportPanel.data.reportFilePath && fs.existsSync(DependencyReportPanel.data.reportFilePath)) {
-      // Delete temp StackAnalysis file
-      fs.unlinkSync(DependencyReportPanel.data.reportFilePath);
-      console.log(`File ${DependencyReportPanel.data.reportFilePath} has been deleted.`);
+    if (fs.existsSync(stackAnalysisReportFilePath)) {
+      // Delete temp stackAnalysisReport file
+      fs.unlinkSync(stackAnalysisReportFilePath);
+      console.log(`File ${stackAnalysisReportFilePath} has been deleted.`);
     }
     DependencyReportPanel.data = null;
     while (this._disposables.length) {
@@ -154,8 +155,8 @@ export class DependencyReportPanel {
       r += render_stack_iframe(portal_uri);
       r += footer;
       return r;
-    } else if (output && /<\s*html[^>]*>/i.test(output.report)) {
-      return output.report;
+    } else if (output && /<\s*html[^>]*>/i.test(output)) {
+      return output;
     } else {
       return loader;
     }

@@ -1,0 +1,122 @@
+---
+name: Stage
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - ".github/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build plugin
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: 12.x
+
+      - name: Install vsce@1.83.0
+        run: npm i -g vsce@1.83.0
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Compile
+        run: npm run test-compile
+
+      - name: VSCE package
+        run: vsce package --pre-release --out fabric8-analytics-early-access.vsix
+
+      - name: Upload vsix package as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: vsix
+          path: ./fabric8-analytics-early-access.vsix
+
+  release:
+    runs-on: ubuntu-latest
+    name: Create an early-access release
+    environment: staging
+    needs: build
+    if: github.repository == 'fabric8-analytics/fabric8-analytics-vscode-extension'
+    steps:
+      - name: Download vsix package artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: vsix
+          path: ./vsix
+
+      - name: Check for existing early-access release
+        id: existing_release
+        uses: actions/github-script@v6
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.STAGING_PAT }}
+          script: |
+            const repo_name = context.payload.repository.full_name
+            var response = await github.request('GET /repos/' + repo_name + '/releases/tags/early-access')
+            // if the request fails (ie 404) the next steps will not occur and the output will not be set
+            core.setOutput('id', response.data.id)
+
+      - name: Delete early-access release if exists
+        if: ${{ steps.existing_release.outputs.id }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.STAGING_PAT }}
+          script: |
+            const repo_name = context.payload.repository.full_name
+            await github.request('DELETE /repos/' + repo_name + '/releases/' + ${{ steps.existing_release.outputs.id }})
+
+      - name: Delete early-access tag if exists
+        continue-on-error: true
+        run: git push --delete origin early-access
+
+      # a little pause between deleting the release and creating a new one
+      # without it, the new release might be a weird release, i.e. a draft release
+      - name: Sleep 5
+        run: sleep 5
+
+      - name: Create new early-access release
+        id: new_release
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.STAGING_PAT }}
+          script: |
+            const repo_name = context.payload.repository.full_name
+            const response = await github.request('POST /repos/' + repo_name + '/releases', {
+              tag_name: 'early-access',
+              name: 'Early-Access',
+              draft: false,
+              prerelease: true,
+              generate_release_notes: true,
+              make_latest: 'false'
+            })
+            core.setOutput('upload_url', response.data.upload_url)
+
+      - name: Create SHA256 checksums for the binaries
+        working-directory: vsix
+        run: |
+          for pkg in *
+          do
+            sha256sum "$pkg" > "$pkg.sha256"
+          done
+
+      - name: Upload packages and checksums as early-access release assets
+        working-directory: vsix
+        run: |
+          for file in *
+          do
+            asset_name=$(basename "$file")
+            upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
+            curl --data-binary @"$file" \
+            -H "Authorization: token ${{ secrets.STAGING_PAT }}" \
+            -H "Content-Type: application/octet-stream" \
+            "$upload_url"
+          done

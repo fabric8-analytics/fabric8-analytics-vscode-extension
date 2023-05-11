@@ -32,7 +32,7 @@ jobs:
         run: npm run test-compile
 
       - name: VSCE package
-        run: vsce package --pre-release --out fabric8-analytics-early-access.vsix
+        run: vsce package --out fabric8-analytics-early-access.vsix
 
       - name: Upload vsix package as artifact
         uses: actions/upload-artifact@v3

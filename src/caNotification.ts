@@ -7,6 +7,7 @@ class CANotification {
   private vulnerabilityCount: number;
   private advisoryCount: number;
   private exploitCount: number;
+  private issuesCount: number;
   private depCount: number;
   private uri: string;
   private text: string;
@@ -21,6 +22,7 @@ class CANotification {
     this.vulnerabilityCount = vulnCount.vulnerabilityCount;
     this.advisoryCount = vulnCount.advisoryCount;
     this.exploitCount = vulnCount.exploitCount;
+    this.issuesCount = vulnCount.issuesCount;
     this.depCount = respData.depCount || 0;
     this.uri = respData.uri;
     this.text = respData.data;
@@ -48,8 +50,8 @@ class CANotification {
   }
 
   private vulnCountText(): string {
-    const vulns = this.vulnerabilityCount + this.advisoryCount;
-    return vulns > 0 ? `${vulns} ${vulns === 1 ? 'vulnerability' : 'vulnerabilities'}` : ``;
+    const vulns = (this.vulnerabilityCount + this.advisoryCount) || this.issuesCount;
+    return vulns > 0 ? `${vulns} ${vulns === 1 ? 'vulnerability' : 'vulnerabilities'}` : `no vulnerabilities`;
   }
 
   private exploitCountText(): string {

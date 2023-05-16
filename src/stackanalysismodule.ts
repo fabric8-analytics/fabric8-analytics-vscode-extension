@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as paths from 'path';
 import * as fs from 'fs';
-import { Apiendpoint } from './apiendpoint'
+import { Apiendpoint } from './apiendpoint';
 
 import { Config } from './config';
 import { getRequestTimeout, getRequestPollInterval, stackAnalysisReportFilePath } from './constants';

@@ -44,7 +44,7 @@
     "Node",
     "Maven"
   ],
-  "icon": "icon/openshift_logo.png",
+  "icon": "icon/trusted_content_icon.png",
   "engines": {
     "vscode": "^1.12.0"
   },

@@ -4,7 +4,7 @@ def installBuildRequirements(){
 	def nodeHome = tool 'nodejs-lts'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	sh "npm install -g vsce@1.83.0"
+	// sh "npm install -g vsce@1.83.0" // this causes errors on jenkins, vsce is already installed globally
 }
 
 def buildVscodeExtension(){

@@ -1,10 +1,10 @@
 #!/usr/bin/env groovy
 
 def installBuildRequirements(){
-	def nodeHome = tool 'nodejs-lts'
+	def nodeHome = tool 'nodejs-12.18.3'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	// sh "npm install -g vsce@1.83.0" // this causes errors on jenkins, vsce is already installed globally
+	sh "npm install -g --force vsce@1.83.0"
 }
 
 def buildVscodeExtension(){

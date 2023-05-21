@@ -1,4 +1,7 @@
 # Change Log
+## 0.3.7 (May 22th 2022)
+- fixes - Extension breaks for Go version 1.17. See [#608](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/608)
+- fixes - Retry failed stack analysis requests. See [#609](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/609)
 ## 0.3.6 (June 28th 2022)
 - fixes - [ISSUE] Extension causes VSCode Jupyter Notebook to malfunction. See [#546](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/546) [#547](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/547) [#567](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/567)
 ## 0.3.5 (November 29th 2021)
@@ -6,7 +9,7 @@
 ## 0.3.4 (October 6th 2021)
 - fixes - [ISSUE] letsencrypted issue by moving to selfhosted. See [#542](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/542)
 ## 0.3.3 (May 6th 2021)
-- enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497) 
+- enhancement - Let language server know about the type of client and RedHat UUID. See [#497](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/497)
 - enhancement - Use lsp 0.4.26 to pass more data to api-server.See [#186](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/186)
 - enhancement - upgrade dev deps to fix vulns. See [#514](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/514)
 - enhancement - add dev-dependency disclaimer. See [#519](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/519)
@@ -17,7 +20,7 @@
 - fixes - [BUG] Ignore unparseable files from telemetry reporting. See [#513](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/513) [#191](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/191)
 
 ## 0.3.2 (February 9th, 2021)
-- enhancement - Get python path from ms-python extension. See [#485](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/485) 
+- enhancement - Get python path from ms-python extension. See [#485](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/485)
 - enhancement - Usage data collection to enhance extension. For more details view [privacy statement](https://developers.redhat.com/article/tool-data-collection) and [usage data doc](Telemetry.md). See [#489](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/486) [#487](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/487) [#488](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/488)
 - fixes - Use lsp 0.4.24 to fix bug with empty manifests. See [#493](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/493) [#494](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/494)
 

@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Dependency Analytics",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,

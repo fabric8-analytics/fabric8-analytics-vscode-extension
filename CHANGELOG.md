@@ -1,5 +1,5 @@
 # Change Log
-## 0.3.9 (May 22th 2022)
+## 0.3.10 (May 22th 2022)
 - fixes - Extension breaks for Go version 1.17. See [#608](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/608)
 - fixes - Retry failed stack analysis requests. See [#609](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/609)
 ## 0.3.6 (June 28th 2022)

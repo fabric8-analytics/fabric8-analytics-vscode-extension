@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { Apiendpoint } from './apiendpoint';
 
 import { Config } from './config';
-import { getRequestTimeout, getRequestPollInterval, stackAnalysisReportFilePath } from './constants';
+import { getRequestTimeout, getRequestPollInterval } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
@@ -27,7 +27,7 @@ export module stackanalysismodule {
         title: StatusMessages.EXT_TITLE
       },
       p => {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
           p.report({ message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
 
           ProjectDataProvider[effectiveF8Var](argumentList)
@@ -50,12 +50,15 @@ export module stackanalysismodule {
               let thatContext: any;
 
               if (ecosystem === 'maven') {
-                options['uri'] = `${Apiendpoint.STACK_REPORT_URL_1_5}/${ecosystem}?user_key=${apiConfig.apiKey}`;
+                options['uri'] = `${apiConfig.host15}/${ecosystem}`;
                 options['body'] = payloadData['manifest']['value'];
                 options['headers'] = {
                   'Accept': 'text/html',
                   'Content-Type': 'text/vnd.graphviz',
                 };
+                if (apiConfig.crdaSnykToken !== '') {
+                  options['headers']['Crda-Snyk-Token'] = apiConfig.crdaSnykToken;
+                }
               } else {
                 options['uri'] = `${apiConfig.host
                   }/api/v2/stack-analyses?user_key=${apiConfig.apiKey}`;
@@ -77,12 +80,12 @@ export module stackanalysismodule {
             })
             .then(async resp => {
               if (ecosystem === 'maven') {
-                fs.writeFile(stackAnalysisReportFilePath, resp, (err) => {
+                fs.writeFile(apiConfig.dependencyAnalysisReportFilePath, resp, (err) => {
                   if (err) {
                     handleError(err);
                     reject();
                   }
-                  console.log(`File saved to ${stackAnalysisReportFilePath}`);
+                  console.log(`File saved to ${apiConfig.dependencyAnalysisReportFilePath}`);
                   p.report({
                     message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
                   });

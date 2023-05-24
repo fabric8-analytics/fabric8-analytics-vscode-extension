@@ -207,6 +207,24 @@
           "description": "Host name of the stack report UI.",
           "scope": "window"
         },
+        "dependencyAnalytics.host15": {
+          "type": "string",
+          "default": "http://crda-backend-dev-crda.apps.sssc-cl01.appeng.rhecoeng.com/api/v3/dependency-analysis",
+          "description": "Host name of CRDA 1.5 Dependency Analytics server.",
+          "scope": "window"
+        },
+        "dependencyAnalytics.crdaSnykToken": {
+          "type": "string",
+          "default": "",
+          "description": "Dependency Analytics server authentication token for Snyk.",
+          "scope": "window"
+        },
+        "dependencyAnalytics.dependencyAnalysisReportFilePath": {
+          "type": "string",
+          "default": "/tmp/dependencyAnalysisReport.html",
+          "description": "Path to a local file where the Dependency Analysis report will be saved.",
+          "scope": "window"
+        },
         "maven.executable.path": {
           "type": "string",
           "default": "",

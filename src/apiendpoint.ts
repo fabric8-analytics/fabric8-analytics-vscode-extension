@@ -9,8 +9,6 @@ export namespace Apiendpoint {
   export let OSIO_ROUTE_URL: string = '';
   export const STACK_REPORT_URL: string =
     'https://stack-analytics-report.openshift.io/';
-  export const STACK_REPORT_URL_1_5: string =
-    'http://crda-backend-crda.apps.sssc-cl01.appeng.rhecoeng.com/api/v3/dependency-analysis';
   export const THREE_SCALE_CONNECT_URL: string =
     'https://f8a-connect-api-2445582058137.production.gw.apicast.io/';
   export const THREE_SCALE_CONNECT_KEY: string =

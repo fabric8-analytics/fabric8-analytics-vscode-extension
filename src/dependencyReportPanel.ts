@@ -1,7 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { stackAnalysisReportFilePath } from './constants';
 import { Templates } from './template';
 import { Config } from './config';
 import * as fs from 'fs';
@@ -125,10 +124,10 @@ export class DependencyReportPanel {
 
     // Clean up our resources
     this._panel.dispose();
-    if (fs.existsSync(stackAnalysisReportFilePath)) {
+    if (fs.existsSync(apiConfig.dependencyAnalysisReportFilePath)) {
       // Delete temp stackAnalysisReport file
-      fs.unlinkSync(stackAnalysisReportFilePath);
-      console.log(`File ${stackAnalysisReportFilePath} has been deleted.`);
+      fs.unlinkSync(apiConfig.dependencyAnalysisReportFilePath);
+      console.log(`File ${apiConfig.dependencyAnalysisReportFilePath} has been deleted.`);
     }
     DependencyReportPanel.data = null;
     while (this._disposables.length) {

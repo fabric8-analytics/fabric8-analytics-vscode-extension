@@ -50,7 +50,7 @@ export module stackanalysismodule {
               let thatContext: any;
 
               if (ecosystem === 'maven') {
-                options['uri'] = `${apiConfig.host15}/${ecosystem}`;
+                options['uri'] = `${apiConfig.crdaHost}/api/v3/dependency-analysis/${ecosystem}`;
                 options['body'] = payloadData['manifest']['value'];
                 options['headers'] = {
                   'Accept': 'text/html',

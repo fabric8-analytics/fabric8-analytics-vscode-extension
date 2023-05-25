@@ -207,9 +207,9 @@
           "description": "Host name of the stack report UI.",
           "scope": "window"
         },
-        "dependencyAnalytics.host15": {
+        "dependencyAnalytics.crdaHost": {
           "type": "string",
-          "default": "http://crda-backend-dev-crda.apps.sssc-cl01.appeng.rhecoeng.com/api/v3/dependency-analysis",
+          "default": "http://crda-backend-dev-crda.apps.sssc-cl01.appeng.rhecoeng.com",
           "description": "Host name of CRDA 1.5 Dependency Analytics server.",
           "scope": "window"
         },

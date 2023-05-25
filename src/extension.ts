@@ -9,6 +9,7 @@ import {
 } from 'vscode-languageclient';
 import * as path from 'path';
 
+import { Config } from './config';
 import { Commands } from './commands';
 import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
@@ -24,6 +25,7 @@ let lspClient: LanguageClient;
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
+  const apiConfig = Config.getApiConfig();
   startUp(context);
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
@@ -89,7 +91,10 @@ export function activate(context: vscode.ExtensionContext) {
           configurationSection: 'dependencyAnalyticsServer',
           // Notify the server about file changes to '.clientrc files contained in the workspace
           fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
-        }
+        },
+        initializationOptions: {
+          crdaHost: apiConfig.crdaHost
+        },
       };
 
       // Create the language client and start the client.
@@ -111,7 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
           if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName:fileName });
+            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
           }
           else {
             record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
@@ -123,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (canShowPopup(notification)) {
             showVulnerabilityFoundPrompt(notification.popupText(), path.basename(notification.origin()));
-            record(context, TelemetryActions.componentAnalysisDone, {manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin())});
+            record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()) });
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }
@@ -133,7 +138,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);
-          record(context, TelemetryActions.componentAnalysisFailed, {manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: respData.data});
+          record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: respData.data });
         });
       });
       context.subscriptions.push(
@@ -164,7 +169,7 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   const version = packageJSON.version;
   const previousVersion = context.globalState.get<string>(GlobalState.Version);
   // Nothing to display
-  if (version === previousVersion){
+  if (version === previousVersion) {
     return;
   }
 
@@ -189,18 +194,18 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
 }
 
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
-  const invokeFullStackReport = (uri : vscode.Uri) => {
+  const invokeFullStackReport = (uri: vscode.Uri) => {
     const fileUri = uri || vscode.window.activeTextEditor.document.uri;
     multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
   };
 
-  const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
+  const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
     record(context, origin, { manifest: uri.fsPath.split('/').pop(), fileName: uri.fsPath.split('/').pop() });
     invokeFullStackReport(uri);
   };
 
   const registerCommand = (cmd: string, action: TelemetryActions) => {
-      return vscode.commands.registerCommand(cmd, recordAndInvoke.bind(null, action));
+    return vscode.commands.registerCommand(cmd, recordAndInvoke.bind(null, action));
   };
 
   const stackAnalysisCommands = [

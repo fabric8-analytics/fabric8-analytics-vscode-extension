@@ -93,7 +93,8 @@ export function activate(context: vscode.ExtensionContext) {
           fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
         },
         initializationOptions: {
-          crdaHost: apiConfig.crdaHost
+          crdaHost: apiConfig.crdaHost,
+          triggerFullStackAnalysis: Commands.TRIGGER_FULL_STACK_ANALYSIS
         },
       };
 

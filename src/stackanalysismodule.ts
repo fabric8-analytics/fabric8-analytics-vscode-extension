@@ -82,13 +82,13 @@ export module stackanalysismodule {
               if (ecosystem === 'maven') {
                 fs.writeFile(apiConfig.dependencyAnalysisReportFilePath, resp, (err) => {
                   if (err) {
+                    p.report({
+                      message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                    });
                     handleError(err);
                     reject();
                   }
                   console.log(`File saved to ${apiConfig.dependencyAnalysisReportFilePath}`);
-                  p.report({
-                    message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                  });
                   if (DependencyReportPanel.currentPanel) {
                     DependencyReportPanel.currentPanel.doUpdatePanel(resp);
                   }

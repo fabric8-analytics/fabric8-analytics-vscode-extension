@@ -10,7 +10,6 @@ import {
 
 import * as path from 'path';
 
-import { Config } from './config';
 import { Commands } from './commands';
 import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
@@ -26,7 +25,6 @@ let lspClient: LanguageClient;
 export let outputChannelDep: any;
 
 export function activate(context: vscode.ExtensionContext) {
-  const apiConfig = Config.getApiConfig();
   startUp(context);
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
@@ -91,10 +89,9 @@ export function activate(context: vscode.ExtensionContext) {
           // Synchronize the setting section 'dependencyAnalyticsServer' to the server
           configurationSection: 'dependencyAnalyticsServer',
           // Notify the server about file changes to '.clientrc files contained in the workspace
-          fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
+          fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc'),
         },
         initializationOptions: {
-          crdaHost: apiConfig.crdaHost,
           triggerFullStackAnalysis: Commands.TRIGGER_FULL_STACK_ANALYSIS
         },
       };

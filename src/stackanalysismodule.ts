@@ -14,7 +14,6 @@ import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
 export module stackanalysismodule {
-  const apiConfig = Config.getApiConfig();
   export const stackAnalysesLifeCycle = (
     context,
     effectiveF8Var,
@@ -49,8 +48,9 @@ export module stackanalysismodule {
               const options = {};
               let thatContext: any;
 
+              const apiConfig = Config.getApiConfig();
               if (ecosystem === 'maven') {
-                options['uri'] = `${apiConfig.crdaHost}/api/v3/dependency-analysis/${ecosystem}`;
+                options['uri'] = `${apiConfig.crdaHost}/dependency-analysis/${ecosystem}`;
                 options['body'] = payloadData['manifest']['value'];
                 options['headers'] = {
                   'Accept': 'text/html',
@@ -79,6 +79,7 @@ export module stackanalysismodule {
               return resp;
             })
             .then(async resp => {
+              const apiConfig = Config.getApiConfig();
               if (ecosystem === 'maven') {
                 fs.writeFile(apiConfig.dependencyAnalysisReportFilePath, resp, (err) => {
                   if (err) {
@@ -88,7 +89,6 @@ export module stackanalysismodule {
                     handleError(err);
                     reject();
                   }
-                  console.log(`File saved to ${apiConfig.dependencyAnalysisReportFilePath}`);
                   if (DependencyReportPanel.currentPanel) {
                     DependencyReportPanel.currentPanel.doUpdatePanel(resp);
                   }
@@ -194,14 +194,12 @@ export module stackanalysismodule {
   };
 
   export const validateSnykToken = async () => {
-
-    const crdaSnykToken = vscode.workspace.getConfiguration().get('dependencyAnalytics.crdaSnykToken');
-
-    if (crdaSnykToken !== '') {
+    const apiConfig = Config.getApiConfig();
+    if (apiConfig.crdaSnykToken !== '') {
       const options = {};
-      options['uri'] = `${apiConfig.crdaHost}/api/v3/token`;
+      options['uri'] = apiConfig.crdaHost;
       options['headers'] = {
-        'Crda-Snyk-Token': crdaSnykToken
+        'Crda-Snyk-Token': apiConfig.crdaSnykToken
       };
 
       stackAnalysisServices.getSnykTokenValidationService(options);

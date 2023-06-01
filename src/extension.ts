@@ -6,7 +6,8 @@ import {
   LanguageClientOptions,
   ServerOptions,
   TransportKind
-} from 'vscode-languageclient';
+} from 'vscode-languageclient/node';
+
 import * as path from 'path';
 
 import { Config } from './config';
@@ -105,8 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
         serverOptions,
         clientOptions
       );
-
-      lspClient.onReady().then(() => {
+      lspClient.start().then(() => {
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
@@ -143,7 +143,6 @@ export function activate(context: vscode.ExtensionContext) {
         });
       });
       context.subscriptions.push(
-        lspClient.start(),
         disposableFullStack,
         disposableStackLogs,
         caStatusBarProvider,

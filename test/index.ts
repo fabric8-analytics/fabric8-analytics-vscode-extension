@@ -5,7 +5,7 @@ declare var global: any;
 /* tslint:disable no-require-imports */
 
 import * as fs from 'fs';
-import * as glob from 'glob';
+import { glob } from 'glob'
 import * as paths from 'path';
 
 const istanbul = require('istanbul');
@@ -23,7 +23,8 @@ if (!tty.getWindowSize) {
 
 let mocha = new Mocha({
   ui: 'tdd',
-  useColors: true
+  useColors: true,
+
 });
 
 function configure(mochaOpts: any): void {
@@ -56,6 +57,7 @@ function run(testsRoot: string, clb: any): any {
   }
 
   // Glob test files
+
   glob(
     '**/**.test.js',
     { cwd: testsRoot },

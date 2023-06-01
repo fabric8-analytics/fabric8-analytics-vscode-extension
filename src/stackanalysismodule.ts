@@ -92,7 +92,7 @@ export module stackanalysismodule {
                   if (DependencyReportPanel.currentPanel) {
                     DependencyReportPanel.currentPanel.doUpdatePanel(resp);
                   }
-                  resolve();
+                  resolve(null);
                 });
               } else {
                 console.log(`Analyzing your stack, id ${resp}`);
@@ -116,7 +116,7 @@ export module stackanalysismodule {
                         if (DependencyReportPanel.currentPanel) {
                           DependencyReportPanel.currentPanel.doUpdatePanel(data);
                         }
-                        resolve();
+                        resolve(null);
                       } else {
                         console.log(`Polling for stack report, remaining count:${timeoutCounter}`);
                         --timeoutCounter;
@@ -213,5 +213,5 @@ export module stackanalysismodule {
                                             To resolve this issue, please obtain a valid token from the following link: [here](${snykURL}).`);
 
     }
-  }
+  };
 }

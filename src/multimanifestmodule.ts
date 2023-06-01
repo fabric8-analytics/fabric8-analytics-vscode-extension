@@ -260,7 +260,7 @@ export module multimanifestmodule {
   export const triggerTokenValidation = async (provider) => {
     switch (provider) {
       case 'snyk':
-        stackanalysismodule.validateSnykToken()
+        stackanalysismodule.validateSnykToken();
         break;
       case 'tidelift':
         // add Tidelift token validation here...
@@ -269,6 +269,6 @@ export module multimanifestmodule {
         // add Sonatype token validation here...
         break;
     }
-  }
+  };
 
 }

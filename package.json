@@ -209,7 +209,7 @@
         },
         "dependencyAnalytics.crdaHost": {
           "type": "string",
-          "default": "http://crda-backend-dev-crda.apps.sssc-cl01.appeng.rhecoeng.com",
+          "default": "http://crda-backend-crda.apps.sssc-cl01.appeng.rhecoeng.com",
           "description": "Host name of CRDA 1.5 Dependency Analytics server.",
           "scope": "window"
         },

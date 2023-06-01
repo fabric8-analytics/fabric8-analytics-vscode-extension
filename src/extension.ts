@@ -150,6 +150,13 @@ export function activate(context: vscode.ExtensionContext) {
       );
     }
   });
+
+  vscode.workspace.onDidChangeConfiguration((event) => {
+    if (event.affectsConfiguration('dependencyAnalytics.crdaSnykToken')) {
+      multimanifestmodule.triggerTokenValidation('snyk');
+    }
+    // add more token providers here...
+  });
 }
 
 export function initOutputChannel(): any {

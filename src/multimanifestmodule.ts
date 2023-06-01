@@ -256,4 +256,19 @@ export module multimanifestmodule {
         });
     });
   };
+
+  export const triggerTokenValidation = async (provider) => {
+    switch (provider) {
+      case 'snyk':
+        stackanalysismodule.validateSnykToken()
+        break;
+      case 'tidelift':
+        // add Tidelift token validation here...
+        break;
+      case 'sonatype':
+        // add Sonatype token validation here...
+        break;
+    }
+  }
+
 }

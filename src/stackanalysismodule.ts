@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { Apiendpoint } from './apiendpoint';
 
 import { Config } from './config';
-import { getRequestTimeout, getRequestPollInterval } from './constants';
+import { getRequestTimeout, getRequestPollInterval, snykURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
@@ -192,4 +192,26 @@ export module stackanalysismodule {
     }
     vscode.window.showErrorMessage(err);
   };
+
+  export const validateSnykToken = async () => {
+
+    const crdaSnykToken = vscode.workspace.getConfiguration().get('dependencyAnalytics.crdaSnykToken');
+
+    if (crdaSnykToken !== '') {
+      const options = {};
+      options['uri'] = `${apiConfig.crdaHost}/api/v3/token`;
+      options['headers'] = {
+        'Crda-Snyk-Token': crdaSnykToken
+      };
+
+      stackAnalysisServices.getSnykTokenValidationService(options);
+
+    } else {
+
+      vscode.window.showInformationMessage(`Please note that if you fail to provide a valid Snyk Token in the extension workspace settings, 
+                                            Snyk vulnerabilities will not be displayed. 
+                                            To resolve this issue, please obtain a valid token from the following link: [here](${snykURL}).`);
+
+    }
+  }
 }

@@ -118,7 +118,7 @@ export module stackAnalysisServices {
             httpResponse.statusCode === 429 ||
             httpResponse.statusCode === 403
           ) {
-            errorMsg = `Service is currently busy to process your request for analysis, please try again in few minutes, Status: ${httpResponse.statusCode
+            errorMsg = `Service is currently busy to process your request for analysis, please try again in few minutes. Status: ${httpResponse.statusCode
               } - ${httpResponse.statusMessage}`;
             reject(errorMsg);
           } else if (httpResponse.statusCode === 408) {
@@ -140,6 +140,46 @@ export module stackAnalysisServices {
       console.log('Options', options && options.headers);
       postRequestWithExponentialBackoff(resolve, reject);
     });
+
+  };
+
+  export const getSnykTokenValidationService = (options, retryCount = 0) => {
+    let errorMsg: string;
+
+    const getRequestWithExponentialBackoff = (resolve, reject) => {
+      request.get(options, (err, httpResponse) => {
+        if (err) {
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            invokeExponentialBackoff(retryCount, getRequestWithExponentialBackoff, resolve, reject);
+          } else {
+            errorMsg = `An error occurred while validating the Snyk Token. Error: ${err.message}`;
+            vscode.window.showWarningMessage(errorMsg);
+          }
+        } else {
+          if (
+            httpResponse.statusCode === 200 ||
+            httpResponse.statusCode === 202
+          ) {
+            vscode.window.showInformationMessage('Snyk Token Validated');
+          } else if (
+            httpResponse.statusCode === 400 ||
+            httpResponse.statusCode === 401
+          ) {
+            errorMsg = `Please provide a valid Snyk Token in the extension workspace settings. Status: ${httpResponse.statusCode} - ${httpResponse.statusMessage}`;
+            vscode.window.showWarningMessage(errorMsg);
+          } else if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            invokeExponentialBackoff(retryCount, getRequestWithExponentialBackoff, resolve, reject);
+          } else {
+            errorMsg = `An error occurred while validating the Snyk Token. Status: ${httpResponse.statusCode} - ${httpResponse.statusMessage}`;
+            vscode.window.showWarningMessage(errorMsg);
+          }
+        }
+      });
+    };
+
+    getRequestWithExponentialBackoff(null, null);
 
   };
 

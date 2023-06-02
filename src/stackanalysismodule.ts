@@ -50,7 +50,7 @@ export module stackanalysismodule {
 
               const apiConfig = Config.getApiConfig();
               if (ecosystem === 'maven') {
-                options['uri'] = `${apiConfig.crdaHost}/dependency-analysis/${ecosystem}`;
+                options['uri'] = `${apiConfig.crdaHost}/api/v3/dependency-analysis/${ecosystem}`;
                 options['body'] = payloadData['manifest']['value'];
                 options['headers'] = {
                   'Accept': 'text/html',
@@ -197,7 +197,7 @@ export module stackanalysismodule {
     const apiConfig = Config.getApiConfig();
     if (apiConfig.crdaSnykToken !== '') {
       const options = {};
-      options['uri'] = apiConfig.crdaHost;
+      options['uri'] = `${apiConfig.crdaHost}/api/v3/token`;
       options['headers'] = {
         'Crda-Snyk-Token': apiConfig.crdaSnykToken
       };

@@ -283,6 +283,7 @@
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "request": "^2.88.2",
+    "uuid": "^9.0.0",
     "vscode-languageclient": "^8.1.0"
   }
 }

@@ -13,7 +13,6 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
-			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceFolder}/dist/*.js"
@@ -30,7 +29,6 @@
 				"--extensionDevelopmentPath=${workspaceRoot}",
 				"--extensionTestsPath=${workspaceRoot}/out/test"
 			],
-			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [
 				"${workspaceFolder}/out/test/**/*.js"

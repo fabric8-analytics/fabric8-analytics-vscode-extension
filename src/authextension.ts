@@ -1,7 +1,6 @@
 'use strict';
 
 import { GlobalState } from './constants';
-import fetch from 'node-fetch';
 import { Config } from './config';
 import { getRedHatService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 

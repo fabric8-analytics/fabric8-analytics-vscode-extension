@@ -9,7 +9,6 @@ const loader = Templates.LOADER_TEMPLATE;
 const header = Templates.HEADER_TEMPLATE;
 const footer = Templates.FOOTER_TEMPLATE;
 let portal_uri: string = '';
-const apiConfig = Config.getApiConfig();
 
 /**
  * Manages cat coding webview panels
@@ -98,6 +97,7 @@ export class DependencyReportPanel {
 
   public doUpdatePanel(data: any) {
     if (data && data.external_request_id) {
+      const apiConfig = Config.getApiConfig();
       DependencyReportPanel.data = data;
       let r = header;
       let token_uri = undefined;
@@ -124,6 +124,7 @@ export class DependencyReportPanel {
 
     // Clean up our resources
     this._panel.dispose();
+    const apiConfig = Config.getApiConfig();
     if (fs.existsSync(apiConfig.dependencyAnalysisReportFilePath)) {
       // Delete temp stackAnalysisReport file
       fs.unlinkSync(apiConfig.dependencyAnalysisReportFilePath);
@@ -146,6 +147,7 @@ export class DependencyReportPanel {
   private _renderHtmlForWebView() {
     let output = DependencyReportPanel.data;
     if (output && output.external_request_id) {
+      const apiConfig = Config.getApiConfig();
       let r = header;
       let token_uri = undefined;
       portal_uri = `${apiConfig.stackReportUIHost}#/analyze/${output.external_request_id

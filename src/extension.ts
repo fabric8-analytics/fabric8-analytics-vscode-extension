@@ -141,7 +141,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         lspClient.onNotification('caTokenWarning', msg => {
           vscode.window.showWarningMessage(msg);
-        })
+        });
       });
       context.subscriptions.push(
         disposableFullStack,

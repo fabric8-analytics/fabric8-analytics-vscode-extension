@@ -1,8 +1,9 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 let dummyMomentoData = {};
 
 class DummyMemento implements vscode.Memento {
+  keys: () => ReadonlyArray<string>;
   get<T>(key: string): Promise<T | undefined> {
     return dummyMomentoData[key];
   }
@@ -16,23 +17,23 @@ class DummyMemento implements vscode.Memento {
 }
 
 export const context: vscode.ExtensionContext = {
-  extensionPath: 'path',
-  storagePath: 'string',
-  logPath: 'string',
+  extensionPath: "path",
+  storagePath: "string",
+  logPath: "string",
   // tslint:disable-next-line:no-empty
-  subscriptions: { dispose(): any { } }[0],
+  subscriptions: { dispose(): any {} }[0],
   workspaceState: new DummyMemento(),
   globalState: new DummyMemento(),
-  globalStoragePath: 'path',
+  globalStoragePath: "path",
   asAbsolutePath(relativePath: string): string {
-    return '';
+    return "";
   },
-  extensionUri: vscode.Uri.file(''),
+  extensionUri: vscode.Uri.file(""),
   environmentVariableCollection: null,
   extensionMode: vscode.ExtensionMode.Test,
   storageUri: undefined,
   logUri: undefined,
-  globalStorageUri: undefined
+  globalStorageUri: undefined,
+  secrets: undefined,
+  extension: undefined,
 };
-
-

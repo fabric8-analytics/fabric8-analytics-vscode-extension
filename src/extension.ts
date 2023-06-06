@@ -29,9 +29,14 @@ export function activate(context: vscode.ExtensionContext) {
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
-      // uri will be null in case user have use context menu/file explorer
-      const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-      multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+      try {
+        // uri will be null in case the user has used the context menu/file explorer
+        const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+        multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+      } catch (error) {
+        // Throw a custom error message when the command execution fails
+        throw new Error(`Running the contributed command: 'fabric8.stackAnalysis' failed.`);
+      }
     }
   );
 

@@ -144,7 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
           record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: respData.data });
         });
 
-        lspClient.onNotification('caTokenWarning', msg => {
+        lspClient.onNotification('caSimpleWarning', msg => {
           vscode.window.showWarningMessage(msg);
         });
       });

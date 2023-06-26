@@ -12,6 +12,7 @@ import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
+import crda from '@RHEcosystemAppEng/crda-javascript-api'
 
 export module stackanalysismodule {
   export const stackAnalysesLifeCycle = (
@@ -155,7 +156,18 @@ export module stackanalysismodule {
     );
   };
 
-  export const processStackAnalyses = (
+  const mavenStackAnalsis = async (path) => {
+    try {
+      // Get stack analysis in HTML format (string)
+      let result = await crda.stackAnalysis(path, true)
+      return result;
+    } catch (error) {
+      return error;
+    }
+
+  };
+
+  export const processStackAnalyses = async (
     context,
     workspaceFolder,
     ecosystem,
@@ -183,6 +195,8 @@ export module stackanalysismodule {
         : workspaceFolder.uri.fsPath;
       effectiveF8Var = 'effectivef8Golang';
     }
+    let jsonStackAnalysis = await mavenStackAnalsis(argumentList)
+    console.log(jsonStackAnalysis);
     stackAnalysesLifeCycle(context, effectiveF8Var, argumentList, ecosystem);
   };
 

@@ -2,7 +2,7 @@
 
 'use strict';
 
-import webpack from 'webpack';
+import * as webpack from 'webpack';
 
 const path = require('path');
 const glob = require('glob');

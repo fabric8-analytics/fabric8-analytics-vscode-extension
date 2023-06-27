@@ -2,10 +2,20 @@
 
 'use strict';
 
+import webpack from 'webpack';
+
 const path = require('path');
 const glob = require('glob');
 
 module.exports = (env, argv) => {
+
+  plugins: [
+    new webpack.ProvidePlugin({
+      WebSocket: 'ws',
+      fetch: ['node-fetch', 'default'],
+    }),
+  ];
+
   let entry = {
     'extension': './src/extension.ts',
     'server': './node_modules/fabric8-analytics-lsp-server/dist/server.js',
@@ -54,6 +64,11 @@ module.exports = (env, argv) => {
       }]
     },
     ignoreWarnings: [/Failed to parse source map/],
+    plugins: [
+      new webpack.ProvidePlugin({
+        fetch: ['node-fetch', 'default'],
+      }),
+    ]
   };
   return config;
 };

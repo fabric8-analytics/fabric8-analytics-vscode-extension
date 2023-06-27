@@ -285,7 +285,6 @@
     "@RHEcosystemAppEng/crda-javascript-api": "^0.0.2-ea.5",
     "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
     "fs": "^0.0.1-security",
-    "node-fetch": "^2.6.11",
     "path": "^0.12.7",
     "request": "^2.88.2",
     "uuid": "^9.0.0",

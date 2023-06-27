@@ -3,7 +3,6 @@
 import { GlobalState } from './constants';
 import { Config } from './config';
 import { getRedHatService } from '@redhat-developer/vscode-redhat-telemetry/lib';
-import fetch from 'node-fetch';
 
 export module authextension {
   const apiConfig = Config.getApiConfig();

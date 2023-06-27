@@ -12,6 +12,8 @@ import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
+import crda from '@RHEcosystemAppEng/crda-javascript-api';
+
 
 export module stackanalysismodule {
   export const stackAnalysesLifeCycle = (
@@ -155,7 +157,21 @@ export module stackanalysismodule {
     );
   };
 
-  export const processStackAnalyses = (
+  export async function mavenStackAnalsis(path: string): Promise<string> {
+    return new Promise<string>(async (resolve, reject) => {
+      try {
+        // Get stack analysis in HTML format (string)
+        let result = await crda.stackAnalysis(path, true)
+        resolve(JSON.stringify(result));
+      } catch (error) {
+        reject(error);
+      }
+    })
+
+
+  };
+
+  export const processStackAnalyses = async (
     context,
     workspaceFolder,
     ecosystem,

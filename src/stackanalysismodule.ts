@@ -52,15 +52,11 @@ export module stackanalysismodule {
 
               const apiConfig = Config.getApiConfig();
               if (ecosystem === 'maven') {
-                options['uri'] = `${apiConfig.crdaHost}/api/v3/dependency-analysis/${ecosystem}`;
-                options['body'] = payloadData['manifest']['value'];
-                options['headers'] = {
-                  'Accept': 'text/html',
-                  'Content-Type': 'text/vnd.graphviz',
-                };
-                if (apiConfig.crdaSnykToken !== '') {
-                  options['headers']['Crda-Snyk-Token'] = apiConfig.crdaSnykToken;
-                }
+                let resp = await mavenStackAnalsis(argumentList)
+                p.report({
+                  message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
+                });
+                return resp;
               } else {
                 options['uri'] = `${apiConfig.host
                   }/api/v2/stack-analyses?user_key=${apiConfig.apiKey}`;
@@ -69,16 +65,17 @@ export module stackanalysismodule {
                   showTransitiveReport: 'true',
                   uuid: process.env.UUID
                 };
+                thatContext = context;
+                let resp = await stackAnalysisServices.postStackAnalysisService(
+                  options,
+                  thatContext
+                );
+                p.report({
+                  message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
+                });
+                return resp;
               }
-              thatContext = context;
-              let resp = await stackAnalysisServices.postStackAnalysisService(
-                options,
-                thatContext
-              );
-              p.report({
-                message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
-              });
-              return resp;
+
             })
             .then(async resp => {
               const apiConfig = Config.getApiConfig();
@@ -158,17 +155,15 @@ export module stackanalysismodule {
   };
 
   export async function mavenStackAnalsis(path: string): Promise<string> {
-    return new Promise<string>(async (resolve, reject) => {
+    return new Promise<any>(async (resolve, reject) => {
       try {
         // Get stack analysis in HTML format (string)
         let result = await crda.stackAnalysis(path, true)
-        resolve(JSON.stringify(result));
+        resolve(result);
       } catch (error) {
         reject(error);
       }
     })
-
-
   };
 
   export const processStackAnalyses = async (

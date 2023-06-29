@@ -1,18 +1,16 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as paths from 'path';
+import * as path from 'path';
 import * as fs from 'fs';
-import { Apiendpoint } from './apiendpoint';
 
 import { Config } from './config';
-import { getRequestTimeout, getRequestPollInterval, snykURL } from './constants';
+import { getRequestTimeout, getRequestPollInterval, snykURL, defaultDependencyAnalysisReportFilePath } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
-import crda from '@RHEcosystemAppEng/crda-javascript-api';
 
 
 export module stackanalysismodule {
@@ -28,36 +26,75 @@ export module stackanalysismodule {
         title: StatusMessages.EXT_TITLE
       },
       p => {
-        return new Promise<void>((resolve, reject) => {
-          p.report({ message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
+        return new Promise<void>(async (resolve, reject) => {
+          p.report({
+            message: StatusMessages.WIN_RESOLVING_DEPENDENCIES
+          });
+          const apiConfig = Config.getApiConfig();
 
-          ProjectDataProvider[effectiveF8Var](argumentList)
-            .then(async dataEpom => {
-              await multimanifestmodule.triggerManifestWs(context);
-              p.report({
-                message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
-              });
-              return dataEpom;
-            })
-            .then(async dataEpom => {
-              let formData = await multimanifestmodule.form_manifests_payload(
-                dataEpom, ecosystem
-              );
-              return formData;
-            })
-            .then(async formData => {
-              let payloadData = formData;
-              const options = {};
-              let thatContext: any;
+          if (ecosystem === 'maven') {
+            await multimanifestmodule.triggerManifestWs(context);
+            p.report({
+              message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
+            });
 
-              const apiConfig = Config.getApiConfig();
-              if (ecosystem === 'maven') {
-                let resp = await mavenStackAnalsis(argumentList)
+            const options = {};
+            if (apiConfig.crdaSnykToken !== '') {
+              options['CRDA_SNYK_TOKEN'] = apiConfig.crdaSnykToken;
+            }
+
+            stackAnalysisServices.crdaApiStackAnalysis(argumentList, options)
+              .then(resp => {
                 p.report({
                   message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
                 });
-                return resp;
-              } else {
+                let reportFilePath = apiConfig.dependencyAnalysisReportFilePath || defaultDependencyAnalysisReportFilePath;
+                let reportDirectoryPath = path.dirname(reportFilePath)
+                if (!fs.existsSync(reportDirectoryPath)) {
+                  fs.mkdirSync(reportDirectoryPath, { recursive: true });
+                }
+                fs.writeFile(reportFilePath, resp, (err) => {
+                  if (err) {
+                    p.report({
+                      message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
+                    });
+                    handleError(err);
+                    reject(err);
+                  } else {
+                    if (DependencyReportPanel.currentPanel) {
+                      DependencyReportPanel.currentPanel.doUpdatePanel(resp);
+                    }
+                    resolve(null);
+                  }
+                });
+              })
+              .catch(err => {
+                p.report({
+                  message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
+                });
+                handleError(err);
+                reject();
+              });
+          } else {
+            ProjectDataProvider[effectiveF8Var](argumentList)
+              .then(async dataEpom => {
+                await multimanifestmodule.triggerManifestWs(context);
+                p.report({
+                  message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
+                });
+                return dataEpom;
+              })
+              .then(async dataEpom => {
+                let formData = await multimanifestmodule.form_manifests_payload(
+                  dataEpom, ecosystem
+                );
+                return formData;
+              })
+              .then(async formData => {
+                let payloadData = formData;
+                const options = {};
+                let thatContext: any;
+
                 options['uri'] = `${apiConfig.host
                   }/api/v2/stack-analyses?user_key=${apiConfig.apiKey}`;
                 options['formData'] = payloadData;
@@ -74,26 +111,8 @@ export module stackanalysismodule {
                   message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
                 });
                 return resp;
-              }
-
-            })
-            .then(async resp => {
-              const apiConfig = Config.getApiConfig();
-              if (ecosystem === 'maven') {
-                fs.writeFile(apiConfig.dependencyAnalysisReportFilePath, resp, (err) => {
-                  if (err) {
-                    p.report({
-                      message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                    });
-                    handleError(err);
-                    reject();
-                  }
-                  if (DependencyReportPanel.currentPanel) {
-                    DependencyReportPanel.currentPanel.doUpdatePanel(resp);
-                  }
-                  resolve(null);
-                });
-              } else {
+              })
+              .then(async resp => {
                 console.log(`Analyzing your stack, id ${resp}`);
                 const options = {};
                 options['uri'] = `${apiConfig.host
@@ -140,33 +159,22 @@ export module stackanalysismodule {
                       reject(error);
                     });
                 }, getRequestPollInterval);
-              }
-            })
-            .catch(err => {
-              p.report({
-                message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
+              })
+              .catch(err => {
+                p.report({
+                  message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
+                });
+                handleError(err);
+                reject();
               });
-              handleError(err);
-              reject();
-            });
+
+          }
         });
       }
     );
   };
 
-  export async function mavenStackAnalsis(path: string): Promise<string> {
-    return new Promise<any>(async (resolve, reject) => {
-      try {
-        // Get stack analysis in HTML format (string)
-        let result = await crda.stackAnalysis(path, true)
-        resolve(result);
-      } catch (error) {
-        reject(error);
-      }
-    })
-  };
-
-  export const processStackAnalyses = async (
+  export const processStackAnalyses = (
     context,
     workspaceFolder,
     ecosystem,
@@ -176,7 +184,7 @@ export module stackanalysismodule {
     if (ecosystem === 'maven') {
       argumentList = uri
         ? uri.fsPath
-        : paths.join(workspaceFolder.uri.fsPath, 'pom.xml');
+        : path.join(workspaceFolder.uri.fsPath, 'pom.xml');
       effectiveF8Var = 'effectivef8Pom';
     } else if (ecosystem === 'npm') {
       argumentList = uri

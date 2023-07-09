@@ -43,7 +43,7 @@ node('rhel8'){
 	// Publishing part
 	if(publishToMarketPlace.equals('true')){
 		timeout(time:5, unit:'DAYS') {
-			input message:'Approve deployment?', submitter: 'jparsai, tfigenbl'
+			input message:'Approve deployment?', submitter: 'jparsai, tfigenbl, zgrinber'
 		}
 
 		stage "Publish to Marketplace"

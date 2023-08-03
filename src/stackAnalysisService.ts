@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as request from 'request';
-import crda from '@RHEcosystemAppEng/crda-javascript-api';
+import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
 
 const MAX_RETRIES = 5;
 const INITIAL_DELAY = 1000; // in milliseconds
@@ -184,11 +184,11 @@ export module stackAnalysisServices {
 
   };
 
-  export const crdaApiStackAnalysis = (path, options) => {
+  export const exhortApiStackAnalysis = (path, options) => {
     return new Promise<any>(async (resolve, reject) => {
       try {
         // Get stack analysis in HTML format
-        let stackAnalysisReportHtml = await crda.stackAnalysis(path, true, options)
+        let stackAnalysisReportHtml = await exhort.stackAnalysis(path, true, options)
         resolve(stackAnalysisReportHtml);
       } catch (error) {
         reject(error);

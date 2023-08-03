@@ -39,11 +39,11 @@ export module stackanalysismodule {
             });
 
             const options = {};
-            if (apiConfig.crdaSnykToken !== '') {
-              options['CRDA_SNYK_TOKEN'] = apiConfig.crdaSnykToken;
+            if (apiConfig.exhortSnykToken !== '') {
+              options['EXHORT_SNYK_TOKEN'] = apiConfig.exhortSnykToken;
             }
 
-            stackAnalysisServices.crdaApiStackAnalysis(argumentList, options)
+            stackAnalysisServices.exhortApiStackAnalysis(argumentList, options)
               .then(resp => {
                 p.report({
                   message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
@@ -214,11 +214,11 @@ export module stackanalysismodule {
 
   export const validateSnykToken = async () => {
     const apiConfig = Config.getApiConfig();
-    if (apiConfig.crdaSnykToken !== '') {
+    if (apiConfig.exhortSnykToken !== '') {
       const options = {};
-      options['uri'] = `${apiConfig.crdaHost}/api/v3/token`;
+      options['uri'] = `${apiConfig.exhortHost}/api/v3/token`;
       options['headers'] = {
-        'Crda-Snyk-Token': apiConfig.crdaSnykToken
+        'Exhort-Snyk-Token': apiConfig.exhortSnykToken
       };
 
       stackAnalysisServices.getSnykTokenValidationService(options);

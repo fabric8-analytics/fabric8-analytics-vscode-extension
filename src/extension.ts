@@ -157,7 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.workspace.onDidChangeConfiguration((event) => {
-    if (event.affectsConfiguration('dependencyAnalytics.crdaSnykToken')) {
+    if (event.affectsConfiguration('dependencyAnalytics.exhortSnykToken')) {
       multimanifestmodule.triggerTokenValidation('snyk');
     }
     // add more token providers here...

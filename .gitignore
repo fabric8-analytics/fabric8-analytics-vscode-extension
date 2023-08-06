@@ -16,3 +16,4 @@ target/
 test/resources/**/package-lock.json
 test/resources/**/node_modules
 .npmrc
+test-workspace

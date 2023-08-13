@@ -13,13 +13,13 @@ export enum GlobalState {
 export const extensionId = 'fabric8-analytics';
 // publisher.name from package.json
 export const extensionQualifiedId = `redhat.${extensionId}`;
-// GET request timeout
-export const getRequestTimeout = 120 * 1000; // ms
-// GET request polling frequency
-export const getRequestPollInterval = 2 * 1000; // ms
 // UTM
 export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
 // URL to Snyk webpage
 export const snykURL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
 // default dependencyAnalysisReportFilePath
 export const defaultDependencyAnalysisReportFilePath = '/tmp/dependencyAnalysisReport.html';
+// Red Hat GA Repository
+export const redhatMavenRepository = 'https://maven.repository.redhat.com/ga/'
+// Red Hat GA Repository documentation
+export const redhatMavenRepositoryDocumentationURL = 'https://access.redhat.com/maven-repository'

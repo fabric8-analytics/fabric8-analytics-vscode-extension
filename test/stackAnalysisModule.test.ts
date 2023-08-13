@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 
 import { context } from './vscontext.mock';
 import { stackanalysismodule } from '../src/stackanalysismodule';
-import { ProjectDataProvider } from '../src/ProjectDataProvider';
 import { multimanifestmodule } from '../src/multimanifestmodule';
 import { stackAnalysisServices } from '../src/stackAnalysisService';
 
@@ -47,6 +46,7 @@ suite('stackanalysis module', () => {
       );
       expect(spyStackAnalysesLifeCycle).callCount(1);
     });
+
     test('processStackAnalyses should call stackAnalysesLifeCycle for maven', async () => {
       let spyStackAnalysesLifeCycle = sandbox.spy(
         stackanalysismodule,
@@ -61,46 +61,44 @@ suite('stackanalysis module', () => {
     });
 
     test('stackAnalysesLifeCycle should call chain of promises', async () => {
-      let stubEffectivef8Package = sandbox
-        .stub(ProjectDataProvider, 'effectivef8Package')
-        .resolves('target/npmlist.json');
       let stubTriggerManifestWs = sandbox
         .stub(multimanifestmodule, 'triggerManifestWs')
         .resolves(true);
       let stubFormManifestPayload = sandbox
         .stub(multimanifestmodule, 'form_manifests_payload')
-        .resolves({ orgin: 'vscode', ecosystem: 'npm' });
-      let stubPostStackAnalysisService = sandbox
-        .stub(stackAnalysisServices, 'postStackAnalysisService')
-        .resolves('23445');
-      let stubGetStackAnalysisService = sandbox
-        .stub(stackAnalysisServices, 'getStackAnalysisService')
-        .resolves({ result: '23445' });
+        .resolves({ orgin: 'vscode', ecosystem: 'maven' });
+      let stubExhortApiStackAnalysis = sandbox
+        .stub(stackAnalysisServices, 'exhortApiStackAnalysis')
+        .resolves('<html><body>Mock HTML response</body></html>');
       await stackanalysismodule.stackAnalysesLifeCycle(
         context,
-        'effectivef8Package',
         'path/samplenodeapp',
         'maven'
       );
-      expect(stubEffectivef8Package).callCount(1);
       expect(stubTriggerManifestWs).callCount(1);
+      expect(stubExhortApiStackAnalysis).callCount(1);
     });
 
     test('stackAnalysesLifeCycle should throw err', async () => {
-      let stubEffectivef8Package = sandbox
-        .stub(ProjectDataProvider, 'effectivef8Package')
-        .rejects(false);
+      let stubTriggerManifestWs = sandbox
+        .stub(multimanifestmodule, 'triggerManifestWs')
+        .resolves(true);
+      let stubFormManifestPayload = sandbox
+        .stub(multimanifestmodule, 'form_manifests_payload')
+        .resolves({ orgin: 'vscode', ecosystem: 'maven' });
+      let stubExhortApiStackAnalysis = sandbox
+        .stub(stackAnalysisServices, 'exhortApiStackAnalysis')
+        .rejects(new Error("Stub Failed"));
       try {
         await stackanalysismodule.stackAnalysesLifeCycle(
           context,
-          'effectivef8Package',
           'path/samplenodeapp',
           'maven'
         );
       } catch (err) {
         return;
       }
-      expect(stubEffectivef8Package).callCount(1);
+      expect(stubExhortApiStackAnalysis).callCount(1);
     });
   });
 });

@@ -111,7 +111,7 @@ export class DependencyReportPanel {
     } else if (data && /<\s*html[^>]*>/i.test(data)) {
       DependencyReportPanel.data = data;
       this._panel.webview.html = data;
-    } else if (data && data === 'error') {
+    } else if (!data || data === 'error') {
       let r = header;
       r += render_project_failure();
       r += footer;

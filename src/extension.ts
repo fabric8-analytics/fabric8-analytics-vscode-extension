@@ -11,7 +11,7 @@ import {
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
 import { StatusMessages } from './statusMessages';
@@ -37,6 +37,17 @@ export function activate(context: vscode.ExtensionContext) {
         // Throw a custom error message when the command execution fails
         throw new Error(`Running the contributed command: 'fabric8.stackAnalysis' failed.`);
       }
+    }
+  );
+
+  let rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
+    Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
+    () => {
+      const msg = `Important: If you apply dependency analysis recommendations, 
+                    make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
+                    This ensures that the applied dependencies work correctly. 
+                    Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
+      vscode.window.showWarningMessage(msg);
     }
   );
 
@@ -97,7 +108,8 @@ export function activate(context: vscode.ExtensionContext) {
           fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc'),
         },
         initializationOptions: {
-          triggerFullStackAnalysis: Commands.TRIGGER_FULL_STACK_ANALYSIS
+          triggerFullStackAnalysis: Commands.TRIGGER_FULL_STACK_ANALYSIS,
+          triggerRHRepositoryRecommendationNotification: Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION
         },
       };
 
@@ -149,6 +161,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
       });
       context.subscriptions.push(
+        rhRepositoryRecommendationNotification,
         disposableFullStack,
         disposableStackLogs,
         caStatusBarProvider,

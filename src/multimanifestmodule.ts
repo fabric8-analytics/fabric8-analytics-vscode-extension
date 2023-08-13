@@ -127,7 +127,10 @@ export module multimanifestmodule {
   export const dependencyAnalyticsReportFlow = async (context, uri = null) => {
     let workspaceFolder: vscode.WorkspaceFolder;
     if (uri && uri.scheme && uri.scheme === 'file') {
-      if (uri.fsPath && uri.fsPath.toLowerCase().indexOf('pom.xml') !== -1) {
+      if (
+        uri.fsPath &&
+        uri.fsPath.toLowerCase().indexOf('pom.xml') !== -1
+      ) {
         workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         stackanalysismodule.processStackAnalyses(
           context,
@@ -146,28 +149,28 @@ export module multimanifestmodule {
           'npm',
           uri
         );
-      } else if (
-        uri.fsPath &&
-        uri.fsPath.toLowerCase().indexOf('requirements.txt') !== -1
-      ) {
-        workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        stackanalysismodule.processStackAnalyses(
-          context,
-          workspaceFolder,
-          'pypi',
-          uri
-        );
-      } else if (
-        uri.fsPath &&
-        uri.fsPath.toLowerCase().indexOf('go.mod') !== -1
-      ) {
-        workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        stackanalysismodule.processStackAnalyses(
-          context,
-          workspaceFolder,
-          'golang',
-          uri
-        );
+        // } else if (
+        //   uri.fsPath &&
+        //   uri.fsPath.toLowerCase().indexOf('requirements.txt') !== -1
+        // ) {
+        //   workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+        //   stackanalysismodule.processStackAnalyses(
+        //     context,
+        //     workspaceFolder,
+        //     'pypi',
+        //     uri
+        //   );
+        // } else if (
+        //   uri.fsPath &&
+        //   uri.fsPath.toLowerCase().indexOf('go.mod') !== -1
+        // ) {
+        //   workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+        //   stackanalysismodule.processStackAnalyses(
+        //     context,
+        //     workspaceFolder,
+        //     'golang',
+        //     uri
+        //   );
       } else {
         vscode.window.showInformationMessage(
           `File ${uri.fsPath} is not supported!!`

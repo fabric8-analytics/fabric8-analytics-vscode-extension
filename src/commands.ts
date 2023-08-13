@@ -18,4 +18,5 @@ export namespace Commands {
     'fabric8.stackAnalysisFromEditor';
   export const TRIGGER_LSP_EDIT = 'lsp.applyTextEdit';
   export const TRIGGER_STACK_LOGS = 'fabric8.fabric8AnalyticsStackLogs';
+  export const TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION = 'fabric8.RHRepositoryRecommendationNotification'
 }

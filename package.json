@@ -206,12 +206,6 @@
           "description": "Host name of the stack report UI.",
           "scope": "window"
         },
-        "dependencyAnalytics.exhortHost": {
-          "type": "string",
-          "default": "http://pre-exhort.apps.sssc-cl01.appeng.rhecoeng.com/",
-          "description": "Host name of Exhort Dependency Analytics server.",
-          "scope": "window"
-        },
         "dependencyAnalytics.exhortSnykToken": {
           "type": "string",
           "default": "",
@@ -282,7 +276,7 @@
   },
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.10",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.12",
     "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",

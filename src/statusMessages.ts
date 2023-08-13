@@ -7,11 +7,9 @@ export namespace StatusMessages {
   export const FULL_STACK_PROMPT_TEXT = `Open the detailed vulnerability report`;
   export const LSP_FAILURE_TEXT = `Open the output window`;
   export const EXT_TITLE = `Dependency Analytics`;
-  export const WIN_RESOLVING_DEPENDENCIES = `Resolving application dependencies...`;
   export const WIN_ANALYZING_DEPENDENCIES = `Analyzing application dependencies...`;
   export const WIN_SUCCESS_ANALYZE_DEPENDENCIES = `Generating dependency analytics report...`;
-  export const WIN_FAILURE_ANALYZE_DEPENDENCIES = `Unable to generate stack report`;
-  export const WIN_FAILURE_RESOLVE_DEPENDENCIES = `Unable to generate stack report`;
+  export const WIN_FAILURE_RESOLVE_DEPENDENCIES = `Unable to generate dependency analytics report`;
   export const WIN_SHOW_LOGS = `No output channel has been created for Dependency Analytics`;
   export const LSP_INITIALIZE = `Initializing Language Server`;
   export const REPORT_TAB_TITLE = `Dependency Analytics Report`;

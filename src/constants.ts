@@ -20,6 +20,25 @@ export const snykURL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analyt
 // default dependencyAnalysisReportFilePath
 export const defaultDependencyAnalysisReportFilePath = '/tmp/dependencyAnalysisReport.html';
 // Red Hat GA Repository
-export const redhatMavenRepository = 'https://maven.repository.redhat.com/ga/'
+export const redhatMavenRepository = 'https://maven.repository.redhat.com/ga/';
 // Red Hat GA Repository documentation
-export const redhatMavenRepositoryDocumentationURL = 'https://access.redhat.com/maven-repository'
+export const redhatMavenRepositoryDocumentationURL = 'https://access.redhat.com/maven-repository';
+
+export namespace StatusMessages {
+  export const WIN_ANALYZING_DEPENDENCIES = 'Analyzing application dependencies...';
+  export const WIN_GENERATING_DEPENDENCIES = 'Generating dependency analytics report...';
+  export const WIN_SUCCESS_DEPENDENCY_ANALYSIS = 'Successfully generated dependency analytics report...';
+  export const WIN_FAILURE_DEPENDENCY_ANALYSIS = 'Unable to generate dependency analytics report';
+  export const WIN_SHOW_LOGS = 'No output channel has been created for Dependency Analytics';
+  export const NO_SUPPORTED_MANIFEST = 'No supported manifest file found to be analyzed.';
+}
+
+export namespace PromptText {
+  export const FULL_STACK_PROMPT_TEXT = `Open the detailed vulnerability report`;
+  export const LSP_FAILURE_TEXT = `Open the output window`;
+}
+
+export namespace Titles {
+  export const EXT_TITLE = `Dependency Analytics`;
+  export const REPORT_TITLE = `Dependency Analytics Report`;
+}

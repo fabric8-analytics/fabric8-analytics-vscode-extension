@@ -1,10 +1,11 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import { Titles } from './constants';
 
 export class DepOutputChannel {
   outputChannel: vscode.OutputChannel;
-  constructor(channelName = 'Dependency Analytics') {
+  constructor(channelName = Titles.EXT_TITLE) {
     if (!this.outputChannel) {
       this.outputChannel = vscode.window.createOutputChannel(channelName);
     }

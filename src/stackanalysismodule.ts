@@ -5,23 +5,21 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Config } from './config';
-import { snykURL, defaultDependencyAnalysisReportFilePath } from './constants';
+import { snykURL, defaultDependencyAnalysisReportFilePath, StatusMessages, Titles } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { stackAnalysisServices } from './stackAnalysisService';
-import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
 
 export module stackanalysismodule {
-  export const stackAnalysesLifeCycle = (
+  export const stackAnalysisLifeCycle = (
     context,
     manifestFilePath,
-    ecosystem
   ) => {
     vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
-        title: StatusMessages.EXT_TITLE
+        title: Titles.EXT_TITLE
       },
       p => {
         return new Promise<void>(async (resolve, reject) => {
@@ -45,10 +43,10 @@ export module stackanalysismodule {
           stackAnalysisServices.exhortApiStackAnalysis(manifestFilePath, options, context)
             .then(resp => {
               p.report({
-                message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
+                message: StatusMessages.WIN_GENERATING_DEPENDENCIES
               });
               let reportFilePath = apiConfig.dependencyAnalysisReportFilePath || defaultDependencyAnalysisReportFilePath;
-              let reportDirectoryPath = path.dirname(reportFilePath)
+              let reportDirectoryPath = path.dirname(reportFilePath);
               if (!fs.existsSync(reportDirectoryPath)) {
                 fs.mkdirSync(reportDirectoryPath, { recursive: true });
               }
@@ -59,13 +57,16 @@ export module stackanalysismodule {
                   if (DependencyReportPanel.currentPanel) {
                     DependencyReportPanel.currentPanel.doUpdatePanel(resp);
                   }
+                  p.report({
+                    message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS
+                  });
                   resolve(null);
                 }
               });
             })
             .catch(err => {
               p.report({
-                message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
+                message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS
               });
               handleError(err);
               reject();
@@ -75,7 +76,7 @@ export module stackanalysismodule {
     );
   };
 
-  export const processStackAnalyses = (
+  export const processStackAnalysis = (
     context,
     workspaceFolder,
     ecosystem,
@@ -99,7 +100,7 @@ export module stackanalysismodule {
       //     ? uri.fsPath
       //     : workspaceFolder.uri.fsPath;
     }
-    stackAnalysesLifeCycle(context, manifestFilePath, ecosystem);
+    stackAnalysisLifeCycle(context, manifestFilePath);
   };
 
   export const handleError = err => {
@@ -116,7 +117,7 @@ export module stackanalysismodule {
       // set up configuration options for the token validation request
       let options = {
         'EXHORT_SNYK_TOKEN': apiConfig.exhortSnykToken,
-      }
+      };
 
       // execute stack analysis
       stackAnalysisServices.getSnykTokenValidationService(options);

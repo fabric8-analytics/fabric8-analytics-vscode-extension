@@ -14,7 +14,7 @@ import { Commands } from './commands';
 import { GlobalState, extensionQualifiedId, registrationURL, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
-import { StatusMessages } from './statusMessages';
+import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
         multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
       } catch (error) {
         // Throw a custom error message when the command execution fails
-        throw new Error(`Running the contributed command: 'fabric8.stackAnalysis' failed.`);
+        throw new Error(`Running the contributed command: '${Commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`);
       }
     }
   );
@@ -128,8 +128,8 @@ export function activate(context: vscode.ExtensionContext) {
         };
 
         const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
-          const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
-          if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
+          const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, PromptText.FULL_STACK_PROMPT_TEXT);
+          if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
           }

@@ -19,7 +19,7 @@ export module stackAnalysisServices {
         clearContextInfo(context);
         reject(error);
       }
-    })
+    });
   };
 
   export const getSnykTokenValidationService = async (options) => {
@@ -55,5 +55,5 @@ export module stackAnalysisServices {
       clearContextInfo(context);
       vscode.window.showErrorMessage(`Failed to validate token, Error: ${error}`);
     }
-  }
+  };
 }

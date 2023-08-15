@@ -188,24 +188,6 @@
           "default": "off",
           "description": "Traces the communication between VSCode and the dependencyAnalyticsServer service."
         },
-        "dependencyAnalytics.host": {
-          "type": "string",
-          "default": "https://gw.api.openshift.io/",
-          "description": "Host name of Dependency Analytics server.",
-          "scope": "window"
-        },
-        "dependencyAnalytics.apiKey": {
-          "type": "string",
-          "default": "207c527cfc2a6b8dcf4fa43ad7a976da",
-          "description": "3scale user_key to access dependencyAnalytics.host",
-          "scope": "window"
-        },
-        "dependencyAnalytics.stackReportUIHost": {
-          "type": "string",
-          "default": "https://stack-analytics-report.openshift.io/",
-          "description": "Host name of the stack report UI.",
-          "scope": "window"
-        },
         "dependencyAnalytics.exhortSnykToken": {
           "type": "string",
           "default": "",
@@ -276,7 +258,7 @@
   },
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.12",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.13",
     "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",

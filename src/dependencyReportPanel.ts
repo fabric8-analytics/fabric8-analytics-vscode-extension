@@ -1,14 +1,12 @@
-import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { Templates } from './template';
+import { Titles } from './constants';
 import { Config } from './config';
 import * as fs from 'fs';
 
-const loader = Templates.LOADER_TEMPLATE;
-const header = Templates.HEADER_TEMPLATE;
-const footer = Templates.FOOTER_TEMPLATE;
-let portal_uri: string = '';
+const loaderTmpl = Templates.LOADER_TEMPLATE;
+const errorTmpl = Templates.ERROR_TEMPLATE;
 
 /**
  * Manages cat coding webview panels
@@ -39,7 +37,7 @@ export class DependencyReportPanel {
     // Otherwise, create a new panel.
     const panel = vscode.window.createWebviewPanel(
       DependencyReportPanel.viewType,
-      'Dependency Analytics Report',
+      Titles.REPORT_TITLE,
       column || vscode.ViewColumn.One,
       {
         // Enable javascript in the webview
@@ -96,26 +94,11 @@ export class DependencyReportPanel {
   }
 
   public doUpdatePanel(data: any) {
-    if (data && data.external_request_id) {
-      const apiConfig = Config.getApiConfig();
-      DependencyReportPanel.data = data;
-      let r = header;
-      let token_uri = undefined;
-      portal_uri = `${apiConfig.stackReportUIHost}#/analyze/${data.external_request_id
-        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${apiConfig.host
-        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${apiConfig.apiKey}"}`;
-      console.log('portal_uri', portal_uri);
-      r += render_stack_iframe(portal_uri);
-      r += footer;
-      this._panel.webview.html = r;
-    } else if (data && /<\s*html[^>]*>/i.test(data)) {
+    if (data && /<\s*html[^>]*>/i.test(data)) {
       DependencyReportPanel.data = data;
       this._panel.webview.html = data;
-    } else if (!data || data === 'error') {
-      let r = header;
-      r += render_project_failure();
-      r += footer;
-      this._panel.webview.html = r;
+    } else {
+      this._panel.webview.html = errorTmpl;
     }
   }
 
@@ -140,52 +123,10 @@ export class DependencyReportPanel {
   }
 
   private _updateWebView() {
-    this._panel.title = 'Dependency Analytics Report';
-    this._panel.webview.html = this._renderHtmlForWebView();
-  }
-
-  private _renderHtmlForWebView() {
+    this._panel.title = Titles.REPORT_TITLE;
     let output = DependencyReportPanel.data;
-    if (output && output.external_request_id) {
-      const apiConfig = Config.getApiConfig();
-      let r = header;
-      let token_uri = undefined;
-      portal_uri = `${apiConfig.stackReportUIHost}#/analyze/${output.external_request_id
-        }?interframe=true&api_data={"access_token":"${token_uri}","route_config":{"api_url":"${apiConfig.host
-        }","ver":"v3","uuid":"${process.env.UUID}"},"user_key":"${apiConfig.apiKey}"}`;
-      r += render_stack_iframe(portal_uri);
-      r += footer;
-      return r;
-    } else if (output && /<\s*html[^>]*>/i.test(output)) {
-      return output;
-    } else {
-      return loader;
-    }
+    this._panel.webview.html = output && /<\s*html[^>]*>/i.test(output) ?
+      output :
+      loaderTmpl;
   }
 }
-
-let render_project_failure = () => {
-  return `<div>
-                <p style='color:#000000;text-align: center;'>Unable to analyze your stack.</p>
-              </div>`;
-};
-
-let render_stack_iframe = portaluri => {
-  //const result = sa.result[0];
-  return `<iframe id="frame" width="100%" height="100%" frameborder="0" src=${portaluri}></iframe>
-  
-  <script>
-
-  const vscode = acquireVsCodeApi();
-  window.addEventListener('message', (e) => {
-    vscode.postMessage({
-      command: 'launch-link-in-external-browser',
-      url: e.data
-    });  
-
-  }, false);
-
-  </script>
-
-  `;
-};

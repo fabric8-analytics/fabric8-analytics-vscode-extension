@@ -2,7 +2,7 @@
 
 import { StatusBarItem, window, StatusBarAlignment, Uri } from 'vscode';
 import { Disposable } from 'vscode-languageclient';
-import { StatusMessages } from './statusMessages';
+import { PromptText } from './constants';
 import { Commands } from './commands';
 
 class CAStatusBarProvider implements Disposable {
@@ -15,18 +15,18 @@ class CAStatusBarProvider implements Disposable {
     public showSummary(text: string, uri: string): void {
         this.statusBarItem.text = text;
         this.statusBarItem.command = {
-            title: StatusMessages.FULL_STACK_PROMPT_TEXT,
+            title: PromptText.FULL_STACK_PROMPT_TEXT,
             command: Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
             arguments: [Uri.parse(uri)]
         };
-        this.statusBarItem.tooltip = StatusMessages.FULL_STACK_PROMPT_TEXT;
+        this.statusBarItem.tooltip = PromptText.FULL_STACK_PROMPT_TEXT;
         this.statusBarItem.show();
     }
 
     public setError(): void {
         this.statusBarItem.text = `$(error) Dependency analysis has failed`;
         this.statusBarItem.command = {
-            title: StatusMessages.LSP_FAILURE_TEXT,
+            title: PromptText.LSP_FAILURE_TEXT,
             command: Commands.TRIGGER_STACK_LOGS,
         };
     }

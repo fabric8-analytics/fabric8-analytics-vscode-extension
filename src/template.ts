@@ -1,13 +1,15 @@
 'use strict';
 
+import { Titles } from './constants';
+
 /**
  * Commonly used commands
  */
 export namespace Templates {
-  /**
-   * Template for loaders
-   */
-  export const LOADER_TEMPLATE = `<!DOCTYPE html>
+    /**
+     * Template for loaders
+     */
+    export const LOADER_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -248,7 +250,7 @@ export namespace Templates {
     <body>
         <div id="loading_screen">
         <div style="text-align: center;margin-top:130px;" id="caption">
-            <h1 style='color:#ffffff'>Dependency Analytics</h1>
+            <h1 style='color:#ffffff'>${Titles.EXT_TITLE}</h1>
             <h2 style='color:#ffffff'>Analyzing application dependencies...</h2>
             <br />
             <br />
@@ -267,7 +269,7 @@ export namespace Templates {
     </body>
     </html>`;
 
-  export const HEADER_TEMPLATE = `<!DOCTYPE html>
+    export const ERROR_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>
     <meta charset="utf-8"/>
@@ -285,7 +287,9 @@ export namespace Templates {
 
     </style>
     </head>
-    <body>`;
-
-  export const FOOTER_TEMPLATE = '</body></html>';
+    <body>
+    <div>
+    <p style='color:#000000;text-align: center;'>Unable to analyze your stack.</p>
+    </div>
+    </body></html>`;
 }

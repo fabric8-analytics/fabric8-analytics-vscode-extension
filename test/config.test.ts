@@ -19,42 +19,34 @@ suite('Config module', () => {
     sandbox.restore();
   });
 
-  test('should get API config', () => {
-    const workspaceConfiguration = {
-      get: function (section: string) {
-        // Return a mock API configuration here
-        if (section === 'dependencyAnalytics') {
-          return { mockApiConfig: true };
-        }
-        throw new Error('Unknown section');
-      },
-    };
-    sandbox.stub(vscode.workspace, 'getConfiguration').returns(workspaceConfiguration as vscode.WorkspaceConfiguration);
+  test('getApiConfig should get API config', async () => {
+    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
+    getConfigurationStub.withArgs('dependencyAnalytics').resolves('mockApiConfig');
 
-    const apiConfig = Config.getApiConfig();
+    const apiConfig = await Config.getApiConfig();
 
-    expect(apiConfig).to.deep.equal({ mockApiConfig: true });
+    expect(apiConfig).to.equal('mockApiConfig');
   });
 
-  test('should get Maven executable', () => {
+  test('getMavenExecutable should get Maven executable', () => {
     let mavenPath = Config.getMavenExecutable();
 
     expect(mavenPath).equals('mvn');
   });
 
-  test('should get Node executable', () => {
+  test('getNodeExecutable should get Node executable', () => {
     let npmPath = Config.getNodeExecutable();
 
     expect(npmPath).equals('npm');
   });
 
-  test('should get Python executable', () => {
+  test('getPythonExecutable should get Python executable', () => {
     let python = Config.getPythonExecutable();
 
     expect(python).equals('python');
   });
 
-  test('should get Go executable', () => {
+  test('getGoExecutable should get Go executable', () => {
     let goPath = Config.getGoExecutable();
 
     expect(goPath).equals('go');

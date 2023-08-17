@@ -18,9 +18,8 @@ export module authextension {
 
   export async function setTelemetryid(context) {
     const redhatService = await getRedHatService(context);
-    const REDHAT_UUID = await (
-      await redhatService.getIdProvider()
-    ).getRedHatUUID();
+    const redhatIdProvider = await redhatService.getIdProvider()
+    const REDHAT_UUID = await redhatIdProvider.getRedHatUUID();
     process.env['TELEMETRY_ID'] = REDHAT_UUID;
   }
 

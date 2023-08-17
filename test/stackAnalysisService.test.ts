@@ -30,21 +30,20 @@ suite('stacknalysis Services', () => {
     expect(context.globalState.get('f8_3scale_user_key')).equals('');
   });
 
-  test('exhortApiStackAnalysis should return success with HTML', async () => {
-    const pathToManifest = 'test/resources/sampleMavenApp/pom.xml';
+  test('exhortApiStackAnalysis should return HTML', async () => {
+    const pathToManifest = 'sampleMavenApp/pom.xml';
 
     const result = await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context);
 
     // Compare the result with the mocked response
-    const mockHtmlResponse = fs.readFileSync('test/resources/sampleMavenApp/response.html', 'utf8');
+    const mockHtmlResponse = fs.readFileSync('sampleMavenApp/response.html', 'utf8');
     expect(result).to.equal(mockHtmlResponse);
   });
 
   test('exhortApiStackAnalysis should return error', async () => {
-    const pathToManifest = 'path/to/mock/pom.xml';
+    const pathToManifest = '/path/to/mock/pom.xml';
     const clearContextInfoStub = sandbox.stub(stackAnalysisServices, 'clearContextInfo');
     sandbox.stub(exhort, 'stackAnalysis').rejects(new Error('Mock error message'));
-
     await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context);
 
     expect(clearContextInfoStub).to.be.calledOnceWith(context);

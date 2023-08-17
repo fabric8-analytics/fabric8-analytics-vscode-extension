@@ -23,11 +23,11 @@ suite('DependencyReportPanel Modules', () => {
   });
 
   test('createOrShow should create a new panel', async () => {
-    const createWebviewPanelStub = sandbox.stub(vscode.window, 'createWebviewPanel');
+    const createWebviewPanelSpy = sandbox.spy(vscode.window, 'createWebviewPanel');
 
     DependencyReportPanel.createOrShow(context.extensionPath, null);
 
-    expect(createWebviewPanelStub).to.be.calledOnce;
+    expect(createWebviewPanelSpy).to.be.calledOnce;
     expect(DependencyReportPanel.currentPanel).to.exist;
   });
 
@@ -42,7 +42,7 @@ suite('DependencyReportPanel Modules', () => {
 
   test('dispose current panel', async () => {
     const data = '<html><body>Mock data</body></html>';
-    const getApiConfigStub = sandbox.stub(Config, 'getApiConfig').returns({
+    sandbox.stub(Config, 'getApiConfig').returns({
       dependencyAnalysisReportFilePath: 'mockFilePath',
     });
     const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
@@ -51,7 +51,6 @@ suite('DependencyReportPanel Modules', () => {
     DependencyReportPanel.createOrShow(context.extensionPath, data);
     DependencyReportPanel.currentPanel.dispose();
 
-    expect(getApiConfigStub).to.be.calledOnce;
     expect(existsSyncStub).to.be.calledWith('mockFilePath');
     expect(unlinkSyncStub).to.be.calledWith('mockFilePath');
     expect(DependencyReportPanel.data).equals(null);

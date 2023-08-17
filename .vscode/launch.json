@@ -26,14 +26,11 @@
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": [
-				"${workspaceFolder}/test/resources/sampleNodeApp/",
+				"${workspaceFolder}/test/resources/",
 				"--extensionDevelopmentPath=${workspaceRoot}",
 				"--extensionTestsPath=${workspaceRoot}/out/test"
 			],
 			"sourceMaps": true,
-			"outFiles": [
-				"${workspaceFolder}/out/test/**/*.js"
-			],
 			"preLaunchTask": "npm: test-compile"
 		},
 		{

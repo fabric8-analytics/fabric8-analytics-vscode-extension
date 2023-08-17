@@ -39,12 +39,12 @@ suite('multimanifest module', () => {
 
     await multimanifestmodule.dependencyAnalyticsReportFlow(context, null);
 
-    expect(triggerFullStackAnalysisSpy).callCount(1);
+    expect(triggerFullStackAnalysisSpy).to.be.calledOnce;
   });
 
   test('triggerFullStackAnalysis should trigger full stack analysis for specified workspace folder', async () => {
-    const workspaceFolder = { uri: vscode.Uri.file('/path/to/workspace') } as vscode.WorkspaceFolder;
-    const findFilesStub = sandbox.spy(vscode.workspace, 'findFiles');
+    const workspaceFolder = { uri: vscode.Uri.file('/path/to/mock/workspace') } as vscode.WorkspaceFolder;
+    const findFilesStub = sandbox.stub(vscode.workspace, 'findFiles').resolves([vscode.Uri.file('/path/to/mock/pom.xml')]);
     const processStackAnalysisStub = sandbox.stub(stackanalysismodule, 'processStackAnalysis');
 
     await multimanifestmodule.triggerFullStackAnalysis(context, workspaceFolder);
@@ -61,7 +61,7 @@ suite('multimanifest module', () => {
 
     expect(result).equals(true);
     expect(createOrShowStub.calledOnceWithExactly(context.extensionPath, null)).to.be.true;
-    expect(authorize_f8_analyticsStub).callCount(1);
+    expect(authorize_f8_analyticsStub).to.be.calledOnce;
   });
 
   test('triggerManifestWs should reject with "Unable to authenticate." when authorization fails', async () => {

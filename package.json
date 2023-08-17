@@ -226,6 +226,7 @@
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -b",
+    "posttest-compile": "./transformToDynamicImport.sh",
     "test-compile": "tsc -p ./",
     "test": "node ./out/test/runTest.js",
     "reinstall": "npm cache verify && npm install",

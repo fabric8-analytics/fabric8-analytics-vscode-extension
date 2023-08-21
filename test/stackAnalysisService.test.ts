@@ -24,12 +24,6 @@ suite('stacknalysis Services', () => {
     sandbox.restore();
   });
 
-  test('context data should have been cleared', () => {
-    stackAnalysisServices.clearContextInfo(context);
-    expect(context.globalState.get('f8_access_routes')).equals('');
-    expect(context.globalState.get('f8_3scale_user_key')).equals('');
-  });
-
   test('exhortApiStackAnalysis should return HTML', async () => {
     const pathToManifest = 'sampleMavenApp/pom.xml';
 
@@ -42,11 +36,9 @@ suite('stacknalysis Services', () => {
 
   test('exhortApiStackAnalysis should return error', async () => {
     const pathToManifest = '/path/to/mock/pom.xml';
-    const clearContextInfoStub = sandbox.stub(stackAnalysisServices, 'clearContextInfo');
     sandbox.stub(exhort, 'stackAnalysis').rejects(new Error('Mock error message'));
-    await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context);
+    expect(await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context)).to.throw(new Error('Mock error message'));
 
-    expect(clearContextInfoStub).to.be.calledOnceWith(context);
   });
 
   test('getSnykTokenValidationService should show Snyk Token Validated message on 200 status code', async () => {
@@ -78,12 +70,9 @@ suite('stacknalysis Services', () => {
     expect(showWarningMessage).to.be.calledWith('Failed to validate token. Status: 500');
   });
 
-  test('getSnykTokenValidationService should handle error and clear context info', async () => {
-    const clearContextInfoStub = sandbox.stub(stackAnalysisServices, 'clearContextInfo');
+  test('getSnykTokenValidationService should handle error', async () => {
     sandbox.stub(exhort, 'validateToken').rejects(new Error('Mock error message'));
 
-    await stackAnalysisServices.getSnykTokenValidationService(options);
-
-    expect(clearContextInfoStub).to.be.calledOnceWith(context);
+    expect(await stackAnalysisServices.getSnykTokenValidationService(options)).to.throw(new Error('Mock error message'));
   });
 });

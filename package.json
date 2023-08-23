@@ -259,7 +259,7 @@
   },
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.13",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.14",
     "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",

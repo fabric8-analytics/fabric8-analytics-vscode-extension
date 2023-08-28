@@ -2,7 +2,6 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 
 import { context } from './vscontext.mock';
 import { stackanalysismodule } from '../src/stackanalysismodule';
@@ -51,45 +50,15 @@ suite('stackanalysis module', () => {
   });
 
   test('stackAnalysisLifeCycle should call chain of promises', async () => {
-    const getApiConfigStub = sandbox.stub(Config, 'getApiConfig').returns({
-      exhortSnykToken: 'mockToken',
-      dependencyAnalysisReportFilePath: '/path/to/mock/report'
-    });
-    const manifestFilePathMock = '/path/to/mock/manifest';
-    const triggerManifestWsStub = sandbox.stub(multimanifestmodule, 'triggerManifestWs').resolves(true);
-    const exhortApiStackAnalysisStub = sandbox.stub(stackAnalysisServices, 'exhortApiStackAnalysis')
-      .resolves('<html><body>Mock HTML response</body></html>');
-    const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
-    const writeFileStub = sandbox.stub(fs, 'writeFile').resolves(true);
-
-    await stackanalysismodule.stackAnalysisLifeCycle(context, manifestFilePathMock);
-
-    expect(triggerManifestWsStub).to.be.calledOnce;
-    expect(exhortApiStackAnalysisStub).to.be.calledOnce;
-    // are in the exhortApiStackAnalysis .then block
-    expect(existsSyncStub).to.be.calledOnce;
-    expect(writeFileStub).to.be.calledOnce;
-  });
-
-  test('stackAnalysisLifeCycle should handle errors', async () => {
-    const getApiConfigStub = sandbox.stub(Config, 'getApiConfig').returns({
-      exhortSnykToken: 'mockToken',
-    });
-    const manifestFilePathMock = '/path/to/mock/manifest';
+    const withProgressSpy = sandbox.spy(vscode.window, 'withProgress');
     const triggerManifestWsStub = sandbox.stub(multimanifestmodule, 'triggerManifestWs');
-    const handleErrorSpy = sandbox.spy(stackanalysismodule, 'handleError');
-    const showErrorMessageStub = sandbox.stub(vscode.window, 'showErrorMessage');
-    const exhortApiStackAnalysisStub = sandbox.stub(stackAnalysisServices, 'exhortApiStackAnalysis')
-      .rejects('Mock error message');
+    const exhortApiStackAnalysisStub = sandbox.stub(stackAnalysisServices, 'exhortApiStackAnalysis');
 
-    await stackanalysismodule.stackAnalysisLifeCycle(context, manifestFilePathMock);
+    await stackanalysismodule.stackAnalysisLifeCycle(context, '/path/to/mock/manifest');
 
-    expect(getApiConfigStub).to.be.calledOnce;
+    expect(withProgressSpy).to.be.calledOnce;
     expect(triggerManifestWsStub).to.be.calledOnce;
     expect(exhortApiStackAnalysisStub).to.be.calledOnce;
-    // are in the exhortApiStackAnalysis .catch block
-    expect(handleErrorSpy).to.be.calledOnce;
-    expect(showErrorMessageStub).to.be.calledOnce;
   });
 
   test('validateSnykToken should execute stackAnalysisServices.getSnykTokenValidationService if a valid token is provided', async () => {

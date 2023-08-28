@@ -6,7 +6,7 @@ export enum GlobalState {
   // to store the current version string to localStorage
   Version = 'fabric8Version',
   // to store the UUID string to localStorage
-  UUID = 'uuid'
+  // UUID = 'uuid'
 }
 
 // Refer `name` from package.json

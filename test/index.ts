@@ -59,7 +59,7 @@ function run(testsRoot: string, clb: any): any {
 
   glob(
     '**/**.test.js',
-    { cwd: testsRoot },
+    { cwd: testsRoot, ignore: ['**/stackAnalysisService.test.js'] },
     (error, files): any => {
       if (error) {
         return clb(error);

@@ -43,7 +43,7 @@ suite('DependencyReportPanel Modules', () => {
   test('dispose current panel', async () => {
     const data = '<html><body>Mock data</body></html>';
     sandbox.stub(Config, 'getApiConfig').returns({
-      dependencyAnalysisReportFilePath: 'mockFilePath',
+      redHatDependencyAnalyticsReportFilePath: 'mockFilePath',
     });
     const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
     const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');

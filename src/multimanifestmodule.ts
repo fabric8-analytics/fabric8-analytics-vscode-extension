@@ -12,7 +12,7 @@ export module multimanifestmodule {
    * Needed async function in order to wait for user selection in case of
    * multi root projects
    */
-  export const dependencyAnalyticsReportFlow = async (context, uri) => {
+  export const redhatDependencyAnalyticsReportFlow = async (context, uri) => {
     let workspaceFolder: vscode.WorkspaceFolder;
     if (uri && uri.scheme && uri.scheme === 'file') {
       if (

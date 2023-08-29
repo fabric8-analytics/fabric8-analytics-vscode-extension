@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
       try {
         // uri will be null in case the user has used the context menu/file explorer
         const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-        multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+        multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, fileUri);
       } catch (error) {
         // Throw a custom error message when the command execution fails
         throw new Error(`Running the contributed command: '${Commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`);
@@ -43,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
   let rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
     Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
     () => {
-      const msg = `Important: If you apply dependency analysis recommendations, 
+      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
                     make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
                     This ensures that the applied dependencies work correctly. 
                     Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
@@ -102,8 +102,8 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'go.mod' }
         ],
         synchronize: {
-          // Synchronize the setting section 'dependencyAnalyticsServer' to the server
-          configurationSection: 'dependencyAnalyticsServer',
+          // Synchronize the setting section 'redHatDependencyAnalyticsServer' to the server
+          configurationSection: 'redHatDependencyAnalyticsServer',
           // Notify the server about file changes to '.clientrc files contained in the workspace
           fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc'),
         },
@@ -115,8 +115,8 @@ export function activate(context: vscode.ExtensionContext) {
 
       // Create the language client and start the client.
       lspClient = new LanguageClient(
-        'dependencyAnalyticsServer',
-        'Dependency Analytics Language Server',
+        'redHatDependencyAnalyticsServer',
+        'Red Hat Dependency Analytics Language Server',
         serverOptions,
         clientOptions
       );
@@ -170,7 +170,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   vscode.workspace.onDidChangeConfiguration((event) => {
-    if (event.affectsConfiguration('dependencyAnalytics.exhortSnykToken')) {
+    if (event.affectsConfiguration('redHatDependencyAnalytics.exhortSnykToken')) {
       multimanifestmodule.triggerTokenValidation('snyk');
     }
     // add more token providers here...
@@ -222,7 +222,7 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   const invokeFullStackReport = (uri: vscode.Uri) => {
     const fileUri = uri || vscode.window.activeTextEditor.document.uri;
-    multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+    multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, fileUri);
   };
 
   const recordAndInvoke = (origin: string, uri: vscode.Uri) => {

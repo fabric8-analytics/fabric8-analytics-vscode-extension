@@ -19,7 +19,7 @@ suite('DepOutputChannel module', () => {
     sandbox.restore();
   });
 
-  test('getOutputChannel should return OutputChannel with Dependency Analytics', () => {
+  test('getOutputChannel should return OutputChannel with default name', () => {
     const depOutputChannel = new DepOutputChannel();
 
     let outputChannel = depOutputChannel.getOutputChannel();

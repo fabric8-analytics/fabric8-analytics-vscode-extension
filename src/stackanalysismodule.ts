@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Config } from './config';
-import { snykURL, defaultDependencyAnalysisReportFilePath, StatusMessages, Titles } from './constants';
+import { snykURL, defaultRedhatDependencyAnalyticsReportFilePath, StatusMessages, Titles } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { DependencyReportPanel } from './dependencyReportPanel';
@@ -45,7 +45,7 @@ export module stackanalysismodule {
               p.report({
                 message: StatusMessages.WIN_GENERATING_DEPENDENCIES
               });
-              let reportFilePath = apiConfig.dependencyAnalysisReportFilePath || defaultDependencyAnalysisReportFilePath;
+              let reportFilePath = apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath;
               let reportDirectoryPath = path.dirname(reportFilePath);
               if (!fs.existsSync(reportDirectoryPath)) {
                 fs.mkdirSync(reportDirectoryPath, { recursive: true });

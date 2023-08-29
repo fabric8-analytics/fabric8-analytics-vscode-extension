@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 export namespace Config {
 
   export function getApiConfig(): any {
-    return vscode.workspace.getConfiguration('dependencyAnalytics');
+    return vscode.workspace.getConfiguration('redHatDependencyAnalytics');
   }
 
   export function getMavenExecutable(): string {

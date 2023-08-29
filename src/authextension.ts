@@ -12,7 +12,6 @@ export module authextension {
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
     process.env['UTM_SOURCE'] = 'vscode';
     process.env['SNYK_TOKEN'] = apiConfig.exhortSnykToken;
-    process.env['GOLANG_EXECUTABLE'] = Config.getGoExecutable();
     process.env['MVN_EXECUTABLE'] = Config.getMavenExecutable();
   };
 

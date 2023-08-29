@@ -29,7 +29,6 @@ suite('authextension Modules', () => {
     expect(process.env['PROVIDE_FULLSTACK_ACTION']).equals('true');
     expect(process.env['UTM_SOURCE']).equals('vscode');
     expect(process.env['SNYK_TOKEN']).equals('mockToken');
-    expect(process.env['GOLANG_EXECUTABLE']).equals('go');
     expect(process.env['MVN_EXECUTABLE']).equals('mvn');
   });
 });

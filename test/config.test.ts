@@ -21,7 +21,7 @@ suite('Config module', () => {
 
   test('getApiConfig should get API config', async () => {
     const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    getConfigurationStub.withArgs('dependencyAnalytics').resolves('mockApiConfig');
+    getConfigurationStub.withArgs('redHatDependencyAnalytics').resolves('mockApiConfig');
 
     const apiConfig = await Config.getApiConfig();
 

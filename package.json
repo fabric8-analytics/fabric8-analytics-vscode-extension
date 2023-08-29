@@ -1,6 +1,6 @@
 {
   "name": "fabric8-analytics",
-  "displayName": "Dependency Analytics",
+  "displayName": "Red Hat Dependency Analytics",
   "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
   "version": "0.3.11",
   "author": "Red Hat",
@@ -54,7 +54,7 @@
       {
         "command": "fabric8.stackAnalysis",
         "title": "Stack Report...",
-        "category": "Dependency Analytics"
+        "category": "Red Hat Dependency Analytics"
       },
       {
         "command": "fabric8.stackAnalysisFromPieBtn",
@@ -66,16 +66,16 @@
       },
       {
         "command": "fabric8.stackAnalysisFromEditor",
-        "title": "Dependency Analytics Report..."
+        "title": "Red Hat Dependency Analytics Report..."
       },
       {
         "command": "fabric8.stackAnalysisFromExplorer",
-        "title": "Dependency Analytics Report..."
+        "title": "Red Hat Dependency Analytics Report..."
       },
       {
         "command": "fabric8.fabric8AnalyticsStackLogs",
         "title": "Debug logs",
-        "category": "Dependency Analytics"
+        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -173,12 +173,12 @@
           "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
           "scope": "window"
         },
-        "dependencyAnalyticsServer.maxNumberOfProblems": {
+        "redHatDependencyAnalyticsServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
           "description": "Controls the maximum number of problems produced by the server."
         },
-        "dependencyAnalyticsServer.trace.server": {
+        "redHatDependencyAnalyticsServer.trace.server": {
           "type": "string",
           "enum": [
             "off",
@@ -186,18 +186,18 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the dependencyAnalyticsServer service."
+          "description": "Traces the communication between VSCode and the redHatDependencyAnalyticsServer service."
         },
-        "dependencyAnalytics.exhortSnykToken": {
+        "redHatDependencyAnalytics.exhortSnykToken": {
           "type": "string",
           "default": "",
-          "description": "Dependency Analytics server authentication token for Snyk.",
+          "description": "Red Hat Dependency Analytics server authentication token for Snyk.",
           "scope": "window"
         },
-        "dependencyAnalytics.dependencyAnalysisReportFilePath": {
+        "redHatDependencyAnalytics.redHatDependencyAnalyticsReportFilePath": {
           "type": "string",
-          "default": "/tmp/dependencyAnalysisReport.html",
-          "description": "Path to a local file where the Dependency Analysis report will be saved.",
+          "default": "/tmp/redhatDependencyAnalyticsReport.html",
+          "description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",
           "scope": "window"
         },
         "maven.executable.path": {

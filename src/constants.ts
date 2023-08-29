@@ -17,8 +17,8 @@ export const extensionQualifiedId = `redhat.${extensionId}`;
 export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
 // URL to Snyk webpage
 export const snykURL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
-// default dependencyAnalysisReportFilePath
-export const defaultDependencyAnalysisReportFilePath = '/tmp/dependencyAnalysisReport.html';
+// default Redhat Dependency Analytics report file path
+export const defaultRedhatDependencyAnalyticsReportFilePath = '/tmp/redhatDependencyAnalyticsReport.html';
 // Red Hat GA Repository
 export const redhatMavenRepository = 'https://maven.repository.redhat.com/ga/';
 // Red Hat GA Repository documentation
@@ -26,10 +26,10 @@ export const redhatMavenRepositoryDocumentationURL = 'https://access.redhat.com/
 
 export namespace StatusMessages {
   export const WIN_ANALYZING_DEPENDENCIES = 'Analyzing application dependencies...';
-  export const WIN_GENERATING_DEPENDENCIES = 'Generating dependency analytics report...';
-  export const WIN_SUCCESS_DEPENDENCY_ANALYSIS = 'Successfully generated dependency analytics report...';
-  export const WIN_FAILURE_DEPENDENCY_ANALYSIS = 'Unable to generate dependency analytics report';
-  export const WIN_SHOW_LOGS = 'No output channel has been created for Dependency Analytics';
+  export const WIN_GENERATING_DEPENDENCIES = 'Generating Red Hat Dependency Analytics report...';
+  export const WIN_SUCCESS_DEPENDENCY_ANALYSIS = 'Successfully generated Red Hat Dependency Analytics report...';
+  export const WIN_FAILURE_DEPENDENCY_ANALYSIS = 'Unable to generate Red Hat Dependency Analytics report';
+  export const WIN_SHOW_LOGS = 'No output channel has been created for Red Hat Dependency Analytics';
   export const NO_SUPPORTED_MANIFEST = 'No supported manifest file found to be analyzed.';
 }
 
@@ -39,6 +39,6 @@ export namespace PromptText {
 }
 
 export namespace Titles {
-  export const EXT_TITLE = `Dependency Analytics`;
-  export const REPORT_TITLE = `Dependency Analytics Report`;
+  export const EXT_TITLE = `Red Hat Dependency Analytics`;
+  export const REPORT_TITLE = `Red Hat Dependency Analytics Report`;
 }

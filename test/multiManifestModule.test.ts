@@ -23,21 +23,21 @@ suite('multimanifest module', () => {
     sandbox.restore();
   });
 
-  test('dependencyAnalyticsReportFlow should process stack analysis for maven when given a pom.xml', async () => {
+  test('redhatDependencyAnalyticsReportFlow should process stack analysis for maven when given a pom.xml', async () => {
     const uri = vscode.Uri.file('/path/to/pom.xml');
     const getWorkspaceFolderStub = sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns({ uri } as vscode.WorkspaceFolder);
     const processStackAnalysisStub = sandbox.stub(stackanalysismodule, 'processStackAnalysis');
 
-    await multimanifestmodule.dependencyAnalyticsReportFlow(context, uri);
+    await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, uri);
 
     expect(getWorkspaceFolderStub.calledOnce).to.be.true;
     expect(processStackAnalysisStub.calledOnceWithExactly(context, { uri }, 'maven', uri)).to.be.true;
   });
 
-  test('dependencyAnalyticsReportFlow should call triggerFullStackAnalyse once', async () => {
+  test('redhatDependencyAnalyticsReportFlow should call triggerFullStackAnalyse once', async () => {
     let triggerFullStackAnalysisSpy = sandbox.spy(multimanifestmodule, 'triggerFullStackAnalysis');
 
-    await multimanifestmodule.dependencyAnalyticsReportFlow(context, null);
+    await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, null);
 
     expect(triggerFullStackAnalysisSpy).to.be.calledOnce;
   });

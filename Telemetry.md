@@ -1,4 +1,4 @@
-## [Dependency Analytics](https://github.com/fabric8-analytics)
+## [Red Hat Dependency Analytics](https://github.com/fabric8-analytics)
 
 ### Usage Data
 

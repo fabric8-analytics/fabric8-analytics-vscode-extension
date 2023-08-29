@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { Templates } from './template';
-import { Titles } from './constants';
+import { Titles, defaultRedhatDependencyAnalyticsReportFilePath } from './constants';
 import { Config } from './config';
 import * as fs from 'fs';
 
@@ -108,10 +108,10 @@ export class DependencyReportPanel {
     // Clean up our resources
     this._panel.dispose();
     const apiConfig = Config.getApiConfig();
-    if (fs.existsSync(apiConfig.dependencyAnalysisReportFilePath)) {
+    if (fs.existsSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath)) {
       // Delete temp stackAnalysisReport file
-      fs.unlinkSync(apiConfig.dependencyAnalysisReportFilePath);
-      console.log(`File ${apiConfig.dependencyAnalysisReportFilePath} has been deleted.`);
+      fs.unlinkSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath);
+      console.log(`File ${apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath} has been deleted.`);
     }
     DependencyReportPanel.data = null;
     while (this._disposables.length) {

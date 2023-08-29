@@ -26,7 +26,7 @@ async function main() {
       vscodeExecutablePath,
       extensionDevelopmentPath,
       extensionTestsPath,
-      launchArgs: [path.resolve(__dirname, '../../test/resources/sampleNodeApp/')]
+      launchArgs: [path.resolve(__dirname, '../../test/resources/')]
     });
   } catch (err) {
     console.error(`Failed to run tests. ${err}`);

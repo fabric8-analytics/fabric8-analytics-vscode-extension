@@ -33,22 +33,4 @@ suite('Config module', () => {
 
     expect(mavenPath).equals('mvn');
   });
-
-  test('getNodeExecutable should get Node executable', () => {
-    let npmPath = Config.getNodeExecutable();
-
-    expect(npmPath).equals('npm');
-  });
-
-  test('getPythonExecutable should get Python executable', () => {
-    let python = Config.getPythonExecutable();
-
-    expect(python).equals('python');
-  });
-
-  test('getGoExecutable should get Go executable', () => {
-    let goPath = Config.getGoExecutable();
-
-    expect(goPath).equals('go');
-  });
 });

@@ -1,23 +1,16 @@
-# Dependency Analytics
+# Red Hat Dependency Analytics
 
 [![Visual Studio Marketplace](https://vsmarketplacebadges.dev/version/redhat.fabric8-analytics.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
 ![CI Build](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/Tests/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
-Dependency Analytics is powered by [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/). It is the most advanced and accurate open source vulnerability database in the industry and adds value with the latest, fastest, and numerous vulnerabilities derived from multiple sources.
+`Red Hat Dependency Analytics (RHDA)` is powered by [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/). It is the most advanced and accurate open source vulnerability database in the industry and adds value with the latest, fastest, and numerous vulnerabilities derived from multiple sources.
 
-'Dependency Analytics Report' with Insights about your application dependencies:
-
-- Flags a security vulnerability(CVE) and suggests a remedial version
-- Shows Github popularity metrics along with the latest version
-- Suggests a project level license, check for conflicts between dependency licenses
-- AI-based guidance for additional, alternative dependencies
-
-> **Disclaimer**: Dependency Analytics does not analyse **dev/test** dependencies.
+'Dependency Analytics Report' provides insights about your application dependencies and flags security vulnerabilities(CVE)
 
 ## Supported Languages
 
-'Dependency Analytics' extension supports projects using Maven, npm (Node ecosystem), Python, and Golang.
+Red Hat Dependency Analytics extension supports projects using Maven and NPM (Node ecosystem).
 Extending support for other languages is currently in progress.
 
 ## Prerequisites
@@ -25,170 +18,121 @@ Extending support for other languages is currently in progress.
 This extension assumes you have the following binaries on your `PATH`:
 
 - `mvn` (for analyzing Java applications)
-- `npm` (for analyzing Node applications)
-- `python` (for analyzing Python applications)
-- `go` (for analyzing Golang applications)
 
-**Note:** By default, the `mvn/npm/go` command is executed directly in the terminal, which requires that `mvn/npm/go` is found in your system environment `PATH`. For Python applications [Interpreter Path](https://code.visualstudio.com/docs/python/environments#_manually-specify-an-interpreter) is required to be provided as below.
-You can do this via preferences in VS Code:
-File(Code on macOS) > Preferences > Settings to open your [Settings](https://code.visualstudio.com/docs/getstarted/settings) select Workspace (open settings.json) and add below.
+By default, the `mvn` command is executed directly in the terminal, which requires that `mvn` is found in your system environment `PATH`. 
 
-```
-{
-    ...
-    "maven.executable.path": "/path-to-maven-home/bin/mvn"
-    "npm.executable.path": "/path-to-npm-home/bin/npm"
-    "python.pythonPath": "/path-to-python-home/bin/python"
-    "go.executable.path": "/path-to-go/bin/go"
-    ...
-}
-```
-
-> **NOTE** Dependency Analytics is an online service hosted and maintained by Red Hat. This open source software will access only your manifests and license file(s) to learn about application dependencies and licenses before giving you the report.
+> **NOTE** Red Hat Dependency Analytics is an online service hosted and maintained by Red Hat. This open source software will access only your manifests file(s) to learn about the application dependencies within before providing you with a detailed report.
 
 ## Quick Start
 
-- Install the extension.
-- Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt` / `go.mod`) scans your application for security vulnerabilities.
-- Right click on a manifest file (`pom.xml`/`package.json` / `requirements.txt` / `go.mod`) in the 'Vscode File explorer' or 'Vscode File editor' to display 'Dependency Analytics Report' for your application.
+- Install the `Dependency Analytics` extension by Red Hat.
+
+To trigger `Inline Component Analysis` for a manifest file, you need to:
+- Open or edit a manifest file (`pom.xml`/`package.json`), which scans your application and provides inline feedback on any dependencies identified with security vulnerabilities.
+
+To generate the `Red Hat Dependency Analytics Report` for your application, you can do one of the following:
+- Right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or 'Vscode File editor' and choose `Dependency Analytics Report` option.
+- On an open manifest file (`pom.xml`/`package.json`), click on the pie icon located at the upper right corner in the tab container.
+-  On an open manifest file (`pom.xml`/`package.json`), hoover over a dependency marked by Inline Component Analysis, click on `Quick Fix` and choose `Detailed Vulnerability Report`.
 
 ## Features
 
-1. Opening or editing a manifest file (`pom.xml` / `package.json` / `requirements.txt` / `go.mod`) scans your application for security vulnerabilities, flag them along with 'Quick Fix'.
+1. Upon opening or editing a manifest file (`pom.xml`/`package.json`), an automated scan will be triggered on your application. This process provides immediate, inline feedback regarding any dependencies that have been detected to have security vulnerabilities. Such dependencies will be appropriately flagged in red and present a short summary when hoovered over. Summary contains the full package name and version, amount of known security vulnerabilities and highest severity status of said vulnerabilities.
+<br >**Note** a `target` folder will be created in the workspace, used to process pom.xml files. Please add `target` to `.gitignore`.
 
-![ screencast ](images/0.3.0/component-analysis.gif)
 
-2. 'Quick Fix' provides a single-click option to `Switch to the recommended version` for vulnerability remediation. It also provides an option for `Detailed Vulnerability Report` to display 'Dependency Analytics' report with detailed vulnerability analysis.
+2. When hoovering over the inline feedback for dependencies with security vulnerabilities, the 'Quick Fix' link provides an option for `Detailed Vulnerability Report` in order to display the Red Hat Dependency Analytics Report for more information.
 
-![ screencast ](images/0.3.0/quick-fix.gif)
+3. Excluding a package from analysis can be achieved by marking the package for exclusion.
+<br >If users wish to ignore vulnerabilities for a dependency, it can be done by adding "exhortignore" as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file for Maven. Node manifest files don't support comments, hence "exhortignore" must be given inside a JSON.
+If "exhortignore" is followed by a list of comma-separated Snyk vulnerability IDs, only listed vulnerabilities will be ignored during analysis.
 
-3. Right-click on a manifest file(`pom.xml` / `package.json` / `requirements.txt`) and choose 'Dependency Analytics Report ...' OR click on ![icon](images/0.2.0/icon.png) icon in editor group OR click on status bar message to display 'Dependency Analytics' report as shown below. This report covers deeper insights into your application dependencies:
-
-- Flags a security vulnerability(CVE) and suggests a remedial version
-- Shows Github popularity metrics along with the latest version
-- Suggests a project level license, check for conflicts between dependency licenses
-- AI-based guidance for additional, alternative dependencies
-
-![ screencast ](images/0.3.0/stack-analysis.gif)
-
-4. **For multi-module maven application** Right-click on root `pom.xml` in the editor window and choose Dependency Analytics Report ...' so display 'Dependency Analytics' report for the entire application.
-
-![ screencast ](images/0.3.0/multi-stack-analysis.gif)
-
----
-
-**Note** It creates a folder `target` in the workspace, used to process manifest files needed for generating stack reports. Please add `target` in `.gitignore`.
-
-## Register for a free Snyk Account and Connect Snyk to your Red Hat Dependency Analytics
-
-1. Clicking on the `Sign up for a free Snyk account` from 'Dependency Analytics report' will take you to the Snyk sign-up page for a free Snyk account. After signing up for a free Snyk account, it goes to the 'Snyk's Landing page', which shows `Snyk token` to connect Snyk with your Red Hat Dependency Analytics. Copy and paste the Snyk token into Red Hat Dependency Analytics Report below.
-
-![ screencast ](images/0.2.0/snyk-sign-up.gif)
-
-2. Look for ![snyk button](images/0.2.0/snyk-button.png) in Dependency Analytics Report and click on the button to enter your Snyk Token. Paste your Snyk token and click on the `Submit button`.
-
-![ screencast ](images/0.2.0/snyk-token.gif)
-
-3. After successfully entering the Snyk token, the Dependency Analytics report updates with detailed information about security vulnerabilities unique to Snyk and vulnerabilities having publicly known exploits.
-
-![ screencast ](images/0.3.0/reg-stack-analysis.gif)
-
-## Ignoring Vulnerabilities during analysis
-
-If users wish to ignore vulnerabilities for a dependency, it can be done by adding "crdaignore" as a comment in the manifest file for Python, Maven, Golang. Node manifest files don't support comments; hence "crdaignore" must be given inside a JSON.
-If "crdaignore" is followed by a list of comma-separated Snyk vulnerability IDs, only listed vulnerabilities ignored during analysis, in case "crdaignore" is not followed by any list, all vulnerabilities present in a package will be ignored.
-
-# Examples
-
-# Python
-Ignore all vulnerabilities in fastapi and few for flask
-
-```
-fastapi==0.36.0 #crdaignore
-sceptre==2.2.1
-flask==1.0 #crdaignore [<Snyk vulnerability ID 1 >, <Snyk vulnerability ID 2 >]
-```
-# Golang
-Ignore all the security vulnerabilities present in the "ginkgo" and "pax-go" dependencies in a golang manifest file.
-```
-	code.cloudfoundry.org/archiver v0.0.0-20170223024658-7291196139d7
-	github.com/googleapis/gax-go v1.0.3 //crdaignore [<Snyk vulnerability ID 1 >]
-	github.com/googleapis/gax-go/v2 v2.0.5
-	github.com/onsi/ginkgo v1.14.2 // indirect crdaignore 
-	github.com/onsi/gomega v1.10.3 // indirect 
-
-```
-# Maven
-Ignore all vulnerabilities of the dependency "junit:junit". 
-
-```
- <dependency>
-      <groupId>junit</groupId>  <!--crdaignore-->
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
- </dependency>
-```
-Note: To ignore vulnerabilities for a dependency in a maven manifest file, insert "crdaignore" in comments against the group id, artifact id, or version of that particular dependency.
-
-# Node
-Ignore all the security vulnerabilities for "bootstrap" and a set of vulnerabilities for the "lodash" package.
-```
-"crdaignore": {
-			"packages": {
-				"bootstrap": [
-					"*"
-				],
-				"lodash": [<Snyk vulnerability ID 1 >]
-			}
-	},
-```
-A sample npm manifest file with the security vulnerabilities to ignore during analysis:
-```
-{
-		"name": "node-js-sample",
-		"version": "0.2.0",
-		"description": "A sample Node.js app using Express 4",
+- Java Maven users can add a comment in pom.xml, example:
+	```
+	<dependency> <!--exhortignore-->
+		<groupId>...</groupId>
+		<artifactId>...</artifactId>
+		<version>...</version>
+	</dependency>
+	```
+- Javascript NPM users can add a list of Snyk vulnerability IDs to be excluded under the *exhortignore* field in package.json, example:
+	```
+	{
+		"name": "sample",
+		"version": "1.0.0",
+		"description": "",
 		"main": "index.js",
-		"scripts": {
-				"start": "node index.js"
-		},
+		"keywords": [],
+		"author": "",
+		"license": "ISC",
 		"dependencies": {
-				"ansi-styles": "3.2.1",
-				"escape-string-regexp": "1.0.5",
-				"supports-color": "5.5.0",
-				"cordova-plugin-camera": "4.1.0",
-				"bootstrap": "4.1.1",
-				"libnmap": "0.4.15",
-				"lodash": "4.17.11",
-				"html-purify": "1.1.0"
+			"dotenv": "^8.2.0",
+			"express": "^4.17.1",
+			"jsonwebtoken": "^8.5.1",
+			"mongoose": "^5.9.18"
 		},
-		"engines": {
-				"node": "4.0.0"
+		"exhortignore": [
+			"jsonwebtoken"
+		]
+	}
+	```
+
+4. Red Hat Dependency Analytics does not analyse **dev/test** dependencies.
+- *test* scope in pom.xml:
+	```
+	<dependency>
+		<groupId>...</groupId>
+		<artifactId>...</artifactId>
+		<version>...</version>
+		<scope>test</scope>
+	</dependency>
+	```
+- *devDependencies* field in package.json:
+	```
+	{
+		"name": "sample",
+		"version": "1.0.0",
+		"description": "",
+		"main": "index.js",
+		"keywords": [],
+		"author": "",
+		"license": "ISC",
+		"dependencies": {
+			"dotenv": "^8.2.0",
+			"express": "^4.17.1",
+			"jsonwebtoken": "^8.5.1",
+			"mongoose": "^5.9.18"
 		},
-		"crdaignore": {
-			"packages": {
-				"bootstrap": [
-					"*"
-				],
-				"lodash": ["vulnerability 1"]
-			}
-		},
-		"repository": {
-				"type": "git",
-				"url": "https://github.com/heroku/node-js-sample"
-		},
-		"keywords": [
-				"node",
-				"heroku",
-				"express"
-		],
-		"author": "Mark Pundsack",
-		"contributors": [
-				"Zeke Sikelianos <zeke@sikelianos.com> (http://zeke.sikelianos.com)"
-		],
-		"license": "MIT"
-}
-```
+		"devDependencies": {
+        	"axios": "^0.19.0"
+    	}
+	}
+	```
+
+5. To generate the `Red Hat Dependency Analytics Report` for your application, you can do one of the following:
+- Right click on a manifest file (`pom.xml`/`package.json`) in the 'Vscode File explorer' or 'Vscode File editor' and choose `Dependency Analytics Report` option.
+- On an open manifest file (`pom.xml`/`package.json`), click on the pie icon ![icon](images/0.2.0/icon.png) located at the upper right corner in the tab container.
+-  On an open manifest file (`pom.xml`/`package.json`), hoover over a dependency marked by Inline Component Analysis, click on `Quick Fix` and choose `Detailed Vulnerability Report`.
+
+6. The HTML of the `Red Hat Dependency Analytics Report` will be stored temporarily while the Dependency Analytics Report tab remains open. Once the tab is closed, the corresponding file will be automatically removed. You can define the filename by adjusting the configuration in the extension's workspace settings, under the *Dependency Analytics: Dependency Analysis Report File Path* field. The default location for this file is '/tmp/dependencyAnalysisReport.html'.
+
+7. what you can do in the report
+
+## Configuration
+
+The Dependency Analysis plugin has configurable parameters within the extension that allow users to tailor the behavior and functionality of the extension according to their preferences.
+To access these configurable parameters please enter the [extension workspace settings](https://code.visualstudio.com/docs/getstarted/settings) withing you VS code instance, switch to *Workspace* tab and search for *Dependency Analytics*.
+
+### Configurable Parameters
+
+**Exhort Snyk Token** - edit the *Exhort Snyk Token* setting to change the Snyk token setting.
+The Snyk Token allows Exhort to authenticate with Snyk (vulnerability data provider).
+Please note that a valid Snyk Token is not provided in the extension workspace settings, Snyk vulnerabilities will not be displayed.
+An alert message on edit will provide feedback on whether the token is valid or not.
+To generate a new token please visit this [link](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
+
+**Dependency Analysis Report File Path** - edit the *Dependency Analysis Report File Path* setting to change the location where the HTML of the `Red Hat Dependency Analytics Report` will be stored (Default value: "/tmp/dependencyAnalysisReport.html").
+
 # Using Dependency Analytics on your CI Builds
 
 ## GitHub Actions 
@@ -202,27 +146,7 @@ providing Insights(security, licenses, AI based guidance) for applications and h
 
 - [GitHub Organization](https://github.com/fabric8-analytics)
 
-# Common Errors and FAQ
-
-1. VScode output says "Go executable not found".
-
-    **Suggestion:** Try adding your go executable path to your vscode's settings.json file
-
-    **E.g.:** `"go.executable.path": "/path-to-go/bin/go"`
-
-2. Failed to run golist command.
-
-    **Suggestion:** Resolve the error thrown by `go mod tidy` and `go list` for the project and try again. 
-
-3. Stack analysis fails after applying the recommended version.
-
-    **Suggestion:** Not all recommended versions work directly, developers need to resolve dependencies for the recommended version using `go mod tidy` or manually.
-
-4. Plugin does not highlight vulnerabilities in vendor code.
-
-    **Suggestion:** Currently plugin does not support vendor (or local) code vulnerabilities scanning. Switch to go.mod to express your project dependencies.
-
-# Feedback & Questions
+# Support, Feedback & Questions
 
 - File a bug in [GitHub Issues](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues)
 

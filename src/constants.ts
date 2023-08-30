@@ -34,7 +34,7 @@ export namespace StatusMessages {
 }
 
 export namespace PromptText {
-  export const FULL_STACK_PROMPT_TEXT = `Open the detailed vulnerability report`;
+  export const FULL_STACK_PROMPT_TEXT = `Open detailed vulnerability report`;
   export const LSP_FAILURE_TEXT = `Open the output window`;
 }
 

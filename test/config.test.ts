@@ -33,4 +33,10 @@ suite('Config module', () => {
 
     expect(mavenPath).equals('mvn');
   });
+
+  test('getNodeExecutable should get Node executable', () => {
+    let nodePath = Config.getNodeExecutable();
+
+    expect(nodePath).equals('npm');
+  });
 });

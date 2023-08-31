@@ -13,6 +13,7 @@ export module authextension {
     process.env['UTM_SOURCE'] = 'vscode';
     process.env['SNYK_TOKEN'] = apiConfig.exhortSnykToken;
     process.env['MVN_EXECUTABLE'] = Config.getMavenExecutable();
+    process.env['NPM_EXECUTABLE'] = Config.getNodeExecutable();
   };
 
   // export async function setTelemetryid(context) {

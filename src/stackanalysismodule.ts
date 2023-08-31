@@ -35,6 +35,8 @@ export module stackanalysismodule {
 
           // set up configuration options for the stack analysis request
           const options = {};
+          options['EXHORT_MVN_PATH'] = Config.getMavenExecutable();
+          options['EXHORT_NPM_PATH'] = Config.getNodeExecutable();
           if (apiConfig.exhortSnykToken !== '') {
             options['EXHORT_SNYK_TOKEN'] = apiConfig.exhortSnykToken;
           }

@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Red Hat Dependency Analytics",
   "description": "Provides insights on security vulnerabilities in your application dependencies.",
-  "version": "0.3.11",
+  "version": "0.7.0",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -204,6 +204,12 @@
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of mvn executable.",
+          "scope": "window"
+        },
+        "npm.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of npm executable.",
           "scope": "window"
         }
       }

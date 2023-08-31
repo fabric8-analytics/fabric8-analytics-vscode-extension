@@ -30,5 +30,6 @@ suite('authextension Modules', () => {
     expect(process.env['UTM_SOURCE']).equals('vscode');
     expect(process.env['SNYK_TOKEN']).equals('mockToken');
     expect(process.env['MVN_EXECUTABLE']).equals('mvn');
+    expect(process.env['NPM_EXECUTABLE']).equals('npm');
   });
 });

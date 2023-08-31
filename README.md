@@ -17,7 +17,21 @@ Extending support for other languages is currently in progress.
 
 This extension assumes you have the following binaries on your *PATH*:
 
-- *mvn* (for analyzing Java applications)
+- `mvn` (for analyzing Java applications)
+- `npm` (for analyzing Node applications)
+
+**Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that `mvn/npm` is found in your system environment `PATH`.
+In case it is located elsewhere you can configure this via preferences in VS Code. To do this access the [extension settings](https://code.visualstudio.com/docs/getstarted/settings) within your VS code instance, switch to *Workspace* tab, search for *\<Ecosystem\> Executable Path* and edit the *Path* setting.
+You can also the `settings.json` file and add the following:
+
+```
+{
+    ...
+    "maven.executable.path": "/path-to-maven-home/bin/mvn"
+    "npm.executable.path": "/path-to-npm-home/bin/npm"
+    ...
+}
+```
 
 ## Quick Start
 
@@ -132,7 +146,7 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 ## Configuration
 
 The `Red Hat Dependency Analytics` plugin has configurable parameters within the extension that allow users to tailor the behavior and functionality of the extension according to their preferences.
-To access these configurable parameters please enter the [extension workspace settings](https://code.visualstudio.com/docs/getstarted/settings) within your VS code instance, switch to *Workspace* tab and search for *Red Hat Dependency Analytics*.
+To access these configurable parameters please enter the [extension settings](https://code.visualstudio.com/docs/getstarted/settings) within your VS code instance, switch to *Workspace* tab and search for *Red Hat Dependency Analytics*.
 
 ![Red Hat Dependency Analytics Extension Workspace Settings](images/screenshots/extension-workspace-settings.png)
 

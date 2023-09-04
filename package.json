@@ -44,9 +44,7 @@
   },
   "activationEvents": [
     "workspaceContains:**/package.json",
-    "workspaceContains:**/pom.xml",
-    "workspaceContains:**/requirements.txt",
-    "workspaceContains:**/go.mod"
+    "workspaceContains:**/pom.xml"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -89,16 +87,6 @@
           "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == package.json",
           "group": "navigation"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromPieBtn",
-          "when": "resourceFilename == requirements.txt",
-          "group": "navigation"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromPieBtn",
-          "when": "resourceFilename == go.mod",
-          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -109,14 +97,6 @@
         {
           "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == pom.xml"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromExplorer",
-          "when": "resourceFilename == requirements.txt"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromExplorer",
-          "when": "resourceFilename == go.mod"
         }
       ],
       "editor/context": [
@@ -127,14 +107,6 @@
         {
           "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == pom.xml"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromEditor",
-          "when": "resourceFilename == requirements.txt"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromEditor",
-          "when": "resourceFilename == go.mod"
         }
       ],
       "commandPalette": [
@@ -253,7 +225,7 @@
   },
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.15",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.18",
     "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",

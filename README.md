@@ -50,7 +50,7 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 - Click on `Open detailed vulnerability report` button inside the vulnerability alert popup message.
 - Click on `Found <NUMBER> vulnerabilities` in the *status bar* bellow.
 - Click on `Dependency analysis in progress` in the *status bar* bellow (only visible when Component Analysis is in progress and not yet complete).
-<br > Check out the [features](#features) section for more deatils.
+<br > Check out the [features](#features) section for more details.
 
 > **NOTE** `Red Hat Dependency Analytics` is an online service hosted and maintained by Red Hat. This open source software will access only your manifests file(s) to analyse the application dependencies within before providing you with a detailed report.
 

@@ -45,7 +45,7 @@ Open or edit a manifest file *(pom.xml/package.json)* to trigger inline `Compone
 
 Generate a `Red Hat Dependency Analytics Report` for your application by performing any of the following actions:
 - Right click on a manifest file in the *Vscode File explorer* or *Vscode File editor* and choose the `Red Hat Dependency Analytics Report` option.
-- On an open manifest file, click on the *pie icon* ![icon](images/0.2.0/icon.png) located at the upper right corner in the tab container.
+- On an open manifest file, click on the *pie icon* ![icon](icon/report-icon.png) located at the upper right corner in the tab container.
 - On an open manifest file, hoover over a dependency marked by the inline `Component Analysis`, click on *Quick Fix* and choose *Detailed Vulnerability Report* option`.
 - Click on `Open detailed vulnerability report` button inside the vulnerability alert popup message.
 - Click on `Found <NUMBER> vulnerabilities` in the *status bar* bellow.
@@ -131,7 +131,7 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 1. **Red Hat Dependency Analytics Report** 
 	<br >To generate the `Red Hat Dependency Analytics Report` for your application, you can do one of the following:
 	- Right click on a manifest file *(pom.xml/package.json)* in the *Vscode File explorer* or *Vscode File editor* and choose the `Red Hat Dependency Analytics Report` option.
-	- On an open manifest file, click on the *pie icon* ![icon](images/0.2.0/icon.png) located at the upper right corner in the tab container.
+	- On an open manifest file, click on the *pie icon* ![icon](icon/report-icon.png) located at the upper right corner in the tab container.
 	- On an open manifest file, hoover over a dependency marked by the inline `Component Analysis`, click on *Quick Fix* and choose *Detailed Vulnerability Report* option.
 	![ screencast ](images/screencasts/quickfix.gif)
 	- Click on `Open detailed vulnerability report` button inside the vulnerability alert popup message.<br >

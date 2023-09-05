@@ -4,7 +4,7 @@
 ![CI Build](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/Tests/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
-With the Red Hat's Dependency Analytics (RHDA) extension you can generate vulnerability reports for your application's dependencies by highlighting security concerns within your software supply chain.
+Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you build your application.
 The Dependency Analytics extension uses the [Snyk Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
 Snyk uses industry-leading security intelligence by pulling from many data sources to give you exact vulnerability information, along with advice on how to remediate those security risks.
 
@@ -30,16 +30,14 @@ In future releases, Red Hat plans to support other programming languages.
 
 **Prerequisites**
 
-- At least one of the following binaries must exist in your system’s `PATH` environment:
-  - `mvn`
-  - `npm`
+- For Maven projects, analyzing a `pom.xml` file, you must have the `mvn` binary in your system’s `PATH` environment.
+- For Node projects, analyzing a `package.json` file, you must have the `node` binary in your system’s `PATH` environment.
 
-  <br >**IMPORTANT:** 
-  <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
-  You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
-  You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
-  Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for Maven or Node.
-- Optionally, a Snyk token.
+<br >**IMPORTANT:** 
+<br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
+You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
+You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
+Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for Maven or Node.
 
 **Procedure**
 
@@ -49,18 +47,16 @@ In future releases, Red Hat plans to support other programming languages.
 4. Search the **Marketplace** for _Dependency Analytics_.
 5. Click the **Install** button to install the extension.
 6. To start scanning your application for security vulnerabilities, and view the vulnerability report, you can do one of the following:
-   - Right click on a manifest file in the **Explorer** view, and click **Red Hat Dependency Analytics Report...**.
-   - Open a manifest file, and click the **pie chart icon** ![ Pie chart icon ](images/0.2.0/icon.png).
    - Open a manifest file, hoover over a dependency marked by the inline analysis, indicated by the wavy-red line under a version number or dependency name, click **Quick Fix**, and click **Detailed Vulnerability Report**.
+   - Open a manifest file, and click the **pie chart icon** ![ Pie chart icon ](images/0.2.0/icon.png).
+   - Right click on a manifest file in the **Explorer** view, and click **Red Hat Dependency Analytics Report...**.
 7. (OPTIONAL) You can link your Snyk account to Dependency Analytics by doing the following:
-   1. Log into your [Snyk account](https://app.snyk.io/login).
+   1. Log into your [Snyk account](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
    2. On the account landing page, you can find your Snyk Token, copy the token.
    3. Open the Dependency Analytics extension settings.
    4. Click the **Workspace** tab.
    5. Paste the Snyk token in the **Exhort Snyk Token** field.
    6. After adding your Snyk token, the vulnerability report gives you detailed information about security vulnerabilities unique to Snyk, and vulnerabilities that have publicly known exploits.
-
-   <br >**IMPORTANT** Not providing a valid Snyk Token limits the vulnerability information you can view.
 
 ## Configuration
 
@@ -78,9 +74,9 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 ### Configurable parameters
 
 **Exhort Snyk Token** :
-<br >The Snyk token allows Exhort to authenticate with Snyk Vulnerability Database.
+<br >The Snyk token allows Exhort to authenticate with the Snyk Vulnerability Database.
 If a Snyk token is not provided, Snyk vulnerability information is not displayed.
-![ Screenshot of the empty token dialog box ](images/screenshots/empty-token.png)
+<br >![ Screenshot of the empty token dialog box ](images/screenshots/empty-token.png)
 
 On opening a manifest file, a pop-up message alerts you if your Snyk token is not valid.
 ![ Screenshot of the invalid token dialog box ](images/screenshots/invalid-token.png)
@@ -88,6 +84,7 @@ On opening a manifest file, a pop-up message alerts you if your Snyk token is no
 If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
 
 **Red Hat Dependency Analytics Report File Path** :
+
 Specify the local path to create the Dependency Analytics report file.
 The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
@@ -116,7 +113,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	</dependency>
 	```
 
-	If you wish to ignore vulnerabilities for a dependency in a JSON file, you must add `exhortignore` as a attribute-value pair.
+	If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
 	If `exhortignore` is followed by a list of comma-separated Snyk vulnerability IDs, only the listed vulnerabilities will be ignored during analysis.
 	For example:
 
@@ -181,16 +178,16 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.
 	Closing the tab removes the temporary HTML file.
 	You can specify the file name by [modifying the _Red Hat Dependency Analytics: Red Hat Dependency Analytics Report File Path_ field](#configuration) in the extension settings.
-	The default location for this file is `/tmp/redhatDependencyAnalyticsReport.html`.
 
 ## Using Red Hat Dependency Analytics for CI builds
 
 You can automate the analysis of your application's vulnerabilities within the build and release pipeline.
 Red Hat offers integration with these Continuous Integration (CI) platforms:
 
-- [Red hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
+- [Red Hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
+- [Red Hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
 
-- [Red hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
+**IMPORTANT:** GitHub actions for RHDA has been temporarily disabled until further notice.
 
 ## Know more about the Red Hat Dependency Analytics platform
 

@@ -15,33 +15,47 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      
+      - name: Create .npmrc file
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PKG_TOKEN }}" >> ~/.npmrc
+          echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" > ~/.npmrc
+
       - name: Setup Node env
-        uses: actions/setup-node@v2.1.2
+        uses: actions/setup-node@v3
         with:
-          # Version Spec of the version to use.  Examples: 12.x, 10.15.1, >=10.15.0
-          node-version: 14.x
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+          
       - name: Install @vscode/vsce
         run: npm i -g @vscode/vsce
+
       - name: Install Dependencies
         run: npm ci
+
       - name: Compile for test
         run: npm run test-compile
+
       - name: VSCE prepublish
         run: vsce package
+
       - name: Invoke LSP entrypoint(server.js)
         run: node dist/server.js
+
       - name: Run headless test
         uses: GabrielBB/xvfb-action@v1
         with:
           run: npm test
+
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Extension Build For PR ${{ github.event.pull_request.number }}
           path: ./*.vsix

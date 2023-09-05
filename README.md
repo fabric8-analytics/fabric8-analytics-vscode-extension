@@ -60,7 +60,7 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 	<br >Upon opening or editing a manifest file *(pom.xml/package.json)*, an automated scan will be triggered on your application. This process provides immediate, inline feedback regarding any dependencies that have been detected to have security vulnerabilities. Such dependencies will be appropriately flagged in red and present a short summary when hoovered over. Summary contains the full package name and version, amount of known security vulnerabilities and highest severity status of said vulnerabilities.
 	<br >**Note** a *target* folder will be created in the workspace, used to process pom.xml files. Please add *target* to *.gitignore*.
 
-	![ screencast ](images/0.3.11/component-analysis.gif)
+	![ screencast ](images/screencasts/component-analysis.gif)
 
 1. **Excluding dependencies with exhortignore**
 	<br >Excluding a package from analysis can be achieved by marking the package for exclusion. 
@@ -133,7 +133,7 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 	- Right click on a manifest file *(pom.xml/package.json)* in the *Vscode File explorer* or *Vscode File editor* and choose the `Red Hat Dependency Analytics Report` option.
 	- On an open manifest file, click on the *pie icon* ![icon](images/0.2.0/icon.png) located at the upper right corner in the tab container.
 	- On an open manifest file, hoover over a dependency marked by the inline `Component Analysis`, click on *Quick Fix* and choose *Detailed Vulnerability Report* option.
-	![ screencast ](images/0.3.11/quickfix.gif)
+	![ screencast ](images/screencasts/quickfix.gif)
 	- Click on `Open detailed vulnerability report` button inside the vulnerability alert popup message.<br >
 	![ screenshot ](images/screenshots/vuln-alert-popup.png)
 	- Click on `Found <NUMBER> vulnerabilities` in the *status bar* bellow.<br >

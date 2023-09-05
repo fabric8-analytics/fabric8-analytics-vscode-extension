@@ -76,9 +76,11 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 **Exhort Snyk Token** :
 <br >The Snyk token allows Exhort to authenticate with the Snyk Vulnerability Database.
 If a Snyk token is not provided, Snyk vulnerability information is not displayed.
+
+If you leave this field blank, the following informational message is displayed.
 <br >![ Screenshot of the empty token dialog box ](images/screenshots/empty-token.png)
 
-On opening a manifest file, a pop-up message alerts you if your Snyk token is not valid.
+If you enter a invalid Snyk token, a pop-up message alerts you that your Snyk token is not valid.
 ![ Screenshot of the invalid token dialog box ](images/screenshots/invalid-token.png)
 
 If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).

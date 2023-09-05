@@ -10,6 +10,9 @@ class DummyMemento implements vscode.Memento {
     dummyMomentoData[key] = value;
     return Promise.resolve(dummyMomentoData);
   }
+  keys(): readonly string[] {
+    return Object.keys(dummyMomentoData);
+  }
   public setKeysForSync(keys: string[]): void {
     return;
   }
@@ -32,7 +35,9 @@ export const context: vscode.ExtensionContext = {
   extensionMode: vscode.ExtensionMode.Test,
   storageUri: undefined,
   logUri: undefined,
-  globalStorageUri: undefined
+  globalStorageUri: undefined,
+  secrets: undefined,
+  extension: undefined
 };
 
 

@@ -1,0 +1,598 @@
+<svg version="1.1" style="display: none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <symbol viewBox="0 0 10.9793322 13"id="shield-icon">
+        <title>Combined Shape</title>
+        <g id="New-dependencies-view" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="Overview" transform="translate(-1207.172757, -938.000000)" fill="#3E8635">
+                <g id="Details-of-dependency-com.github" transform="translate(427.000000, 764.000000)">
+                    <g id="Dependency-1" transform="translate(0.000000, 144.000000)">
+                        <g id="Group-9" transform="translate(780.172757, 24.000000)">
+                            <g id="Group-4" transform="translate(0.000000, 3.200001)">
+                                <g id="Icons/2.-Size-sm/Actions/check" transform="translate(0.000000, 2.799999)">
+                                    <path d="M10.5565789,0 C10.7906249,0 10.9793322,0.181542969 10.9793322,0.40625 L10.9793322,5.74082031 C10.9793322,9.75 6.24081907,13 5.49579296,13 C4.75076684,13 0,9.75 0,5.73955078 L0,0.40625 C0,0.181542969 0.188707272,0 0.422753304,0 Z M8.54277883,3.11782667 L4.7912961,6.89087353 L3.03981338,5.1293244 C2.883609,4.97220683 2.63032812,4.97220683 2.47412375,5.1293244 L1.90844938,5.69826556 C1.75224501,5.85538312 1.75224501,6.11010449 1.90844938,6.26720671 L4.50845797,8.88215991 C4.66464708,9.03927747 4.9179127,9.03927747 5.07413233,8.88217525 L9.67414282,4.25570898 C9.8303472,4.09859141 9.8303472,3.84387004 9.67414282,3.68676782 L9.10846846,3.11782667 C8.95226408,2.96072444 8.6989832,2.96072444 8.54277883,3.11782667 Z" id="Combined-Shape"></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </symbol>
+</svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+<style type="text/css">
+    * {box-sizing: border-box}
+
+    /* Set height of body and the document to 100% */
+    body, html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial;
+        padding: 20px;
+    }
+    .accordion-toggle[aria-expanded="true"] i.fas.fa-angle-down {
+        display: none;
+    }
+    .accordion-toggle[aria-expanded="false"] i.fas.fa-angle-up {
+        display: none;
+    }
+    .pf-c-table thead,
+    .pf-c-table .pf-m-truncate {
+        --pf-c-table--cell--MaxWidth: none !important;
+    }
+
+    .pf-c-table thead, .pf-c-table .pf-m-truncate {
+        --pf-c-table--cell--MinWidth: none !important;
+    }
+    .hiddenRow {
+        padding: 0 !important;
+    }
+    .accordion {
+        background-color: #eee;
+        /*color: #444;*/
+        color:#06c;
+
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        transition: 0.4s;
+    }
+
+    .active, .accordion:hover {
+        background-color: #ccc;
+    }
+
+    .accordion:after {
+        content: '\002B';
+        color: #777;
+        font-weight: bold;
+        float: right;
+        margin-left: 5px;
+    }
+
+    .active:after {
+        content: "\2212";
+    }
+
+    .panel {
+        padding: 0 18px;
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+    }
+    .panel2 {
+        padding: 0 18px;
+        display: none;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    /* Style tab links */
+    .tablink {
+        background-color: #555;
+        color: white;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        font-size: 17px;
+        width: 25%;
+    }
+
+    .tablink:hover {
+        background-color: #777;
+    }
+
+    /* Style the tab content (and add height:100% for full page content) */
+    .tabcontent {
+        color: black;
+        display: none;
+        padding: 100px 20px;
+        height: fit-content;
+    }
+
+    /*#redhat {background-color: red;}*/
+    /*#snyk {background-color: lightgreen;}*/
+</style>    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Include latest PatternFly CSS via CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/@patternfly/patternfly@2/patternfly.css" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <title>Dependency Analysis</title>
+</head>
+<body class="p-2 container-fluid">
+
+<div class="card">
+    <div class="card-header">
+        <svg width="31px" height="25px" viewBox="0 0 61 55" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="padding-bottom: 5px">
+            <title></title>
+            <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="Icons-/-4.-Size-xl-/-Status-/-exclamation-triangle" fill="#F0AB00">
+                    <path d="M55.6811464,54.9998718 C59.5692673,54.9998718 62.0128612,50.7818528 60.0661228,47.4074788 L34.7600689,3.52969955 C32.8158025,0.159857423 27.9375754,0.153677628 25.9899101,3.52969955 L0.683135242,47.4074788 C-1.25979225,50.775364 1.17257499,54.9998718 5.06821466,54.9998718 L55.6811464,54.9998718 Z M32.9350725,36.437416 L27.8149065,36.437416 C27.1427508,36.437416 26.5878052,35.9119275 26.5512414,35.2408018 L25.7688794,20.897086 C25.7293287,20.172093 26.3064186,19.5624563 27.0324415,19.5624563 L33.7174345,19.5624563 C34.4434574,19.5624563 35.0206503,20.172093 34.9810996,20.897086 L34.1987376,35.2408018 C34.1621738,35.9119275 33.6072282,36.437416 32.9350725,36.437416 Z M30.3749895,48.0389509 C27.6955335,48.0389509 25.5234386,45.866856 25.5234386,43.1873999 C25.5234386,40.5079439 27.6955335,38.335849 30.3749895,38.335849 C33.0544455,38.335849 35.2265404,40.5079439 35.2265404,43.1873999 C35.2265404,45.866856 33.0544455,48.0389509 30.3749895,48.0389509 Z" id="exclamation-triangle"></path>
+                </g>
+            </g>
+        </svg>
+        <span style="font-size: larger">&nbsp; Security Issues</span>
+
+    </div>
+    <div class="card-body">
+        <div class="row" >
+            <div class="col-5">
+                <p>Below is a list of dependencies affected with CVE, as well as vulnerability only found using Snyk's vulnerability database.</p>
+            </div>
+            <div class="col offset-1">
+                <p style="font-size: larger">Dependencies with security issues in your stack.</p>
+                <p>Dependencies with high common vulnerabilities and exposures (CVE) score.</p>
+                <p class="ml-5">
+                    <svg width="18px" height="18px" viewBox="0 0 48 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <title></title>
+                        <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="Icons-/-4.-Size-xl-/-Status-/-pficon-security" fill="#2b9af3">
+                                <path d="M45.4306641,0 L1.81933594,0 C0.812109375,0 0,0.754101563 0,1.6875 L0,23.8412109 C0,40.5 20.4451172,54 23.6513672,54 C26.8576172,54 47.25,40.5 47.25,23.8464844 L47.25,1.6875 C47.25,0.754101563 46.4378906,0 45.4306641,0 Z M25.8767578,40.5 L21.3732422,40.5 C20.7509766,40.4894531 20.2605469,39.9462891 20.25,39.2712891 L20.25,34.9787109 C20.2605469,34.3037109 20.75625,33.7658203 21.3732422,33.75 L25.8767578,33.75 C26.4990234,33.7605469 26.9894531,34.3037109 27,34.9787109 L27,39.2712891 L27.0052734,39.2712891 C26.9894531,39.9462891 26.49375,40.4894531 25.8767578,40.5 Z M28.6822266,8.57988281 L27.2742188,27.1265625 C27.2003906,27.9966797 26.4726563,28.6875 25.5919922,28.6875 L21.6527344,28.6875 C20.7773438,28.6875 20.0443359,28.0125 19.9705078,27.1423828 L18.5677734,8.59570312 C18.4833984,7.60957031 19.2638672,6.76582031 20.25,6.76582031 L27,6.75 C27.9861328,6.75 28.7613281,7.59375 28.6822266,8.57988281 Z" id="pficon-security"></path>
+                            </g>
+                        </g>
+                    </svg>
+                    Total Vulnerabilities: 7
+                </p>
+                <p class="ml-5">
+                    <svg width="18px" height="18px" viewBox="0 0 48 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <title></title>
+                        <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="Icons-/-4.-Size-xl-/-Status-/-pficon-security" fill="#f0ab00">
+                                <path d="M45.4306641,0 L1.81933594,0 C0.812109375,0 0,0.754101563 0,1.6875 L0,23.8412109 C0,40.5 20.4451172,54 23.6513672,54 C26.8576172,54 47.25,40.5 47.25,23.8464844 L47.25,1.6875 C47.25,0.754101563 46.4378906,0 45.4306641,0 Z M25.8767578,40.5 L21.3732422,40.5 C20.7509766,40.4894531 20.2605469,39.9462891 20.25,39.2712891 L20.25,34.9787109 C20.2605469,34.3037109 20.75625,33.7658203 21.3732422,33.75 L25.8767578,33.75 C26.4990234,33.7605469 26.9894531,34.3037109 27,34.9787109 L27,39.2712891 L27.0052734,39.2712891 C26.9894531,39.9462891 26.49375,40.4894531 25.8767578,40.5 Z M28.6822266,8.57988281 L27.2742188,27.1265625 C27.2003906,27.9966797 26.4726563,28.6875 25.5919922,28.6875 L21.6527344,28.6875 C20.7773438,28.6875 20.0443359,28.0125 19.9705078,27.1423828 L18.5677734,8.59570312 C18.4833984,7.60957031 19.2638672,6.76582031 20.25,6.76582031 L27,6.75 C27.9861328,6.75 28.7613281,7.59375 28.6822266,8.57988281 Z" id="pficon-security"></path>
+                            </g>
+                        </g>
+                    </svg>
+                    Vulnerable Dependencies: 1
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ml-3 mt-4">
+    <div class="d-inline p-2 bg-light">Commonly Known Vulnerabilities</div>
+</div>
+<div>
+    <hr class="pf-c-divider mt-2"/>
+</div>
+
+<div class="p-3">
+    <table class="pf-c-table pf-m-expandable pf-m-compact pf-m-grid-md">
+        <thead class="">
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">#</th>
+            <th scope="col">Dependencies</th>
+            <th scope="col"># Direct</th>
+            <th scope="col"># Transitive</th>
+            <th scope="col">Highest CVSS</th>
+            <th scope="col">Highest Severity</th>
+            <th scope="col">Red Hat remediation available</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr data-toggle="collapse" data-target="#log4jlog4j" class="accordion-toggle" aria-expanded="false">
+                <td role="cell">
+                    <div class="pf-c-table__toggle-icon">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        <i class="fas fa-angle-up" aria-hidden="true"></i>
+                    </div>
+                </td>
+                <td>#1</td>
+                <td>
+                    <a href="https://central.sonatype.com/artifact/log4j/log4j/1.2.17"
+                       target="_blank">
+                        log4j:log4j
+                    </a>
+                </td>
+                <td>7</td>
+                <td>0</td>
+                    <td>
+                            <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                <div
+                                        class="pf-c-progress__description"
+                                        id="progress-simple-example-description"
+                                >3.7/10</div>
+                                <div
+                                        class="pf-c-progress__bar"
+                                        role="progressbar"
+                                        aria-valuemin="0"
+                                        aria-valuemax="10"
+                                        aria-valuenow="3.7"
+                                        aria-labelledby="progress-simple-example-description"
+                                >
+                                    <div class="pf-c-progress__indicator" style="width:37%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-1300176?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-1300176"
+                            target="_blank">
+                                SNYK-JAVA-LOG4J-1300176
+                            </a>
+                        
+                    </td>
+                <td>
+                </td>
+            </tr>
+            <tr class="pf-c-table__expandable-row pf-m-expanded">
+                <td colspan="8" class="hiddenRow">
+                    <div class="accordion-body collapse p-4 bg-light" id="log4jlog4j">
+                        <p class="px-3">Details of the dependency:
+                            <span class="font-weight-bold">log4j:log4j</span>
+                        </p>
+                                <div class="p-3">
+                                    <table class="pf-c-table pf-m-expandable pf-m-compact pf-m-grid-md">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Severity</th>
+                                            <th scope="col" style="width: 18%">Exploit Maturity</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col" style="width: 13%">CVSS</th>
+                                            <th scope="col">CVE</th>
+                                            <th scope="col">Remediation</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                    <td>
+                                                        <span class="pf-c-label__content">
+                                                            CRITICAL
+                                                        </span>
+                                                    </span>
+                                                    </td>
+                                                        <td>Proof of concept code</td>
+                                                    <td>Deserialization of Untrusted Data</td>
+                                                <td>
+                                                        <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                                            <div class="pf-c-progress__description" id="progress-simple-example-description"
+                                                            >9.8/10</div>
+                                                            <div
+                                                                    class="pf-c-progress__bar"
+                                                                    role="progressbar"
+                                                                    aria-valuemin="0"
+                                                                    aria-valuemax="10"
+                                                                    aria-valuenow="3.7"
+                                                                    aria-labelledby="progress-simple-example-description"
+                                                            >
+                                                                <div class="pf-c-progress__indicator" style="width:98%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                            CVE-2019-17571
+                                                </td>
+                                                <td>
+                                                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-572732?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-572732"
+                                                            target="_blank">
+                                                                SNYK-JAVA-LOG4J-572732
+                                                            </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                    <td>
+                                                        <span class="pf-c-label__content">
+                                                            HIGH
+                                                        </span>
+                                                    </span>
+                                                    </td>
+                                                        <td>No known exploit</td>
+                                                    <td>SQL Injection</td>
+                                                <td>
+                                                        <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                                            <div class="pf-c-progress__description" id="progress-simple-example-description"
+                                                            >8.1/10</div>
+                                                            <div
+                                                                    class="pf-c-progress__bar"
+                                                                    role="progressbar"
+                                                                    aria-valuemin="0"
+                                                                    aria-valuemax="10"
+                                                                    aria-valuenow="3.7"
+                                                                    aria-labelledby="progress-simple-example-description"
+                                                            >
+                                                                <div class="pf-c-progress__indicator" style="width:81%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                            CVE-2022-23305
+                                                </td>
+                                                <td>
+                                                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-2342645?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-2342645"
+                                                            target="_blank">
+                                                                SNYK-JAVA-LOG4J-2342645
+                                                            </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                    <td>
+                                                        <span class="pf-c-label__content">
+                                                            HIGH
+                                                        </span>
+                                                    </span>
+                                                    </td>
+                                                        <td>No known exploit</td>
+                                                    <td>Deserialization of Untrusted Data</td>
+                                                <td>
+                                                        <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                                            <div class="pf-c-progress__description" id="progress-simple-example-description"
+                                                            >8.1/10</div>
+                                                            <div
+                                                                    class="pf-c-progress__bar"
+                                                                    role="progressbar"
+                                                                    aria-valuemin="0"
+                                                                    aria-valuemax="10"
+                                                                    aria-valuenow="3.7"
+                                                                    aria-labelledby="progress-simple-example-description"
+                                                            >
+                                                                <div class="pf-c-progress__indicator" style="width:81%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                            CVE-2022-23307
+                                                </td>
+                                                <td>
+                                                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-2342646?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-2342646"
+                                                            target="_blank">
+                                                                SNYK-JAVA-LOG4J-2342646
+                                                            </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                    <td>
+                                                        <span class="pf-c-label__content">
+                                                            HIGH
+                                                        </span>
+                                                    </span>
+                                                    </td>
+                                                        <td>No known exploit</td>
+                                                    <td>Deserialization of Untrusted Data</td>
+                                                <td>
+                                                        <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                                            <div class="pf-c-progress__description" id="progress-simple-example-description"
+                                                            >8.1/10</div>
+                                                            <div
+                                                                    class="pf-c-progress__bar"
+                                                                    role="progressbar"
+                                                                    aria-valuemin="0"
+                                                                    aria-valuemax="10"
+                                                                    aria-valuenow="3.7"
+                                                                    aria-labelledby="progress-simple-example-description"
+                                                            >
+                                                                <div class="pf-c-progress__indicator" style="width:81%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                            CVE-2022-23302
+                                                </td>
+                                                <td>
+                                                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-2342647?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-2342647"
+                                                            target="_blank">
+                                                                SNYK-JAVA-LOG4J-2342647
+                                                            </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                    <td>
+                                                        <span class="pf-c-label__content">
+                                                            MEDIUM
+                                                        </span>
+                                                    </span>
+                                                    </td>
+                                                        <td>Proof of concept code</td>
+                                                    <td>Arbitrary Code Execution</td>
+                                                <td>
+                                                        <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                                            <div class="pf-c-progress__description" id="progress-simple-example-description"
+                                                            >6.6/10</div>
+                                                            <div
+                                                                    class="pf-c-progress__bar"
+                                                                    role="progressbar"
+                                                                    aria-valuemin="0"
+                                                                    aria-valuemax="10"
+                                                                    aria-valuenow="3.7"
+                                                                    aria-labelledby="progress-simple-example-description"
+                                                            >
+                                                                <div class="pf-c-progress__indicator" style="width:66%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                            CVE-2021-4104
+                                                </td>
+                                                <td>
+                                                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-2316893?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-2316893"
+                                                            target="_blank">
+                                                                SNYK-JAVA-LOG4J-2316893
+                                                            </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                    <td>
+                                                        <span class="pf-c-label__content">
+                                                            MEDIUM
+                                                        </span>
+                                                    </span>
+                                                    </td>
+                                                        <td>No known exploit</td>
+                                                    <td>Denial of Service (DoS)</td>
+                                                <td>
+                                                        <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                                            <div class="pf-c-progress__description" id="progress-simple-example-description"
+                                                            >5.9/10</div>
+                                                            <div
+                                                                    class="pf-c-progress__bar"
+                                                                    role="progressbar"
+                                                                    aria-valuemin="0"
+                                                                    aria-valuemax="10"
+                                                                    aria-valuenow="3.7"
+                                                                    aria-labelledby="progress-simple-example-description"
+                                                            >
+                                                                <div class="pf-c-progress__indicator" style="width:59%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                            CVE-2023-26464
+                                                </td>
+                                                <td>
+                                                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-3358774?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-3358774"
+                                                            target="_blank">
+                                                                SNYK-JAVA-LOG4J-3358774
+                                                            </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                    <td>
+                                                        <span class="pf-c-label__content">
+                                                            LOW
+                                                        </span>
+                                                    </span>
+                                                    </td>
+                                                        <td>No known exploit</td>
+                                                    <td>Man-in-the-Middle (MitM)</td>
+                                                <td>
+                                                        <div class="pf-c-progress pf-m-warning" id="progress-simple-example">
+                                                            <div class="pf-c-progress__description" id="progress-simple-example-description"
+                                                            >3.7/10</div>
+                                                            <div
+                                                                    class="pf-c-progress__bar"
+                                                                    role="progressbar"
+                                                                    aria-valuemin="0"
+                                                                    aria-valuemax="10"
+                                                                    aria-valuenow="3.7"
+                                                                    aria-labelledby="progress-simple-example-description"
+                                                            >
+                                                                <div class="pf-c-progress__indicator" style="width:37%;"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                            CVE-2020-9488
+                                                </td>
+                                                <td>
+                                                            <a href="https://security.snyk.io/vuln/SNYK-JAVA-LOG4J-1300176?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=vuln/SNYK-JAVA-LOG4J-1300176"
+                                                            target="_blank">
+                                                                SNYK-JAVA-LOG4J-1300176
+                                                            </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                        <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" style="font-size: small;"
+                                href="#log4jlog4jtransTable" role="button" aria-expanded="false"
+                                aria-controls="log4jlog4jtransTable">
+                            Transitive Dependencies with vulnerabilites <i class="fa fa-angle-down"></i>
+                        </button>
+                        <div class="collapse" id="log4jlog4jtransTable">
+                            <table class="pf-c-table pf-m-expandable pf-m-compact pf-m-grid-md">
+                                <thead>
+                                <tr>
+                                    <th scope="col" style="width: 19%">Dependencies</th>
+                                    <th scope="col">Severity</th>
+                                    <th scope="col" >Exploit Maturity</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col" style="width: 13%">CVSS</th>
+                                    <th scope="col" style="width: 13%">CVE</th>
+                                    <th scope="col" style="width: 26%">Remediation</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">
+                    <a href="" target="_blank">
+                        Modal title
+                    </a>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Click either VEX or SBOM to download the corresponding file type. You can also click the package name to view more information in Red Hat's Maven repository.
+            </div>
+            <div class="modal-footer" style="justify-content: space-around">
+                <span id="vex"><a href="" target="_blank">VEX</a></span>
+                <span id="sbom"> <a href="" target="_blank">SBOMs</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+<script>
+    $('#modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var link = button.data('link')// Extract info from data-* attributes
+        var rhpkg = button.data('rhpkg')
+        var vex = button.data('vex')
+        var sbom = button.data('sbom')
+        var modal = $(this)
+        modal.find('.modal-title a').attr("href", link);
+        modal.find('.modal-title a').text(rhpkg);
+        modal.find('#vex a').attr("href", vex)
+        modal.find('#sbom a').attr("href", sbom)
+    })
+</script>
+</body>
+</html>

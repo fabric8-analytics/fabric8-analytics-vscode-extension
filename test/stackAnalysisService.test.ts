@@ -1,16 +1,20 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import * as fs from 'fs';
 import * as vscode from 'vscode';
-import * as request from 'request';
 
 import { context } from './vscontext.mock';
 import { stackAnalysisServices } from '../src/stackAnalysisService';
+import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
+
+
 const expect = chai.expect;
 chai.use(sinonChai);
 
 suite('stacknalysis Services', () => {
   let sandbox: sinon.SinonSandbox;
+  const options = {};
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -20,115 +24,55 @@ suite('stacknalysis Services', () => {
     sandbox.restore();
   });
 
-  test('context data should have been cleared', () => {
-    stackAnalysisServices.clearContextInfo(context);
-    expect(context.globalState.get('f8_access_routes')).equals('');
-    expect(context.globalState.get('f8_3scale_user_key')).equals('');
+  test('exhortApiStackAnalysis should return HTML', async () => {
+    const pathToManifest = 'sampleMavenApp/pom.xml';
+
+    const result = await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context);
+
+    // Compare the result with the mocked response
+    const mockHtmlResponse = fs.readFileSync('sampleMavenApp/response.html', 'utf8');
+    expect(result).to.equal(mockHtmlResponse);
   });
 
-  test('getStackAnalysisService should return success with statuscode 200', () => {
-    const options = {};
-    let sampleBody = { result: 'sucess' };
-    options['uri'] = 'https://abc.com';
-    let stubRequestGet = sandbox
-      .stub(request, 'get')
-      .yields(null, { statusCode: 200 }, JSON.stringify(sampleBody));
-    stackAnalysisServices.getStackAnalysisService(options);
-    expect(stubRequestGet).callCount(1);
+  test('exhortApiStackAnalysis should return error', async () => {
+    const pathToManifest = '/path/to/mock/pom.xml';
+    sandbox.stub(exhort, 'stackAnalysis').rejects(new Error('Mock error message'));
+    expect(await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context)).to.throw(new Error('Mock error message'));
+
   });
 
-  test('getStackAnalysisService should return success with statuscode 403', () => {
-    const options = {};
-    let sampleBody = { result: 'sucess' };
-    options['uri'] = 'https://abc.com';
-    let stubRequestGet = sandbox
-      .stub(request, 'get')
-      .yields(null, { statusCode: 403 }, JSON.stringify(sampleBody));
-    stackAnalysisServices.getStackAnalysisService(options);
-    expect(stubRequestGet).callCount(1);
+  test('getSnykTokenValidationService should show Snyk Token Validated message on 200 status code', async () => {
+    const showInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage');
+    sandbox.stub(exhort, 'validateToken').resolves(200);
+
+    await stackAnalysisServices.getSnykTokenValidationService(options);
+
+    expect(showInformationMessage).to.be.calledWith('Snyk Token Validated Successfully');
   });
 
-  test('postStackAnalysisService should return success with statuscode 200', () => {
-    const options = {};
-    let sampleBody = { id: '12345', status: 'success' };
-    options['uri'] = 'https://abc.com';
-    let stubRequestPost = sandbox
-      .stub(request, 'post')
-      .yields(null, { statusCode: 200 }, JSON.stringify(sampleBody));
-    stackAnalysisServices.postStackAnalysisService(options, context);
-    expect(stubRequestPost).callCount(1);
+  test('getSnykTokenValidationService should show appropriate warning message on non-200 status code', async () => {
+    const showWarningMessage = sandbox.stub(vscode.window, 'showWarningMessage');
+
+    const statusCodes = [400, 401, 403, 429];
+    for (const statusCode of statusCodes) {
+      sandbox.stub(exhort, 'validateToken').resolves(statusCode);
+
+      await stackAnalysisServices.getSnykTokenValidationService(options);
+
+      expect(showWarningMessage).to.be.calledWith(sandbox.match(new RegExp(`^.*Status: ${statusCode}$`)));
+    }
+
+    // Additional test for an unknown status code
+    sandbox.stub(exhort, 'validateToken').resolves(500);
+
+    await stackAnalysisServices.getSnykTokenValidationService(options);
+
+    expect(showWarningMessage).to.be.calledWith('Failed to validate token. Status: 500');
   });
 
-  test('postStackAnalysisService should return success with error and statuscode 200 ', () => {
-    const options = {};
-    let sampleBody = {
-      error: 'Could not process aa76ab88de4d444896e1969360f628bf.'
-    };
-    options['uri'] = 'https://abc.com';
-    let stubRequestPost = sandbox
-      .stub(request, 'post')
-      .yields(null, { statusCode: 200 }, JSON.stringify(sampleBody));
-    stackAnalysisServices.postStackAnalysisService(options, context);
-    expect(stubRequestPost).callCount(1);
-  });
+  test('getSnykTokenValidationService should handle error', async () => {
+    sandbox.stub(exhort, 'validateToken').rejects(new Error('Mock error message'));
 
-  test('postStackAnalysisService should return success with statuscode 401', () => {
-    const options = {};
-    options['uri'] = 'https://abc.com';
-    let stubRequestPost = sandbox
-      .stub(request, 'post')
-      .yields(null, { statusCode: 401 });
-    stackAnalysisServices.postStackAnalysisService(options, context);
-    expect(stubRequestPost).callCount(1);
-  });
-
-  test('postStackAnalysisService should return success with statuscode 429', () => {
-    const options = {};
-    options['uri'] = 'https://abc.com';
-    let stubRequestPost = sandbox
-      .stub(request, 'post')
-      .yields(null, { statusCode: 429 });
-    stackAnalysisServices.postStackAnalysisService(options, context);
-    expect(stubRequestPost).callCount(1);
-  });
-
-  test('postStackAnalysisService should return success with statuscode 400', () => {
-    const options = {};
-    options['uri'] = 'https://abc.com';
-    let stubRequestPost = sandbox
-      .stub(request, 'post')
-      .yields(null, { statusCode: 400 });
-    stackAnalysisServices.postStackAnalysisService(options, context);
-    expect(stubRequestPost).callCount(1);
-  });
-
-  test('postStackAnalysisService should return success with statuscode 500 and call ClearContextInfo', () => {
-    let retryCount = Number.MAX_VALUE;
-    const options = {};
-    options['uri'] = 'https://abc.com';
-    let spyClearContextInfo = sandbox.spy(
-      stackAnalysisServices,
-      'clearContextInfo'
-    );
-    let stubRequestPost = sandbox
-      .stub(request, 'post')
-      .yields(null, { statusCode: 500 });
-    stackAnalysisServices.postStackAnalysisService(options, context, retryCount);
-    expect(stubRequestPost).callCount(1);
-    expect(spyClearContextInfo).callCount(1);
-  });
-
-  test('postStackAnalysisService should return error', () => {
-    let retryCount = Number.MAX_VALUE;
-    const options = {};
-    options['uri'] = 'https://abc.com';
-    let spyClearContextInfo = sandbox.spy(
-      stackAnalysisServices,
-      'clearContextInfo'
-    );
-    let stubRequestPost = sandbox.stub(request, 'post').yields('err');
-    stackAnalysisServices.postStackAnalysisService(options, context, retryCount);
-    expect(stubRequestPost).callCount(1);
-    expect(spyClearContextInfo).callCount(1);
+    expect(await stackAnalysisServices.getSnykTokenValidationService(options)).to.throw(new Error('Mock error message'));
   });
 });

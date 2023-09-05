@@ -3,6 +3,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import { authextension } from '../src/authextension';
+import { Config } from '../src/config';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -18,14 +19,17 @@ suite('authextension Modules', () => {
     sandbox.restore();
   });
 
-  test('call to setContextData should set env variables', async () => {
-    const apiRoutes = { host: 'http://prod', apikey: '12345' };
-    authextension.setContextData(apiRoutes);
-  });
+  test('setContextData should set environment variables based on apiConfig', async () => {
+    const mockApiConfig = {
+      exhortSnykToken: 'mockToken'
+    };
 
-  test('call to setUUID should set env variable', async () => {
-    const uuid = "a1b2c3d4";
-    authextension.setUUID(uuid);
-    expect(process.env['UUID']).equals('a1b2c3d4');
+    authextension.setContextData(mockApiConfig);
+
+    expect(process.env['PROVIDE_FULLSTACK_ACTION']).equals('true');
+    expect(process.env['UTM_SOURCE']).equals('vscode');
+    expect(process.env['SNYK_TOKEN']).equals('mockToken');
+    expect(process.env['MVN_EXECUTABLE']).equals('mvn');
+    expect(process.env['NPM_EXECUTABLE']).equals('npm');
   });
 });

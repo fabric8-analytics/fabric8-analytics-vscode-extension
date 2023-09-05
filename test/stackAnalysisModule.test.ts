@@ -5,25 +5,15 @@ import * as vscode from 'vscode';
 
 import { context } from './vscontext.mock';
 import { stackanalysismodule } from '../src/stackanalysismodule';
-import { ProjectDataProvider } from '../src/ProjectDataProvider';
 import { multimanifestmodule } from '../src/multimanifestmodule';
 import { stackAnalysisServices } from '../src/stackAnalysisService';
+import { Config } from '../src/config';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
 suite('stackanalysis module', () => {
   let sandbox: sinon.SinonSandbox;
-  let editor = {
-    document: {
-      uri: {
-        fsPath: '/Users/sampleNodeRepo/package.json',
-        path: '/Users/sampleNodeRepo/package.json',
-        scheme: 'file'
-      },
-      fileName: '/Users/sampleNodeRepo/package.json'
-    }
-  };
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -33,74 +23,66 @@ suite('stackanalysis module', () => {
     sandbox.restore();
   });
 
-  suite('stacknalysis module:', () => {
-    let workspaceFolder = vscode.workspace.workspaceFolders[0];
-    test('processStackAnalyses should call stackAnalysesLifeCycle for npm', async () => {
-      let spyStackAnalysesLifeCycle = sandbox.spy(
-        stackanalysismodule,
-        'stackAnalysesLifeCycle'
-      );
-      await stackanalysismodule.processStackAnalyses(
-        context,
-        workspaceFolder,
-        'npm'
-      );
-      expect(spyStackAnalysesLifeCycle).callCount(1);
-    });
-    test('processStackAnalyses should call stackAnalysesLifeCycle for maven', async () => {
-      let spyStackAnalysesLifeCycle = sandbox.spy(
-        stackanalysismodule,
-        'stackAnalysesLifeCycle'
-      );
-      await stackanalysismodule.processStackAnalyses(
-        context,
-        workspaceFolder,
-        'maven'
-      );
-      expect(spyStackAnalysesLifeCycle).callCount(1);
-    });
+  test('processStackAnalysis should call stackAnalysisLifeCycle for maven', async () => {
+    const workspaceFolder = { uri: vscode.Uri.file('/path/to/mockFolder') } as vscode.WorkspaceFolder;
+    let stackAnalysisLifeCycleStub = sandbox.stub(stackanalysismodule, 'stackAnalysisLifeCycle');
 
-    test('stackAnalysesLifeCycle should call chain of promises', async () => {
-      let stubEffectivef8Package = sandbox
-        .stub(ProjectDataProvider, 'effectivef8Package')
-        .resolves('target/npmlist.json');
-      let stubTriggerManifestWs = sandbox
-        .stub(multimanifestmodule, 'triggerManifestWs')
-        .resolves(true);
-      let stubFormManifestPayload = sandbox
-        .stub(multimanifestmodule, 'form_manifests_payload')
-        .resolves({ orgin: 'vscode', ecosystem: 'npm' });
-      let stubPostStackAnalysisService = sandbox
-        .stub(stackAnalysisServices, 'postStackAnalysisService')
-        .resolves('23445');
-      let stubGetStackAnalysisService = sandbox
-        .stub(stackAnalysisServices, 'getStackAnalysisService')
-        .resolves({ result: '23445' });
-      await stackanalysismodule.stackAnalysesLifeCycle(
-        context,
-        'effectivef8Package',
-        'path/samplenodeapp',
-        'maven'
-      );
-      expect(stubEffectivef8Package).callCount(1);
-      expect(stubTriggerManifestWs).callCount(1);
-    });
+    await stackanalysismodule.processStackAnalysis(
+      context,
+      workspaceFolder,
+      'maven'
+    );
 
-    test('stackAnalysesLifeCycle should throw err', async () => {
-      let stubEffectivef8Package = sandbox
-        .stub(ProjectDataProvider, 'effectivef8Package')
-        .rejects(false);
-      try {
-        await stackanalysismodule.stackAnalysesLifeCycle(
-          context,
-          'effectivef8Package',
-          'path/samplenodeapp',
-          'maven'
-        );
-      } catch (err) {
-        return;
-      }
-      expect(stubEffectivef8Package).callCount(1);
-    });
+    expect(stackAnalysisLifeCycleStub.calledOnceWithExactly(context, '/path/to/mockFolder/pom.xml')).to.be.true;
   });
+
+  test('processStackAnalysis should call stackAnalysisLifeCycle for npm', async () => {
+    const workspaceFolder = { uri: vscode.Uri.file('/path/to/mockFolder') } as vscode.WorkspaceFolder;
+    let stackAnalysisLifeCycleStub = sandbox.stub(stackanalysismodule, 'stackAnalysisLifeCycle');
+
+    await stackanalysismodule.processStackAnalysis(
+      context,
+      workspaceFolder,
+      'npm'
+    );
+
+    expect(stackAnalysisLifeCycleStub.calledOnceWithExactly(context, '/path/to/mockFolder/package.json')).to.be.true;
+  });
+
+  test('stackAnalysisLifeCycle should call chain of promises', async () => {
+    const withProgressSpy = sandbox.spy(vscode.window, 'withProgress');
+    const triggerManifestWsStub = sandbox.stub(multimanifestmodule, 'triggerManifestWs');
+    const exhortApiStackAnalysisStub = sandbox.stub(stackAnalysisServices, 'exhortApiStackAnalysis');
+
+    await stackanalysismodule.stackAnalysisLifeCycle(context, '/path/to/mock/manifest');
+
+    expect(withProgressSpy).to.be.calledOnce;
+    expect(triggerManifestWsStub).to.be.calledOnce;
+    expect(exhortApiStackAnalysisStub).to.be.calledOnce;
+  });
+
+  test('validateSnykToken should execute stackAnalysisServices.getSnykTokenValidationService if a valid token is provided', async () => {
+    const getApiConfigStub = sandbox.stub(Config, 'getApiConfig').returns({
+      exhortSnykToken: 'mockToken'
+    });
+    const getSnykTokenValidationServiceStub = sandbox.stub(stackAnalysisServices, 'getSnykTokenValidationService');
+
+    await stackanalysismodule.validateSnykToken();
+
+    expect(getApiConfigStub).to.be.calledOnce;
+    expect(getSnykTokenValidationServiceStub.calledOnceWithExactly({ EXHORT_SNYK_TOKEN: 'mockToken', })).to.be.true;
+  });
+
+  test('validateSnykToken should show information message if no token is provided', async () => {
+    const getApiConfigStub = sandbox.stub(Config, 'getApiConfig').returns({
+      exhortSnykToken: ''
+    });
+    const showInformationMessageStub = sandbox.stub(vscode.window, 'showInformationMessage');
+
+    await stackanalysismodule.validateSnykToken();
+
+    expect(getApiConfigStub).to.be.calledOnce;
+    expect(showInformationMessageStub).to.be.calledOnce;
+  });
+
 });

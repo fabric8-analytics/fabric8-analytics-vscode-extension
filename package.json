@@ -1,8 +1,8 @@
 {
   "name": "fabric8-analytics",
-  "displayName": "Dependency Analytics",
-  "description": "Insights about your application dependencies: Security, License compatibility and AI based guidance to choose appropriate dependencies for your application.",
-  "version": "0.3.10",
+  "displayName": "Red Hat Dependency Analytics",
+  "description": "Provides insights on security vulnerabilities in your application dependencies.",
+  "version": "0.7.0",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -43,11 +43,8 @@
     "vscode": "^1.50.0"
   },
   "activationEvents": [
-    "onCommand:fabric8.stackAnalysis",
     "workspaceContains:**/package.json",
-    "workspaceContains:**/pom.xml",
-    "workspaceContains:**/requirements.txt",
-    "workspaceContains:**/go.mod"
+    "workspaceContains:**/pom.xml"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -55,7 +52,7 @@
       {
         "command": "fabric8.stackAnalysis",
         "title": "Stack Report...",
-        "category": "Dependency Analytics"
+        "category": "Red Hat Dependency Analytics"
       },
       {
         "command": "fabric8.stackAnalysisFromPieBtn",
@@ -67,16 +64,16 @@
       },
       {
         "command": "fabric8.stackAnalysisFromEditor",
-        "title": "Dependency Analytics Report..."
+        "title": "Red Hat Dependency Analytics Report..."
       },
       {
         "command": "fabric8.stackAnalysisFromExplorer",
-        "title": "Dependency Analytics Report..."
+        "title": "Red Hat Dependency Analytics Report..."
       },
       {
         "command": "fabric8.fabric8AnalyticsStackLogs",
         "title": "Debug logs",
-        "category": "Dependency Analytics"
+        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -90,16 +87,6 @@
           "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == package.json",
           "group": "navigation"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromPieBtn",
-          "when": "resourceFilename == requirements.txt",
-          "group": "navigation"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromPieBtn",
-          "when": "resourceFilename == go.mod",
-          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -110,14 +97,6 @@
         {
           "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == pom.xml"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromExplorer",
-          "when": "resourceFilename == requirements.txt"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromExplorer",
-          "when": "resourceFilename == go.mod"
         }
       ],
       "editor/context": [
@@ -128,14 +107,6 @@
         {
           "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == pom.xml"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromEditor",
-          "when": "resourceFilename == requirements.txt"
-        },
-        {
-          "command": "fabric8.stackAnalysisFromEditor",
-          "when": "resourceFilename == go.mod"
         }
       ],
       "commandPalette": [
@@ -174,12 +145,12 @@
           "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
           "scope": "window"
         },
-        "dependencyAnalyticsServer.maxNumberOfProblems": {
+        "redHatDependencyAnalyticsServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
           "description": "Controls the maximum number of problems produced by the server."
         },
-        "dependencyAnalyticsServer.trace.server": {
+        "redHatDependencyAnalyticsServer.trace.server": {
           "type": "string",
           "enum": [
             "off",
@@ -187,24 +158,18 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the dependencyAnalyticsServer service."
+          "description": "Traces the communication between VSCode and the redHatDependencyAnalyticsServer service."
         },
-        "dependencyAnalytics.host": {
+        "redHatDependencyAnalytics.exhortSnykToken": {
           "type": "string",
-          "default": "https://gw.api.openshift.io/",
-          "description": "Host name of Dependency Analytics server.",
+          "default": "",
+          "description": "Red Hat Dependency Analytics server authentication token for Snyk.",
           "scope": "window"
         },
-        "dependencyAnalytics.apiKey": {
+        "redHatDependencyAnalytics.redHatDependencyAnalyticsReportFilePath": {
           "type": "string",
-          "default": "207c527cfc2a6b8dcf4fa43ad7a976da",
-          "description": "3scale user_key to access dependencyAnalytics.host",
-          "scope": "window"
-        },
-        "dependencyAnalytics.stackReportUIHost": {
-          "type": "string",
-          "default": "https://stack-analytics-report.openshift.io/",
-          "description": "Host name of the stack report UI.",
+          "default": "/tmp/redhatDependencyAnalyticsReport.html",
+          "description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",
           "scope": "window"
         },
         "maven.executable.path": {
@@ -218,12 +183,6 @@
           "default": "",
           "description": "Specifies absolute path of npm executable.",
           "scope": "window"
-        },
-        "go.executable.path": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies absolute path of go executable.",
-          "scope": "window"
         }
       }
     }
@@ -231,43 +190,45 @@
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch --info-verbosity verbose",
+    "webpack-dev": "webpack --mode development --watch",
+    "compile": "tsc -b",
+    "posttest-compile": "./transformToDynamicImport.sh",
     "test-compile": "tsc -p ./",
     "test": "node ./out/test/runTest.js",
     "reinstall": "npm cache verify && npm install",
     "lint": "tslint -c tslint.json src/*.ts"
   },
   "devDependencies": {
-    "@types/glob": "^7.1.1",
-    "@types/mocha": "^5.2.0",
-    "@types/node": "^12.12.0",
-    "@types/sinon": "^7.5.0",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.5",
+    "@types/sinon": "^10.0.15",
     "@types/vscode": "^1.50.0",
-    "chai": "^4.1.2",
-    "decache": "^4.4.0",
-    "glob": "^7.1.3",
+    "@vscode/test-electron": "^2.3.2",
+    "chai": "^4.3.7",
+    "decache": "^4.6.1",
     "istanbul": "^0.4.5",
-    "mocha": "^7.1.2",
-    "mocha-jenkins-reporter": "^0.4.0",
-    "mocha-loader": "^3.0.0",
+    "mocha": "^10.2.0",
+    "mocha-jenkins-reporter": "^0.4.8",
+    "nyc": "^15.1.0",
     "remap-istanbul": "^0.13.0",
-    "sinon": "^7.5.0",
-    "sinon-chai": "^3.2.0",
-    "source-map-loader": "^1.1.0",
-    "ts-loader": "^6.2.0",
+    "sinon": "^15.1.0",
+    "sinon-chai": "^3.7.0",
+    "source-map-loader": "^4.0.1",
+    "supports-color": "^9.3.1",
+    "ts-loader": "^9.4.3",
+    "ts-node": "^10.9.1",
     "tslint": "^5.19.0",
-    "typescript": "^3.8.3",
-    "vscode-test": "^1.3.0",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12"
+    "typescript": "^5.1.3",
+    "webpack": "^5.85.0",
+    "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "@redhat-developer/vscode-redhat-telemetry": "0.4.2",
-    "fabric8-analytics-lsp-server": "^0.4.29",
-    "fs": "0.0.1-security",
-    "node-fetch": "^2.6.0",
-    "path": "0.12.7",
-    "request": "2.88.0",
-    "vscode-languageclient": "5.2.1"
+    "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.18",
+    "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "vscode-languageclient": "^8.1.0"
   }
 }

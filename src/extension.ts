@@ -6,14 +6,15 @@ import {
   LanguageClientOptions,
   ServerOptions,
   TransportKind
-} from 'vscode-languageclient';
+} from 'vscode-languageclient/node';
+
 import * as path from 'path';
 
 import { Commands } from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL } from './constants';
+import { GlobalState, extensionQualifiedId, registrationURL, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { authextension } from './authextension';
-import { StatusMessages } from './statusMessages';
+import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './DepOutputChannel';
@@ -28,9 +29,25 @@ export function activate(context: vscode.ExtensionContext) {
   let disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
-      // uri will be null in case user have use context menu/file explorer
-      const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-      multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+      try {
+        // uri will be null in case the user has used the context menu/file explorer
+        const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+        multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, fileUri);
+      } catch (error) {
+        // Throw a custom error message when the command execution fails
+        throw new Error(`Running the contributed command: '${Commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`);
+      }
+    }
+  );
+
+  let rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
+    Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
+    () => {
+      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
+                    make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
+                    This ensures that the applied dependencies work correctly. 
+                    Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
+      vscode.window.showWarningMessage(msg);
     }
   );
 
@@ -85,22 +102,25 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'go.mod' }
         ],
         synchronize: {
-          // Synchronize the setting section 'dependencyAnalyticsServer' to the server
-          configurationSection: 'dependencyAnalyticsServer',
+          // Synchronize the setting section 'redHatDependencyAnalyticsServer' to the server
+          configurationSection: 'redHatDependencyAnalyticsServer',
           // Notify the server about file changes to '.clientrc files contained in the workspace
-          fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
-        }
+          fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc'),
+        },
+        initializationOptions: {
+          triggerFullStackAnalysis: Commands.TRIGGER_FULL_STACK_ANALYSIS,
+          triggerRHRepositoryRecommendationNotification: Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION
+        },
       };
 
       // Create the language client and start the client.
       lspClient = new LanguageClient(
-        'dependencyAnalyticsServer',
-        'Dependency Analytics Language Server',
+        'redHatDependencyAnalyticsServer',
+        'Red Hat Dependency Analytics Language Server',
         serverOptions,
         clientOptions
       );
-
-      lspClient.onReady().then(() => {
+      lspClient.start().then(() => {
         const notifiedFiles = new Set<string>();
         const canShowPopup = (notification: CANotification): boolean => {
           const hasAlreadyShown = notifiedFiles.has(notification.origin());
@@ -108,10 +128,10 @@ export function activate(context: vscode.ExtensionContext) {
         };
 
         const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
-          const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, StatusMessages.FULL_STACK_PROMPT_TEXT);
-          if (selection === StatusMessages.FULL_STACK_PROMPT_TEXT) {
+          const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, PromptText.FULL_STACK_PROMPT_TEXT);
+          if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
-            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName:fileName });
+            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
           }
           else {
             record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
@@ -123,7 +143,7 @@ export function activate(context: vscode.ExtensionContext) {
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (canShowPopup(notification)) {
             showVulnerabilityFoundPrompt(notification.popupText(), path.basename(notification.origin()));
-            record(context, TelemetryActions.componentAnalysisDone, {manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin())});
+            record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()) });
             // prevent further popups.
             notifiedFiles.add(notification.origin());
           }
@@ -133,16 +153,27 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.setError();
           vscode.window.showErrorMessage(respData.data);
-          record(context, TelemetryActions.componentAnalysisFailed, {manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: respData.data});
+          record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: respData.data });
+        });
+
+        lspClient.onNotification('caSimpleWarning', msg => {
+          vscode.window.showWarningMessage(msg);
         });
       });
       context.subscriptions.push(
-        lspClient.start(),
+        rhRepositoryRecommendationNotification,
         disposableFullStack,
         disposableStackLogs,
         caStatusBarProvider,
       );
     }
+  });
+
+  vscode.workspace.onDidChangeConfiguration((event) => {
+    if (event.affectsConfiguration('redHatDependencyAnalytics.exhortSnykToken')) {
+      multimanifestmodule.triggerTokenValidation('snyk');
+    }
+    // add more token providers here...
   });
 }
 
@@ -164,7 +195,7 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   const version = packageJSON.version;
   const previousVersion = context.globalState.get<string>(GlobalState.Version);
   // Nothing to display
-  if (version === previousVersion){
+  if (version === previousVersion) {
     return;
   }
 
@@ -189,18 +220,18 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
 }
 
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
-  const invokeFullStackReport = (uri : vscode.Uri) => {
+  const invokeFullStackReport = (uri: vscode.Uri) => {
     const fileUri = uri || vscode.window.activeTextEditor.document.uri;
-    multimanifestmodule.dependencyAnalyticsReportFlow(context, fileUri);
+    multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, fileUri);
   };
 
-  const recordAndInvoke = (origin: string, uri : vscode.Uri) => {
+  const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
     record(context, origin, { manifest: uri.fsPath.split('/').pop(), fileName: uri.fsPath.split('/').pop() });
     invokeFullStackReport(uri);
   };
 
   const registerCommand = (cmd: string, action: TelemetryActions) => {
-      return vscode.commands.registerCommand(cmd, recordAndInvoke.bind(null, action));
+    return vscode.commands.registerCommand(cmd, recordAndInvoke.bind(null, action));
   };
 
   const stackAnalysisCommands = [

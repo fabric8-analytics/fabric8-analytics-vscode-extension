@@ -1,119 +1,74 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import * as paths from 'path';
+import * as path from 'path';
+import * as fs from 'fs';
 
 import { Config } from './config';
-import { getRequestTimeout, getRequestPollInterval } from './constants';
+import { snykURL, defaultRedhatDependencyAnalyticsReportFilePath, StatusMessages, Titles } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
-import { ProjectDataProvider } from './ProjectDataProvider';
 import { stackAnalysisServices } from './stackAnalysisService';
-import { StatusMessages } from './statusMessages';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
+
 export module stackanalysismodule {
-  const apiConfig = Config.getApiConfig();
-  export const stackAnalysesLifeCycle = (
+  export const stackAnalysisLifeCycle = (
     context,
-    effectiveF8Var,
-    argumentList,
-    ecosystem
+    manifestFilePath,
   ) => {
     vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Window,
-        title: StatusMessages.EXT_TITLE
+        title: Titles.EXT_TITLE
       },
       p => {
-        return new Promise((resolve, reject) => {
-          p.report({ message: StatusMessages.WIN_RESOLVING_DEPENDENCIES });
+        return new Promise<void>(async (resolve, reject) => {
 
-          ProjectDataProvider[effectiveF8Var](argumentList)
-            .then(async dataEpom => {
-              await multimanifestmodule.triggerManifestWs(context);
+          // get config data from extension workspace setting
+          const apiConfig = Config.getApiConfig();
+
+          // create webview panel
+          await multimanifestmodule.triggerManifestWs(context);
+          p.report({
+            message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
+          });
+
+          // set up configuration options for the stack analysis request
+          const options = {};
+          options['EXHORT_MVN_PATH'] = Config.getMavenExecutable();
+          options['EXHORT_NPM_PATH'] = Config.getNodeExecutable();
+          if (apiConfig.exhortSnykToken !== '') {
+            options['EXHORT_SNYK_TOKEN'] = apiConfig.exhortSnykToken;
+          }
+
+          // execute stack analysis
+          stackAnalysisServices.exhortApiStackAnalysis(manifestFilePath, options, context)
+            .then(resp => {
               p.report({
-                message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
+                message: StatusMessages.WIN_GENERATING_DEPENDENCIES
               });
-              return dataEpom;
-            })
-            .then(async dataEpom => {
-              let formData = await multimanifestmodule.form_manifests_payload(
-                dataEpom, ecosystem
-              );
-              return formData;
-            })
-            .then(async formData => {
-              let payloadData = formData;
-              const options = {};
-              let thatContext: any;
-              options['uri'] = `${apiConfig.host
-                }/api/v2/stack-analyses?user_key=${apiConfig.apiKey}`;
-              options['formData'] = payloadData;
-              options['headers'] = {
-                showTransitiveReport: 'true',
-                uuid: process.env.UUID
-              };
-              thatContext = context;
-              let respId = await stackAnalysisServices.postStackAnalysisService(
-                options,
-                thatContext
-              );
-              p.report({
-                message: StatusMessages.WIN_SUCCESS_ANALYZE_DEPENDENCIES
-              });
-              return respId;
-            })
-            .then(async respId => {
-              console.log(`Analyzing your stack, id ${respId}`);
-              const options = {};
-              options['uri'] = `${apiConfig.host
-                }/api/v2/stack-analyses/${respId}?user_key=${apiConfig.apiKey
-                }`;
-              options['headers'] = {
-                uuid: process.env.UUID
-              };
-              let timeoutCounter = getRequestTimeout / getRequestPollInterval;
-              const interval = setInterval(() => {
-                stackAnalysisServices
-                  .getStackAnalysisService(options)
-                  .then(data => {
-                    if (!data.hasOwnProperty('error')) {
-                      clearInterval(interval);
-                      p.report({
-                        message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                      });
-                      if (DependencyReportPanel.currentPanel) {
-                        DependencyReportPanel.currentPanel.doUpdatePanel(data);
-                      }
-                      resolve();
-                    } else {
-                      console.log(`Polling for stack report, remaining count:${timeoutCounter}`);
-                      --timeoutCounter;
-                      if (timeoutCounter <= 0) {
-                        let errMsg = `Failed to trigger application's stack analysis, try in a while.`;
-                        clearInterval(interval);
-                        p.report({
-                          message:
-                            StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                        });
-                        handleError(errMsg);
-                        reject();
-                      }
-                    }
-                  })
-                  .catch(error => {
-                    clearInterval(interval);
-                    p.report({
-                      message: StatusMessages.WIN_FAILURE_ANALYZE_DEPENDENCIES
-                    });
-                    handleError(error);
-                    reject(error);
+              let reportFilePath = apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath;
+              let reportDirectoryPath = path.dirname(reportFilePath);
+              if (!fs.existsSync(reportDirectoryPath)) {
+                fs.mkdirSync(reportDirectoryPath, { recursive: true });
+              }
+              fs.writeFile(reportFilePath, resp, (err) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  if (DependencyReportPanel.currentPanel) {
+                    DependencyReportPanel.currentPanel.doUpdatePanel(resp);
+                  }
+                  p.report({
+                    message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS
                   });
-              }, getRequestPollInterval);
+                  resolve(null);
+                }
+              });
             })
             .catch(err => {
               p.report({
-                message: StatusMessages.WIN_FAILURE_RESOLVE_DEPENDENCIES
+                message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS
               });
               handleError(err);
               reject();
@@ -123,35 +78,31 @@ export module stackanalysismodule {
     );
   };
 
-  export const processStackAnalyses = (
+  export const processStackAnalysis = (
     context,
     workspaceFolder,
     ecosystem,
     uri = null
   ) => {
-    let effectiveF8Var: string, argumentList: string;
+    let manifestFilePath: string;
     if (ecosystem === 'maven') {
-      argumentList = uri
+      manifestFilePath = uri
         ? uri.fsPath
-        : paths.join(workspaceFolder.uri.fsPath, 'pom.xml');
-      effectiveF8Var = 'effectivef8Pom';
+        : path.join(workspaceFolder.uri.fsPath, 'pom.xml');
     } else if (ecosystem === 'npm') {
-      argumentList = uri
-        ? uri.fsPath.split('package.json')[0]
-        : workspaceFolder.uri.fsPath;
-      effectiveF8Var = 'effectivef8Package';
-    } else if (ecosystem === 'pypi') {
-      argumentList = uri
-        ? uri.fsPath.split('requirements.txt')[0]
-        : workspaceFolder.uri.fsPath;
-      effectiveF8Var = 'effectivef8Pypi';
-    } else if (ecosystem === 'golang') {
-      argumentList = uri
+      manifestFilePath = uri
         ? uri.fsPath
-        : workspaceFolder.uri.fsPath;
-      effectiveF8Var = 'effectivef8Golang';
+        : path.join(workspaceFolder.uri.fsPath, 'package.json');
+      // } else if (ecosystem === 'pypi') {
+      //   manifestFilePath = uri
+      //     ? uri.fsPath.split('requirements.txt')[0]
+      //     : workspaceFolder.uri.fsPath;
+      // } else if (ecosystem === 'golang') {
+      //   manifestFilePath = uri
+      //     ? uri.fsPath
+      //     : workspaceFolder.uri.fsPath;
     }
-    stackAnalysesLifeCycle(context, effectiveF8Var, argumentList, ecosystem);
+    stackAnalysisLifeCycle(context, manifestFilePath);
   };
 
   export const handleError = err => {
@@ -159,5 +110,26 @@ export module stackanalysismodule {
       DependencyReportPanel.currentPanel.doUpdatePanel('error');
     }
     vscode.window.showErrorMessage(err);
+  };
+
+  export const validateSnykToken = async () => {
+    const apiConfig = Config.getApiConfig();
+    if (apiConfig.exhortSnykToken !== '') {
+
+      // set up configuration options for the token validation request
+      let options = {
+        'EXHORT_SNYK_TOKEN': apiConfig.exhortSnykToken,
+      };
+
+      // execute stack analysis
+      stackAnalysisServices.getSnykTokenValidationService(options);
+
+    } else {
+
+      vscode.window.showInformationMessage(`Please note that if you fail to provide a valid Snyk Token in the extension workspace settings, 
+                                            Snyk vulnerabilities will not be displayed. 
+                                            To resolve this issue, please obtain a valid token from the following link: [here](${snykURL}).`);
+
+    }
   };
 }

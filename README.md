@@ -140,7 +140,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	}
 	```
 
-  - **Excluding developmental or test dependencies**
+- **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
 	For example, setting `test` in the `scope` tag within a `pom.xml` file:
 

@@ -31,7 +31,7 @@ In future releases, Red Hat plans to support other programming languages.
 **Prerequisites**
 
 - For Maven projects, analyzing a `pom.xml` file, you must have the `mvn` binary in your system’s `PATH` environment.
-- For Node projects, analyzing a `package.json` file, you must have the `node` binary in your system’s `PATH` environment.
+- For Node projects, analyzing a `package.json` file, you must have the `npm` binary in your system’s `PATH` environment.
 
 <br >**IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.

@@ -5,8 +5,8 @@
 [![codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
 Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you build your application.
-The Dependency Analytics extension uses the [Snyk Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
-Snyk uses industry-leading security intelligence by pulling from many data sources to give you exact vulnerability information, along with advice on how to remediate those security risks.
+The Dependency Analytics extension uses the Snyk REST API to query [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
+Snyk uses industry-leading security intelligence by pulling from many data sources to give you exact vulnerability information.
 
 **NOTE:**
 <br >The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
@@ -43,13 +43,14 @@ Click the **Workspace** tab, search for the word _executable_, and specify the a
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/) on your workstation.
 2. After the installation finishes, open the Visual Studio Code application.
-3. Click the **Extensions** icon from the **Activity Bar** or click **View** from the file menu, and click **Extensions**.
+3. From the file menu, click **View**, and click **Extensions**.
 4. Search the **Marketplace** for _Dependency Analytics_.
 5. Click the **Install** button to install the extension.
 6. To start scanning your application for security vulnerabilities, and view the vulnerability report, you can do one of the following:
-   - Open a manifest file, hoover over a dependency marked by the inline analysis, indicated by the wavy-red line under a version number or dependency name, click **Quick Fix**, and click **Detailed Vulnerability Report**.
-   - Open a manifest file, and click the **pie chart icon** ![ Pie chart icon ](images/0.2.0/icon.png).
+   - Open a manifest file, hoover over a dependency marked by the inline Component Analysis, indicated by the wavy-red line under a version number or dependency name, click **Quick Fix**, and click **Detailed Vulnerability Report**.
+   - Open a manifest file, and click the **pie chart** icon ![ Pie chart icon ](images/0.2.0/icon.png).
    - Right click on a manifest file in the **Explorer** view, and click **Red Hat Dependency Analytics Report...**.
+   - From the vulnerability pop-up alert message, click **Open detailed vulnerability report**.
 7. (OPTIONAL) You can link your Snyk account to Dependency Analytics by doing the following:
    1. Log into your [Snyk account](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
    2. On the account landing page, you can find your Snyk Token, copy the token.

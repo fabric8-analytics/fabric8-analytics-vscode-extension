@@ -44,7 +44,7 @@ Click the **Workspace** tab, search for the word _executable_, and specify the a
 1. Install [Visual Studio Code](https://code.visualstudio.com/) on your workstation.
 2. After the installation finishes, open the Visual Studio Code application.
 3. From the file menu, click **View**, and click **Extensions**.
-4. Search the **Marketplace** for _Dependency Analytics_.
+4. Search the **Marketplace** for _Red Hat Dependency Analytics_.
 5. Click the **Install** button to install the extension.
 6. To start scanning your application for security vulnerabilities, and view the vulnerability report, you can do one of the following:
    - Open a manifest file, hoover over a dependency marked by the inline Component Analysis, indicated by the wavy-red line under a version number or dependency name, click **Quick Fix**, and click **Detailed Vulnerability Report**.

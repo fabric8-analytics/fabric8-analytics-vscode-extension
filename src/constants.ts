@@ -8,7 +8,7 @@ export enum GlobalState {
   // to store the UUID string to localStorage
   // UUID = 'uuid'
   // to store the current exhort environment mode
-  ExhortDevMode = 'true'
+  ExhortDevMode = 'false'
 }
 
 // Refer `name` from package.json

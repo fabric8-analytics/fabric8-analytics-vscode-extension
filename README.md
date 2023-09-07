@@ -47,14 +47,14 @@ Click the **Workspace** tab, search for the word _executable_, and specify the a
 4. Search the **Marketplace** for _Red Hat Dependency Analytics_.
 5. Click the **Install** button to install the extension.
 6. To start scanning your application for security vulnerabilities, and view the vulnerability report, you can do one of the following:
-   - Open a manifest file, hoover over a dependency marked by the inline Component Analysis, indicated by the wavy-red line under a version number or dependency name, click **Quick Fix**, and click **Detailed Vulnerability Report**.
-   - Open a manifest file, and click the **pie chart** icon ![ Pie chart icon ](images/0.2.0/icon.png).
+   - Open a manifest file, hover over a dependency marked by the inline Component Analysis, indicated by the wavy-red line under a version number or dependency name, click **Quick Fix**, and click **Detailed Vulnerability Report**.
+   - Open a manifest file, and click the **pie chart** icon ![ Pie chart icon ](icon/report-icon.png).
    - Right click on a manifest file in the **Explorer** view, and click **Red Hat Dependency Analytics Report...**.
    - From the vulnerability pop-up alert message, click **Open detailed vulnerability report**.
 7. (OPTIONAL) You can link your Snyk account to Dependency Analytics by doing the following:
    1. Log into your [Snyk account](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
    2. On the account landing page, you can find your Snyk Token, copy the token.
-   3. Open the Dependency Analytics extension settings.
+   3. Open the Red Hat Dependency Analytics extension settings.
    4. Click the **Workspace** tab.
    5. Paste the Snyk token in the **Exhort Snyk Token** field.
    6. After adding your Snyk token, the vulnerability report gives you detailed information about security vulnerabilities unique to Snyk, and vulnerabilities that have publicly known exploits.
@@ -66,8 +66,8 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 **Procedure**
 
 1. Open the Visual Studio Code application.
-2. Click the **Extensions** icon from the **Activity Bar** or click **View** from the file menu, and click **Extensions**.
-3. Find the installed **Dependency Analytics** extension, and click on the **Gear** icon.
+2. From the file menu, click **View**, and click **Extensions**.
+3. Find the installed **Red Hat Dependency Analytics** extension, and click on the **Gear** icon.
 4. Click **Extension Settings**.
 
    ![Red Hat Dependency Analytics extension workspace settings](images/screenshots/extension-workspace-settings.png)
@@ -82,7 +82,7 @@ If you leave this field blank, the following informational message is displayed.
 <br >![ Screenshot of the empty token dialog box ](images/screenshots/empty-token.png)
 
 If you enter a invalid Snyk token, a pop-up message alerts you that your Snyk token is not valid.
-![ Screenshot of the invalid token dialog box ](images/screenshots/invalid-token.png)
+<br >![ Screenshot of the invalid token dialog box ](images/screenshots/invalid-token.png)
 
 If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
 
@@ -96,12 +96,12 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 - **Component analysis**
 	<br >Upon opening a manifest file, such as a `pom.xml` or `package.json` file, a scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
-	Such dependencies are appropriately underlined in red, and hoovering over it gives you a short summary of the security concern.
+	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
 	
 	**NOTE:** Add the `target` folder to your `.gitignore` file to exclude it from Git monitoring.
 
-	![ Animated screenshot showing the inline reporting feature of Dependency Analytics ](images/0.3.11/component-analysis.gif)
+	![ Animated screenshot showing the inline reporting feature of Dependency Analytics ](images/screencasts/component-analysis.gif)
 
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.

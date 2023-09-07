@@ -4,76 +4,123 @@
 ![CI Build](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/Tests/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
-`Red Hat Dependency Analytics (RHDA)` is powered by [Snyk Intel Vulnerability DB](https://snyk.io/product/vulnerability-database/). It is the most advanced and accurate open source vulnerability database in the industry and adds value with the latest, fastest, and numerous vulnerabilities derived from multiple sources.
+Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you build your application.
+The Dependency Analytics extension uses the Snyk REST API to query [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
+Snyk uses industry-leading security intelligence by pulling from many data sources to give you exact vulnerability information.
 
-`Red Hat Dependency Analytics Report` provides insights about your application dependencies and flags security vulnerabilities(CVE).
+**NOTE:**
+<br >The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
+Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
-## Supported Languages
+**IMPORTANT:**
+<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), and Node ecosystems (`npm`).
+In future releases, Red Hat plans to support other programming languages.
 
-RHDA extension supports projects using Maven and NPM (Node) ecosystems.
-Extending support for other languages is currently in progress.
+##### Table of Contents
+- [Quick start](#quick-start)
+- [Configuration](#configuration)
+- [Features](#features)
+- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
+- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)
+- [Data and telemetry](#data-and-telemetry)
+- [Support, feedback \& questions](#support-feedback--questions)
+- [License](#license)
 
-## Prerequisites
+## Quick start
 
-This extension assumes you have the following binaries on your *PATH*:
+**Prerequisites**
 
-- `mvn` (for analyzing Java applications)
-- `npm` (for analyzing Node applications)
+- For Maven projects, analyzing a `pom.xml` file, you must have the `mvn` binary in your system’s `PATH` environment.
+- For Node projects, analyzing a `package.json` file, you must have the `npm` binary in your system’s `PATH` environment.
 
-**Note:** By default, the `mvn/npm` command is executed directly in the terminal, which requires that `mvn/npm` is found in your system environment `PATH`.
-In case it is located elsewhere you can configure this via preferences in VS Code. To do this access the [extension settings](https://code.visualstudio.com/docs/getstarted/settings) within your VS code instance, switch to *Workspace* tab, search for *\<Ecosystem\> Executable Path* and edit the *Path* setting.
-You can also the `settings.json` file and add the following:
+<br >**IMPORTANT:** 
+<br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
+You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
+You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
+Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for Maven or Node.
 
-```
-{
-    ...
-    "maven.executable.path": "/path-to-maven-home/bin/mvn"
-    "npm.executable.path": "/path-to-npm-home/bin/npm"
-    ...
-}
-```
+**Procedure**
 
-## Quick Start
+1. Install [Visual Studio Code](https://code.visualstudio.com/) on your workstation.
+2. After the installation finishes, open the Visual Studio Code application.
+3. From the file menu, click **View**, and click **Extensions**.
+4. Search the **Marketplace** for _Red Hat Dependency Analytics_.
+5. Click the **Install** button to install the extension.
+6. To start scanning your application for security vulnerabilities, and view the vulnerability report, you can do one of the following:
+   - Open a manifest file, hoover over a dependency marked by the inline Component Analysis, indicated by the wavy-red line under a version number or dependency name, click **Quick Fix**, and click **Detailed Vulnerability Report**.
+   - Open a manifest file, and click the **pie chart** icon ![ Pie chart icon ](images/0.2.0/icon.png).
+   - Right click on a manifest file in the **Explorer** view, and click **Red Hat Dependency Analytics Report...**.
+   - From the vulnerability pop-up alert message, click **Open detailed vulnerability report**.
+7. (OPTIONAL) You can link your Snyk account to Dependency Analytics by doing the following:
+   1. Log into your [Snyk account](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
+   2. On the account landing page, you can find your Snyk Token, copy the token.
+   3. Open the Dependency Analytics extension settings.
+   4. Click the **Workspace** tab.
+   5. Paste the Snyk token in the **Exhort Snyk Token** field.
+   6. After adding your Snyk token, the vulnerability report gives you detailed information about security vulnerabilities unique to Snyk, and vulnerabilities that have publicly known exploits.
 
-Install the `Red Hat Dependency Analytics` extension from *Extensions Marketplace*.
+## Configuration
 
-Configure the Snyk Token in the *extension workspace settings*. Please find configuration instructions [here](#configuration).
-On successfully entering the Snyk token, the Red Hat Dependency Analytics report can provide detailed information about security vulnerabilities unique to Snyk and vulnerabilities having publicly known exploits.
-<br >**IMPORTANT** Please note that if a valid Snyk Token is not provided in the extension workspace settings, Snyk vulnerabilities will not be displayed.
+The Red Hat Dependency Analytics extension has some configurable parameters that allows you to customize its behavior according to your preferences.
 
-Open or edit a manifest file *(pom.xml/package.json)* to trigger inline `Component Analysis`. This feature scans your application and provides inline feedback on any dependencies identified with security vulnerabilities.
+**Procedure**
 
-Generate a `Red Hat Dependency Analytics Report` for your application by performing any of the following actions:
-- Right click on a manifest file in the *Vscode File explorer* or *Vscode File editor* and choose the `Red Hat Dependency Analytics Report` option.
-- On an open manifest file, click on the *pie icon* ![icon](icon/report-icon.png) located at the upper right corner in the tab container.
-- On an open manifest file, hoover over a dependency marked by the inline `Component Analysis`, click on *Quick Fix* and choose *Detailed Vulnerability Report* option`.
-- Click on `Open detailed vulnerability report` button inside the vulnerability alert popup message.
-- Click on `Found <NUMBER> vulnerabilities` in the *status bar* bellow.
-- Click on `Dependency analysis in progress` in the *status bar* bellow (only visible when Component Analysis is in progress and not yet complete).
-<br > Check out the [features](#features) section for more details.
+1. Open the Visual Studio Code application.
+2. Click the **Extensions** icon from the **Activity Bar** or click **View** from the file menu, and click **Extensions**.
+3. Find the installed **Dependency Analytics** extension, and click on the **Gear** icon.
+4. Click **Extension Settings**.
 
-> **NOTE** `Red Hat Dependency Analytics` is an online service hosted and maintained by Red Hat. This open source software will access only your manifests file(s) to analyse the application dependencies within before providing you with a detailed report.
+   ![Red Hat Dependency Analytics extension workspace settings](images/screenshots/extension-workspace-settings.png)
+
+### Configurable parameters
+
+**Exhort Snyk Token** :
+<br >The Snyk token allows Exhort to authenticate with the Snyk Vulnerability Database.
+If a Snyk token is not provided, Snyk vulnerability information is not displayed.
+
+If you leave this field blank, the following informational message is displayed.
+<br >![ Screenshot of the empty token dialog box ](images/screenshots/empty-token.png)
+
+If you enter a invalid Snyk token, a pop-up message alerts you that your Snyk token is not valid.
+![ Screenshot of the invalid token dialog box ](images/screenshots/invalid-token.png)
+
+If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
+
+**Red Hat Dependency Analytics Report File Path** :
+
+Specify the local path to create the Dependency Analytics report file.
+The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
 ## Features
 
-1. **Component Analysis**
-	<br >Upon opening or editing a manifest file *(pom.xml/package.json)*, an automated scan will be triggered on your application. This process provides immediate, inline feedback regarding any dependencies that have been detected to have security vulnerabilities. Such dependencies will be appropriately flagged in red and present a short summary when hoovered over. Summary contains the full package name and version, amount of known security vulnerabilities and highest severity status of said vulnerabilities.
-	<br >**Note** a *target* folder will be created in the workspace, used to process pom.xml files. Please add *target* to *.gitignore*.
+- **Component analysis**
+	<br >Upon opening a manifest file, such as a `pom.xml` or `package.json` file, a scan starts the analysis process.
+	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
+	Such dependencies are appropriately underlined in red, and hoovering over it gives you a short summary of the security concern.
+	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
+	
+	**NOTE:** Add the `target` folder to your `.gitignore` file to exclude it from Git monitoring.
 
-	![ screencast ](images/screencasts/component-analysis.gif)
+	![ Animated screenshot showing the inline reporting feature of Dependency Analytics ](images/0.3.11/component-analysis.gif)
 
-1. **Excluding dependencies with exhortignore**
-	<br >Excluding a package from analysis can be achieved by marking the package for exclusion. 
-	If users wish to ignore vulnerabilities for a dependency in a **pom.xml** file for *Java Maven* ecosystem, it can be done by adding `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file. example:
-	```
+- **Excluding dependencies with `exhortignore`**
+	<br >You can exclude a package from analysis by marking the package for exclusion.
+	If you wish to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
+	For example:
+
+	```xml
 	<dependency> <!--exhortignore-->
 		<groupId>...</groupId>
 		<artifactId>...</artifactId>
 		<version>...</version>
 	</dependency>
 	```
-	**package.json** Node manifest files for *Javascript NPM* ecosystem don't support comments, hence `exhortignore` must be given inside a JSON. If `exhortignore` is followed by a list of comma-separated Snyk vulnerability IDs, only the listed vulnerabilities will be ignored during analysis. example:
-	```
+
+	If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
+	If `exhortignore` is followed by a list of comma-separated Snyk vulnerability IDs, only the listed vulnerabilities will be ignored during analysis.
+	For example:
+
+	```json
 	{
 		"name": "sample",
 		"version": "1.0.0",
@@ -94,11 +141,11 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 	}
 	```
 
-1. **Excluding dev/test dependencies**
-	<br >`Red Hat Dependency Analytics` does not analyse dependencies marked as **dev/test**. These dependencies will be ignored. example:
-	
-	*test* scope in *pom.xml*:
-	```
+- **Excluding developmental or test dependencies**
+	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
+	For example, setting `test` in the `scope` tag within a `pom.xml` file:
+
+	```xml
 	<dependency>
 		<groupId>...</groupId>
 		<artifactId>...</artifactId>
@@ -106,8 +153,10 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 		<scope>test</scope>
 	</dependency>
 	```	
-	*devDependencies* field in *package.json*:
-	```
+
+	For example, setting `devDependencies` attributte in the `package.json` file:
+	
+	```json
 	{
 		"name": "sample",
 		"version": "1.0.0",
@@ -128,74 +177,39 @@ Generate a `Red Hat Dependency Analytics Report` for your application by perform
 	}
 	```
 
-1. **Red Hat Dependency Analytics Report** 
-	<br >To generate the `Red Hat Dependency Analytics Report` for your application, you can do one of the following:
-	- Right click on a manifest file *(pom.xml/package.json)* in the *Vscode File explorer* or *Vscode File editor* and choose the `Red Hat Dependency Analytics Report` option.
-	- On an open manifest file, click on the *pie icon* ![icon](icon/report-icon.png) located at the upper right corner in the tab container.
-	- On an open manifest file, hoover over a dependency marked by the inline `Component Analysis`, click on *Quick Fix* and choose *Detailed Vulnerability Report* option.
-	![ screencast ](images/screencasts/quickfix.gif)
-	- Click on `Open detailed vulnerability report` button inside the vulnerability alert popup message.<br >
-	![ screenshot ](images/screenshots/vuln-alert-popup.png)
-	- Click on `Found <NUMBER> vulnerabilities` in the *status bar* bellow.<br >
-	![ screenshot ](images/screenshots/found-vulns-status-bar.png)
-	- Click on `Dependency analysis in progress` in the *status bar* bellow (only visible when Component Analysis is in progress and not yet complete).<br >
-	![ screenshot ](images/screenshots/dependency-analysis-in-progress-status-bar.png)
+- **Red Hat Dependency Analytics report** 
+	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.
+	Closing the tab removes the temporary HTML file.
+	You can specify the file name by [modifying the _Red Hat Dependency Analytics: Red Hat Dependency Analytics Report File Path_ field](#configuration) in the extension settings.
 
-	**Bonus Feature** The HTML of the `Red Hat Dependency Analytics Report` will be stored temporarily while the `Red Hat Dependency Analytics Report` tab remains open. Once the tab is closed, the corresponding file will be automatically removed. You can define the filename by [adjusting the configuration](#configuration) in the *extensions workspace settings*, under the *Red Hat Dependency Analytics: Red Hat Dependency Analytics Report File Path* field. The default location for this file is `/tmp/redhatDependencyAnalyticsReport.html`.
+## Using Red Hat Dependency Analytics for CI builds
 
-## Configuration
+You can automate the analysis of your application's vulnerabilities within the build and release pipeline.
+Red Hat offers integration with these Continuous Integration (CI) platforms:
 
-The `Red Hat Dependency Analytics` plugin has configurable parameters within the extension that allow users to tailor the behavior and functionality of the extension according to their preferences.
-To access these configurable parameters please enter the [extension settings](https://code.visualstudio.com/docs/getstarted/settings) within your VS code instance, switch to *Workspace* tab and search for *Red Hat Dependency Analytics*.
+- [Red Hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
+- [Red Hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
 
-![Red Hat Dependency Analytics Extension Workspace Settings](images/screenshots/extension-workspace-settings.png)
+**IMPORTANT:** GitHub actions for RHDA has been temporarily disabled until further notice.
 
-### Configurable Parameters
+## Know more about the Red Hat Dependency Analytics platform
 
-**Exhort Snyk Token** - edit the *Exhort Snyk Token* setting to change the Snyk token setting.
-The Snyk Token allows Exhort to authenticate with Snyk (vulnerability data provider).
-Please note that if a valid Snyk Token is not provided in the extension workspace settings, Snyk vulnerabilities will not be displayed.
-An alert message on edit will provide feedback on whether the token is valid or not.
-To generate a new token please visit the following [link](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
-
-**Valid Token Info Message**<br >
-![ screenshot ](images/screenshots/valid-token.png)
-
-**Invalid Token Alert Message**<br >
-![ screenshot ](images/screenshots/invalid-token.png)
-
-**Enpty Token Warning Message**<br >
-![ screenshot ](images/screenshots/empty-token.png)
-
-**Red Hat Dependency Analytics Report File Path** - edit the *Red Hat Dependency Analytics Report File Path* setting to change the location where the HTML of the `Red Hat Dependency Analytics Report` will be stored (Default value: `/tmp/redhatDependencyAnalyticsReport.html`).
-
-## Using Red Hat Dependency Analytics on your CI Builds
-
-To automate the analysis of vulnerabilities in a project's dependencies, we offer integration with the following Continuous Integration (CI) platforms:
-
-- [Red hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
-
-- [Red hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
-
-- Red hat Dependency Analytics GitHub Actions \<TBD\>
-
-## Know more about Red Hat Dependency Analytics Platform
-
-The mission of this project is to enhance developer experience significantly:
-providing Insights for applications and helping developers and enterprises.
+The goal of this project is to significantly enhance a developer's experience by providing helpful vulnerability insights for their applications.
 
 - [GitHub Organization](https://github.com/fabric8-analytics)
 
-## Support, Feedback & Questions
+## Data and telemetry
 
-- For assistance, reach out to us at `rhda-support@redhat.com`
+The Red Hat Dependency Analytics Extension for Visual Studio Code collects anonymous [usage data](Telemetry.md) and sends it to Red Hat servers to help improve our products and services.
+Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection) to learn more.
+This extension respects the `redhat.telemetry.enabled` setting, which you can learn more about [here](https://github.com/redhat-developer/vscode-commons#how-to-disable-telemetry-reporting).
 
-- File a bug in [GitHub Issues](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues)
+## Support, feedback & questions
+
+There are two ways you can contact us:
+- You can reach out to us at `rhda-support@redhat.com` with any questions, feedback, and general support.
+- You can also file a [GitHub Issue](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues).
 
 ## License
 
 Apache 2.0, See [LICENSE](LICENSE) for more information.
-
-## Data and telemetry
-
-The Red Hat Dependency Analytics Extension for Visual Studio Code collects anonymous [usage data](Telemetry.md) and sends it to Red Hat servers to help improve our products and services. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection) to learn more. This extension respects the `redhat.telemetry.enabled` setting which you can learn more about at https://github.com/redhat-developer/vscode-commons#how-to-disable-telemetry-reporting

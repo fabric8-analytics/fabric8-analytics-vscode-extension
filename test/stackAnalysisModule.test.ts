@@ -8,6 +8,7 @@ import { stackanalysismodule } from '../src/stackanalysismodule';
 import { multimanifestmodule } from '../src/multimanifestmodule';
 import { stackAnalysisServices } from '../src/stackAnalysisService';
 import { Config } from '../src/config';
+import { GlobalState } from '../src/constants';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -70,7 +71,7 @@ suite('stackanalysis module', () => {
     await stackanalysismodule.validateSnykToken();
 
     expect(getApiConfigStub).to.be.calledOnce;
-    expect(getSnykTokenValidationServiceStub.calledOnceWithExactly({ EXHORT_SNYK_TOKEN: 'mockToken', })).to.be.true;
+    expect(getSnykTokenValidationServiceStub.calledOnceWithExactly({ EXHORT_SNYK_TOKEN: 'mockToken', 'EXHORT_DEV_MODE': GlobalState.ExhortDevMode })).to.be.true;
   });
 
   test('validateSnykToken should show information message if no token is provided', async () => {

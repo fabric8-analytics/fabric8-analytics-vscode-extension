@@ -8,12 +8,8 @@
   "preview": true,
   "contributors": [
     {
-      "name": "Jaivardhan Kumar",
-      "email": "jakumar@redhat.com"
-    },
-    {
-      "name": "Arunprasad Rajkumar",
-      "email": "arajkuma@redhat.com"
+      "name": "Ilona Shishov",
+      "email": "ishishov@redhat.com"
     }
   ],
   "license": "Apache-2.0",
@@ -224,9 +220,9 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
+    "@IlonaShishov/fabric8-analytics-lsp-server": "^0.7.1-ea.3",
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.18",
-    "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-alpha.4",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import { authextension } from '../src/authextension';
-import { Config } from '../src/config';
+import { GlobalState } from '../src/constants';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -31,5 +31,6 @@ suite('authextension Modules', () => {
     expect(process.env['SNYK_TOKEN']).equals('mockToken');
     expect(process.env['MVN_EXECUTABLE']).equals('mvn');
     expect(process.env['NPM_EXECUTABLE']).equals('npm');
+    expect(process.env['EXHORT_DEV_MODE']).equals(GlobalState.ExhortDevMode);
   });
 });

@@ -1,34 +1,35 @@
-name: Tests
+name: CI
 
-  # Controls when the action will run. Triggers the workflow on push or pull request
-  # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   build-and-test:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'IlonaShishov'
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
       
-      - name: Create .npmrc file
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PKG_TOKEN }}" >> ~/.npmrc
-          echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" > ~/.npmrc
-
-      - name: Setup Node env
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
           registry-url: 'https://npm.pkg.github.com'
-          
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create .npmrc
+        run: |
+          echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "@IlonaShishov:registry=https://npm.pkg.github.com" > ~/.npmrc
+      
       - name: Install @vscode/vsce
         run: npm i -g @vscode/vsce
 
@@ -41,11 +42,11 @@ jobs:
       - name: VSCE prepublish
         run: vsce package
 
-      - name: Invoke LSP entrypoint(server.js)
-        run: node dist/server.js
+      - name: Lint code
+        run: npm run lint
 
       - name: Run headless test
-        uses: GabrielBB/xvfb-action@v1
+        uses: coactions/setup-xvfb@v1
         with:
           run: npm test
 

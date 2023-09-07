@@ -1,6 +1,6 @@
 'use strict';
 
-// import { GlobalState } from './constants';
+import { GlobalState } from './constants';
 import { Config } from './config';
 // import { getRedHatService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 
@@ -14,6 +14,7 @@ export module authextension {
     process.env['SNYK_TOKEN'] = apiConfig.exhortSnykToken;
     process.env['MVN_EXECUTABLE'] = Config.getMavenExecutable();
     process.env['NPM_EXECUTABLE'] = Config.getNodeExecutable();
+    process.env['EXHORT_DEV_MODE'] = GlobalState.ExhortDevMode;
   };
 
   // export async function setTelemetryid(context) {

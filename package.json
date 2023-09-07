@@ -14,6 +14,10 @@
     {
       "name": "Arunprasad Rajkumar",
       "email": "arajkuma@redhat.com"
+    },
+    {
+      "name": "Ilona Shishov",
+      "email": "ishishov@redhat.com"
     }
   ],
   "license": "Apache-2.0",
@@ -226,7 +230,7 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.18",
-    "fabric8-analytics-lsp-server": "file:../fabric8-analytics-lsp-server",
+    "@IlonaShishov/fabric8-analytics-lsp-server": "0.7.1-ea.1",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

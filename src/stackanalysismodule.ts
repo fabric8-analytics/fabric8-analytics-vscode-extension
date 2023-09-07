@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Config } from './config';
-import { snykURL, defaultRedhatDependencyAnalyticsReportFilePath, StatusMessages, Titles } from './constants';
+import { snykURL, defaultRedhatDependencyAnalyticsReportFilePath, StatusMessages, Titles, GlobalState } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { DependencyReportPanel } from './dependencyReportPanel';
@@ -37,6 +37,7 @@ export module stackanalysismodule {
           const options = {};
           options['EXHORT_MVN_PATH'] = Config.getMavenExecutable();
           options['EXHORT_NPM_PATH'] = Config.getNodeExecutable();
+          options['EXHORT_DEV_MODE'] = GlobalState.ExhortDevMode;
           if (apiConfig.exhortSnykToken !== '') {
             options['EXHORT_SNYK_TOKEN'] = apiConfig.exhortSnykToken;
           }
@@ -119,6 +120,7 @@ export module stackanalysismodule {
       // set up configuration options for the token validation request
       let options = {
         'EXHORT_SNYK_TOKEN': apiConfig.exhortSnykToken,
+        'EXHORT_DEV_MODE': GlobalState.ExhortDevMode,
       };
 
       // execute stack analysis

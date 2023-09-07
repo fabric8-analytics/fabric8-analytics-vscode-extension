@@ -7,6 +7,8 @@ export enum GlobalState {
   Version = 'fabric8Version',
   // to store the UUID string to localStorage
   // UUID = 'uuid'
+  // to store the current exhort environment mode
+  ExhortDevMode = 'true'
 }
 
 // Refer `name` from package.json

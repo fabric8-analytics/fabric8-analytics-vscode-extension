@@ -42,6 +42,9 @@ jobs:
       - name: VSCE prepublish
         run: vsce package
 
+      - name: Lint code
+        run: npm run lint
+
       - name: Run headless test
         uses: coactions/setup-xvfb@v1
         with:

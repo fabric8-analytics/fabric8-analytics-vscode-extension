@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'fabric8-analytics'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create .npmrc
+        run: |
+          echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "@fabric8-analytics:registry=https://npm.pkg.github.com" > ~/.npmrc
+      
+      - name: Install @vscode/vsce
+        run: npm i -g @vscode/vsce
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Compile for test
+        run: npm run test-compile
+
+      - name: VSCE prepublish
+        run: vsce package
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run headless test
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: npm test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Extension Build For PR ${{ github.event.pull_request.number }}
+          path: ./*.vsix

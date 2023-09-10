@@ -23,6 +23,7 @@ suite('Fabric8 Analytics Extension', () => {
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
+      Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION
     ];
     // @ts-ignore
     assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
@@ -39,7 +40,7 @@ suite('Fabric8 Analytics Extension', () => {
           assert.equal(reason.name, 'Error');
           assert.equal(
             reason.message,
-            `Running the contributed command: 'fabric8.stackAnalysis' failed.`
+            `Running the contributed command: '${Commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`
           );
         }
       );

@@ -2,13 +2,23 @@
 
 'use strict';
 
+import * as webpack from 'webpack';
+
 const path = require('path');
 const glob = require('glob');
 
 module.exports = (env, argv) => {
+
+  plugins: [
+    new webpack.ProvidePlugin({
+      WebSocket: 'ws',
+      fetch: ['node-fetch', 'default'],
+    }),
+  ];
+
   let entry = {
     'extension': './src/extension.ts',
-    'server': './node_modules/fabric8-analytics-lsp-server/dist/server.js',
+    'server': './node_modules/@fabric8-analytics/fabric8-analytics-lsp-server/dist/server.js',
   };
   // debug
   if (argv.mode !== 'production') {
@@ -26,7 +36,7 @@ module.exports = (env, argv) => {
       libraryTarget: 'commonjs2',
       devtoolModuleFilenameTemplate: '../[resource-path]'
     },
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     externals: {
       vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     },
@@ -53,6 +63,12 @@ module.exports = (env, argv) => {
         }]
       }]
     },
+    ignoreWarnings: [/Failed to parse source map/],
+    plugins: [
+      new webpack.ProvidePlugin({
+        fetch: ['node-fetch', 'default'],
+      }),
+    ]
   };
   return config;
 };

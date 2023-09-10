@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
+import * as vscode from 'vscode';
 import { Config } from '../src/config';
 
 const expect = chai.expect;
@@ -18,18 +19,24 @@ suite('Config module', () => {
     sandbox.restore();
   });
 
-  test('getMavenExecutable should return mvn', () => {
+  test('getApiConfig should get API config', async () => {
+    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
+    getConfigurationStub.withArgs('redHatDependencyAnalytics').resolves('mockApiConfig');
+
+    const apiConfig = await Config.getApiConfig();
+
+    expect(apiConfig).to.equal('mockApiConfig');
+  });
+
+  test('getMavenExecutable should get Maven executable', () => {
     let mavenPath = Config.getMavenExecutable();
+
     expect(mavenPath).equals('mvn');
   });
 
-  test('getNodeExecutable should return npm', () => {
-    let npmPath = Config.getNodeExecutable();
-    expect(npmPath).equals('npm');
-  });
+  test('getNodeExecutable should get Node executable', () => {
+    let nodePath = Config.getNodeExecutable();
 
-  test('getPypiExecutable should return python', () => {
-    let python = Config.getPythonExecutable();
-    expect(python).equals('python');
+    expect(nodePath).equals('npm');
   });
 });

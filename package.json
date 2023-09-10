@@ -220,7 +220,7 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "@IlonaShishov/fabric8-analytics-lsp-server": "^0.7.1-ea.3",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.7.1-ea.4",
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-alpha.4",
     "fs": "^0.0.1-security",

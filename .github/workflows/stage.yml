@@ -12,12 +12,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'IlonaShishov'
+    if: github.repository_owner == 'fabric8-analytics'
     name: Build plugin
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -30,7 +32,7 @@ jobs:
       - name: Create .npmrc
         run: |
           echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "@IlonaShishov:registry=https://npm.pkg.github.com" > ~/.npmrc
+          echo "@fabric8-analytics:registry=https://npm.pkg.github.com" > ~/.npmrc
       
       - name: Install @vscode/vsce
         run: npm i -g @vscode/vsce

@@ -5,6 +5,7 @@ def installBuildRequirements(){
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh 'echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" > ~/.npmrc'
     sh 'echo "@fabric8-analytics:registry=https://npm.pkg.github.com" >> ~/.npmrc'
+
 	sh "npm install -g typescript"
 	sh "npm install -g --force @vscode/vsce"
 }
@@ -22,6 +23,10 @@ node('rhel8'){
 
 	stage 'install fabric8-analytics-vscode-extension build requirements'
 	installBuildRequirements()
+	withCredentials([[$class: 'StringBinding', credentialsId: 'github-npm-pat', variable: 'NPM_TOKEN']]) {
+    			sh 'echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" >> ~/.npmrc'
+    		}
+
 
 	stage 'Build fabric8-analytics-vscode-extension'
 	sh "npm install"

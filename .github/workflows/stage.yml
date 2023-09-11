@@ -101,7 +101,7 @@ jobs:
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
               tag_name: '${{ steps.bump.outputs.version }}',
               name: '${{ steps.bump.outputs.version }}',
-              prerelease: true
+              prerelease: true,
               generate_release_notes: true
             })
             core.setOutput('upload_url', response.data.upload_url)

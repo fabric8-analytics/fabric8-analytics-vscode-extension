@@ -5,8 +5,8 @@
 export enum GlobalState {
   // to store the current version string to localStorage
   Version = 'fabric8Version',
-  // to store the UUID string to localStorage
-  // UUID = 'uuid'
+  // to store the UTM source for tracking purposes
+  UtmSource = 'vscode',
   // to store the current exhort environment mode
   ExhortDevMode = 'false'
 }

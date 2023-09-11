@@ -40,7 +40,8 @@
   },
   "activationEvents": [
     "workspaceContains:**/package.json",
-    "workspaceContains:**/pom.xml"
+    "workspaceContains:**/pom.xml",
+    "workspaceContains:**/go.mod"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -83,6 +84,11 @@
           "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == package.json",
           "group": "navigation"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == go.mod",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -93,6 +99,10 @@
         {
           "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == pom.xml"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromExplorer",
+          "when": "resourceFilename == go.mod"
         }
       ],
       "editor/context": [
@@ -103,6 +113,10 @@
         {
           "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == pom.xml"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromEditor",
+          "when": "resourceFilename == go.mod"
         }
       ],
       "commandPalette": [
@@ -168,7 +182,7 @@
           "description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",
           "scope": "window"
         },
-        "maven.executable.path": {
+        "mvn.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of mvn executable.",
@@ -178,6 +192,12 @@
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of npm executable.",
+          "scope": "window"
+        },
+        "go.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of go executable.",
           "scope": "window"
         }
       }
@@ -220,9 +240,9 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.7.1-ea.4",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.7.1-ea.10",
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-alpha.4",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.32",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

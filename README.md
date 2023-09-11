@@ -1,8 +1,8 @@
 # Red Hat Dependency Analytics
 
 [![Visual Studio Marketplace](https://vsmarketplacebadges.dev/version/redhat.fabric8-analytics.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.fabric8-analytics)
-![CI Build](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/Tests/badge.svg?branch=master)
-[![codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
+![CI](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/CI/badge.svg?branch=master)
+[![Codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
 Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you build your application.
 The Dependency Analytics extension uses the Snyk REST API to query [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
@@ -13,7 +13,7 @@ Snyk uses industry-leading security intelligence by pulling from many data sourc
 Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
 **IMPORTANT:**
-<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), and Node ecosystems (`npm`).
+<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`) and Golang (`go`) ecosystems.
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents
@@ -32,12 +32,13 @@ In future releases, Red Hat plans to support other programming languages.
 
 - For Maven projects, analyzing a `pom.xml` file, you must have the `mvn` binary in your system’s `PATH` environment.
 - For Node projects, analyzing a `package.json` file, you must have the `npm` binary in your system’s `PATH` environment.
+- For Golang projects, analyzing a `go.mod` file, you must have the `go` binary in your system’s `PATH` environment.
 
 <br >**IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
 You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
 You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
-Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for Maven or Node.
+Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for Maven, Node or Golang.
 
 **Procedure**
 
@@ -94,7 +95,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 ## Features
 
 - **Component analysis**
-	<br >Upon opening a manifest file, such as a `pom.xml` or `package.json` file, a scan starts the analysis process.
+	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json` or `go.mod` file, a scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
 	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
@@ -141,6 +142,14 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	}
 	```
 
+	If you wish to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	For example:
+	```
+	require (
+		golang.org/x/sys v1.6.7 // exhortignore
+	)
+	```
+
 - **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
 	For example, setting `test` in the `scope` tag within a `pom.xml` file:
@@ -175,6 +184,16 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 			"axios": "^0.19.0"
 		}
 	}
+	```
+
+	For example, setting `exclude` attributte in the `go.mod` file:
+
+	```
+	exclude golang.org/x/sys v1.6.7
+
+	exclude (
+		golang.org/x/sys v1.6.7
+	)
 	```
 
 - **Red Hat Dependency Analytics report** 

@@ -28,15 +28,21 @@ suite('Config module', () => {
     expect(apiConfig).to.equal('mockApiConfig');
   });
 
-  test('getMavenExecutable should get Maven executable', () => {
-    let mavenPath = Config.getMavenExecutable();
+  test('getMvnExecutable should get mvn executable', () => {
+    let mvnPath = Config.getMvnExecutable();
 
-    expect(mavenPath).equals('mvn');
+    expect(mvnPath).equals('mvn');
   });
 
-  test('getNodeExecutable should get Node executable', () => {
-    let nodePath = Config.getNodeExecutable();
+  test('getNpmExecutable should get npm executable', () => {
+    let npmPath = Config.getNpmExecutable();
 
-    expect(nodePath).equals('npm');
+    expect(npmPath).equals('npm');
+  });
+
+  test('getGoExecutable should get go executable', () => {
+    let goPath = Config.getGoExecutable();
+
+    expect(goPath).equals('go');
   });
 });

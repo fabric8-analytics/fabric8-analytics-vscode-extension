@@ -1,4 +1,6 @@
 # Change Log
+## 0.7.3 (Oct 10th 2023)
+- enhancement - Support for Golang. See [#645](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/645)
 ## 0.7.0 (Sep 11th 2023)
 - fixes - Improved overall performance and stability with the analysis report.
 - informational - Alpha release of the new Red Hat Dependency Analytics (RHDA) extension.

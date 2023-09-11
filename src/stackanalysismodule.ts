@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Config } from './config';
-import { snykURL, defaultRedhatDependencyAnalyticsReportFilePath, StatusMessages, Titles, GlobalState } from './constants';
+import { snykURL, defaultRedhatDependencyAnalyticsReportFilePath, StatusMessages, Titles } from './constants';
 import { multimanifestmodule } from './multimanifestmodule';
 import { stackAnalysisServices } from './stackAnalysisService';
 import { DependencyReportPanel } from './dependencyReportPanel';
@@ -34,10 +34,15 @@ export module stackanalysismodule {
           });
 
           // set up configuration options for the stack analysis request
-          const options = {};
-          options['EXHORT_MVN_PATH'] = Config.getMavenExecutable();
-          options['EXHORT_NPM_PATH'] = Config.getNodeExecutable();
-          options['EXHORT_DEV_MODE'] = GlobalState.ExhortDevMode;
+          const options = {
+            'EXHORT_MVN_PATH': Config.getMvnExecutable(),
+            'EXHORT_NPM_PATH': Config.getNpmExecutable(),
+            'EXHORT_GO_PATH': Config.getGoExecutable(),
+            'EXHORT_DEV_MODE': process.env.EXHORT_DEV_MODE,
+            'RHDA_TOKEN': process.env.TELEMETRY_ID,
+            'RHDA_SOURCE': process.env.UTM_SOURCE
+          };
+
           if (apiConfig.exhortSnykToken !== '') {
             options['EXHORT_SNYK_TOKEN'] = apiConfig.exhortSnykToken;
           }
@@ -94,13 +99,14 @@ export module stackanalysismodule {
       manifestFilePath = uri
         ? uri.fsPath
         : path.join(workspaceFolder.uri.fsPath, 'package.json');
+
+    } else if (ecosystem === 'golang') {
+      manifestFilePath = uri
+        ? uri.fsPath
+        : path.join(workspaceFolder.uri.fsPath, 'go.mod');
       // } else if (ecosystem === 'pypi') {
       //   manifestFilePath = uri
       //     ? uri.fsPath.split('requirements.txt')[0]
-      //     : workspaceFolder.uri.fsPath;
-      // } else if (ecosystem === 'golang') {
-      //   manifestFilePath = uri
-      //     ? uri.fsPath
       //     : workspaceFolder.uri.fsPath;
     }
     stackAnalysisLifeCycle(context, manifestFilePath);
@@ -110,7 +116,7 @@ export module stackanalysismodule {
     if (DependencyReportPanel.currentPanel) {
       DependencyReportPanel.currentPanel.doUpdatePanel('error');
     }
-    vscode.window.showErrorMessage(err);
+    vscode.window.showErrorMessage(err.message);
   };
 
   export const validateSnykToken = async () => {
@@ -120,7 +126,9 @@ export module stackanalysismodule {
       // set up configuration options for the token validation request
       let options = {
         'EXHORT_SNYK_TOKEN': apiConfig.exhortSnykToken,
-        'EXHORT_DEV_MODE': GlobalState.ExhortDevMode,
+        'EXHORT_DEV_MODE': process.env.EXHORT_DEV_MODE,
+        'RHDA_TOKEN': process.env.TELEMETRY_ID,
+        'RHDA_SOURCE': process.env.UTM_SOURCE
       };
 
       // execute stack analysis

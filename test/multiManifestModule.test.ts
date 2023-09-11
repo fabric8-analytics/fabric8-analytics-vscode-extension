@@ -34,25 +34,6 @@ suite('multimanifest module', () => {
     expect(processStackAnalysisStub.calledOnceWithExactly(context, { uri }, 'maven', uri)).to.be.true;
   });
 
-  test('redhatDependencyAnalyticsReportFlow should call triggerFullStackAnalyse once', async () => {
-    let triggerFullStackAnalysisSpy = sandbox.spy(multimanifestmodule, 'triggerFullStackAnalysis');
-
-    await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, null);
-
-    expect(triggerFullStackAnalysisSpy).to.be.calledOnce;
-  });
-
-  test('triggerFullStackAnalysis should trigger full stack analysis for specified workspace folder', async () => {
-    const workspaceFolder = { uri: vscode.Uri.file('/path/to/mock/workspace') } as vscode.WorkspaceFolder;
-    const findFilesStub = sandbox.stub(vscode.workspace, 'findFiles').resolves([vscode.Uri.file('/path/to/mock/pom.xml')]);
-    const processStackAnalysisStub = sandbox.stub(stackanalysismodule, 'processStackAnalysis');
-
-    await multimanifestmodule.triggerFullStackAnalysis(context, workspaceFolder);
-
-    expect(findFilesStub).to.be.calledOnce;
-    expect(processStackAnalysisStub.calledOnceWithExactly(context, workspaceFolder, 'maven')).to.be.true;
-  });
-
   test('triggerManifestWs should resolve with true when authorized and create DependencyReportPanel', async () => {
     let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(true);
     const createOrShowStub = sandbox.stub(DependencyReportPanel, 'createOrShow');

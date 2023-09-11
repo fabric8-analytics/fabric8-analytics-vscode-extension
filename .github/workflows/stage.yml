@@ -58,56 +58,50 @@ jobs:
     needs: build
 
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Configure git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Update package with new version
+        id: bump
+        run: |
+          echo "version=$(npm version ${{ vars.VERSION_BUMPING_TYPE }} --no-git-tag-version )" >> "$GITHUB_OUTPUT"          
+
       - name: Download vsix package artifact
         uses: actions/download-artifact@v3
         with:
           name: vsix
           path: ./vsix
 
-      - name: Check for existing early-access release
-        id: existing_release
-        uses: actions/github-script@v6
-        continue-on-error: true
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const repo_name = context.payload.repository.full_name
-            var response = await github.request('GET /repos/' + repo_name + '/releases/tags/early-access')
-            // if the request fails (ie 404) the next steps will not occur and the output will not be set
-            core.setOutput('id', response.data.id)
+      - name: Commit and push package modifications
+        run: |
+          git add package.json
+          git add package-lock.json
+          git commit -m "build: updated package with ${{ steps.bump.outputs.version }} [skip ci]"
+          git push          
 
-      - name: Delete early-access release if exists
-        if: ${{ steps.existing_release.outputs.id }}
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const repo_name = context.payload.repository.full_name
-            await github.request('DELETE /repos/' + repo_name + '/releases/' + ${{ steps.existing_release.outputs.id }})
+      - name: Create and push new tag
+        run: |
+          git tag ${{ steps.bump.outputs.version }} -m "${{ steps.bump.outputs.version }}"
+          git push origin ${{ steps.bump.outputs.version }}          
 
-      - name: Delete early-access tag if exists
-        continue-on-error: true
-        run: git push --delete origin early-access
-
-      # a little pause between deleting the release and creating a new one
-      # without it, the new release might be a weird release, i.e. a draft release
-      - name: Sleep 5
-        run: sleep 5
-
-      - name: Create new early-access release
+      - name: Create a release
         id: new_release
-        uses: actions/github-script@v6
+        uses: actions/github-script@v6.4.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const repo_name = context.payload.repository.full_name
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
-              tag_name: 'early-access',
-              name: 'Early-Access',
-              draft: false,
-              prerelease: true,
-              generate_release_notes: true,
-              make_latest: 'false'
+              tag_name: '${{ steps.bump.outputs.version }}',
+              name: '${{ steps.bump.outputs.version }}',
+              generate_release_notes: true
             })
             core.setOutput('upload_url', response.data.upload_url)
 

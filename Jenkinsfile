@@ -3,6 +3,8 @@
 def installBuildRequirements(){
 	def nodeHome = tool 'nodejs-14.19.1'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
+	sh 'echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" > ~/.npmrc'
+    sh 'echo "@fabric8-analytics:registry=https://npm.pkg.github.com" >> ~/.npmrc'
 	sh "npm install -g typescript"
 	sh "npm install -g --force @vscode/vsce"
 }

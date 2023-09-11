@@ -4,8 +4,7 @@ import * as sinonChai from 'sinon-chai';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 
-import { context } from './vscontext.mock';
-import { stackAnalysisServices } from '../src/stackAnalysisService';
+import * as stackAnalysisServices from '../src/stackAnalysisService';
 import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
 
 
@@ -27,7 +26,7 @@ suite('stacknalysis Services', () => {
   test('exhortApiStackAnalysis should return HTML', async () => {
     const pathToManifest = 'sampleMavenApp/pom.xml';
 
-    const result = await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context);
+    const result = await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options);
 
     // Compare the result with the mocked response
     const mockHtmlResponse = fs.readFileSync('sampleMavenApp/response.html', 'utf8');
@@ -37,7 +36,7 @@ suite('stacknalysis Services', () => {
   test('exhortApiStackAnalysis should return error', async () => {
     const pathToManifest = '/path/to/mock/pom.xml';
     sandbox.stub(exhort, 'stackAnalysis').rejects(new Error('Mock error message'));
-    expect(await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options, context)).to.throw(new Error('Mock error message'));
+    expect(await stackAnalysisServices.exhortApiStackAnalysis(pathToManifest, options)).to.throw(new Error('Mock error message'));
 
   });
 

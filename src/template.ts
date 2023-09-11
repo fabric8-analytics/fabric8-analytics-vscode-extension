@@ -3,21 +3,15 @@
 import { Titles } from './constants';
 
 /**
- * Commonly used commands
+ * Commonly used templates
  */
-export namespace Templates {
-    /**
-     * Template for loaders
-     */
-    export const LOADER_TEMPLATE = `<!DOCTYPE html>
+export const LOADER_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
         html, body {
-            width: 96%;
-            height: 90%;
             font-size: 16px;
         }
 
@@ -35,7 +29,7 @@ export namespace Templates {
             height: 2rem;
             background: rgba(230, 230, 230, 0.85);
             border-radius: 50%;
-            position: absolute;
+            position: sticky;
             left: calc(50% - 1rem);
             top: calc(42% - 1rem);
             box-shadow: 0 0 1rem rgba(255, 255, 255, 0.35);
@@ -249,27 +243,23 @@ export namespace Templates {
         </head>
     <body>
         <div id="loading_screen">
-        <div style="text-align: center;margin-top:130px;" id="caption">
-            <h1 style='color:#ffffff'>${Titles.EXT_TITLE}</h1>
-            <h2 style='color:#ffffff'>Analyzing application dependencies...</h2>
-            <br />
-            <br />
-            <br />
-        </div>
-        <div>
-            <div class="blob blob-0"></div>
-            <div class="blob blob-1"></div>
-            <div class="blob blob-2"></div>
-            <div class="blob blob-3"></div>
-            <div class="blob blob-4"></div>
-            <div class="blob blob-5"></div>
-        </div>
-        <br />
+            <div style="text-align: center;margin:130px 0px 90px;" id="caption">
+                <h1 style='color:#ffffff'>${Titles.EXT_TITLE}</h1>
+                <h2 style='color:#ffffff'>Analyzing application dependencies...</h2>
+            </div>
+            <div style="display: flex;">
+                <div class="blob blob-0"></div>
+                <div class="blob blob-1"></div>
+                <div class="blob blob-2"></div>
+                <div class="blob blob-3"></div>
+                <div class="blob blob-4"></div>
+                <div class="blob blob-5"></div>
+            </div>
         </div>
     </body>
     </html>`;
 
-    export const ERROR_TEMPLATE = `<!DOCTYPE html>
+export const ERROR_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>
     <meta charset="utf-8"/>
@@ -292,4 +282,3 @@ export namespace Templates {
     <p style='color:#000000;text-align: center;'>Unable to analyze your stack.</p>
     </div>
     </body></html>`;
-}

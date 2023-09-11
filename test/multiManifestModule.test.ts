@@ -4,9 +4,9 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
 import { context } from './vscontext.mock';
-import { multimanifestmodule } from '../src/multimanifestmodule';
-import { authextension } from '../src/authextension';
-import { stackanalysismodule } from '../src/stackanalysismodule';
+import * as multimanifestmodule from '../src/multimanifestmodule';
+import * as contextHandler from '../src/contextHandler';
+import * as stackanalysismodule from '../src/stackanalysismodule';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 
 const expect = chai.expect;
@@ -24,48 +24,43 @@ suite('multimanifest module', () => {
   });
 
   test('redhatDependencyAnalyticsReportFlow should process stack analysis for maven when given a pom.xml', async () => {
-    const uri = vscode.Uri.file('/path/to/pom.xml');
-    const getWorkspaceFolderStub = sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns({ uri } as vscode.WorkspaceFolder);
-    const processStackAnalysisStub = sandbox.stub(stackanalysismodule, 'processStackAnalysis');
+    const uri = vscode.Uri.file('path/to/pom.xml');
+    const stackAnalysisLifeCycleStub = sandbox.stub(stackanalysismodule, 'stackAnalysisLifeCycle');
 
     await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, uri);
 
-    expect(getWorkspaceFolderStub.calledOnce).to.be.true;
-    expect(processStackAnalysisStub.calledOnceWithExactly(context, { uri }, 'maven', uri)).to.be.true;
+    expect(stackAnalysisLifeCycleStub.calledOnceWithExactly(context, uri.fsPath)).to.be.true;
   });
 
-  test('redhatDependencyAnalyticsReportFlow should call triggerFullStackAnalyse once', async () => {
-    let triggerFullStackAnalysisSpy = sandbox.spy(multimanifestmodule, 'triggerFullStackAnalysis');
+  test('redhatDependencyAnalyticsReportFlow should show an information message for an unsupported file', async () => {
+    const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
 
-    await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, null);
+    const uri = vscode.Uri.file('path/to/unsupported.txt');
 
-    expect(triggerFullStackAnalysisSpy).to.be.calledOnce;
-  });
+    await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, uri);
 
-  test('triggerFullStackAnalysis should trigger full stack analysis for specified workspace folder', async () => {
-    const workspaceFolder = { uri: vscode.Uri.file('/path/to/mock/workspace') } as vscode.WorkspaceFolder;
-    const findFilesStub = sandbox.stub(vscode.workspace, 'findFiles').resolves([vscode.Uri.file('/path/to/mock/pom.xml')]);
-    const processStackAnalysisStub = sandbox.stub(stackanalysismodule, 'processStackAnalysis');
-
-    await multimanifestmodule.triggerFullStackAnalysis(context, workspaceFolder);
-
-    expect(findFilesStub).to.be.calledOnce;
-    expect(processStackAnalysisStub.calledOnceWithExactly(context, workspaceFolder, 'maven')).to.be.true;
+    expect(showInformationMessageSpy).to.be.calledWith('File /path/to/unsupported.txt is not supported!!');
   });
 
   test('triggerManifestWs should resolve with true when authorized and create DependencyReportPanel', async () => {
-    let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(true);
-    const createOrShowStub = sandbox.stub(DependencyReportPanel, 'createOrShow');
+    let loadContextDataStub = sandbox.stub(contextHandler, 'loadContextData').resolves(true);
+    const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
-    let result = await multimanifestmodule.triggerManifestWs(context);
+    try {
+      await multimanifestmodule.triggerManifestWs(context);
+      // If triggerManifestWs resolves successfully, the test will pass.
+    } catch (error) {
+      // If triggerManifestWs rejects, the test will fail with the error message.
+      expect.fail('Expected triggerManifestWs to resolve, but it rejected with an error: ' + error);
+    }
 
-    expect(result).equals(true);
-    expect(createOrShowStub.calledOnceWithExactly(context.extensionPath, null)).to.be.true;
-    expect(authorize_f8_analyticsStub).to.be.calledOnce;
+    expect(loadContextDataStub.calledOnce).to.be.true;
+    expect(createOrShowWebviewPanelStub.calledOnce).to.be.true;
   });
 
   test('triggerManifestWs should reject with "Unable to authenticate." when authorization fails', async () => {
-    const authStub = sandbox.stub(authextension, 'authorize_f8_analytics').rejects('Authentication failed');
+    let loadContextDataStub = sandbox.stub(contextHandler, 'loadContextData').resolves(false);
+    const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
     try {
       await multimanifestmodule.triggerManifestWs(context);
@@ -75,7 +70,8 @@ suite('multimanifest module', () => {
       expect(error).to.equal('Unable to authenticate.');
     }
 
-    expect(authStub.calledOnceWithExactly(context)).to.be.true;
+    expect(loadContextDataStub.calledOnce).to.be.true;
+    expect(createOrShowWebviewPanelStub.called).to.be.false;
   });
 
   test('triggerTokenValidation should call validateSnykToken when provider is "snyk"', async () => {
@@ -83,7 +79,15 @@ suite('multimanifest module', () => {
 
     await multimanifestmodule.triggerTokenValidation('snyk');
 
-    expect(validateSnykTokenStub).to.be.calledOnce;
+    expect(validateSnykTokenStub.calledOnce).to.be.true;
+  });
+
+  test('triggerTokenValidation should end when undefined provider is called', async () => {
+    const validateSnykTokenStub = sandbox.stub(stackanalysismodule, 'validateSnykToken');
+
+    await multimanifestmodule.triggerTokenValidation('undefined');
+
+    expect(validateSnykTokenStub.called).to.be.false;
   });
 
 });

@@ -13,17 +13,18 @@ export enum TelemetryActions {
 }
 
 let telemetryServiceObj: TelemetryService = null;
+
 async function telemetryService(context: vscode.ExtensionContext): Promise<TelemetryService> {
-  if(!telemetryServiceObj) {
-    const redhatService = await getRedHatService(context);  
+  if (!telemetryServiceObj) {
+    const redhatService = await getRedHatService(context);
     telemetryServiceObj = await redhatService.getTelemetryService();
   }
   return telemetryServiceObj;
 }
 
 export async function record(context: vscode.ExtensionContext, eventName: string, properties?: object) {
-  const telemetryServiceObj: TelemetryService = await telemetryService(context);
-  let event:TelemetryEvent={
+  telemetryServiceObj = await telemetryService(context);
+  const event: TelemetryEvent = {
     type: 'track',
     name: eventName,
     properties: properties
@@ -32,6 +33,6 @@ export async function record(context: vscode.ExtensionContext, eventName: string
 }
 
 export async function startUp(context: vscode.ExtensionContext) {
-  const telemetryServiceObj: TelemetryService = await telemetryService(context);
+  telemetryServiceObj = await telemetryService(context);
   await telemetryServiceObj?.sendStartupEvent();
 }

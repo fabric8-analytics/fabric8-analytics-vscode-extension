@@ -71,7 +71,7 @@ jobs:
       - name: Update package with new version
         id: bump
         run: |
-          echo "version=$(npm version ${{ vars.VERSION_BUMPING_TYPE }} --no-git-tag-version --preid alpha)" >> "$GITHUB_OUTPUT"          
+          echo "version=$(npm version ${{ vars.VERSION_BUMPING_TYPE }} --no-git-tag-version)" >> "$GITHUB_OUTPUT"          
 
       - name: Download vsix package artifact
         uses: actions/download-artifact@v3

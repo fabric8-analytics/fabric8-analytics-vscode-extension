@@ -2,9 +2,8 @@
 ## 0.7.0 (Sep 11th 2023)
 - fixes - Improved overall performance and stability with the analysis report.
 - informational - Alpha release of the new Red Hat Dependency Analytics (RHDA) extension.
-- informational - The deprecated CRDA GitHub Action CI tool has been disabled.
-- informational - Currently no support for Python and Go, but coming soon.
 - informational - Code base refactoring from CRDA to RHDA alpha. See [#636](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/636)
+- informational - Currently no support for Python and Go, but coming soon.
 ## 0.3.10 (May 22th 2022)
 - fixes - Extension breaks for Go version 1.17. See [#608](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/608)
 - fixes - Retry failed stack analysis requests. See [#609](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/609)

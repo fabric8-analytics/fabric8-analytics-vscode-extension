@@ -190,8 +190,6 @@ Red Hat offers integration with these Continuous Integration (CI) platforms:
 - [Red Hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
 - [Red Hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
 
-**IMPORTANT:** GitHub actions for RHDA has been temporarily disabled until further notice.
-
 ## Know more about the Red Hat Dependency Analytics platform
 
 The goal of this project is to significantly enhance a developer's experience by providing helpful vulnerability insights for their applications.

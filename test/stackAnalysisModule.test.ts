@@ -62,6 +62,19 @@ suite('stackanalysis module', () => {
     expect(stackAnalysisLifeCycleStub.calledOnceWithExactly(context, '/path/to/mockFolder/go.mod')).to.be.true;
   });
 
+  test('processStackAnalysis should call stackAnalysisLifeCycle for pypi', async () => {
+    const workspaceFolder = { uri: vscode.Uri.file('/path/to/mockFolder') } as vscode.WorkspaceFolder;
+    let stackAnalysisLifeCycleStub = sandbox.stub(stackanalysismodule, 'stackAnalysisLifeCycle');
+
+    await stackanalysismodule.processStackAnalysis(
+      context,
+      workspaceFolder,
+      'pypi'
+    );
+
+    expect(stackAnalysisLifeCycleStub.calledOnceWithExactly(context, '/path/to/mockFolder/requirements.txt')).to.be.true;
+  });
+
   test('stackAnalysisLifeCycle should call chain of promises', async () => {
     const withProgressSpy = sandbox.spy(vscode.window, 'withProgress');
     const triggerManifestWsStub = sandbox.stub(multimanifestmodule, 'triggerManifestWs');

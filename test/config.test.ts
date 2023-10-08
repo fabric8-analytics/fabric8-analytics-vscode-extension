@@ -45,4 +45,28 @@ suite('Config module', () => {
 
     expect(goPath).equals('go');
   });
+
+  test('getPython3Executable should get python3 executable', () => {
+    let python3Path = Config.getPython3Executable();
+
+    expect(python3Path).equals('python3');
+  });
+
+  test('getPip3Executable should get pip3 executable', () => {
+    let pip3Path = Config.getPip3Executable();
+
+    expect(pip3Path).equals('pip3');
+  });
+
+  test('getPythonExecutable should get python executable', () => {
+    let pythonPath = Config.getPythonExecutable();
+
+    expect(pythonPath).equals('python');
+  });
+
+  test('getPipExecutable should get pip executable', () => {
+    let pipPath = Config.getPipExecutable();
+
+    expect(pipPath).equals('pip');
+  });
 });

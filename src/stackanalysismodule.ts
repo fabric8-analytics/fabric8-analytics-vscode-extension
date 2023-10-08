@@ -38,6 +38,10 @@ export module stackanalysismodule {
             'EXHORT_MVN_PATH': Config.getMvnExecutable(),
             'EXHORT_NPM_PATH': Config.getNpmExecutable(),
             'EXHORT_GO_PATH': Config.getGoExecutable(),
+            'EXHORT_PYTHON3_PATH': Config.getPython3Executable(),
+            'EXHORT_PIP3_PATH': Config.getPip3Executable(),
+            'EXHORT_PYTHON_PATH': Config.getPythonExecutable(),
+            'EXHORT_PIP_PATH': Config.getPipExecutable(),
             'EXHORT_DEV_MODE': process.env.EXHORT_DEV_MODE,
             'RHDA_TOKEN': process.env.TELEMETRY_ID,
             'RHDA_SOURCE': process.env.UTM_SOURCE
@@ -104,10 +108,10 @@ export module stackanalysismodule {
       manifestFilePath = uri
         ? uri.fsPath
         : path.join(workspaceFolder.uri.fsPath, 'go.mod');
-      // } else if (ecosystem === 'pypi') {
-      //   manifestFilePath = uri
-      //     ? uri.fsPath.split('requirements.txt')[0]
-      //     : workspaceFolder.uri.fsPath;
+    } else if (ecosystem === 'pypi') {
+      manifestFilePath = uri
+        ? uri.fsPath
+        : path.join(workspaceFolder.uri.fsPath, 'requirements.txt');
     }
     stackAnalysisLifeCycle(context, manifestFilePath);
   };

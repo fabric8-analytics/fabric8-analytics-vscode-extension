@@ -32,6 +32,10 @@ suite('authextension Modules', () => {
     expect(process.env['MVN_EXECUTABLE']).equals('mvn');
     expect(process.env['NPM_EXECUTABLE']).equals('npm');
     expect(process.env['GO_EXECUTABLE']).equals('go');
+    expect(process.env['PYTHON3_EXECUTABLE']).equals('python3');
+    expect(process.env['PIP3_EXECUTABLE']).equals('pip3');
+    expect(process.env['PYTHON_EXECUTABLE']).equals('python');
+    expect(process.env['PIP_EXECUTABLE']).equals('pip');
     expect(process.env['EXHORT_DEV_MODE']).equals(GlobalState.ExhortDevMode);
   });
 });

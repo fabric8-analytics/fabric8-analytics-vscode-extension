@@ -42,17 +42,17 @@ export module multimanifestmodule {
         'golang',
         uri
       );
-      // } else if (
-      //   uri.fsPath &&
-      //   uri.fsPath.toLowerCase().indexOf('requirements.txt') !== -1
-      // ) {
-      //   workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-      //   stackanalysismodule.processStackAnalysis(
-      //     context,
-      //     workspaceFolder,
-      //     'pypi',
-      //     uri
-      //   );
+    } else if (
+      uri.fsPath &&
+      uri.fsPath.toLowerCase().indexOf('requirements.txt') !== -1
+    ) {
+      workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+      stackanalysismodule.processStackAnalysis(
+        context,
+        workspaceFolder,
+        'pypi',
+        uri
+      );
     } else {
       vscode.window.showInformationMessage(
         `File ${uri.fsPath} is not supported!!`

@@ -13,7 +13,7 @@ Snyk uses industry-leading security intelligence by pulling from many data sourc
 Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
 **IMPORTANT:**
-<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`) and Golang (`go`) ecosystems.
+<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go`) and Python (`pip`) ecosystems.
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents
@@ -33,6 +33,7 @@ In future releases, Red Hat plans to support other programming languages.
 - For Maven projects, analyzing a `pom.xml` file, you must have the `mvn` binary in your system’s `PATH` environment.
 - For Node projects, analyzing a `package.json` file, you must have the `npm` binary in your system’s `PATH` environment.
 - For Golang projects, analyzing a `go.mod` file, you must have the `go` binary in your system’s `PATH` environment.
+- For Python projects, analyzing a `requirements.txt` file, you must have the `python3/pip3` or `python/pip` binaries in your system’s `PATH` environment.
 
 <br >**IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
@@ -95,7 +96,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 ## Features
 
 - **Component analysis**
-	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json` or `go.mod` file, a scan starts the analysis process.
+	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
 	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
@@ -150,8 +151,15 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	)
 	```
 
+	If you wish to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	For example:
+	```
+	requests==2.28.1 # exhortignore
+	```
+
 - **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
+	
 	For example, setting `test` in the `scope` tag within a `pom.xml` file:
 
 	```xml
@@ -195,6 +203,8 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 		golang.org/x/sys v1.6.7
 	)
 	```
+
+	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there istead.
 
 - **Red Hat Dependency Analytics report** 
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.

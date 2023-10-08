@@ -9,21 +9,10 @@ const glob = require('glob');
 
 module.exports = (env, argv) => {
 
-  plugins: [
-    new webpack.ProvidePlugin({
-      WebSocket: 'ws',
-      fetch: ['node-fetch', 'default'],
-    }),
-  ];
-
   let entry = {
     'extension': './src/extension.ts',
     'server': './node_modules/@fabric8-analytics/fabric8-analytics-lsp-server/dist/server.js',
   };
-  // debug
-  if (argv.mode !== 'production') {
-    /* entry['test/all.test'] = glob.sync('./test/*.test.ts'); */
-  }
   /**@type {import('webpack').Configuration}*/
   const config = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/

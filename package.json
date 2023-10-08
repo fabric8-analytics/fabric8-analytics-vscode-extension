@@ -41,7 +41,8 @@
   "activationEvents": [
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",
-    "workspaceContains:**/go.mod"
+    "workspaceContains:**/go.mod",
+    "workspaceContains:**/requirements.txt"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -89,6 +90,11 @@
           "command": "fabric8.stackAnalysisFromPieBtn",
           "when": "resourceFilename == go.mod",
           "group": "navigation"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == requirements.txt",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -103,6 +109,10 @@
         {
           "command": "fabric8.stackAnalysisFromExplorer",
           "when": "resourceFilename == go.mod"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromExplorer",
+          "when": "resourceFilename == requirements.txt"
         }
       ],
       "editor/context": [
@@ -117,6 +127,10 @@
         {
           "command": "fabric8.stackAnalysisFromEditor",
           "when": "resourceFilename == go.mod"
+        },
+        {
+          "command": "fabric8.stackAnalysisFromEditor",
+          "when": "resourceFilename == requirements.txt"
         }
       ],
       "commandPalette": [
@@ -199,6 +213,30 @@
           "default": "",
           "description": "Specifies absolute path of go executable.",
           "scope": "window"
+        },
+        "python3.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of python3 executable, python3 takes precedence over python.",
+          "scope": "window"
+        },
+        "pip3.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip3 executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "python.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of python executable, python3 takes precedence over python.",
+          "scope": "window"
+        },
+        "pip.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
         }
       }
     }
@@ -240,11 +278,12 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.7.1-ea.10",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.7.1-ea.11",
     "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-ea.32",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
-    "vscode-languageclient": "^8.1.0"
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver-textdocument": "^1.0.8"
   }
 }

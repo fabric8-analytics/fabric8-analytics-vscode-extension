@@ -13,7 +13,7 @@ Snyk uses industry-leading security intelligence by pulling from many data sourc
 Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
 **IMPORTANT:**
-<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go`) and Python (`pip`) ecosystems.
+<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`) and Python (`pip`) ecosystems.
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents

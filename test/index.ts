@@ -2,8 +2,6 @@
 
 declare var global: any;
 
-/* tslint:disable no-require-imports */
-
 import * as fs from 'fs';
 import { glob } from 'glob'
 import * as paths from 'path';

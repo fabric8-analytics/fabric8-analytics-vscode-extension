@@ -15,6 +15,10 @@ export module authextension {
     process.env['MVN_EXECUTABLE'] = Config.getMvnExecutable();
     process.env['NPM_EXECUTABLE'] = Config.getNpmExecutable();
     process.env['GO_EXECUTABLE'] = Config.getGoExecutable();
+    process.env['PYTHON3_EXECUTABLE'] = Config.getPython3Executable();
+    process.env['PIP3_EXECUTABLE'] = Config.getPip3Executable();
+    process.env['PYTHON_EXECUTABLE'] = Config.getPythonExecutable();
+    process.env['PIP_EXECUTABLE'] = Config.getPipExecutable();
     process.env['EXHORT_DEV_MODE'] = GlobalState.ExhortDevMode;
   };
 

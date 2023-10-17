@@ -143,22 +143,24 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	}
 	```
 
-	If you wish to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	You can ignore vulnerabilities for a dependency in a `go.mod` file, but you must add `exhortignore` as a comment against the dependency in the manifest file.
 	For example:
-	```
+
+	```go
 	require (
 		golang.org/x/sys v1.6.7 // exhortignore
 	)
 	```
 
-	If you wish to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	You can ignore vulnerabilities for a dependency in a `requirements.txt` file, but you must add `exhortignore` as a comment against the dependency in the manifest file.
 	For example:
-	```
+
+	```python
 	requests==2.28.1 # exhortignore
 	```
 
 - **Excluding developmental or test dependencies**
-	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
+	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies get ignored.
 	
 	For example, setting `test` in the `scope` tag within a `pom.xml` file:
 
@@ -171,7 +173,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	</dependency>
 	```	
 
-	For example, setting `devDependencies` attributte in the `package.json` file:
+	For example, setting `devDependencies` attribute in the `package.json` file:
 	
 	```json
 	{
@@ -194,9 +196,9 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	}
 	```
 
-	For example, setting `exclude` attributte in the `go.mod` file:
+	For example, setting `exclude` attribute in the `go.mod` file:
 
-	```
+	```go
 	exclude golang.org/x/sys v1.6.7
 
 	exclude (
@@ -204,7 +206,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	)
 	```
 
-	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there istead.
+	You can create an alternative file to `requirements.txt`, for example, a `requirements-dev.txt` or a `requirements-test.txt` file where you can add the development or test dependencies there.
 
 - **Red Hat Dependency Analytics report** 
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.

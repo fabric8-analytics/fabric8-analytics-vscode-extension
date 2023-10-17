@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 
-import { Templates } from './template';
+import * as Templates from './template';
 import { Titles, defaultRedhatDependencyAnalyticsReportFilePath } from './constants';
-import { Config } from './config';
+import * as Config from './config';
 import * as fs from 'fs';
 
 const loaderTmpl = Templates.LOADER_TEMPLATE;
@@ -65,7 +65,7 @@ export class DependencyReportPanel {
 
     // Update the content based on view changes
     this._panel.onDidChangeViewState(
-      e => {
+      () => {
         if (this._panel.visible) {
           // this._update();
           this._updateWebView();
@@ -124,7 +124,7 @@ export class DependencyReportPanel {
 
   private _updateWebView() {
     this._panel.title = Titles.REPORT_TITLE;
-    let output = DependencyReportPanel.data;
+    const output = DependencyReportPanel.data;
     this._panel.webview.html = output && /<\s*html[^>]*>/i.test(output) ?
       output :
       loaderTmpl;

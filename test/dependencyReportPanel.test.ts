@@ -4,7 +4,7 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-import { Config } from '../src/config';
+import * as Config from '../src/config';
 import { context } from './vscontext.mock';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 

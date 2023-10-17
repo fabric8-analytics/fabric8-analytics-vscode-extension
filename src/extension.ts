@@ -10,10 +10,10 @@ import {
 
 import * as path from 'path';
 
-import { Commands } from './commands';
+import * as Commands from './commands';
 import { GlobalState, extensionQualifiedId, registrationURL, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
-import { multimanifestmodule } from './multimanifestmodule';
-import { authextension } from './authextension';
+import * as multimanifestmodule from './multimanifestmodule';
+import { authorize_f8_analytics } from './authextension';
 import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
@@ -22,11 +22,11 @@ import { record, startUp, TelemetryActions } from './redhatTelemetry';
 
 let lspClient: LanguageClient;
 
-export let outputChannelDep: any;
+export let outputChannelDep: DepOutputChannel;
 
 export function activate(context: vscode.ExtensionContext) {
   startUp(context);
-  let disposableFullStack = vscode.commands.registerCommand(
+  const disposableFullStack = vscode.commands.registerCommand(
     Commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
       try {
@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  let rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
+  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
     Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
     () => {
       const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
@@ -51,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  let disposableStackLogs = vscode.commands.registerCommand(
+  const disposableStackLogs = vscode.commands.registerCommand(
     Commands.TRIGGER_STACK_LOGS,
     () => {
       if (outputChannelDep) {
@@ -67,21 +67,21 @@ export function activate(context: vscode.ExtensionContext) {
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
 
-  authextension.authorize_f8_analytics(context).then(data => {
+  authorize_f8_analytics(context).then(data => {
     if (data) {
       // Create output channel
       outputChannelDep = initOutputChannel();
       // The server is implemented in node
-      let serverModule = context.asAbsolutePath(
+      const serverModule = context.asAbsolutePath(
         path.join('dist', 'server.js')
       );
       // The debug options for the server
       // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-      let debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+      const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
 
       // If the extension is launched in debug mode then the debug server options are used
       // Otherwise the run options are used
-      let serverOptions: ServerOptions = {
+      const serverOptions: ServerOptions = {
         run: { module: serverModule, transport: TransportKind.ipc },
         debug: {
           module: serverModule,
@@ -91,7 +91,7 @@ export function activate(context: vscode.ExtensionContext) {
       };
 
       // Options to control the language client
-      let clientOptions: LanguageClientOptions = {
+      const clientOptions: LanguageClientOptions = {
         // Register the server for xml, json documents
         documentSelector: [
           { scheme: 'file', language: 'json' },
@@ -177,7 +177,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 }
 
-export function initOutputChannel(): any {
+export function initOutputChannel(): DepOutputChannel {
   const outputChannelDepInit = new DepOutputChannel();
   return outputChannelDepInit;
 }
@@ -193,14 +193,14 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   // Retrive current and previous version string to show welcome message
   const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
   const version = packageJSON.version;
-  const previousVersion = context.globalState.get<string>(GlobalState.Version);
+  const previousVersion = context.globalState.get<string>(GlobalState.VERSION);
   // Nothing to display
   if (version === previousVersion) {
     return;
   }
 
   // store current version into localStorage
-  context.globalState.update(GlobalState.Version, version);
+  context.globalState.update(GlobalState.VERSION, version);
 
   const actions: vscode.MessageItem[] = [{ title: 'README' }, { title: 'Release Notes' }];
 

@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
-import { authextension } from '../src/authextension';
+import { setContextData } from '../src/authextension';
 import { GlobalState } from '../src/constants';
 
 const expect = chai.expect;
@@ -24,10 +24,10 @@ suite('authextension Modules', () => {
       exhortSnykToken: 'mockToken'
     };
 
-    authextension.setContextData(mockApiConfig);
+    setContextData(mockApiConfig);
 
     expect(process.env['PROVIDE_FULLSTACK_ACTION']).equals('true');
-    expect(process.env['UTM_SOURCE']).equals('vscode');
+    expect(process.env['UTM_SOURCE']).equals(GlobalState.UTM_SOURCE);
     expect(process.env['SNYK_TOKEN']).equals('mockToken');
     expect(process.env['MVN_EXECUTABLE']).equals('mvn');
     expect(process.env['NPM_EXECUTABLE']).equals('npm');
@@ -36,6 +36,6 @@ suite('authextension Modules', () => {
     expect(process.env['PIP3_EXECUTABLE']).equals('pip3');
     expect(process.env['PYTHON_EXECUTABLE']).equals('python');
     expect(process.env['PIP_EXECUTABLE']).equals('pip');
-    expect(process.env['EXHORT_DEV_MODE']).equals(GlobalState.ExhortDevMode);
+    expect(process.env['EXHORT_DEV_MODE']).equals(GlobalState.EXHORT_DEV_MODE);
   });
 });

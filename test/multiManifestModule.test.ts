@@ -4,9 +4,9 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
 import { context } from './vscontext.mock';
-import { multimanifestmodule } from '../src/multimanifestmodule';
-import { authextension } from '../src/authextension';
-import { stackanalysismodule } from '../src/stackanalysismodule';
+import * as multimanifestmodule from '../src/multimanifestmodule';
+import * as authextension from '../src/authextension';
+import * as stackanalysismodule from '../src/stackanalysismodule';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 
 const expect = chai.expect;
@@ -53,7 +53,7 @@ suite('multimanifest module', () => {
       // The test should not reach this point, so fail if it does
       expect.fail('Function should have rejected');
     } catch (error) {
-      expect(error).to.equal('Unable to authenticate.');
+      expect(error).to.equal('Unable to authenticate. Authentication failed');
     }
 
     expect(authStub.calledOnceWithExactly(context)).to.be.true;

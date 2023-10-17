@@ -4,10 +4,10 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
 import { context } from './vscontext.mock';
-import { stackanalysismodule } from '../src/stackanalysismodule';
-import { multimanifestmodule } from '../src/multimanifestmodule';
-import { stackAnalysisServices } from '../src/stackAnalysisService';
-import { Config } from '../src/config';
+import * as stackanalysismodule from '../src/stackanalysismodule';
+import * as multimanifestmodule from '../src/multimanifestmodule';
+import * as stackAnalysisServices from '../src/stackAnalysisService';
+import * as Config from '../src/config';
 
 const expect = chai.expect;
 chai.use(sinonChai);

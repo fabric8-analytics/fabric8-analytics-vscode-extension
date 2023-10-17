@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
 import * as vscode from 'vscode';
-import { Config } from '../src/config';
+import * as Config from '../src/config';
 
 const expect = chai.expect;
 chai.use(sinonChai);

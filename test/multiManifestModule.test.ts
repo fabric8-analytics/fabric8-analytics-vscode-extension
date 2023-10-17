@@ -4,9 +4,9 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
 import { context } from './vscontext.mock';
-import { multimanifestmodule } from '../src/multimanifestmodule';
-import { authextension } from '../src/authextension';
-import { stackanalysismodule } from '../src/stackanalysismodule';
+import * as multimanifestmodule from '../src/multimanifestmodule';
+import * as authextension from '../src/authextension';
+import * as stackanalysismodule from '../src/stackanalysismodule';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 
 const expect = chai.expect;
@@ -34,8 +34,8 @@ suite('multimanifest module', () => {
     expect(processStackAnalysisStub.calledOnceWithExactly(context, { uri }, 'maven', uri)).to.be.true;
   });
 
-  test('triggerManifestWs should resolve when authorized and create DependencyReportPanel', async () => {
-    let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(true);
+  test('triggerManifestWs should resolve with true when authorized and create DependencyReportPanel', async () => {
+    let initContextDataStub = sandbox.stub(authextension, 'initContextData').resolves(true);
     const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
     try {
@@ -46,12 +46,12 @@ suite('multimanifest module', () => {
       expect.fail('Expected triggerManifestWs to resolve, but it rejected with an error: ' + error);
     }
 
-    expect(authorize_f8_analyticsStub.calledOnce).to.be.true;
+    expect(initContextDataStub.calledOnce).to.be.true;
     expect(createOrShowWebviewPanelStub.calledOnce).to.be.true;
   });
 
   test('triggerManifestWs should reject with "Unable to authenticate." when authorization fails', async () => {
-    let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(false);
+    let initContextDataStub = sandbox.stub(authextension, 'initContextData').resolves(false);
     const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
     try {
@@ -62,7 +62,7 @@ suite('multimanifest module', () => {
       expect(error).to.equal('Unable to authenticate.');
     }
 
-    expect(authorize_f8_analyticsStub.calledOnce).to.be.true;
+    expect(initContextDataStub.calledOnce).to.be.true;
     expect(createOrShowWebviewPanelStub.called).to.be.false;
   });
 

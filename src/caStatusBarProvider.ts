@@ -3,7 +3,7 @@
 import { StatusBarItem, window, StatusBarAlignment, Uri } from 'vscode';
 import { Disposable } from 'vscode-languageclient';
 import { PromptText } from './constants';
-import { Commands } from './commands';
+import * as Commands from './commands';
 
 class CAStatusBarProvider implements Disposable {
     private statusBarItem: StatusBarItem;

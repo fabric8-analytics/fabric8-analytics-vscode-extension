@@ -5,7 +5,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 
 import { Config } from '../src/config';
-import { context } from './vscontext.mock';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 
 const expect = chai.expect;
@@ -25,7 +24,7 @@ suite('DependencyReportPanel Modules', () => {
   test('createOrShow should create a new panel', async () => {
     const createWebviewPanelSpy = sandbox.spy(vscode.window, 'createWebviewPanel');
 
-    DependencyReportPanel.createOrShow(context.extensionPath, null);
+    DependencyReportPanel.createOrShowWebviewPanel();
 
     expect(createWebviewPanelSpy).to.be.calledOnce;
     expect(DependencyReportPanel.currentPanel).to.exist;
@@ -34,7 +33,7 @@ suite('DependencyReportPanel Modules', () => {
   test('doUpdatePanel should render and update data', async () => {
     const data = '<html><body>Mock data</body></html>';
 
-    DependencyReportPanel.createOrShow(context.extensionPath, null);
+    DependencyReportPanel.createOrShowWebviewPanel();
     DependencyReportPanel.currentPanel.doUpdatePanel(data);
 
     expect(DependencyReportPanel.data).equals(data);
@@ -48,7 +47,7 @@ suite('DependencyReportPanel Modules', () => {
     const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
     const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');
 
-    DependencyReportPanel.createOrShow(context.extensionPath, data);
+    DependencyReportPanel.createOrShowWebviewPanel();
     DependencyReportPanel.currentPanel.dispose();
 
     expect(existsSyncStub).to.be.calledWith('mockFilePath');

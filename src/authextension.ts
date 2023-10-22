@@ -12,6 +12,7 @@ export module authextension {
     process.env['PROVIDE_FULLSTACK_ACTION'] = 'true';
     process.env['UTM_SOURCE'] = GlobalState.UtmSource;
     process.env['SNYK_TOKEN'] = apiConfig.exhortSnykToken;
+    process.env['MATCH_MANIFEST_VERSIONS'] = apiConfig.matchManifestVersions ? 'true' : 'false';
     process.env['MVN_EXECUTABLE'] = Config.getMvnExecutable();
     process.env['NPM_EXECUTABLE'] = Config.getNpmExecutable();
     process.env['GO_EXECUTABLE'] = Config.getGoExecutable();

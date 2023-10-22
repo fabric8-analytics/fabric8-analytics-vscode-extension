@@ -44,7 +44,8 @@ export module stackanalysismodule {
             'EXHORT_PIP_PATH': Config.getPipExecutable(),
             'EXHORT_DEV_MODE': process.env.EXHORT_DEV_MODE,
             'RHDA_TOKEN': process.env.TELEMETRY_ID,
-            'RHDA_SOURCE': process.env.UTM_SOURCE
+            'RHDA_SOURCE': process.env.UTM_SOURCE,
+            'MATCH_MANIFEST_VERSIONS': apiConfig.matchManifestVersions
           };
 
           if (apiConfig.exhortSnykToken !== '') {

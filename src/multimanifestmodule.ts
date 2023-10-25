@@ -61,16 +61,14 @@ export module multimanifestmodule {
   };
 
   export const triggerManifestWs = context => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       authextension
         .authorize_f8_analytics(context)
         .then(data => {
           if (data) {
-            DependencyReportPanel.createOrShow(context.extensionPath, null);
-            resolve(true);
+            DependencyReportPanel.createOrShowWebviewPanel();
+            resolve();
           }
-        })
-        .catch(err => {
           reject(`Unable to authenticate.`);
         });
     });

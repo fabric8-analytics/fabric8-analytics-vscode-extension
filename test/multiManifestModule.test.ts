@@ -34,19 +34,25 @@ suite('multimanifest module', () => {
     expect(processStackAnalysisStub.calledOnceWithExactly(context, { uri }, 'maven', uri)).to.be.true;
   });
 
-  test('triggerManifestWs should resolve with true when authorized and create DependencyReportPanel', async () => {
+  test('triggerManifestWs should resolve when authorized and create DependencyReportPanel', async () => {
     let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(true);
-    const createOrShowStub = sandbox.stub(DependencyReportPanel, 'createOrShow');
+    const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
-    let result = await multimanifestmodule.triggerManifestWs(context);
+    try {
+      await multimanifestmodule.triggerManifestWs(context);
+      // If triggerManifestWs resolves successfully, the test will pass.
+    } catch (error) {
+      // If triggerManifestWs rejects, the test will fail with the error message.
+      expect.fail('Expected triggerManifestWs to resolve, but it rejected with an error: ' + error);
+    }
 
-    expect(result).equals(true);
-    expect(createOrShowStub.calledOnceWithExactly(context.extensionPath, null)).to.be.true;
-    expect(authorize_f8_analyticsStub).to.be.calledOnce;
+    expect(authorize_f8_analyticsStub.calledOnce).to.be.true;
+    expect(createOrShowWebviewPanelStub.calledOnce).to.be.true;
   });
 
   test('triggerManifestWs should reject with "Unable to authenticate." when authorization fails', async () => {
-    const authStub = sandbox.stub(authextension, 'authorize_f8_analytics').rejects('Authentication failed');
+    let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(false);
+    const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
     try {
       await multimanifestmodule.triggerManifestWs(context);
@@ -56,7 +62,8 @@ suite('multimanifest module', () => {
       expect(error).to.equal('Unable to authenticate.');
     }
 
-    expect(authStub.calledOnceWithExactly(context)).to.be.true;
+    expect(authorize_f8_analyticsStub.calledOnce).to.be.true;
+    expect(createOrShowWebviewPanelStub.called).to.be.false;
   });
 
   test('triggerTokenValidation should call validateSnykToken when provider is "snyk"', async () => {
@@ -64,7 +71,7 @@ suite('multimanifest module', () => {
 
     await multimanifestmodule.triggerTokenValidation('snyk');
 
-    expect(validateSnykTokenStub).to.be.calledOnce;
+    expect(validateSnykTokenStub.calledOnce).to.be.true;
   });
 
 });

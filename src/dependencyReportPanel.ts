@@ -23,14 +23,20 @@ export class DependencyReportPanel {
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
 
-  public static createOrShow(extensionPath: string, data: any) {
+  public static createOrShowWebviewPanel() {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
-    DependencyReportPanel.data = data;
+    DependencyReportPanel.data = null;
+
     // If we already have a panel, show it.
     if (DependencyReportPanel.currentPanel) {
-      DependencyReportPanel.currentPanel._panel.reveal(column);
+      if (DependencyReportPanel.currentPanel._panel.visible) {
+        DependencyReportPanel.currentPanel._updateWebView();
+      } else {
+        DependencyReportPanel.currentPanel._panel.reveal(column);
+      }
+      DependencyReportPanel.currentPanel._disposeReport();
       return;
     }
 
@@ -98,6 +104,7 @@ export class DependencyReportPanel {
       DependencyReportPanel.data = data;
       this._panel.webview.html = data;
     } else {
+      DependencyReportPanel.data = errorTmpl;
       this._panel.webview.html = errorTmpl;
     }
   }
@@ -107,12 +114,7 @@ export class DependencyReportPanel {
 
     // Clean up our resources
     this._panel.dispose();
-    const apiConfig = Config.getApiConfig();
-    if (fs.existsSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath)) {
-      // Delete temp stackAnalysisReport file
-      fs.unlinkSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath);
-      console.log(`File ${apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath} has been deleted.`);
-    }
+    this._disposeReport();
     DependencyReportPanel.data = null;
     while (this._disposables.length) {
       const x = this._disposables.pop();
@@ -123,10 +125,20 @@ export class DependencyReportPanel {
   }
 
   private _updateWebView() {
-    this._panel.title = Titles.REPORT_TITLE;
     let output = DependencyReportPanel.data;
-    this._panel.webview.html = output && /<\s*html[^>]*>/i.test(output) ?
-      output :
-      loaderTmpl;
+    if (output && /<\s*html[^>]*>/i.test(output)) {
+      this._panel.webview.html = output;
+    } else {
+      this._panel.webview.html = loaderTmpl;
+    }
+  }
+
+  private _disposeReport() {
+    const apiConfig = Config.getApiConfig();
+    if (fs.existsSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath)) {
+      // Delete temp stackAnalysisReport file
+      fs.unlinkSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath);
+      console.log(`File ${apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath} has been deleted.`);
+    }
   }
 }

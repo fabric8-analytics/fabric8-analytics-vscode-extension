@@ -21,7 +21,8 @@ suite('authextension Modules', () => {
 
   test('setContextData should set environment variables', async () => {
     const mockApiConfig = {
-      exhortSnykToken: 'mockToken'
+      exhortSnykToken: 'mockToken',
+      matchManifestVersions: true,
     };
 
     authextension.setContextData(mockApiConfig);
@@ -29,6 +30,7 @@ suite('authextension Modules', () => {
     expect(process.env['PROVIDE_FULLSTACK_ACTION']).equals('true');
     expect(process.env['UTM_SOURCE']).equals('vscode');
     expect(process.env['SNYK_TOKEN']).equals('mockToken');
+    expect(process.env['MATCH_MANIFEST_VERSIONS']).equals('true');
     expect(process.env['MVN_EXECUTABLE']).equals('mvn');
     expect(process.env['NPM_EXECUTABLE']).equals('npm');
     expect(process.env['GO_EXECUTABLE']).equals('go');

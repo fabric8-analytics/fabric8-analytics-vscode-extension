@@ -4,9 +4,9 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
 import { context } from './vscontext.mock';
-import { multimanifestmodule } from '../src/multimanifestmodule';
-import { authextension } from '../src/authextension';
-import { stackanalysismodule } from '../src/stackanalysismodule';
+import * as multimanifestmodule from '../src/multimanifestmodule';
+import * as contextHandler from '../src/contextHandler';
+import * as stackanalysismodule from '../src/stackanalysismodule';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 
 const expect = chai.expect;
@@ -24,18 +24,26 @@ suite('multimanifest module', () => {
   });
 
   test('redhatDependencyAnalyticsReportFlow should process stack analysis for maven when given a pom.xml', async () => {
-    const uri = vscode.Uri.file('/path/to/pom.xml');
-    const getWorkspaceFolderStub = sandbox.stub(vscode.workspace, 'getWorkspaceFolder').returns({ uri } as vscode.WorkspaceFolder);
-    const processStackAnalysisStub = sandbox.stub(stackanalysismodule, 'processStackAnalysis');
+    const uri = vscode.Uri.file('path/to/pom.xml');
+    const stackAnalysisLifeCycleStub = sandbox.stub(stackanalysismodule, 'stackAnalysisLifeCycle');
 
     await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, uri);
 
-    expect(getWorkspaceFolderStub.calledOnce).to.be.true;
-    expect(processStackAnalysisStub.calledOnceWithExactly(context, { uri }, 'maven', uri)).to.be.true;
+    expect(stackAnalysisLifeCycleStub.calledOnceWithExactly(context, uri.fsPath)).to.be.true;
   });
 
-  test('triggerManifestWs should resolve when authorized and create DependencyReportPanel', async () => {
-    let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(true);
+  test('redhatDependencyAnalyticsReportFlow should show an information message for an unsupported file', async () => {
+    const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
+
+    const uri = vscode.Uri.file('path/to/unsupported.txt');
+
+    await multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, uri);
+
+    expect(showInformationMessageSpy).to.be.calledWith('File /path/to/unsupported.txt is not supported!!');
+  });
+
+  test('triggerManifestWs should resolve with true when authorized and create DependencyReportPanel', async () => {
+    let loadContextDataStub = sandbox.stub(contextHandler, 'loadContextData').resolves(true);
     const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
     try {
@@ -46,12 +54,12 @@ suite('multimanifest module', () => {
       expect.fail('Expected triggerManifestWs to resolve, but it rejected with an error: ' + error);
     }
 
-    expect(authorize_f8_analyticsStub.calledOnce).to.be.true;
+    expect(loadContextDataStub.calledOnce).to.be.true;
     expect(createOrShowWebviewPanelStub.calledOnce).to.be.true;
   });
 
   test('triggerManifestWs should reject with "Unable to authenticate." when authorization fails', async () => {
-    let authorize_f8_analyticsStub = sandbox.stub(authextension, 'authorize_f8_analytics').resolves(false);
+    let loadContextDataStub = sandbox.stub(contextHandler, 'loadContextData').resolves(false);
     const createOrShowWebviewPanelStub = sandbox.stub(DependencyReportPanel, 'createOrShowWebviewPanel');
 
     try {
@@ -62,7 +70,7 @@ suite('multimanifest module', () => {
       expect(error).to.equal('Unable to authenticate.');
     }
 
-    expect(authorize_f8_analyticsStub.calledOnce).to.be.true;
+    expect(loadContextDataStub.calledOnce).to.be.true;
     expect(createOrShowWebviewPanelStub.called).to.be.false;
   });
 
@@ -72,6 +80,14 @@ suite('multimanifest module', () => {
     await multimanifestmodule.triggerTokenValidation('snyk');
 
     expect(validateSnykTokenStub.calledOnce).to.be.true;
+  });
+
+  test('triggerTokenValidation should end when undefined provider is called', async () => {
+    const validateSnykTokenStub = sandbox.stub(stackanalysismodule, 'validateSnykToken');
+
+    await multimanifestmodule.triggerTokenValidation('undefined');
+
+    expect(validateSnykTokenStub.called).to.be.false;
   });
 
 });

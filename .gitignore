@@ -1,19 +1,23 @@
+# Dependency directories
+**/node_modules
+**/package-lock.json
+
+# test data directories
+test-workspace/
+
+# nyc test coverage directories
+coverage/
+.nyc_output/
+.vscode-test/
+
+# npm  config file
+.npmrc
+
+#others
 dist
 out
-node_modules
 ca-lsp-server.tar
 ca-lsp-server/
-*.vsix
-.vscode-test/
 .DS_Store
 *.tar.*
-coverage/
 .history
-target/
-coverage/
-.history
-target/
-test/resources/**/package-lock.json
-test/resources/**/node_modules
-.npmrc
-test-workspace/

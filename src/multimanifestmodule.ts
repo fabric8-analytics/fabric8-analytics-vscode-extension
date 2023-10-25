@@ -1,91 +1,51 @@
 'use strict';
 
 import * as vscode from 'vscode';
+import * as path from 'path';
 
-import { stackanalysismodule } from './stackanalysismodule';
-import { authextension } from './authextension';
+import * as stackanalysismodule from './stackanalysismodule';
+import { loadContextData } from './contextHandler';
 import { DependencyReportPanel } from './dependencyReportPanel';
 
-export module multimanifestmodule {
-  export const redhatDependencyAnalyticsReportFlow = async (context, uri) => {
-    let workspaceFolder: vscode.WorkspaceFolder;
-    if (
-      uri.fsPath &&
-      uri.fsPath.toLowerCase().indexOf('pom.xml') !== -1
-    ) {
-      workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-      stackanalysismodule.processStackAnalysis(
-        context,
-        workspaceFolder,
-        'maven',
-        uri
-      );
-    } else if (
-      uri.fsPath &&
-      uri.fsPath.toLowerCase().indexOf('package.json') !== -1
-    ) {
-      workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-      stackanalysismodule.processStackAnalysis(
-        context,
-        workspaceFolder,
-        'npm',
-        uri
-      );
-    } else if (
-      uri.fsPath &&
-      uri.fsPath.toLowerCase().indexOf('go.mod') !== -1
-    ) {
-      workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-      stackanalysismodule.processStackAnalysis(
-        context,
-        workspaceFolder,
-        'golang',
-        uri
-      );
-    } else if (
-      uri.fsPath &&
-      uri.fsPath.toLowerCase().indexOf('requirements.txt') !== -1
-    ) {
-      workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-      stackanalysismodule.processStackAnalysis(
-        context,
-        workspaceFolder,
-        'pypi',
-        uri
-      );
-    } else {
-      vscode.window.showInformationMessage(
-        `File ${uri.fsPath} is not supported!!`
-      );
-    }
-  };
+export const redhatDependencyAnalyticsReportFlow = async (context, uri) => {
+  const supportedFiles = ['pom.xml', 'package.json', 'go.mod', 'requirements.txt'];
+  if (
+    uri.fsPath && supportedFiles.includes(path.basename(uri.fsPath))
+  ) {
+    stackanalysismodule.stackAnalysisLifeCycle(
+      context,
+      uri.fsPath
+    );
+  } else {
+    vscode.window.showInformationMessage(
+      `File ${uri.fsPath || ''} is not supported!!`
+    );
+  }
+};
 
-  export const triggerManifestWs = context => {
-    return new Promise<void>((resolve, reject) => {
-      authextension
-        .authorize_f8_analytics(context)
-        .then(data => {
-          if (data) {
-            DependencyReportPanel.createOrShowWebviewPanel();
-            resolve();
-          }
-          reject(`Unable to authenticate.`);
-        });
-    });
-  };
+export const triggerManifestWs = context => {
+  return new Promise<void>((resolve, reject) => {
+    loadContextData(context)
+      .then(status => {
+        if (status) {
+          DependencyReportPanel.createOrShowWebviewPanel();
+          resolve();
+        }
+        reject(`Unable to authenticate.`);
+      });
+  });
+};
 
-  export const triggerTokenValidation = async (provider) => {
-    switch (provider) {
-      case 'snyk':
-        stackanalysismodule.validateSnykToken();
-        break;
-      case 'tidelift':
-        // add Tidelift token validation here...
-        break;
-      case 'sonatype':
-        // add Sonatype token validation here...
-        break;
-    }
-  };
-
-}
+export const triggerTokenValidation = async (provider) => {
+  switch (provider) {
+    case 'snyk':
+      stackanalysismodule.validateSnykToken();
+      break;
+    // case 'tidelift':
+    //   add Tidelift token validation here...
+    //   break;
+    // case 'sonatype':
+    //   add Sonatype token validation here...
+    //   break;
+  }
+};

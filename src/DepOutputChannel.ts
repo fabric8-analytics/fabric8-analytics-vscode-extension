@@ -5,10 +5,8 @@ import { Titles } from './constants';
 
 export class DepOutputChannel {
   outputChannel: vscode.OutputChannel;
-  constructor(channelName = Titles.EXT_TITLE) {
-    if (!this.outputChannel) {
-      this.outputChannel = vscode.window.createOutputChannel(channelName);
-    }
+  constructor(channelName: string = Titles.EXT_TITLE) {
+    this.outputChannel = vscode.window.createOutputChannel(channelName);
   }
 
   getOutputChannel(): vscode.OutputChannel {

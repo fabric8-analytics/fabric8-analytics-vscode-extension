@@ -1,13 +1,21 @@
 'use strict';
 
-class CANotification {
+interface CANotificationData {
+  data: string;
+  done: boolean;
+  uri: string;
+  diagCount: number;
+  vulnCount: number;
+}
 
+class CANotification {
   private data: string;
   private done: boolean;
   private uri: string;
   private diagCount: number;
   private vulnCount: number;
-  constructor(respData: any) {
+
+  constructor(respData: CANotificationData) {
     this.data = respData.data;
     this.done = respData.done === true;
     this.uri = respData.uri;

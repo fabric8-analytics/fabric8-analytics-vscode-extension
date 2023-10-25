@@ -4,8 +4,10 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-import { Config } from '../src/config';
+import * as Config from '../src/config';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
+import * as Templates from '../src/template';
+import { defaultRedhatDependencyAnalyticsReportFilePath } from '../src/constants';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -21,37 +23,91 @@ suite('DependencyReportPanel Modules', () => {
     sandbox.restore();
   });
 
-  test('createOrShow should create a new panel', async () => {
+  test('createOrShowWebviewPanel should create a new panel', async () => {
     const createWebviewPanelSpy = sandbox.spy(vscode.window, 'createWebviewPanel');
+
+    expect(DependencyReportPanel.currentPanel).to.be.undefined;
 
     DependencyReportPanel.createOrShowWebviewPanel();
 
     expect(createWebviewPanelSpy).to.be.calledOnce;
     expect(DependencyReportPanel.currentPanel).to.exist;
+    expect(DependencyReportPanel.data).to.equal(null);
+    expect(DependencyReportPanel.currentPanel.getWebviewPanelHtml()).to.equal(Templates.LOADER_TEMPLATE);
   });
 
-  test('doUpdatePanel should render and update data', async () => {
-    const data = '<html><body>Mock data</body></html>';
+  test('createOrShowWebviewPanel should update webview if panel exists and is visible', async () => {
+    const createWebviewPanelSpy = sandbox.spy(vscode.window, 'createWebviewPanel');
+    const getPanelVisibilitySpy = sandbox.spy(DependencyReportPanel.currentPanel, 'getPanelVisibility');
+
+    expect(DependencyReportPanel.currentPanel).to.exist;
 
     DependencyReportPanel.createOrShowWebviewPanel();
+
+    expect(getPanelVisibilitySpy.calledOnce).to.be.true;
+    expect(DependencyReportPanel.currentPanel.getPanelVisibility()).to.be.true;
+    expect(createWebviewPanelSpy.called).to.be.false;
+  });
+
+  test('createOrShowWebviewPanel should reveal webview if panel exists and is not visible', async () => {
+    const createWebviewPanelSpy = sandbox.spy(vscode.window, 'createWebviewPanel');
+    const getPanelVisibilityStub = sandbox.stub(DependencyReportPanel.currentPanel, 'getPanelVisibility').returns(false);
+
+    expect(DependencyReportPanel.currentPanel).to.exist;
+
+    DependencyReportPanel.createOrShowWebviewPanel();
+
+    expect(getPanelVisibilityStub.calledOnce).to.be.true;
+    expect(DependencyReportPanel.currentPanel.getPanelVisibility()).to.be.false;
+    expect(createWebviewPanelSpy.called).to.be.false;
+  });
+
+  test('doUpdatePanel should update data and render HTML', async () => {
+    const data = '<html><body>Mock data</body></html>';
+
     DependencyReportPanel.currentPanel.doUpdatePanel(data);
 
     expect(DependencyReportPanel.data).equals(data);
+    expect(DependencyReportPanel.currentPanel.getWebviewPanelHtml()).to.equal(data);
   });
 
-  test('dispose current panel', async () => {
-    const data = '<html><body>Mock data</body></html>';
+  test('doUpdatePanel should update data and render error', async () => {
+    const data = 'error';
+
+    DependencyReportPanel.currentPanel.doUpdatePanel(data);
+
+    expect(DependencyReportPanel.data).equals(Templates.ERROR_TEMPLATE);
+    expect(DependencyReportPanel.currentPanel.getWebviewPanelHtml()).to.equal(Templates.ERROR_TEMPLATE);
+  });
+
+  test('dispose should dispose of current panel with RHDA report path setting', async () => {
     sandbox.stub(Config, 'getApiConfig').returns({
       redHatDependencyAnalyticsReportFilePath: 'mockFilePath',
     });
     const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
     const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');
 
-    DependencyReportPanel.createOrShowWebviewPanel();
     DependencyReportPanel.currentPanel.dispose();
 
     expect(existsSyncStub).to.be.calledWith('mockFilePath');
     expect(unlinkSyncStub).to.be.calledWith('mockFilePath');
+    expect(DependencyReportPanel.data).equals(null);
+    expect(DependencyReportPanel.currentPanel).equals(undefined);
+  });
+
+  test('dispose should dispose of current panel with default RHDA report path', async () => {
+    sandbox.stub(Config, 'getApiConfig').returns({
+      redHatDependencyAnalyticsReportFilePath: '',
+    });
+    const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
+    const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');
+
+    DependencyReportPanel.createOrShowWebviewPanel();
+
+    DependencyReportPanel.currentPanel.dispose();
+
+    expect(existsSyncStub).to.be.calledWith(defaultRedhatDependencyAnalyticsReportFilePath);
+    expect(unlinkSyncStub).to.be.calledWith(defaultRedhatDependencyAnalyticsReportFilePath);
     expect(DependencyReportPanel.data).equals(null);
     expect(DependencyReportPanel.currentPanel).equals(undefined);
   });

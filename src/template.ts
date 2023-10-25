@@ -3,13 +3,9 @@
 import { Titles } from './constants';
 
 /**
- * Commonly used commands
+ * Commonly used templates
  */
-export namespace Templates {
-    /**
-     * Template for loaders
-     */
-    export const LOADER_TEMPLATE = `<!DOCTYPE html>
+export const LOADER_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -263,7 +259,7 @@ export namespace Templates {
     </body>
     </html>`;
 
-    export const ERROR_TEMPLATE = `<!DOCTYPE html>
+export const ERROR_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>
     <meta charset="utf-8"/>
@@ -286,4 +282,3 @@ export namespace Templates {
     <p style='color:#000000;text-align: center;'>Unable to analyze your stack.</p>
     </div>
     </body></html>`;
-}

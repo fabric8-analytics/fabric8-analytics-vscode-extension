@@ -10,10 +10,10 @@ import {
 
 import * as path from 'path';
 
-import { Commands } from './commands';
+import * as commands from './commands';
 import { GlobalState, extensionQualifiedId, registrationURL, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
-import { multimanifestmodule } from './multimanifestmodule';
-import { authextension } from './authextension';
+import * as multimanifestmodule from './multimanifestmodule';
+import { loadContextData } from './contextHandler';
 import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
@@ -22,12 +22,12 @@ import { record, startUp, TelemetryActions } from './redhatTelemetry';
 
 let lspClient: LanguageClient;
 
-export let outputChannelDep: any;
+export let outputChannelDep: DepOutputChannel;
 
 export function activate(context: vscode.ExtensionContext) {
   startUp(context);
-  let disposableFullStack = vscode.commands.registerCommand(
-    Commands.TRIGGER_FULL_STACK_ANALYSIS,
+  const disposableFullStack = vscode.commands.registerCommand(
+    commands.TRIGGER_FULL_STACK_ANALYSIS,
     (uri: vscode.Uri) => {
       try {
         // uri will be null in case the user has used the context menu/file explorer
@@ -35,13 +35,13 @@ export function activate(context: vscode.ExtensionContext) {
         multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, fileUri);
       } catch (error) {
         // Throw a custom error message when the command execution fails
-        throw new Error(`Running the contributed command: '${Commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`);
+        throw new Error(`Running the contributed command: '${commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`);
       }
     }
   );
 
-  let rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
-    Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
+  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
+    commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
     () => {
       const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
                     make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
@@ -51,8 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  let disposableStackLogs = vscode.commands.registerCommand(
-    Commands.TRIGGER_STACK_LOGS,
+  const disposableStackLogs = vscode.commands.registerCommand(
+    commands.TRIGGER_STACK_LOGS,
     () => {
       if (outputChannelDep) {
         outputChannelDep.showOutputChannel();
@@ -67,21 +67,21 @@ export function activate(context: vscode.ExtensionContext) {
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
 
-  authextension.authorize_f8_analytics(context).then(data => {
-    if (data) {
+  loadContextData(context).then(status => {
+    if (status) {
       // Create output channel
       outputChannelDep = initOutputChannel();
       // The server is implemented in node
-      let serverModule = context.asAbsolutePath(
+      const serverModule = context.asAbsolutePath(
         path.join('dist', 'server.js')
       );
       // The debug options for the server
       // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-      let debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+      const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
 
       // If the extension is launched in debug mode then the debug server options are used
       // Otherwise the run options are used
-      let serverOptions: ServerOptions = {
+      const serverOptions: ServerOptions = {
         run: { module: serverModule, transport: TransportKind.ipc },
         debug: {
           module: serverModule,
@@ -91,7 +91,7 @@ export function activate(context: vscode.ExtensionContext) {
       };
 
       // Options to control the language client
-      let clientOptions: LanguageClientOptions = {
+      const clientOptions: LanguageClientOptions = {
         // Register the server for xml, json documents
         documentSelector: [
           { scheme: 'file', language: 'json' },
@@ -108,8 +108,8 @@ export function activate(context: vscode.ExtensionContext) {
           fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc'),
         },
         initializationOptions: {
-          triggerFullStackAnalysis: Commands.TRIGGER_FULL_STACK_ANALYSIS,
-          triggerRHRepositoryRecommendationNotification: Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION
+          triggerFullStackAnalysis: commands.TRIGGER_FULL_STACK_ANALYSIS,
+          triggerRHRepositoryRecommendationNotification: commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION
         },
       };
 
@@ -130,7 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
         const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, PromptText.FULL_STACK_PROMPT_TEXT);
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
-            vscode.commands.executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS);
+            vscode.commands.executeCommand(commands.TRIGGER_FULL_STACK_ANALYSIS);
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
           }
           else {
@@ -177,7 +177,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 }
 
-export function initOutputChannel(): any {
+export function initOutputChannel(): DepOutputChannel {
   const outputChannelDepInit = new DepOutputChannel();
   return outputChannelDepInit;
 }
@@ -193,14 +193,14 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   // Retrive current and previous version string to show welcome message
   const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
   const version = packageJSON.version;
-  const previousVersion = context.globalState.get<string>(GlobalState.Version);
+  const previousVersion = context.globalState.get<string>(GlobalState.VERSION);
   // Nothing to display
   if (version === previousVersion) {
     return;
   }
 
   // store current version into localStorage
-  context.globalState.update(GlobalState.Version, version);
+  context.globalState.update(GlobalState.VERSION, version);
 
   const actions: vscode.MessageItem[] = [{ title: 'README' }, { title: 'Release Notes' }];
 
@@ -235,10 +235,10 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   };
 
   const stackAnalysisCommands = [
-    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, TelemetryActions.vulnerabilityReportEditor),
-    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, TelemetryActions.vulnerabilityReportExplorer),
-    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, TelemetryActions.vulnerabilityReportPieBtn),
-    registerCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, TelemetryActions.vulnerabilityReportStatusBar),
+    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, TelemetryActions.vulnerabilityReportEditor),
+    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, TelemetryActions.vulnerabilityReportExplorer),
+    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, TelemetryActions.vulnerabilityReportPieBtn),
+    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, TelemetryActions.vulnerabilityReportStatusBar),
   ];
 
   context.subscriptions.push(...stackAnalysisCommands);

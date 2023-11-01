@@ -17,14 +17,17 @@ Dependency Analytics only accesses your manifest files to analyze your applicati
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents
-- [Quick start](#quick-start)
-- [Configuration](#configuration)
-- [Features](#features)
-- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
-- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)
-- [Data and telemetry](#data-and-telemetry)
-- [Support, feedback \& questions](#support-feedback--questions)
-- [License](#license)
+- [Red Hat Dependency Analytics](#red-hat-dependency-analytics)
+				- [Table of Contents](#table-of-contents)
+	- [Quick start](#quick-start)
+	- [Configuration](#configuration)
+		- [Configurable parameters](#configurable-parameters)
+	- [Features](#features)
+	- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
+	- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)
+	- [Data and telemetry](#data-and-telemetry)
+	- [Support, feedback \& questions](#support-feedback--questions)
+	- [License](#license)
 
 ## Quick start
 
@@ -207,6 +210,20 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	```
 
 	You can create an alternative file to `requirements.txt`, for example, a `requirements-dev.txt` or a `requirements-test.txt` file where you can add the development or test dependencies there.
+
+- **Python and Go package manager behavior**
+    <br >When a user requests a Python or a Go package analysis, Red Hat Dependency Analytics performs the analysis by looking at the version tags from those environments, and not from the manifest files of those environments.
+	This can result in the user receiving information that does not match their intended request.
+	Because of this behavior, Dependency Analytics has a new configurable setting.
+	By default, the `MATCH_MANIFEST_VERSIONS` setting restricts Dependency Analytics from doing an analysis on package versions that do not match the versions defined by the manifest files.
+	When Dependency Analytics finds a package version mis-match, an alert message asks the user to switch this setting.
+	If the user decides to disable this restriction, Dependency Analytics performs the analysis on versions given by the package manager only.
+	This setting applies to Python and Go environments.
+
+    An alternative workaround exists for Python environments only.
+	The user can start Visual Studio Code with the [`EXHORT_PYTHON_VIRTUAL_ENV`](https://github.com/RHEcosystemAppEng/exhort-javascript-api#:~:text=EXHORT_PYTHON_VIRTUAL_ENV) variable set to `true`.
+	Doing this allows Dependency Analytics to install Python packages into a virtual environment to perform the analysis.
+	The benefit is having a clean Python environment not influenced by earlier installations, but the downside is a significantly slower analysis process.
 
 - **Red Hat Dependency Analytics report** 
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.

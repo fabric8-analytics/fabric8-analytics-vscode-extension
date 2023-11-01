@@ -5,26 +5,29 @@
 [![Codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
 Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you build your application.
-The Dependency Analytics extension uses the Snyk REST API to query [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
+The Red Hat Dependency Analytics extension uses the Snyk REST API to query [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
 Snyk uses industry-leading security intelligence by pulling from many data sources to give you exact vulnerability information.
 
 **NOTE:**
 <br >The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
-Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
+Red Hat Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
 **IMPORTANT:**
-<br >Currently, Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`) and Python (`pip`) ecosystems.
+<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`) and Python (`pip`) ecosystems.
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents
-- [Quick start](#quick-start)
-- [Configuration](#configuration)
-- [Features](#features)
-- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
-- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)
-- [Data and telemetry](#data-and-telemetry)
-- [Support, feedback \& questions](#support-feedback--questions)
-- [License](#license)
+- [Red Hat Dependency Analytics](#red-hat-dependency-analytics)
+				- [Table of Contents](#table-of-contents)
+	- [Quick start](#quick-start)
+	- [Configuration](#configuration)
+		- [Configurable parameters](#configurable-parameters)
+	- [Features](#features)
+	- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
+	- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)
+	- [Data and telemetry](#data-and-telemetry)
+	- [Support, feedback \& questions](#support-feedback--questions)
+	- [License](#license)
 
 ## Quick start
 
@@ -53,7 +56,7 @@ Click the **Workspace** tab, search for the word _executable_, and specify the a
    - Open a manifest file, and click the **pie chart** icon ![ Pie chart icon ](icon/report-icon.png).
    - Right click on a manifest file in the **Explorer** view, and click **Red Hat Dependency Analytics Report...**.
    - From the vulnerability pop-up alert message, click **Open detailed vulnerability report**.
-7. (OPTIONAL) You can link your Snyk account to Dependency Analytics by doing the following:
+7. (OPTIONAL) You can link your Snyk account to Red Hat Dependency Analytics by doing the following:
    1. Log into your [Snyk account](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
    2. On the account landing page, you can find your Snyk Token, copy the token.
    3. Open the Red Hat Dependency Analytics extension settings.
@@ -90,7 +93,7 @@ If you need a new Snyk token, you can generate a new token [here](https://app.sn
 
 **Red Hat Dependency Analytics Report File Path** :
 
-Specify the local path to create the Dependency Analytics report file.
+Specify the local path to create the Red Hat Dependency Analytics report file.
 The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
 ## Features
@@ -103,7 +106,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	
 	**NOTE:** Add the `target` folder to your `.gitignore` file to exclude it from Git monitoring.
 
-	![ Animated screenshot showing the inline reporting feature of Dependency Analytics ](images/screencasts/component-analysis.gif)
+	![ Animated screenshot showing the inline reporting feature of Red Hat Dependency Analytics ](images/screencasts/component-analysis.gif)
 
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
@@ -210,6 +213,20 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.
 	Closing the tab removes the temporary HTML file.
 	You can specify the file name by [modifying the _Red Hat Dependency Analytics: Red Hat Dependency Analytics Report File Path_ field](#configuration) in the extension settings.
+
+- **Python and Go package manager behavior**
+    <br >When a user requests a Python or a Go package analysis, Red Hat Dependency Analytics performs the analysis by looking at the version tags from those environments, and not from the manifest files of those environments.
+	This can result in the user receiving information that does not match their intended request.
+	Because of this behavior, Red Hat Dependency Analytics has a new configurable setting.
+	By default, the `MATCH_MANIFEST_VERSIONS` setting restricts Red Hat Dependency Analytics from doing an analysis on package versions that do not match the versions defined by the manifest files.
+	When Red Hat Dependency Analytics finds a package version mis-match, an alert message asks the user to switch this setting.
+	If the user decides to disable this restriction, Red Hat Dependency Analytics performs the analysis on versions given by the package manager only.
+	This setting applies to Python and Go environments.
+	
+	<br >An alternative workaround exists for Python environments only.
+	The user can start Visual Studio Code with the [`EXHORT_PYTHON_VIRTUAL_ENV`](https://github.com/RHEcosystemAppEng/exhort-javascript-api#:~:text=EXHORT_PYTHON_VIRTUAL_ENV) variable set to `true`.
+	Doing this allows Red Hat Dependency Analytics to install Python packages into a virtual environment to perform the analysis.
+	The benefit is having a clean Python environment not influenced by earlier installations, but the downside is a significantly slower analysis process.
 
 ## Using Red Hat Dependency Analytics for CI builds
 

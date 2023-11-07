@@ -19,6 +19,12 @@ suite('DepOutputChannel module', () => {
     sandbox.restore();
   });
 
+  test('DepOutputChannel should create an OutputChannel if it does not exist', () => {
+    const depOutputChannel = new DepOutputChannel();
+
+    expect(depOutputChannel.outputChannel).to.exist;
+  });
+
   test('getOutputChannel should return OutputChannel with default name', () => {
     const depOutputChannel = new DepOutputChannel();
 
@@ -53,7 +59,7 @@ suite('DepOutputChannel module', () => {
     expect(clearStub).to.be.calledOnce;
   });
 
-  test('addOutputChannel should call add() once', () => {
+  test('addMsgOutputChannel should call add() once', () => {
     const depOutputChannel = new DepOutputChannel();
     const appendStub = sandbox.stub(depOutputChannel.outputChannel, 'append');
 

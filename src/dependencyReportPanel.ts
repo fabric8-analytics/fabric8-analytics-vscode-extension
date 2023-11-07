@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 
-import { Templates } from './template';
+import * as templates from './template';
 import { Titles, defaultRedhatDependencyAnalyticsReportFilePath } from './constants';
-import { Config } from './config';
+import * as config from './config';
 import * as fs from 'fs';
 
-const loaderTmpl = Templates.LOADER_TEMPLATE;
-const errorTmpl = Templates.ERROR_TEMPLATE;
+const loaderTmpl = templates.LOADER_TEMPLATE;
+const errorTmpl = templates.ERROR_TEMPLATE;
 
 /**
  * Manages cat coding webview panels
@@ -23,14 +23,20 @@ export class DependencyReportPanel {
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
 
-  public static createOrShow(extensionPath: string, data: any) {
+  public static createOrShowWebviewPanel() {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
-    DependencyReportPanel.data = data;
+    DependencyReportPanel.data = null;
+
     // If we already have a panel, show it.
     if (DependencyReportPanel.currentPanel) {
-      DependencyReportPanel.currentPanel._panel.reveal(column);
+      if (DependencyReportPanel.currentPanel.getPanelVisibility()) {
+        DependencyReportPanel.currentPanel._updateWebViewPanel();
+      } else {
+        DependencyReportPanel.currentPanel._revealWebviewPanel(column);
+      }
+      DependencyReportPanel.currentPanel._disposeReport();
       return;
     }
 
@@ -57,35 +63,21 @@ export class DependencyReportPanel {
 
     // Set the webview's initial html content
     // this._update();
-    this._updateWebView();
+    this._updateWebViewPanel();
 
     // Listen for when the panel is disposed
     // This happens when the user closes the panel or when the panel is closed programatically
-    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-
-    // Update the content based on view changes
-    this._panel.onDidChangeViewState(
-      e => {
-        if (this._panel.visible) {
-          // this._update();
-          this._updateWebView();
-        }
-      },
+    this._panel.onDidDispose(
+      () => this.dispose(),
       null,
       this._disposables
     );
 
-    // Handle messages from the webview
-    this._panel.webview.onDidReceiveMessage(
-      message => {
-        switch (message.command) {
-          case 'alert':
-            vscode.window.showErrorMessage(message.text);
-            return;
-
-          case 'launch-link-in-external-browser':
-            vscode.env.openExternal(message.url);
-            return;
+    // Update the content based on view changes
+    this._panel.onDidChangeViewState(
+      () => {
+        if (this.getPanelVisibility()) {
+          this._updateWebViewPanel();
         }
       },
       null,
@@ -98,6 +90,7 @@ export class DependencyReportPanel {
       DependencyReportPanel.data = data;
       this._panel.webview.html = data;
     } else {
+      DependencyReportPanel.data = errorTmpl;
       this._panel.webview.html = errorTmpl;
     }
   }
@@ -107,12 +100,7 @@ export class DependencyReportPanel {
 
     // Clean up our resources
     this._panel.dispose();
-    const apiConfig = Config.getApiConfig();
-    if (fs.existsSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath)) {
-      // Delete temp stackAnalysisReport file
-      fs.unlinkSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath);
-      console.log(`File ${apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath} has been deleted.`);
-    }
+    this._disposeReport();
     DependencyReportPanel.data = null;
     while (this._disposables.length) {
       const x = this._disposables.pop();
@@ -122,11 +110,33 @@ export class DependencyReportPanel {
     }
   }
 
-  private _updateWebView() {
-    this._panel.title = Titles.REPORT_TITLE;
-    let output = DependencyReportPanel.data;
-    this._panel.webview.html = output && /<\s*html[^>]*>/i.test(output) ?
-      output :
-      loaderTmpl;
+  public getPanelVisibility(): boolean {
+    return this._panel.visible;
+  }
+
+  public getWebviewPanelHtml(): string {
+    return this._panel.webview.html;
+  }
+
+  private _revealWebviewPanel(column: vscode.ViewColumn) {
+    this._panel.reveal(column);
+  }
+
+  private _updateWebViewPanel() {
+    const output = DependencyReportPanel.data;
+    if (output && /<\s*html[^>]*>/i.test(output)) {
+      this._panel.webview.html = output;
+    } else {
+      this._panel.webview.html = loaderTmpl;
+    }
+  }
+
+  private _disposeReport() {
+    const apiConfig = config.getApiConfig();
+    if (fs.existsSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath)) {
+      // Delete temp stackAnalysisReport file
+      fs.unlinkSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath);
+      console.log(`File ${apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath} has been deleted.`);
+    }
   }
 }

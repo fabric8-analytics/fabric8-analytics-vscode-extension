@@ -1,6 +1,6 @@
 # Change Log
-## 0.7.3 (Nov 7th 2023)
-- enhancement - Support for Golang and Python ecosystems. See [#645](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/645)
+## 0.7.3 (Nov 8th 2023)
+- enhancement - Support for Golang and Python ecosystems. See [#656](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/656)
 - enhancement - A new setting for Python and Go environments to restrict package analysis when there is a package version mis-match between the environment and the manifest file. See the [Features section](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md#features) of the README for more information.
 ## 0.7.0 (Sep 11th 2023)
 - fixes - Improved overall performance and stability with the analysis report.

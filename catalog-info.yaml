@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  annotations:
+    backstage.io/kubernetes-id: fabric8-analytics-vscode-extension
+    github.com/project-slug: fabric8-analytics/fabric8-analytics-vscode-extension
+    github.com/project-readme-path: README.md
+    backstage.io/view-url: https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/main/catalog-info.yaml
+    backstage.io/edit-url: https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/main/catalog-info.yaml
+    backstage.io/source-location: url:https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension
+    rhda/manifest-file-path: package.json
+    backstage.io/techdocs-ref: dir:README.md
+  name: fabric8-analytics-vscode-extension
+spec:
+  lifecycle: production
+  owner: ecosystem-appeng
+  type: service

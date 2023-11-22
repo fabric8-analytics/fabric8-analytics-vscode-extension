@@ -8,7 +8,7 @@ export enum GlobalState {
   // to store the UTM source for tracking purposes
   UTM_SOURCE = 'vscode',
   // to store the current exhort environment mode
-  EXHORT_DEV_MODE = 'false'
+  EXHORT_DEV_MODE = 'true'
 }
 
 export enum StatusMessages {
@@ -38,8 +38,10 @@ export const extensionQualifiedId = `redhat.${extensionId}`;
 export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
 // URL to Snyk webpage
 export const snykURL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
+// URL to OSS Index webpage
+export const ossIndexURL = 'https://ossindex.sonatype.org/';
 // default Redhat Dependency Analytics report file path
-export const defaultRedhatDependencyAnalyticsReportFilePath = '/tmp/redhatDependencyAnalyticsReport.html';
+export const defaultRhdaReportFilePath = '/tmp/redhatDependencyAnalyticsReport.html';
 // Red Hat GA Repository
 export const redhatMavenRepository = 'https://maven.repository.redhat.com/ga/';
 // Red Hat GA Repository documentation

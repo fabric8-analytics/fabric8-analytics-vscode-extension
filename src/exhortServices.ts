@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
 
-export const exhortApiStackAnalysis = (pathToManifest, options) => {
+export const stackAnalysisService = (pathToManifest, options) => {
   return new Promise<any>(async (resolve, reject) => {
     try {
       // Get stack analysis in HTML format
@@ -15,7 +15,7 @@ export const exhortApiStackAnalysis = (pathToManifest, options) => {
   });
 };
 
-export const getSnykTokenValidationService = async (options) => {
+export const tokenValidationService = async (options, source) => {
   try {
 
     // Get token validation status code
@@ -24,19 +24,19 @@ export const getSnykTokenValidationService = async (options) => {
     if (
       tokenValidationStatus === 200
     ) {
-      vscode.window.showInformationMessage('Snyk Token Validated Successfully');
+      vscode.window.showInformationMessage(`${source} Token Validated Successfully`);
     } else if (
       tokenValidationStatus === 400
     ) {
-      vscode.window.showWarningMessage(`Missing token. Please provide a valid Snyk Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
+      vscode.window.showWarningMessage(`Missing token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
     } else if (
       tokenValidationStatus === 401
     ) {
-      vscode.window.showWarningMessage(`Invalid token. Please provide a valid Snyk Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
+      vscode.window.showWarningMessage(`Invalid token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
     } else if (
       tokenValidationStatus === 403
     ) {
-      vscode.window.showWarningMessage(`Forbidden. The token does not have permissions. Please provide a valid Snyk Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
+      vscode.window.showWarningMessage(`Forbidden. The token does not have permissions. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
     } else if (
       tokenValidationStatus === 429
     ) {

@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 
 import * as templates from './template';
-import { Titles, defaultRedhatDependencyAnalyticsReportFilePath } from './constants';
-import * as config from './config';
+import { Titles, defaultRhdaReportFilePath } from './constants';
+import { globalConfig } from './config';
 import * as fs from 'fs';
 
 const loaderTmpl = templates.LOADER_TEMPLATE;
@@ -132,11 +132,11 @@ export class DependencyReportPanel {
   }
 
   private _disposeReport() {
-    const apiConfig = config.getApiConfig();
-    if (fs.existsSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath)) {
+    const reportfilePath = globalConfig.rhdaReportFilePath || defaultRhdaReportFilePath;
+    if (fs.existsSync(reportfilePath)) {
       // Delete temp stackAnalysisReport file
-      fs.unlinkSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath);
-      console.log(`File ${apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath} has been deleted.`);
+      fs.unlinkSync(reportfilePath);
+      console.log(`File ${reportfilePath} has been deleted.`);
     }
   }
 }

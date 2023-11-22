@@ -4,6 +4,8 @@ import { getRedHatService, TelemetryEvent, TelemetryService } from '@redhat-deve
 export enum TelemetryActions {
   componentAnalysisDone = 'component_analysis_done',
   componentAnalysisFailed = 'component_analysis_failed',
+  vulnerabilityReportDone = 'vulnerability_report_done',
+  vulnerabilityReportFailed = 'vulnerability_report_failed',
   vulnerabilityReportEditor = 'vulnerability_report_editor',
   vulnerabilityReportExplorer = 'vulnerability_report_explorer',
   vulnerabilityReportPopupOpened = 'vulnerability_report_popup_opened',
@@ -35,4 +37,11 @@ export async function record(context: vscode.ExtensionContext, eventName: string
 export async function startUp(context: vscode.ExtensionContext) {
   telemetryServiceObj = await telemetryService(context);
   await telemetryServiceObj?.sendStartupEvent();
+}
+
+export async function getTelemetryId(context) {
+  const redhatService = await getRedHatService(context);
+  const redhatIdProvider = await redhatService.getIdProvider();
+  const telemetryId = await redhatIdProvider.getRedHatUUID();
+  return telemetryId;
 }

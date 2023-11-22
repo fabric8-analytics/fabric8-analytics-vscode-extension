@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
-import { DepOutputChannel } from '../src/DepOutputChannel';
+import { DepOutputChannel } from '../src/depOutputChannel';
 import { Titles } from '../src/constants';
 
 const expect = chai.expect;

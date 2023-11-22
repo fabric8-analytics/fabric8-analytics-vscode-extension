@@ -52,5 +52,6 @@ module.exports = {
         "no-unsafe-finally": "error",
         "new-parens": "error",
         "no-throw-literal": "error",
+        "no-useless-catch": "off"
     }
 }

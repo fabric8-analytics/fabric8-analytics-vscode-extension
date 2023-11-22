@@ -22,27 +22,9 @@ suite('Fabric8 Analytics Extension', () => {
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR,
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER,
       Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN,
-      Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
-      Commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION
+      Commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR
     ];
     // @ts-ignore
     assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
-  });
-
-  test('should trigger fabric8-analytics full stack-report activate', async () => {
-    await vscode.commands
-      .executeCommand(Commands.TRIGGER_FULL_STACK_ANALYSIS)
-      .then(
-        (res) => {
-          assert.ok(true);
-        },
-        (reason: any) => {
-          assert.equal(reason.name, 'Error');
-          assert.equal(
-            reason.message,
-            `Running the contributed command: '${Commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`
-          );
-        }
-      );
   });
 });

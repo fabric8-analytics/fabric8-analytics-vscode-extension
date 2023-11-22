@@ -34,5 +34,5 @@
 		"out": true // set this to false to include "out" folder in search results
 	},
 	"typescript.tsdk": "./node_modules/typescript/lib",
-	"redhat.telemetry.enabled": true // we want to use the TS server from our node_modules folder to control its version
+	"redhat.telemetry.enabled": true
 }

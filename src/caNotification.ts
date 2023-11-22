@@ -1,26 +1,64 @@
 'use strict';
 
 interface CANotificationData {
-  data: string;
+  errorMessage: string;
   done: boolean;
   uri: string;
   diagCount: number;
-  vulnCount: number;
+  vulnCount: Map<string, number>;
 }
 
 class CANotification {
-  private data: string;
-  private done: boolean;
-  private uri: string;
-  private diagCount: number;
-  private vulnCount: number;
+  private readonly errorMessage: string;
+  private readonly done: boolean;
+  private readonly uri: string;
+  private readonly diagCount: number;
+  private readonly vulnCount: Map<string, number>;
+  private readonly totalVulnCount: number;
+
+  private static readonly VULNERABILITY = 'vulnerability';
+  private static readonly VULNERABILITIES = 'vulnerabilities';
+
+  private static readonly SYNC_SPIN = 'sync~spin';
+  private static readonly WARNING = 'warning';
+  private static readonly SHIELD = 'shield';
+  private static readonly CHECK = 'check';
 
   constructor(respData: CANotificationData) {
-    this.data = respData.data;
+    this.errorMessage = respData.errorMessage || '';
     this.done = respData.done === true;
     this.uri = respData.uri;
     this.diagCount = respData.diagCount || 0;
-    this.vulnCount = respData.vulnCount || 0;
+    this.vulnCount = respData.vulnCount || new Map<string, number>();
+    this.totalVulnCount = Object.values(this.vulnCount).reduce((sum, cv) => sum + cv, 0);
+  }
+
+  private singularOrPlural(num: number): string {
+    return num === 1 ? CANotification.VULNERABILITY : CANotification.VULNERABILITIES;
+  }
+
+  private capitalizeEachWord(inputString: string): string {
+    return inputString.replace(/\b\w/g, (match) => match.toUpperCase());
+  }
+
+  private vulnCountText(): string {
+    return this.totalVulnCount > 0 ? `${this.totalVulnCount} direct ${this.singularOrPlural(this.totalVulnCount)}` : `no ${CANotification.VULNERABILITIES}`;
+  }
+
+  private inProgressText(): string {
+    return `$(${CANotification.SYNC_SPIN}) Dependency analysis in progress`;
+  }
+
+  private warningText(): string {
+    return `$(${CANotification.WARNING}) ${this.vulnCountText()} found for all the providers combined`;
+  }
+
+  private defaultText(): string {
+    return `$(${CANotification.SHIELD})$(${CANotification.CHECK})`;
+  }
+
+  public errorMsg(): string {
+    return this.errorMessage;
   }
 
   public origin(): string {
@@ -36,23 +74,20 @@ class CANotification {
   }
 
   public popupText(): string {
-    // replace texts inside $(..)
-    return this.statusText().replace(/\$\((.*?)\)/g, '');
-  }
-
-  private vulnCountText(): string {
-    const vulns = this.vulnCount;
-    return vulns > 0 ? `${vulns} ${vulns === 1 ? 'vulnerability' : 'vulnerabilities'}` : `no vulnerabilities`;
+    const text: string = Object.entries(this.vulnCount)
+      .map(([provider, vulnCount]) => `Found ${vulnCount} direct ${this.singularOrPlural(vulnCount)} for ${this.capitalizeEachWord(provider)} Provider.`)
+      .join(' ');
+    return text || this.warningText().replace(/\$\((.*?)\)/g, '');
   }
 
   public statusText(): string {
     if (!this.isDone()) {
-      return `$(sync~spin) Dependency analysis in progress`;
+      return this.inProgressText();
     }
     if (this.hasWarning()) {
-      return `$(warning) Found ${this.vulnCountText()}`;
+      return this.warningText();
     }
-    return `$(shield)$(check)`;
+    return this.defaultText();
   }
 }
 

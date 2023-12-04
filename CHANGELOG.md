@@ -6,7 +6,7 @@
 - enhancement - Support for more complex SPDX SBOM relationships
 - fixes - Fixed an issue when the OSS index has to aggregate an SBOM manifest containing more than 128 packages for analysis. See [PR#210](https://github.com/RHEcosystemAppEng/exhort/pull/210) for details.
 - fixes - Fixed an issue where unique Snyk vulnerability information was not being displayed in the Dependency Analytics report. See [PR#217](https://github.com/RHEcosystemAppEng/exhort/pull/217) for details.
-- fixes - Better valid and invalid token alert messages for the Snyk and the Open Source Scanning (OSS) index providers. See [PR#218](https://github.com/RHEcosystemAppEng/exhort/pull/218) for details.
+- fixes - Better valid and invalid token alert messages for the Snyk and the OSS Index vulnerability information providers. See [PR#218](https://github.com/RHEcosystemAppEng/exhort/pull/218) for details.
 - fixes - Fixed analysis report discrepancies between Red Hat Dependency Analytics and Snyk’s analytics. See [PR#219](https://github.com/RHEcosystemAppEng/exhort/pull/219) for details.
 - fixes - Fixed the Go and Python package links so they point to their specific package manager website.
 ## 0.7.3 (Nov 8th 2023)

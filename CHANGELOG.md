@@ -1,12 +1,22 @@
 # Change Log
+## 0.8.0 (Dec 11th 2023)
+- informational - Service Preview release of Red Hat Dependency Analytics (RHDA) extension.
+- enhancement - Added support for the [Sonatype OSS Index](https://ossindex.sonatype.org/) service for gathering package vulnerability information.
+- enhancement - Added support for error observation by using Sentry.
+- enhancement - Support for more complex SPDX SBOM relationships
+- fixes - Fixed an issue when the OSS index has to aggregate an SBOM manifest containing more than 128 packages for analysis. See [PR#210](https://github.com/RHEcosystemAppEng/exhort/pull/210) for details.
+- fixes - Fixed an issue where unique Snyk vulnerability information was not being displayed in the Dependency Analytics report. See [PR#217](https://github.com/RHEcosystemAppEng/exhort/pull/217) for details.
+- fixes - Better valid and invalid token alert messages for the Snyk and the OSS Index vulnerability information providers. See [PR#218](https://github.com/RHEcosystemAppEng/exhort/pull/218) for details.
+- fixes - Fixed analysis report discrepancies between Red Hat Dependency Analytics and Snyk’s analytics. See [PR#219](https://github.com/RHEcosystemAppEng/exhort/pull/219) for details.
+- fixes - Fixed the Go and Python package links so they point to their specific package manager website.
 ## 0.7.3 (Nov 8th 2023)
-- enhancement - Support for Golang and Python ecosystems. See [#656](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/656)
+- enhancement - Support for Golang and Python ecosystems. See [PR#656](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/656) for details.
 - enhancement - A new setting for Python and Go environments to restrict package analysis when there is a package version mis-match between the environment and the manifest file. See the [Features section](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md#features) of the README for more information.
 ## 0.7.0 (Sep 11th 2023)
-- fixes - Improved overall performance and stability with the analysis report.
 - informational - Alpha release of the new Red Hat Dependency Analytics (RHDA) extension.
-- informational - Code base refactoring from CRDA to RHDA alpha. See [#636](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/636)
+- informational - Code base refactoring from CRDA to RHDA alpha. See [PR#636](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/636) for details.
 - informational - Currently no support for Python and Go, but coming soon.
+- fixes - Improved overall performance and stability with the analysis report.
 ## 0.3.10 (May 22th 2022)
 - fixes - Extension breaks for Go version 1.17. See [#608](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/608)
 - fixes - Retry failed stack analysis requests. See [#609](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/609)

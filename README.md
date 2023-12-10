@@ -63,6 +63,14 @@ Click the **Workspace** tab, search for the word _executable_, and specify the a
    4. Click the **Workspace** tab.
    5. Paste the Snyk token in the **Exhort Snyk Token** field.
    6. After adding your Snyk token, the vulnerability report gives you detailed information about security vulnerabilities unique to Snyk, and vulnerabilities that have publicly known exploits.
+8. (OPTIONAL) You can link your Sonatype OSS Index account to Red Hat Dependency Analytics by doing the following:
+   1. Sign in to your [Sonatype OSS Index account](https://ossindex.sonatype.org/user/signin).
+   2. Go to the **User Settings** page, and **copy your API Token**.
+   3. Open the Red Hat Dependency Analytics extension settings.
+   4. Click the **Workspace** tab.
+   5. Enter your username in the **Exhort OSSIndex User** field.
+   6. **Paste your API token** in the **Exhort OSSIndex Token** field.
+   7. After adding your Sonatype user and token, the vulnerability report gives you detailed information about security vulnerabilities unique to OSS Index.
 
 ## Configuration
 
@@ -91,6 +99,16 @@ If you enter a invalid Snyk token, a pop-up message alerts you that your Snyk to
 
 If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
 
+**Exhort OSS Index User and Token**
+<br >The Sonatype OSS Index username and token allows Exhort to authenticate with the OSS Index service to search for any known, and publicly disclosed security vulnerabilities.
+If a Sonatype OSS Index username and token are not provided, the OSS Index vulnerability information is not display.
+
+If you leave these fields blank, the following informational message is displayed.
+<br >![ Screenshot of the empty user and token dialog box ](images/screenshots/empty-user-and-token-oss-index.png)
+
+If you enter an invalid username or token, a pop-up message alerts you that your OSS Index token is invalid.
+<br >![ Screenshot of the invalid token dialog box ](images/screenshots/invalid-oss-index-token.png)
+
 **Red Hat Dependency Analytics Report File Path** :
 
 Specify the local path to create the Red Hat Dependency Analytics report file.
@@ -101,7 +119,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 - **Component analysis**
 	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
-	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern.
+	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from Snyk and the OSS Index.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
 	
 	**NOTE:** Add the `target` folder to your `.gitignore` file to exclude it from Git monitoring.

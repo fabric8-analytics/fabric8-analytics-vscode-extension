@@ -3,7 +3,13 @@
 import * as vscode from 'vscode';
 import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
 
-export const stackAnalysisService = (pathToManifest, options) => {
+/**
+ * Performs RHDA stack analysis based on the provided manifest path and options.
+ * @param pathToManifest The path to the manifest file for analysis.
+ * @param options Additional options for the analysis.
+ * @returns A promise resolving to the stack analysis report in HTML format.
+ */
+function stackAnalysisService(pathToManifest, options) {
   return new Promise<any>(async (resolve, reject) => {
     try {
       // Get stack analysis in HTML format
@@ -13,9 +19,15 @@ export const stackAnalysisService = (pathToManifest, options) => {
       reject(error);
     }
   });
-};
+}
 
-export const tokenValidationService = async (options, source) => {
+/**
+ * Performes RHDA token validation based on the provided options and displays messages based on the validation status.
+ * @param options The options for token validation.
+ * @param source The source for which the token is being validated. Example values: 'Snyk', 'OSS Index'.
+ * @returns A promise resolving after validating the token.
+ */
+async function tokenValidationService(options, source) {
   try {
 
     // Get token validation status code
@@ -47,4 +59,6 @@ export const tokenValidationService = async (options, source) => {
   } catch (error) {
     vscode.window.showErrorMessage(`Failed to validate token, Error: ${error}`);
   }
-};
+}
+
+export { stackAnalysisService, tokenValidationService };

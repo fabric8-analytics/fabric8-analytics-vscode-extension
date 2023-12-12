@@ -40,7 +40,7 @@ suite('CAStatusBarProvider module', () => {
     test('should set error message and command', () => {
         caStatusBarProvider.setError();
 
-        expect(caStatusBarProvider['statusBarItem'].text).to.equal('$(error) Dependency analysis has failed');
+        expect(caStatusBarProvider['statusBarItem'].text).to.equal('$(error) RHDA analysis has failed');
         expect(caStatusBarProvider['statusBarItem'].command).to.deep.equal({
             title: PromptText.LSP_FAILURE_TEXT,
             command: commands.TRIGGER_STACK_LOGS,

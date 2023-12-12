@@ -32,7 +32,7 @@ suite('CANotification module', () => {
         expect(notification.isDone()).to.be.false;
         expect(notification.hasWarning()).to.be.false;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');
-        expect(notification.statusText()).to.equal('$(sync~spin) Dependency analysis in progress');
+        expect(notification.statusText()).to.equal('$(sync~spin) RHDA analysis in progress');
     });
 
 
@@ -50,7 +50,7 @@ suite('CANotification module', () => {
         expect(notification.isDone()).to.be.false;
         expect(notification.hasWarning()).to.be.false;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');
-        expect(notification.statusText()).to.equal('$(sync~spin) Dependency analysis in progress');
+        expect(notification.statusText()).to.equal('$(sync~spin) RHDA analysis in progress');
     });
 
     test('should create an instance with provided data when CA has completed successfully with one vulnerability from one vulnerability provider', async () => {
@@ -161,6 +161,6 @@ suite('CANotification module', () => {
         expect(notification.isDone()).to.be.false;
         expect(notification.hasWarning()).to.be.false;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');
-        expect(notification.statusText()).to.equal('$(sync~spin) Dependency analysis in progress');
+        expect(notification.statusText()).to.equal('$(sync~spin) RHDA analysis in progress');
     });
 });

@@ -6,7 +6,11 @@ import { globalConfig } from './config';
 import { snykURL, ossIndexURL } from './constants';
 import { tokenValidationService } from './exhortServices';
 
-export const validateSnykToken = async () => {
+/**
+ * Validates the Snyk token using the Exhort token validation service.
+ * @returns A Promise that resolves when token has been validated.
+ */
+async function validateSnykToken() {
     if (globalConfig.exhortSnykToken !== '') {
 
         // set up configuration options for the token validation request
@@ -26,9 +30,13 @@ export const validateSnykToken = async () => {
                                               To resolve this issue, please obtain a valid token from the following link: [here](${snykURL}).`);
 
     }
-};
+}
 
-export const validateOSSIndexToken = async () => {
+/**
+ * Validates the OSS Index credentials using the Exhort token validation service.
+ * @returns A Promise that resolves when credentials have been validated.
+ */
+async function validateOSSIndexToken() {
     if (globalConfig.exhortOSSIndexUser !== '' && globalConfig.exhortOSSIndexToken !== '') {
 
         // set up configuration options for the token validation request
@@ -58,4 +66,6 @@ export const validateOSSIndexToken = async () => {
 
         vscode.window.showInformationMessage(msg);
     }
-};
+}
+
+export { validateSnykToken, validateOSSIndexToken };

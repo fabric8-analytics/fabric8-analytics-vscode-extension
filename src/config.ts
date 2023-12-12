@@ -6,6 +6,9 @@ import { GlobalState } from './constants';
 import * as commands from './commands';
 import { getTelemetryId } from './redhatTelemetry';
 
+/**
+ * Represents the configuration settings for the extension.
+ */
 class Config {
   telemetryId: string;
   triggerFullStackAnalysis: string;
@@ -32,17 +35,29 @@ class Config {
   private readonly DEFAULT_PIP_EXECUTABLE = 'pip';
 
   /**
-   * Initializes a new instance of the EnvironmentData class with default extension workspace settings.
+   * Creates an instance of the Config class.
+   * Initializes the instance with default extension workspace settings.
    */
   constructor() {
     this.loadData();
     this.setProcessEnv();
   }
 
-  private getApiConfig(): any {
+  /**
+   * Retrieves RHDA configuration settings from the workspace.
+   * @returns The RHDA configuration settings.
+   * @private
+   */
+  private getRhdaConfig(): any {
     return vscode.workspace.getConfiguration('redHatDependencyAnalytics');
   }
 
+  /**
+   * Retrieves the path for an executable from the workspace.
+   * @param exe The name of the executable.
+   * @returns The path of the executable if specified in the workspace configuration, otherwise the default value.
+   * @private
+   */
   private getExecutableConfig(exe: string): string {
     const exePath: string = vscode.workspace
       .getConfiguration(`${exe}.executable`)
@@ -50,8 +65,11 @@ class Config {
     return exePath ? exePath : exe;
   }
 
+  /**
+   * Loads configuration settings from the workspace.
+   */
   loadData() {
-    const apiConfig = this.getApiConfig();
+    const apiConfig = this.getRhdaConfig();
 
     this.triggerFullStackAnalysis = commands.TRIGGER_FULL_STACK_ANALYSIS;
     this.utmSource = GlobalState.UTM_SOURCE;
@@ -69,6 +87,10 @@ class Config {
     this.exhortPipPath = this.getExecutableConfig(this.DEFAULT_PIP_EXECUTABLE);
   }
 
+  /**
+   * Sets process environment variables based on configuration settings.
+   * @private
+   */
   private setProcessEnv() {
     process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS'] = this.triggerFullStackAnalysis;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
@@ -86,12 +108,19 @@ class Config {
     process.env['EXHORT_DEV_MODE'] = GlobalState.EXHORT_DEV_MODE;
   }
 
+  /**
+   * Authorizes the RHDA (Red Hat Dependency Analytics) service.
+   * @param context The extension context for authorization.
+   */
   async authorizeRHDA(context) {
     this.telemetryId = await getTelemetryId(context);
     process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
   }
 }
 
+/**
+ * The global configuration object for the extension.
+ */
 const globalConfig = new Config();
 
 export { globalConfig };

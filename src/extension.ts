@@ -24,6 +24,10 @@ let lspClient: LanguageClient;
 
 export let outputChannelDep: DepOutputChannel;
 
+/**
+ * Activates the extension upon launch.
+ * @param context - The extension context.
+ */
 export function activate(context: vscode.ExtensionContext) {
   startUp(context);
 
@@ -83,7 +87,6 @@ export function activate(context: vscode.ExtensionContext) {
 
       // Options to control the language client
       const clientOptions: LanguageClientOptions = {
-        // Register the server for xml, json documents
         documentSelector: [
           { scheme: 'file', language: 'json' },
           { scheme: 'file', language: 'xml' },
@@ -164,6 +167,10 @@ export function activate(context: vscode.ExtensionContext) {
   });
 }
 
+/**
+ * Deactivates the extension.
+ * @returns A `Thenable` for void.
+ */
 export function deactivate(): Thenable<void> {
   if (!lspClient) {
     return undefined;
@@ -171,6 +178,11 @@ export function deactivate(): Thenable<void> {
   return lspClient.stop();
 }
 
+/**
+ * Shows an update notification if the extension has been updated to a new version.
+ * @param context - The extension context.
+ * @returns A Promise that resolves once the notification has been displayed if needed.
+ */
 async function showUpdateNotification(context: vscode.ExtensionContext) {
 
   const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
@@ -198,6 +210,10 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   }
 }
 
+/**
+ * Registers stack analysis commands to track RHDA report generations.
+ * @param context - The extension context.
+ */
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
 
   const invokeFullStackReport = async (uri: vscode.Uri) => {

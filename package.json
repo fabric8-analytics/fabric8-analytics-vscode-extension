@@ -202,7 +202,7 @@
           "description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",
           "scope": "window"
         },
-        "mvn.executable.path": {
+        "maven.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of mvn executable.",

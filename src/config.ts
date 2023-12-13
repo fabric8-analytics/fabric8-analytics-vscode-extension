@@ -8,7 +8,7 @@ export function getApiConfig(): any {
 
 export function getMvnExecutable(): string {
   const mvnPath: string = vscode.workspace
-    .getConfiguration('mvn.executable')
+    .getConfiguration('maven.executable')
     .get<string>('path');
   return mvnPath ? mvnPath : 'mvn';
 }

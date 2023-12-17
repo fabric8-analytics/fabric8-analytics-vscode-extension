@@ -10,7 +10,7 @@ import {
 import * as path from 'path';
 
 import * as commands from './commands';
-import { GlobalState, extensionQualifiedId } from './constants';
+import { GlobalState, extensionQualifiedId, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
 import { generateRHDAReport } from './stackAnalysis';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
@@ -57,6 +57,17 @@ export function activate(context: vscode.ExtensionContext) {
       } else {
         vscode.window.showInformationMessage(StatusMessages.WIN_SHOW_LOGS);
       }
+    }
+  );
+
+  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
+    commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
+    () => {
+      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
+                    make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
+                    This ensures that the applied dependencies work correctly. 
+                    Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
+      vscode.window.showWarningMessage(msg);
     }
   );
 
@@ -146,6 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
+        rhRepositoryRecommendationNotification,
         caStatusBarProvider,
       );
     })

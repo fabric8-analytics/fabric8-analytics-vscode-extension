@@ -25,6 +25,7 @@ suite('Config module', () => {
   test('should initialize Config properties with default extension workspace settings', async () => {
 
     expect(globalConfig.triggerFullStackAnalysis).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
+    expect(globalConfig.triggerRHRepositoryRecommendationNotification).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
     expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
     expect(globalConfig.exhortSnykToken).to.eq('');
     expect(globalConfig.exhortOSSIndexUser).to.eq('');
@@ -40,6 +41,7 @@ suite('Config module', () => {
     expect(globalConfig.exhortPipPath).to.eq('pip');
 
     expect(process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS']).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
+    expect(process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION']).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
     expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.eq('');
     expect(process.env['VSCEXT_EXHORT_OSS_INDEX_USER']).to.eq('');

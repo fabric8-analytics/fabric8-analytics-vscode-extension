@@ -12,6 +12,7 @@ import { getTelemetryId } from './redhatTelemetry';
 class Config {
   telemetryId: string;
   triggerFullStackAnalysis: string;
+  triggerRHRepositoryRecommendationNotification: string;
   utmSource: string;
   exhortSnykToken: string;
   exhortOSSIndexUser: string;
@@ -72,6 +73,7 @@ class Config {
     const apiConfig = this.getRhdaConfig();
 
     this.triggerFullStackAnalysis = commands.TRIGGER_FULL_STACK_ANALYSIS;
+    this.triggerRHRepositoryRecommendationNotification = commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION;
     this.utmSource = GlobalState.UTM_SOURCE;
     this.exhortSnykToken = apiConfig.exhortSnykToken;
     this.exhortOSSIndexUser = apiConfig.exhortOSSIndexUser;
@@ -93,6 +95,7 @@ class Config {
    */
   private setProcessEnv() {
     process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS'] = this.triggerFullStackAnalysis;
+    process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION'] = this.triggerRHRepositoryRecommendationNotification;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = this.exhortSnykToken;
     process.env['VSCEXT_EXHORT_OSS_INDEX_USER'] = this.exhortOSSIndexUser;

@@ -28,8 +28,6 @@ suite('Config module', () => {
     expect(globalConfig.triggerRHRepositoryRecommendationNotification).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
     expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
     expect(globalConfig.exhortSnykToken).to.eq('');
-    expect(globalConfig.exhortOSSIndexUser).to.eq('');
-    expect(globalConfig.exhortOSSIndexToken).to.eq('');
     expect(globalConfig.matchManifestVersions).to.eq('true');
     expect(globalConfig.rhdaReportFilePath).to.eq('/tmp/redhatDependencyAnalyticsReport.html');
     expect(globalConfig.exhortMvnPath).to.eq('mvn');
@@ -44,8 +42,6 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION']).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
     expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.eq('');
-    expect(process.env['VSCEXT_EXHORT_OSS_INDEX_USER']).to.eq('');
-    expect(process.env['VSCEXT_EXHORT_OSS_INDEX_TOKEN']).to.eq('');
     expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');
     expect(process.env['VSCEXT_EXHORT_MVN_PATH']).to.eq('mvn');
     expect(process.env['VSCEXT_EXHORT_NPM_PATH']).to.eq('npm');

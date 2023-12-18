@@ -190,18 +190,6 @@
           "description": "Red Hat Dependency Analytics authentication token for Snyk.",
           "scope": "window"
         },
-        "redHatDependencyAnalytics.exhortOSSIndexUser": {
-          "type": "string",
-          "default": "",
-          "description": "Red Hat Dependency Analytics authentication username for OSS Index.",
-          "scope": "window"
-        },
-        "redHatDependencyAnalytics.exhortOSSIndexToken": {
-          "type": "string",
-          "default": "",
-          "description": "Red Hat Dependency Analytics authentication token for OSS Index.",
-          "scope": "window"
-        },
         "redHatDependencyAnalytics.matchManifestVersions": {
           "type": "boolean",
           "default": true,
@@ -296,7 +284,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.8.1-ea.4",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.8.1-ea.6",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.4",
     "fs": "^0.0.1-security",

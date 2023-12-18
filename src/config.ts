@@ -15,8 +15,6 @@ class Config {
   triggerRHRepositoryRecommendationNotification: string;
   utmSource: string;
   exhortSnykToken: string;
-  exhortOSSIndexUser: string;
-  exhortOSSIndexToken: string;
   matchManifestVersions: string;
   exhortMvnPath: string;
   exhortNpmPath: string;
@@ -76,8 +74,6 @@ class Config {
     this.triggerRHRepositoryRecommendationNotification = commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION;
     this.utmSource = GlobalState.UTM_SOURCE;
     this.exhortSnykToken = apiConfig.exhortSnykToken;
-    this.exhortOSSIndexUser = apiConfig.exhortOSSIndexUser;
-    this.exhortOSSIndexToken = apiConfig.exhortOSSIndexToken;
     this.matchManifestVersions = apiConfig.matchManifestVersions ? 'true' : 'false';
     this.rhdaReportFilePath = apiConfig.redHatDependencyAnalyticsReportFilePath;
     this.exhortMvnPath = this.getExecutableConfig(this.DEFAULT_MVN_EXECUTABLE);
@@ -98,8 +94,6 @@ class Config {
     process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION'] = this.triggerRHRepositoryRecommendationNotification;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = this.exhortSnykToken;
-    process.env['VSCEXT_EXHORT_OSS_INDEX_USER'] = this.exhortOSSIndexUser;
-    process.env['VSCEXT_EXHORT_OSS_INDEX_TOKEN'] = this.exhortOSSIndexToken;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
     process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;

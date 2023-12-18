@@ -14,7 +14,7 @@ export enum GlobalState {
 export enum StatusMessages {
   WIN_ANALYZING_DEPENDENCIES = 'Analyzing application dependencies...',
   WIN_GENERATING_DEPENDENCIES = 'Generating Red Hat Dependency Analytics report...',
-  WIN_SUCCESS_DEPENDENCY_ANALYSIS = 'Successfully generated Red Hat Dependency Analytics report...',
+  WIN_SUCCESS_DEPENDENCY_ANALYSIS = 'Successfully generated Red Hat Dependency Analytics report',
   WIN_FAILURE_DEPENDENCY_ANALYSIS = 'Unable to generate Red Hat Dependency Analytics report',
   WIN_SHOW_LOGS = 'No output channel has been created for Red Hat Dependency Analytics',
   NO_SUPPORTED_MANIFEST = 'No supported manifest file found to be analyzed.',
@@ -38,8 +38,6 @@ export const extensionQualifiedId = `redhat.${extensionId}`;
 export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
 // URL to Snyk webpage
 export const snykURL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
-// URL to OSS Index webpage
-export const ossIndexURL = 'https://ossindex.sonatype.org/';
 // default Redhat Dependency Analytics report file path
 export const defaultRhdaReportFilePath = '/tmp/redhatDependencyAnalyticsReport.html';
 // Red Hat GA Repository

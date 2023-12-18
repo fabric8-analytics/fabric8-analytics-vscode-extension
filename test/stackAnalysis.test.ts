@@ -49,8 +49,6 @@ suite('StackAnalysis module', () => {
     });
 
     globalConfig.exhortSnykToken = 'mockToken';
-    globalConfig.exhortOSSIndexUser = 'mockUser';
-    globalConfig.exhortOSSIndexToken = 'mockToken';
 
     await generateRHDAReport(context, MockUri);
 
@@ -66,8 +64,6 @@ suite('StackAnalysis module', () => {
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').rejects(new Error('Mock Error'));
 
     globalConfig.exhortSnykToken = '';
-    globalConfig.exhortOSSIndexUser = '';
-    globalConfig.exhortOSSIndexToken = '';
 
     await generateRHDAReport(context, MockUri)
       .then(() => {
@@ -81,7 +77,7 @@ suite('StackAnalysis module', () => {
       })
   });
 
-  test('should generate RHDA report for supported file and fail to save HTML locally', async () => {
+  test('should generate RHDA report for supported file successfully but fail to save HTML locally', async () => {
     const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
     sandbox.stub(fs, 'existsSync').returns(false);
@@ -98,11 +94,11 @@ suite('StackAnalysis module', () => {
         expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(stackAnalysisServiceStub.calledOnce).to.be.true;
         expect(writeFileStub.calledOnce).to.be.true;
-        expect(DependencyReportPanel.data).to.eq(templates.ERROR_TEMPLATE);
+        expect(DependencyReportPanel.data).to.eq(mockReponse);
       })
   });
 
-  test('should generate RHDA report for supported file and fail to create directory to save HTML locally', async () => {
+  test('should generate RHDA report for supported file successfully but fail to create directory to save HTML locally', async () => {
     const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
     sandbox.stub(fs, 'existsSync').returns(false);
@@ -118,8 +114,7 @@ suite('StackAnalysis module', () => {
         expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(stackAnalysisServiceStub.calledOnce).to.be.true;
         expect(mkdirSyncStub.calledOnce).to.be.true;
-        expect(DependencyReportPanel.data).to.eq(templates.ERROR_TEMPLATE);
+        expect(DependencyReportPanel.data).to.eq(mockReponse);
       })
   });
-
 });

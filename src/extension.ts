@@ -18,7 +18,7 @@ import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
-import { validateSnykToken, validateOSSIndexToken } from './tokenValidation';
+import { validateSnykToken } from './tokenValidation';
 
 let lspClient: LanguageClient;
 
@@ -172,9 +172,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     if (event.affectsConfiguration('redHatDependencyAnalytics.exhortSnykToken')) {
       validateSnykToken();
-    }
-    if (event.affectsConfiguration('redHatDependencyAnalytics.exhortOSSIndexUser') || event.affectsConfiguration('redHatDependencyAnalytics.exhortOSSIndexToken')) {
-      validateOSSIndexToken();
     }
   });
 }

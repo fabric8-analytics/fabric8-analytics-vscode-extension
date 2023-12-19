@@ -202,43 +202,43 @@
           "description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",
           "scope": "window"
         },
-        "mvn.executable.path": {
+        "redHatDependencyAnalytics.mvn.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of mvn executable.",
           "scope": "window"
         },
-        "npm.executable.path": {
+        "redHatDependencyAnalytics.npm.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of npm executable.",
           "scope": "window"
         },
-        "go.executable.path": {
+        "redHatDependencyAnalytics.go.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of go executable.",
           "scope": "window"
         },
-        "python3.executable.path": {
+        "redHatDependencyAnalytics.python3.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of python3 executable, python3 takes precedence over python.",
           "scope": "window"
         },
-        "pip3.executable.path": {
+        "redHatDependencyAnalytics.pip3.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of pip3 executable, pip3 takes precedence over pip.",
           "scope": "window"
         },
-        "python.executable.path": {
+        "redHatDependencyAnalytics.python.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of python executable, python3 takes precedence over python.",
           "scope": "window"
         },
-        "pip.executable.path": {
+        "redHatDependencyAnalytics.pip.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
@@ -284,7 +284,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.8.1-ea.6",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.8.1-ea.7",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.4",
     "fs": "^0.0.1-security",

@@ -4,7 +4,6 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-import { globalConfig } from '../src/config';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 import * as Templates from '../src/template';
 import { defaultRhdaReportFilePath } from '../src/constants';
@@ -81,26 +80,9 @@ suite('DependencyReportPanel Modules', () => {
   });
 
   test('dispose should dispose of current panel with RHDA report path setting', async () => {
-    globalConfig.rhdaReportFilePath = 'mockFilePath'
 
     const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
     const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');
-
-    DependencyReportPanel.currentPanel.dispose();
-
-    expect(existsSyncStub).to.be.calledWith('mockFilePath');
-    expect(unlinkSyncStub).to.be.calledWith('mockFilePath');
-    expect(DependencyReportPanel.data).equals(null);
-    expect(DependencyReportPanel.currentPanel).equals(undefined);
-  });
-
-  test('dispose should dispose of current panel with default RHDA report path', async () => {
-    globalConfig.rhdaReportFilePath = ''
-
-    const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
-    const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');
-
-    DependencyReportPanel.createOrShowWebviewPanel();
 
     DependencyReportPanel.currentPanel.dispose();
 

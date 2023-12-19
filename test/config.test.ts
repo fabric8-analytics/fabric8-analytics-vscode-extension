@@ -22,7 +22,7 @@ suite('Config module', () => {
     sandbox.restore();
   });
 
-  test('should initialize Config properties with default extension workspace settings', async () => {
+  test('should initialize Config properties with default extension settings', async () => {
 
     expect(globalConfig.triggerFullStackAnalysis).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
     expect(globalConfig.triggerRHRepositoryRecommendationNotification).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);

@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { GlobalState } from './constants';
+import { GlobalState, defaultRhdaReportFilePath } from './constants';
 import * as commands from './commands';
 import { getTelemetryId } from './redhatTelemetry';
 
@@ -35,7 +35,7 @@ class Config {
 
   /**
    * Creates an instance of the Config class.
-   * Initializes the instance with default extension workspace settings.
+   * Initializes the instance with default extension settings.
    */
   constructor() {
     this.loadData();
@@ -43,7 +43,7 @@ class Config {
   }
 
   /**
-   * Retrieves RHDA configuration settings from the workspace.
+   * Retrieves RHDA configuration settings.
    * @returns The RHDA configuration settings.
    * @private
    */
@@ -52,37 +52,24 @@ class Config {
   }
 
   /**
-   * Retrieves the path for an executable from the workspace.
-   * @param exe The name of the executable.
-   * @returns The path of the executable if specified in the workspace configuration, otherwise the default value.
-   * @private
-   */
-  private getExecutableConfig(exe: string): string {
-    const exePath: string = vscode.workspace
-      .getConfiguration(`${exe}.executable`)
-      .get<string>('path');
-    return exePath ? exePath : exe;
-  }
-
-  /**
-   * Loads configuration settings from the workspace.
+   * Loads configuration settings.
    */
   loadData() {
-    const apiConfig = this.getRhdaConfig();
+    const rhdaConfig = this.getRhdaConfig();
 
     this.triggerFullStackAnalysis = commands.TRIGGER_FULL_STACK_ANALYSIS;
     this.triggerRHRepositoryRecommendationNotification = commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION;
     this.utmSource = GlobalState.UTM_SOURCE;
-    this.exhortSnykToken = apiConfig.exhortSnykToken;
-    this.matchManifestVersions = apiConfig.matchManifestVersions ? 'true' : 'false';
-    this.rhdaReportFilePath = apiConfig.redHatDependencyAnalyticsReportFilePath;
-    this.exhortMvnPath = this.getExecutableConfig(this.DEFAULT_MVN_EXECUTABLE);
-    this.exhortNpmPath = this.getExecutableConfig(this.DEFAULT_NPM_EXECUTABLE);
-    this.exhortGoPath = this.getExecutableConfig(this.DEFAULT_GO_EXECUTABLE);
-    this.exhortPython3Path = this.getExecutableConfig(this.DEFAULT_PYTHON3_EXECUTABLE);
-    this.exhortPip3Path = this.getExecutableConfig(this.DEFAULT_PIP3_EXECUTABLE);
-    this.exhortPythonPath = this.getExecutableConfig(this.DEFAULT_PYTHON_EXECUTABLE);
-    this.exhortPipPath = this.getExecutableConfig(this.DEFAULT_PIP_EXECUTABLE);
+    this.exhortSnykToken = rhdaConfig.exhortSnykToken;
+    this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
+    this.rhdaReportFilePath = rhdaConfig.redHatDependencyAnalyticsReportFilePath || defaultRhdaReportFilePath;
+    this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
+    this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
+    this.exhortGoPath = rhdaConfig.go.executable.path || this.DEFAULT_GO_EXECUTABLE;
+    this.exhortPython3Path = rhdaConfig.python3.executable.path || this.DEFAULT_PYTHON3_EXECUTABLE;
+    this.exhortPip3Path = rhdaConfig.pip3.executable.path || this.DEFAULT_PIP3_EXECUTABLE;
+    this.exhortPythonPath = rhdaConfig.python.executable.path || this.DEFAULT_PYTHON_EXECUTABLE;
+    this.exhortPipPath = rhdaConfig.pip.executable.path || this.DEFAULT_PIP_EXECUTABLE;
   }
 
   /**

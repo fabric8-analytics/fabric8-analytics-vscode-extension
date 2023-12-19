@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import * as templates from './template';
-import { Titles, defaultRhdaReportFilePath } from './constants';
+import { Titles } from './constants';
 import { globalConfig } from './config';
 import * as fs from 'fs';
 
@@ -162,11 +162,11 @@ export class DependencyReportPanel {
    * @private
    */
   private _disposeReport() {
-    const reportfilePath = globalConfig.rhdaReportFilePath || defaultRhdaReportFilePath;
-    if (fs.existsSync(reportfilePath)) {
+    const reportFilePath = globalConfig.rhdaReportFilePath;
+    if (fs.existsSync(reportFilePath)) {
       // Delete temp stackAnalysisReport file
-      fs.unlinkSync(reportfilePath);
-      console.log(`File ${reportfilePath} has been deleted.`);
+      fs.unlinkSync(reportFilePath);
+      console.log(`File ${reportFilePath} has been deleted.`);
     }
   }
 }

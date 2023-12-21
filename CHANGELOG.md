@@ -1,5 +1,5 @@
 # Change Log
-## 0.8.0 (Dec 11th 2023)
+## 0.9.0 (Dec 21th 2023)
 - informational - Service Preview release of Red Hat Dependency Analytics (RHDA) extension.
 - informational - Configuration names for all supported executable paths in the extension settings have changed. These executable paths are only used for the analysis.
 - enhancement - Added support for error observation by using Sentry.

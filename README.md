@@ -101,13 +101,23 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 - **Component analysis**
 	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
-	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern.
+	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from Snyk.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
 	
 	**NOTE:** Add the `target` folder to your `.gitignore` file to exclude it from Git monitoring.
 
 	![ Animated screenshot showing the inline reporting feature of Red Hat Dependency Analytics ](images/screencasts/component-analysis.gif)
 
+- **Recommendations and remediations** 
+    <br >After running a detailed analysis report on a specific component version, you can view recommendations and remediations by using the _Quick Fix..._ menu.
+	If there is a Red Hat recommended package version available, you can replace your version with Red Hat's version.
+
+	![ Animated screenshot showing how to access the _Quick Fix..._ menu, and switching to a Red Hat recommended package version ](images/screencasts/quickfix.gif)
+
+	<br >**IMPORTANT:** For Maven projects only, when analyzing a `pom.xml` file.
+	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediations.
+	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
+  
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
 	If you wish to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.

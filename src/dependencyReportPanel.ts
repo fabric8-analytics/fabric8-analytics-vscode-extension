@@ -1,20 +1,19 @@
 import * as vscode from 'vscode';
 
 import * as templates from './template';
-import { Titles, defaultRedhatDependencyAnalyticsReportFilePath } from './constants';
-import * as config from './config';
+import { Titles } from './constants';
+import { globalConfig } from './config';
 import * as fs from 'fs';
 
 const loaderTmpl = templates.LOADER_TEMPLATE;
 const errorTmpl = templates.ERROR_TEMPLATE;
 
 /**
- * Manages cat coding webview panels
+ * Manages the webview panel for RHDA reports.
+ * Tracks the currently panel. Only allow a single panel to exist at a time.
  */
 export class DependencyReportPanel {
-  /**
-   * Track the currently panel. Only allow a single panel to exist at a time.
-   */
+
   public static currentPanel: DependencyReportPanel | undefined;
 
   public static readonly viewType = 'stackReport';
@@ -23,6 +22,9 @@ export class DependencyReportPanel {
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
 
+  /**
+   * Creates or shows the webview panel.
+   */
   public static createOrShowWebviewPanel() {
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
@@ -85,6 +87,10 @@ export class DependencyReportPanel {
     );
   }
 
+  /**
+   * Updates the panel with the provided data.
+   * @param data Data to update the panel with.
+   */
   public doUpdatePanel(data: any) {
     if (data && /<\s*html[^>]*>/i.test(data)) {
       DependencyReportPanel.data = data;
@@ -95,6 +101,9 @@ export class DependencyReportPanel {
     }
   }
 
+  /**
+   * Disposes the panel.
+   */
   public dispose() {
     DependencyReportPanel.currentPanel = undefined;
 
@@ -110,18 +119,35 @@ export class DependencyReportPanel {
     }
   }
 
+  /**
+   * Checks if the panel is visible.
+   * @returns A boolean indicating if the panel is visible.
+   */
   public getPanelVisibility(): boolean {
     return this._panel.visible;
   }
 
+  /**
+   * Retrieves the HTML content of the webview panel.
+   * @returns The HTML content of the webview panel.
+   */
   public getWebviewPanelHtml(): string {
     return this._panel.webview.html;
   }
 
+  /**
+   * Reveals the webview panel.
+   * @param column The column to reveal the panel in.
+   * @private
+   */
   private _revealWebviewPanel(column: vscode.ViewColumn) {
     this._panel.reveal(column);
   }
 
+  /**
+   * Updates the webview panel content.
+   * @private
+   */
   private _updateWebViewPanel() {
     const output = DependencyReportPanel.data;
     if (output && /<\s*html[^>]*>/i.test(output)) {
@@ -131,12 +157,16 @@ export class DependencyReportPanel {
     }
   }
 
+  /**
+   * Disposes the RHDA report file from local directory.
+   * @private
+   */
   private _disposeReport() {
-    const apiConfig = config.getApiConfig();
-    if (fs.existsSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath)) {
+    const reportFilePath = globalConfig.rhdaReportFilePath;
+    if (fs.existsSync(reportFilePath)) {
       // Delete temp stackAnalysisReport file
-      fs.unlinkSync(apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath);
-      console.log(`File ${apiConfig.redHatDependencyAnalyticsReportFilePath || defaultRedhatDependencyAnalyticsReportFilePath} has been deleted.`);
+      fs.unlinkSync(reportFilePath);
+      console.log(`File ${reportFilePath} has been deleted.`);
     }
   }
 }

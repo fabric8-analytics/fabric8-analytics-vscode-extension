@@ -3,7 +3,7 @@
 import { Titles } from './constants';
 
 /**
- * Commonly used templates
+ * HTML template for the loader screen during RHDA analysis.
  */
 export const LOADER_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
@@ -259,6 +259,9 @@ export const LOADER_TEMPLATE = `<!DOCTYPE html>
     </body>
     </html>`;
 
+/**
+ * HTML template for displaying an error message when unable to analyze the stack.
+ */
 export const ERROR_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>

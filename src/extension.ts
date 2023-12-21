@@ -7,35 +7,55 @@ import {
   ServerOptions,
   TransportKind
 } from 'vscode-languageclient/node';
-
 import * as path from 'path';
 
 import * as commands from './commands';
-import { GlobalState, extensionQualifiedId, registrationURL, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
-import * as multimanifestmodule from './multimanifestmodule';
-import { loadContextData } from './contextHandler';
+import { GlobalState, extensionQualifiedId, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
+import { generateRHDAReport } from './stackAnalysis';
+import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
-import { DepOutputChannel } from './DepOutputChannel';
+import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
+import { validateSnykToken } from './tokenValidation';
 
 let lspClient: LanguageClient;
 
 export let outputChannelDep: DepOutputChannel;
 
+/**
+ * Activates the extension upon launch.
+ * @param context - The extension context.
+ */
 export function activate(context: vscode.ExtensionContext) {
   startUp(context);
-  const disposableFullStack = vscode.commands.registerCommand(
+
+  // show welcome message after first install or upgrade
+  showUpdateNotification(context);
+
+  const disposableStackAnalysisCommand = vscode.commands.registerCommand(
     commands.TRIGGER_FULL_STACK_ANALYSIS,
-    (uri: vscode.Uri) => {
+    async (uri: vscode.Uri) => {
+      // uri will be null in case the user has used the context menu/file explorer
+      const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
       try {
-        // uri will be null in case the user has used the context menu/file explorer
-        const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
-        multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, fileUri);
+        await generateRHDAReport(context, fileUri);
+        record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath) });
       } catch (error) {
-        // Throw a custom error message when the command execution fails
-        throw new Error(`Running the contributed command: '${commands.TRIGGER_FULL_STACK_ANALYSIS}' failed.`);
+        vscode.window.showErrorMessage(error.message);
+        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath), error: error.message });
+      }
+    }
+  );
+
+  const disposableStackLogsCommand = vscode.commands.registerCommand(
+    commands.TRIGGER_STACK_LOGS,
+    () => {
+      if (outputChannelDep) {
+        outputChannelDep.showOutputChannel();
+      } else {
+        vscode.window.showInformationMessage(StatusMessages.WIN_SHOW_LOGS);
       }
     }
   );
@@ -51,26 +71,12 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const disposableStackLogs = vscode.commands.registerCommand(
-    commands.TRIGGER_STACK_LOGS,
-    () => {
-      if (outputChannelDep) {
-        outputChannelDep.showOutputChannel();
-      } else {
-        vscode.window.showInformationMessage(StatusMessages.WIN_SHOW_LOGS);
-      }
-    }
-  );
-
   registerStackAnalysisCommands(context);
 
-  // show welcome message after first install or upgrade
-  showUpdateNotification(context);
-
-  loadContextData(context).then(status => {
-    if (status) {
+  globalConfig.authorizeRHDA(context)
+    .then(() => {
       // Create output channel
-      outputChannelDep = initOutputChannel();
+      outputChannelDep = new DepOutputChannel();
       // The server is implemented in node
       const serverModule = context.asAbsolutePath(
         path.join('dist', 'server.js')
@@ -92,7 +98,6 @@ export function activate(context: vscode.ExtensionContext) {
 
       // Options to control the language client
       const clientOptions: LanguageClientOptions = {
-        // Register the server for xml, json documents
         documentSelector: [
           { scheme: 'file', language: 'json' },
           { scheme: 'file', language: 'xml' },
@@ -106,11 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
           configurationSection: 'redHatDependencyAnalyticsServer',
           // Notify the server about file changes to '.clientrc files contained in the workspace
           fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc'),
-        },
-        initializationOptions: {
-          triggerFullStackAnalysis: commands.TRIGGER_FULL_STACK_ANALYSIS,
-          triggerRHRepositoryRecommendationNotification: commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION
-        },
+        }
       };
 
       // Create the language client and start the client.
@@ -121,14 +122,9 @@ export function activate(context: vscode.ExtensionContext) {
         clientOptions
       );
       lspClient.start().then(() => {
-        const notifiedFiles = new Set<string>();
-        const canShowPopup = (notification: CANotification): boolean => {
-          const hasAlreadyShown = notifiedFiles.has(notification.origin());
-          return notification.hasWarning() && !hasAlreadyShown;
-        };
 
         const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
-          const selection = await vscode.window.showWarningMessage(`${msg}. Powered by [Snyk](${registrationURL})`, PromptText.FULL_STACK_PROMPT_TEXT);
+          const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
             vscode.commands.executeCommand(commands.TRIGGER_FULL_STACK_ANALYSIS);
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
@@ -141,47 +137,49 @@ export function activate(context: vscode.ExtensionContext) {
         lspClient.onNotification('caNotification', respData => {
           const notification = new CANotification(respData);
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
-          if (canShowPopup(notification)) {
+          if (notification.hasWarning()) {
             showVulnerabilityFoundPrompt(notification.popupText(), path.basename(notification.origin()));
             record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()) });
-            // prevent further popups.
-            notifiedFiles.add(notification.origin());
           }
         });
 
-        lspClient.onNotification('caError', respData => {
-          const notification = new CANotification(respData);
+        lspClient.onNotification('caError', errorData => {
+          const notification = new CANotification(errorData);
           caStatusBarProvider.setError();
-          vscode.window.showErrorMessage(respData.data);
-          record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: respData.data });
-        });
 
-        lspClient.onNotification('caSimpleWarning', msg => {
-          vscode.window.showWarningMessage(msg);
+          // Since CA is an automated feature, only warning message will be shown on failure
+          vscode.window.showWarningMessage(notification.errorMsg());
+
+          // Record telemetry event
+          record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: notification.errorMsg() });
         });
       });
       context.subscriptions.push(
+        disposableStackAnalysisCommand,
+        disposableStackLogsCommand,
         rhRepositoryRecommendationNotification,
-        disposableFullStack,
-        disposableStackLogs,
         caStatusBarProvider,
       );
-    }
-  });
+    })
+    .catch(error => {
+      vscode.window.showErrorMessage(`Failed to Authorize Red Hat Dependency Analytics extension: ${error.message}`);
+      throw (error);
+    });
 
   vscode.workspace.onDidChangeConfiguration((event) => {
+
+    globalConfig.loadData();
+
     if (event.affectsConfiguration('redHatDependencyAnalytics.exhortSnykToken')) {
-      multimanifestmodule.triggerTokenValidation('snyk');
+      validateSnykToken();
     }
-    // add more token providers here...
   });
 }
 
-export function initOutputChannel(): DepOutputChannel {
-  const outputChannelDepInit = new DepOutputChannel();
-  return outputChannelDepInit;
-}
-
+/**
+ * Deactivates the extension.
+ * @returns A `Thenable` for void.
+ */
 export function deactivate(): Thenable<void> {
   if (!lspClient) {
     return undefined;
@@ -189,45 +187,58 @@ export function deactivate(): Thenable<void> {
   return lspClient.stop();
 }
 
+/**
+ * Shows an update notification if the extension has been updated to a new version.
+ * @param context - The extension context.
+ * @returns A Promise that resolves once the notification has been displayed if needed.
+ */
 async function showUpdateNotification(context: vscode.ExtensionContext) {
-  // Retrive current and previous version string to show welcome message
+
   const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
   const version = packageJSON.version;
   const previousVersion = context.globalState.get<string>(GlobalState.VERSION);
-  // Nothing to display
+
   if (version === previousVersion) {
     return;
   }
 
-  // store current version into localStorage
   context.globalState.update(GlobalState.VERSION, version);
 
-  const actions: vscode.MessageItem[] = [{ title: 'README' }, { title: 'Release Notes' }];
-
-  const displayName = packageJSON.displayName;
   const result = await vscode.window.showInformationMessage(
-    `${displayName} has been updated to v${version} — check out what's new!`,
-    ...actions
+    `${packageJSON.displayName} has been updated to v${version} — check out what's new!`,
+    'README',
+    'Release Notes'
   );
 
-  if (result !== null) {
-    if (result === actions[0]) {
+  if (result !== undefined) {
+    if (result === 'README') {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(packageJSON.homepage));
-    } else if (result === actions[1]) {
-      await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/${version}`));
+    } else if (result === 'Release Notes') {
+      await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/v${version}`));
     }
   }
 }
 
+/**
+ * Registers stack analysis commands to track RHDA report generations.
+ * @param context - The extension context.
+ */
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
-  const invokeFullStackReport = (uri: vscode.Uri) => {
-    const fileUri = uri || vscode.window.activeTextEditor.document.uri;
-    multimanifestmodule.redhatDependencyAnalyticsReportFlow(context, fileUri);
+
+  const invokeFullStackReport = async (uri: vscode.Uri) => {
+    try {
+      await generateRHDAReport(context, uri);
+      record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath) });
+    } catch (error) {
+      vscode.window.showErrorMessage(error.message);
+      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath), error: error.message });
+    }
   };
 
   const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
-    record(context, origin, { manifest: uri.fsPath.split('/').pop(), fileName: uri.fsPath.split('/').pop() });
-    invokeFullStackReport(uri);
+    const fileUri = uri || vscode.window.activeTextEditor.document.uri;
+    record(context, origin, { manifest: fileUri.fsPath.split('/').pop(), fileName: fileUri.fsPath.split('/').pop() });
+    invokeFullStackReport(fileUri);
   };
 
   const registerCommand = (cmd: string, action: TelemetryActions) => {

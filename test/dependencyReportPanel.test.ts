@@ -4,10 +4,9 @@ import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-import * as Config from '../src/config';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 import * as Templates from '../src/template';
-import { defaultRedhatDependencyAnalyticsReportFilePath } from '../src/constants';
+import { defaultRhdaReportFilePath } from '../src/constants';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -81,33 +80,14 @@ suite('DependencyReportPanel Modules', () => {
   });
 
   test('dispose should dispose of current panel with RHDA report path setting', async () => {
-    sandbox.stub(Config, 'getApiConfig').returns({
-      redHatDependencyAnalyticsReportFilePath: 'mockFilePath',
-    });
+
     const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
     const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');
 
     DependencyReportPanel.currentPanel.dispose();
 
-    expect(existsSyncStub).to.be.calledWith('mockFilePath');
-    expect(unlinkSyncStub).to.be.calledWith('mockFilePath');
-    expect(DependencyReportPanel.data).equals(null);
-    expect(DependencyReportPanel.currentPanel).equals(undefined);
-  });
-
-  test('dispose should dispose of current panel with default RHDA report path', async () => {
-    sandbox.stub(Config, 'getApiConfig').returns({
-      redHatDependencyAnalyticsReportFilePath: '',
-    });
-    const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
-    const unlinkSyncStub = sandbox.stub(fs, 'unlinkSync');
-
-    DependencyReportPanel.createOrShowWebviewPanel();
-
-    DependencyReportPanel.currentPanel.dispose();
-
-    expect(existsSyncStub).to.be.calledWith(defaultRedhatDependencyAnalyticsReportFilePath);
-    expect(unlinkSyncStub).to.be.calledWith(defaultRedhatDependencyAnalyticsReportFilePath);
+    expect(existsSyncStub).to.be.calledWith(defaultRhdaReportFilePath);
+    expect(unlinkSyncStub).to.be.calledWith(defaultRhdaReportFilePath);
     expect(DependencyReportPanel.data).equals(null);
     expect(DependencyReportPanel.currentPanel).equals(undefined);
   });

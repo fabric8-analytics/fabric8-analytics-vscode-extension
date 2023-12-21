@@ -2,8 +2,11 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
-import * as vscode from 'vscode';
-import * as Config from '../src/config';
+import { globalConfig } from '../src/config';
+import { GlobalState } from '../src/constants';
+import * as commands from '../src/commands';
+import * as redhatTelemetry from '../src/redhatTelemetry';
+import { context } from './vscontext.mock';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -19,166 +22,42 @@ suite('Config module', () => {
     sandbox.restore();
   });
 
-  test('getApiConfig should get API config', async () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    getConfigurationStub.withArgs('redHatDependencyAnalytics').resolves('mockApiConfig');
+  test('should initialize Config properties with default extension settings', async () => {
 
-    const apiConfig = await Config.getApiConfig();
+    expect(globalConfig.triggerFullStackAnalysis).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
+    expect(globalConfig.triggerRHRepositoryRecommendationNotification).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
+    expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
+    expect(globalConfig.exhortSnykToken).to.eq('');
+    expect(globalConfig.matchManifestVersions).to.eq('true');
+    expect(globalConfig.rhdaReportFilePath).to.eq('/tmp/redhatDependencyAnalyticsReport.html');
+    expect(globalConfig.exhortMvnPath).to.eq('mvn');
+    expect(globalConfig.exhortNpmPath).to.eq('npm');
+    expect(globalConfig.exhortGoPath).to.eq('go');
+    expect(globalConfig.exhortPython3Path).to.eq('python3');
+    expect(globalConfig.exhortPip3Path).to.eq('pip3');
+    expect(globalConfig.exhortPythonPath).to.eq('python');
+    expect(globalConfig.exhortPipPath).to.eq('pip');
 
-    expect(apiConfig).to.equal('mockApiConfig');
+    expect(process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS']).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
+    expect(process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION']).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
+    expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
+    expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.eq('');
+    expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');
+    expect(process.env['VSCEXT_EXHORT_MVN_PATH']).to.eq('mvn');
+    expect(process.env['VSCEXT_EXHORT_NPM_PATH']).to.eq('npm');
+    expect(process.env['VSCEXT_EXHORT_GO_PATH']).to.eq('go');
+    expect(process.env['VSCEXT_EXHORT_PYTHON3_PATH']).to.eq('python3');
+    expect(process.env['VSCEXT_EXHORT_PIP3_PATH']).to.eq('pip3');
+    expect(process.env['VSCEXT_EXHORT_PYTHON_PATH']).to.eq('python');
+    expect(process.env['VSCEXT_EXHORT_PIP_PATH']).to.eq('pip');
   });
 
-  test('getMvnExecutable should get default mvn executable', () => {
-    let mvnPath = Config.getMvnExecutable();
+  test('should call retrieve telemetry parameters from getTelemetryId', async () => {
+    sandbox.stub(redhatTelemetry, 'getTelemetryId').resolves('mockId');
 
-    expect(mvnPath).equals('mvn');
-  });
+    await globalConfig.authorizeRHDA(context);
 
-  test('getMvnExecutable should get custom mvn executable', () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    const configMock = {
-      get: (key: string) => {
-        if (key === 'path') {
-          return 'path/to/mvn';
-        }
-      },
-    };
-    getConfigurationStub.withArgs('mvn.executable').returns(configMock as vscode.WorkspaceConfiguration);
-
-    let mvnPath = Config.getMvnExecutable();
-
-    expect(mvnPath).equals('path/to/mvn');
-  });
-
-  test('getNpmExecutable should get default npm executable', () => {
-    let npmPath = Config.getNpmExecutable();
-
-    expect(npmPath).equals('npm');
-  });
-
-  test('getNpmExecutable should get custom npm executable', () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    const configMock = {
-      get: (key: string) => {
-        if (key === 'path') {
-          return 'path/to/npm';
-        }
-      },
-    };
-    getConfigurationStub.withArgs('npm.executable').returns(configMock as vscode.WorkspaceConfiguration);
-
-    let npmPath = Config.getNpmExecutable();
-
-    expect(npmPath).equals('path/to/npm');
-  });
-
-  test('getGoExecutable should get default go executable', () => {
-    let goPath = Config.getGoExecutable();
-
-    expect(goPath).equals('go');
-  });
-
-  test('getGoExecutable should get custom go executable', () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    const configMock = {
-      get: (key: string) => {
-        if (key === 'path') {
-          return 'path/to/go';
-        }
-      },
-    };
-    getConfigurationStub.withArgs('go.executable').returns(configMock as vscode.WorkspaceConfiguration);
-
-    let goPath = Config.getGoExecutable();
-
-    expect(goPath).equals('path/to/go');
-  });
-
-  test('getPython3Executable should get default python3 executable', () => {
-    let python3Path = Config.getPython3Executable();
-
-    expect(python3Path).equals('python3');
-  });
-
-  test('getPython3Executable should get custom python3 executable', () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    const configMock = {
-      get: (key: string) => {
-        if (key === 'path') {
-          return 'path/to/python3';
-        }
-      },
-    };
-    getConfigurationStub.withArgs('python3.executable').returns(configMock as vscode.WorkspaceConfiguration);
-
-    let python3Path = Config.getPython3Executable();
-
-    expect(python3Path).equals('path/to/python3');
-  });
-
-  test('getPip3Executable should get default pip3 executable', () => {
-    let pip3Path = Config.getPip3Executable();
-
-    expect(pip3Path).equals('pip3');
-  });
-
-  test('getPip3Executable should get custom pip3 executable', () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    const configMock = {
-      get: (key: string) => {
-        if (key === 'path') {
-          return 'path/to/pip3';
-        }
-      },
-    };
-    getConfigurationStub.withArgs('pip3.executable').returns(configMock as vscode.WorkspaceConfiguration);
-
-    let pip3Path = Config.getPip3Executable();
-
-    expect(pip3Path).equals('path/to/pip3');
-  });
-
-  test('getPythonExecutable should get default python executable', () => {
-    let pythonPath = Config.getPythonExecutable();
-
-    expect(pythonPath).equals('python');
-  });
-
-  test('getPythonExecutable should get custom python executable', () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    const configMock = {
-      get: (key: string) => {
-        if (key === 'path') {
-          return 'path/to/python';
-        }
-      },
-    };
-    getConfigurationStub.withArgs('python.executable').returns(configMock as vscode.WorkspaceConfiguration);
-
-    let pythonPath = Config.getPythonExecutable();
-
-    expect(pythonPath).equals('path/to/python');
-  });
-
-  test('getPipExecutable should get default pip executable', () => {
-    let pipPath = Config.getPipExecutable();
-
-    expect(pipPath).equals('pip');
-  });
-
-  test('getPipExecutable should get custom pip executable', () => {
-    const getConfigurationStub = sandbox.stub(vscode.workspace, 'getConfiguration');
-    const configMock = {
-      get: (key: string) => {
-        if (key === 'path') {
-          return 'path/to/pip';
-        }
-      },
-    };
-    getConfigurationStub.withArgs('pip.executable').returns(configMock as vscode.WorkspaceConfiguration);
-
-    let pipPath = Config.getPipExecutable();
-
-    expect(pipPath).equals('path/to/pip');
+    expect(globalConfig.telemetryId).to.equal('mockId');
+    expect(process.env['VSCEXT_TELEMETRY_ID']).to.equal('mockId');
   });
 });

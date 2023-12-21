@@ -108,6 +108,16 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
 	![ Animated screenshot showing the inline reporting feature of Red Hat Dependency Analytics ](images/screencasts/component-analysis.gif)
 
+- **Recommendations and remediations** 
+    <br >After running a detailed analysis report on a specific component version, you can view recommendations and remediations by using the _Quick Fix..._ menu.
+	If there is a Red Hat recommended package version available, you can replace your version with Red Hat's version.
+
+	![ Animated screenshot showing how to access the _Quick Fix..._ menu, and switching to a Red Hat recommended package version ](images/screencasts/quickfix.gif)
+
+	<br >**IMPORTANT:** For Maven projects only, when analyzing a `pom.xml` file.
+	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediations.
+	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
+  
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
 	If you wish to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.

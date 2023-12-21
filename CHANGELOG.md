@@ -1,8 +1,10 @@
 # Change Log
 ## 0.8.0 (Dec 11th 2023)
 - informational - Service Preview release of Red Hat Dependency Analytics (RHDA) extension.
+- informational - Configuration names for all supported executable paths in the extension settings have changed. These executable paths are only used for the analysis.
 - enhancement - Added support for error observation by using Sentry.
-- enhancement - Support for more complex SPDX SBOM relationships
+- enhancement - Support for more complex SPDX SBOM relationships.
+- enhancement - Added recommendations and remediations in the _Quick Fix..._ tab.
 - fixes - Fixed an issue where unique Snyk vulnerability information was not being displayed in the Dependency Analytics report. See [PR#217](https://github.com/RHEcosystemAppEng/exhort/pull/217) for details.
 - fixes - Better valid and invalid token alert messages for the Snyk vulnerability information provider. See [PR#218](https://github.com/RHEcosystemAppEng/exhort/pull/218) for details.
 - fixes - Fixed analysis report discrepancies between Red Hat Dependency Analytics and Snyk’s analytics. See [PR#219](https://github.com/RHEcosystemAppEng/exhort/pull/219) for details.

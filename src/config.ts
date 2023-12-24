@@ -89,7 +89,6 @@ class Config {
     process.env['VSCEXT_EXHORT_PIP3_PATH'] = this.exhortPip3Path;
     process.env['VSCEXT_EXHORT_PYTHON_PATH'] = this.exhortPythonPath;
     process.env['VSCEXT_EXHORT_PIP_PATH'] = this.exhortPipPath;
-    process.env['EXHORT_DEV_MODE'] = GlobalState.EXHORT_DEV_MODE;
   }
 
   /**

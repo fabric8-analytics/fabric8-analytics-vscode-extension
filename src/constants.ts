@@ -6,9 +6,7 @@ export enum GlobalState {
   // to store the current version string to localStorage
   VERSION = 'fabric8Version',
   // to store the UTM source for tracking purposes
-  UTM_SOURCE = 'vscode',
-  // to store the current exhort environment mode
-  EXHORT_DEV_MODE = 'true'
+  UTM_SOURCE = 'vscode'
 }
 
 export enum StatusMessages {

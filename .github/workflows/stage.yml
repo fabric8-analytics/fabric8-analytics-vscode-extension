@@ -76,6 +76,45 @@ jobs:
         run: |
           echo "version=$(npm version ${{ vars.VERSION_BUMPING_TYPE }} --no-git-tag-version)" >> "$GITHUB_OUTPUT"          
 
+      - name: Create release notes from changelog
+        id: release-notes
+        run: |
+          notes=$(sed -n "/## ${{ steps.bump.outputs.version }}/,/^##/p" ./CHANGELOG.md | grep -v '##')
+          if [ -z "$notes" ]; then
+            echo "Release notes are missing for version ${{ steps.bump.outputs.version }}."
+            exit 1
+          else
+            echo "notes=$notes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update current version date in changelog
+        run: |
+          day_suffix=$(date +"%e" | sed 's/^[[:space:]]*//')   
+
+          if [ "$day_suffix" = "1" ] || [ "$day_suffix" = "21" ] || [ "$day_suffix" = "31" ]; then
+            suffix="st"
+          elif [ "$day_suffix" = "2" ] || [ "$day_suffix" = "22" ]; then
+            suffix="nd"
+          elif [ "$day_suffix" = "3" ] || [ "$day_suffix" = "23" ]; then
+            suffix="rd"
+          else
+            suffix="th"
+          fi
+
+          today="$(date +"%b %-d")$suffix $(date +"%Y")"
+          version="${{ steps.bump.outputs.version }}"
+
+          if grep -qE "## $version \([^)]*\)" ./CHANGELOG.md; then
+            current_date=$(grep -oP "(?<=## $version \()[^\)]*" ./CHANGELOG.md)
+
+            if [ "$current_date" != "$today" ]; then
+              sed -E -i "s/## $version \([^)]*\)/## $version ($today)/" CHANGELOG.md
+            fi
+
+          else
+            sed -E -i "s/## $version/## $version ($today)/" CHANGELOG.md
+          fi
+
       - name: Download vsix package artifact
         uses: actions/download-artifact@v3
         with:
@@ -84,6 +123,7 @@ jobs:
 
       - name: Commit and push package modifications
         run: |
+          git add CHANGELOG.md
           git add package.json
           git add package-lock.json
           git commit -m "build: updated package with ${{ steps.bump.outputs.version }} [skip ci]"
@@ -104,6 +144,7 @@ jobs:
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
               tag_name: '${{ steps.bump.outputs.version }}',
               name: '${{ steps.bump.outputs.version }}',
+              body: ${{ steps.release-notes.outputs.notes }},
               prerelease: false,
               generate_release_notes: true
             })

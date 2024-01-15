@@ -64,7 +64,7 @@ class Config {
     this.exhortSnykToken = rhdaConfig.exhortSnykToken;
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
     this.vulnerabilityAlertSeverity = rhdaConfig.vulnerabilityAlertSeverity;
-    this.rhdaReportFilePath = rhdaConfig.redHatDependencyAnalyticsReportFilePath || defaultRhdaReportFilePath;
+    this.rhdaReportFilePath = rhdaConfig.reportFilePath || defaultRhdaReportFilePath;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
     this.exhortGoPath = rhdaConfig.go.executable.path || this.DEFAULT_GO_EXECUTABLE;

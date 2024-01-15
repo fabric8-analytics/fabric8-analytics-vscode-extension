@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues",
-    "email": "arajkuma@redhat.com"
+    "email": "ishishov@redhat.com"
   },
   "repository": {
     "type": "git",
@@ -49,12 +49,12 @@
     "commands": [
       {
         "command": "fabric8.stackAnalysis",
-        "title": "Stack Report...",
+        "title": "Red Hat Dependency Analytics Report...",
         "category": "Red Hat Dependency Analytics"
       },
       {
         "command": "fabric8.stackAnalysisFromPieBtn",
-        "title": "Open Vulnerability Report",
+        "title": "Open Red Hat Dependency Analytics Report",
         "icon": {
           "light": "icon/report-icon.png",
           "dark": "icon/report-icon.png"
@@ -148,31 +148,15 @@
         }
       ]
     },
-    "configurationAttributes": {
-      "launch": {
-        "properties": {
-          "pythonPath": {
-            "type": "string",
-            "description": "Path (fully qualified) to python executable. Defaults to the value in settings.json",
-            "default": "${config:python.pythonPath}"
-          }
-        }
-      }
-    },
     "configuration": {
       "type": "object",
-      "title": "Openshift.io configuration",
+      "title": "Red Hat Dependency Analytics configuration",
       "properties": {
         "redhat.telemetry.enabled": {
           "type": "boolean",
           "default": null,
           "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
           "scope": "window"
-        },
-        "redHatDependencyAnalyticsServer.maxNumberOfProblems": {
-          "type": "number",
-          "default": 100,
-          "description": "Controls the maximum number of problems produced by the server."
         },
         "redHatDependencyAnalyticsServer.trace.server": {
           "type": "string",
@@ -182,7 +166,7 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the redHatDependencyAnalyticsServer service."
+          "description": "Traces the communication between VSCode and the Red Hat Dependency Analytics Language Server."
         },
         "redHatDependencyAnalytics.exhortSnykToken": {
           "type": "string",
@@ -196,7 +180,7 @@
           "description": "Restricts RHDA from performing analysis on dependency tags that do not match the tags requested within the manifest files.",
           "scope": "window"
         },
-        "redHatDependencyAnalytics.redHatDependencyAnalyticsReportFilePath": {
+        "redHatDependencyAnalytics.reportFilePath": {
           "type": "string",
           "default": "/tmp/redhatDependencyAnalyticsReport.html",
           "description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",

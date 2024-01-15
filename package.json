@@ -243,6 +243,16 @@
           "default": "",
           "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
           "scope": "window"
+        },
+        "redHatDependencyAnalytics.vulnerabilityAlertSeverity": {
+          "type": "string",
+          "enum": [
+            "Error",
+            "Warning"
+          ],
+          "default": "Error",
+          "description": "Defines the severity level of alerts for detected vulnerabilities in dependencies.",
+          "scope": "window"
         }
       }
     }

@@ -16,6 +16,7 @@ class Config {
   utmSource: string;
   exhortSnykToken: string;
   matchManifestVersions: string;
+  vulnerabilityAlertSeverity: string;
   exhortMvnPath: string;
   exhortNpmPath: string;
   exhortGoPath: string;
@@ -62,6 +63,7 @@ class Config {
     this.utmSource = GlobalState.UTM_SOURCE;
     this.exhortSnykToken = rhdaConfig.exhortSnykToken;
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
+    this.vulnerabilityAlertSeverity = rhdaConfig.vulnerabilityAlertSeverity;
     this.rhdaReportFilePath = rhdaConfig.redHatDependencyAnalyticsReportFilePath || defaultRhdaReportFilePath;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
@@ -82,6 +84,7 @@ class Config {
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = this.exhortSnykToken;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
+    process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
     process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;
     process.env['VSCEXT_EXHORT_GO_PATH'] = this.exhortGoPath;

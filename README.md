@@ -72,7 +72,7 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 
 1. Open the Visual Studio Code application.
 2. From the file menu, click **View**, and click **Extensions**.
-3. Find the installed **Red Hat Dependency Analytics** extension, and click on the **Gear** icon.
+3. Find the installed **Red Hat Dependency Analytics** extension, and click the **Gear** icon.
 4. Click **Extension Settings**.
 
    ![Red Hat Dependency Analytics extension workspace settings](images/screenshots/extension-workspace-settings.png)
@@ -92,9 +92,15 @@ If you enter a invalid Snyk token, a pop-up message alerts you that your Snyk to
 If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
 
 **Red Hat Dependency Analytics Report File Path** :
-
-Specify the local path to create the Red Hat Dependency Analytics report file.
+<br >Specify the local path to create the Red Hat Dependency Analytics report file.
 The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
+
+<br >**IMPORTANT:** 
+<br >The `redHatDependencyAnalyticsReportFilePath` setting name has changed to `reportFilePath`.
+If you had a custom file path set for `redHatDependencyAnalyticsReportFilePath`, then you need to add your custom file path to the `reportFilePath` setting.
+
+**Inline Vulnerability Severity Alerts** :
+<br >You can set the vulnerability severity alert level to receive inline notifications for just errors or warnings.
 
 ## Features
 
@@ -156,7 +162,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	}
 	```
 
-	If you wish to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	If you want to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
 	For example:
 	```
 	require (
@@ -164,7 +170,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	)
 	```
 
-	If you wish to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	If you want to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
 	For example:
 	```
 	requests==2.28.1 # exhortignore
@@ -217,7 +223,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	)
 	```
 
-	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there istead.
+	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there instead.
 
 - **Red Hat Dependency Analytics report** 
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.

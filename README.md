@@ -97,10 +97,9 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
 <br >**IMPORTANT:** 
 <br >The `redHatDependencyAnalyticsReportFilePath` setting name has changed to `reportFilePath`.
-If you had a custom file path set for `redHatDependencyAnalyticsReportFilePath`, then you need to add your custom file path to the `reportFilePath` setting.
 
 **Inline Vulnerability Severity Alerts** :
-<br >You can set the vulnerability severity alert level to receive inline notifications for just errors or warnings.
+<br >You can set the vulnerability severity alert level to `Error` or `Warning` for inline notifications of detected vulnerabilities.
 
 ## Features
 

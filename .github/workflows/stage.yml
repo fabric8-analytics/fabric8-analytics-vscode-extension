@@ -79,9 +79,11 @@ jobs:
       - name: Create release notes from changelog
         id: release-notes
         run: |
-          notes=$(sed -n "/## ${{ steps.bump.outputs.version }}/,/^##/p" ./CHANGELOG.md | grep -v '##')
+          version="${{ steps.bump.outputs.version }}"
+          version=${version#v}
+          notes=$(sed -n "/## $version/,/^##/p" ./CHANGELOG.md | grep -v '##')
           if [ -z "$notes" ]; then
-            echo "Release notes are missing for version ${{ steps.bump.outputs.version }}."
+            echo "Release notes are missing for version $version."
             exit 1
           else
             echo "notes=$notes" >> "$GITHUB_OUTPUT"
@@ -102,7 +104,7 @@ jobs:
           fi
 
           today="$(date +"%b %-d")$suffix $(date +"%Y")"
-          version="${{ steps.bump.outputs.version }}"
+          version="${{ steps.release-notes.outputs.version }}"
 
           if grep -qE "## $version \([^)]*\)" ./CHANGELOG.md; then
             current_date=$(grep -oP "(?<=## $version \()[^\)]*" ./CHANGELOG.md)

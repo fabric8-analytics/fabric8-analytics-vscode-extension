@@ -86,7 +86,17 @@ jobs:
             echo "Release notes are missing for version $version."
             exit 1
           else
-            echo "notes=$notes" >> "$GITHUB_OUTPUT"
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+
+            notes="${notes//$''/%27}"
+            notes="${notes//$''/%60}"
+            notes="${notes//'%'/'%25'}"
+            notes="${notes//$'\n'/'%0A'}"
+            notes="${notes//$'\r'/'%0D'}"
+            delimiter="$(openssl rand -hex 8)"
+            echo "notes<<${delimiter}" >> "$GITHUB_OUTPUT"
+            echo "$notes" >> "$GITHUB_OUTPUT"
+            echo "${delimiter}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Update current version date in changelog
@@ -146,7 +156,7 @@ jobs:
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
               tag_name: '${{ steps.bump.outputs.version }}',
               name: '${{ steps.bump.outputs.version }}',
-              body: ${{ steps.release-notes.outputs.notes }},
+              body: '${{ steps.release-notes.outputs.notes }}',
               prerelease: false,
               generate_release_notes: true
             })

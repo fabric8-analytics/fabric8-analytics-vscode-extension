@@ -1,5 +1,6 @@
 'use strict';
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import {
   LanguageClient,
@@ -7,7 +8,6 @@ import {
   ServerOptions,
   TransportKind
 } from 'vscode-languageclient/node';
-import * as path from 'path';
 
 import * as commands from './commands';
 import { GlobalState, extensionQualifiedId, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
@@ -105,19 +105,13 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'pip-requirements' },
           { scheme: 'file', language: 'go' },
           { scheme: 'file', language: 'go.mod' }
-        ],
-        synchronize: {
-          // Synchronize the setting section 'redHatDependencyAnalyticsServer' to the server
-          configurationSection: 'redHatDependencyAnalyticsServer',
-          // Notify the server about file changes to '.clientrc files contained in the workspace
-          fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc'),
-        }
+        ]
       };
 
       // Create the language client and start the client.
       lspClient = new LanguageClient(
         'redHatDependencyAnalyticsServer',
-        'Red Hat Dependency Analytics Language Server',
+        'Red Hat Dependency Analytics Server',
         serverOptions,
         clientOptions
       );

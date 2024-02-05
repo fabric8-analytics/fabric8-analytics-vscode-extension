@@ -1,6 +1,12 @@
 # Change Log
+## 0.9.2 (Feb 4th 2024)
+- informational - The `redHatDependencyAnalyticsReportFilePath` setting name has changed to `reportFilePath`. If you had a custom file path set for `redHatDependencyAnalyticsReportFilePath`, then you need to add your custom file path to the `reportFilePath` setting.
+- enhancement - Added a vulnerability severity alert level setting for the user to receive inline notifications for just errors or warnings. See [PR#674](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/674) for details.
+- fixes - Fixed an issue with the `codeActionsMap` call. When multiple manifest documents are open that have the same dependency, one of the document entries gets deleted. This gave a wrong result in the analysis. See [PR#236](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/236) for details.
+- fixes - Fixed an issue in the Exhort Javascript API. This fix enables and supports analysis of `pom.xml` manifests that include local modules, and a parent Project Object Model (POM). See the [PR#237](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/237) for details.
+- fixes - Fixed an issue with the analysis report not displaying because of spaces in the manifest file path. See [PR#100](https://github.com/RHEcosystemAppEng/exhort-javascript-api/pull/100) for details.
 ## 0.9.1 (Dec 24th 2023)
-- fixes - Resolved endpoint configuration issue by removing EXHORT_DEV_MODE environment configuration parameter. See [PR#672](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/672).
+- fixes - Resolved endpoint configuration issue by removing EXHORT_DEV_MODE environment configuration parameter. See [PR#672](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/672) for details.
 ## 0.9.0 (Dec 21th 2023)
 - informational - Service Preview release of Red Hat Dependency Analytics (RHDA) extension.
 - informational - Configuration names for all supported executable paths in the extension settings have changed. These executable paths are only used for the analysis.

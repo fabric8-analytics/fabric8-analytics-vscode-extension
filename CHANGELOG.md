@@ -1,5 +1,5 @@
 # Change Log
-## 0.9.2 (Feb 4th 2024)
+## 0.9.2 (Feb 5th 2024)
 - informational - The `redHatDependencyAnalyticsReportFilePath` setting name has changed to `reportFilePath`. If you had a custom file path set for `redHatDependencyAnalyticsReportFilePath`, then you need to add your custom file path to the `reportFilePath` setting.
 - enhancement - Added a vulnerability severity alert level setting for the user to receive inline notifications for just errors or warnings. See [PR#674](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/674) for details.
 - fixes - Fixed an issue with the `codeActionsMap` call. When multiple manifest documents are open that have the same dependency, one of the document entries gets deleted. This gave a wrong result in the analysis. See [PR#236](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/236) for details.

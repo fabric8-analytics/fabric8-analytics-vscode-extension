@@ -88,13 +88,10 @@ jobs:
           else
             echo "version=$version" >> "$GITHUB_OUTPUT"
 
-            notes="${notes//$''/%27}"
-            notes="${notes//$''/%60}"
-            notes="${notes//'%'/'%25'}"
-            notes="${notes//$'\n'/'%0A'}"
-            notes="${notes//$'\r'/'%0D'}"
+            notes="${notes//$'`'/%60}"
             delimiter="$(openssl rand -hex 8)"
             echo "notes<<${delimiter}" >> "$GITHUB_OUTPUT"
+            echo "## Changelog" >> "$GITHUB_OUTPUT"
             echo "$notes" >> "$GITHUB_OUTPUT"
             echo "${delimiter}" >> "$GITHUB_OUTPUT"
           fi

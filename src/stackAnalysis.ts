@@ -21,6 +21,7 @@ const supportedFiles = [
  * @param data The data to update the panel with.
  */
 function updateWebviewPanel(data) {
+  /* istanbul ignore else */
   if (DependencyReportPanel.currentPanel) {
     DependencyReportPanel.currentPanel.doUpdatePanel(data);
   }
@@ -133,6 +134,7 @@ async function generateRHDAReport(context, uri) {
 
       await triggerWebviewPanel(context);
       const resp = await executeStackAnalysis(uri.fsPath);
+      /* istanbul ignore else */
       if (DependencyReportPanel.currentPanel) {
         await writeReportToFile(resp);
       }

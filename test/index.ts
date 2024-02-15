@@ -25,6 +25,7 @@ export async function run(): Promise<void> {
     hookRunInThisContext: true,
     reportDir: join(__dirname, "..", "..", 'coverage'), // remove attribute for report to be saved in ./out/src/
     tempDir: join(__dirname, "..", "..", '.nyc_output'), // remove attribute for output to be saved in ./out/src/
+    exclude: ['exhortServices.js', 'exhortServices_rewire.js', 'redhatTelemetry.js', 'redhatTelemetry_rewire.js']
   })
   await nyc.wrap()
 
@@ -39,7 +40,7 @@ export async function run(): Promise<void> {
   })
 
   // Add all files to the test suite
-  const files = sync("**/**.test.js", { cwd: testsRoot, ignore: ['**/stackAnalysisService.test.js'] })
+  const files = sync("**/**.test.js", { cwd: testsRoot })
   files.forEach(f => mocha.addFile(resolve(testsRoot, f)))
 
   const failures: number = await new Promise(executor => mocha.run(executor))

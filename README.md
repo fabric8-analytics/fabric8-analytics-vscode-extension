@@ -123,6 +123,10 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediations.
 	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
   
+- **Data sources**
+    <br >Red Hat Dependency Analytics uses the [ONGuard](https://github.com/RHEcosystemAppEng/ONguard) service by integrating the [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources.
+	When giving a set of package URLs (purls) to the ONGuard service, a query to OSV retrieves the associated vulnerability information, and also returns Common Vulnerability and Exposures (CVE) metrics.
+
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
 	If you wish to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.

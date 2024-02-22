@@ -4,9 +4,11 @@
 ![CI](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/CI/badge.svg?branch=master)
 [![Codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
-Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you build your application.
-The Red Hat Dependency Analytics extension uses the Snyk REST API to query [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) for the most up-to-date vulnerability information available.
-Snyk uses industry-leading security intelligence by pulling from many data sources to give you exact vulnerability information.
+Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you code your application.
+The Red Hat Dependency Analytics extension uses the following data sources for the most up-to-date vulnerability information available:
+
+- [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) is an industry-leading security intelligence service. Red Hat Dependency Analytics uses Snyk's REST API to query for the latest vulnerability information available.
+- The [ONGuard](https://github.com/RHEcosystemAppEng/ONguard) service, which integrates the [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources. When giving a set of package URLs (purls) to the ONGuard service, a query to OSV retrieves the associated vulnerability information, and also returns Common Vulnerability and Exposures (CVE) metrics.
 
 **NOTE:**
 <br >The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
@@ -106,7 +108,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 - **Component analysis**
 	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
-	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from Snyk.
+	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from the available data sources.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
 	
 	**NOTE:** Add the `target` folder to your `.gitignore` file to exclude it from Git monitoring.
@@ -122,10 +124,6 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	<br >**IMPORTANT:** For Maven projects only, when analyzing a `pom.xml` file.
 	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediations.
 	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
-  
-- **Data sources**
-    <br >Red Hat Dependency Analytics uses the [ONGuard](https://github.com/RHEcosystemAppEng/ONguard) service by integrating the [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources.
-	When giving a set of package URLs (purls) to the ONGuard service, a query to OSV retrieves the associated vulnerability information, and also returns Common Vulnerability and Exposures (CVE) metrics.
 
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.

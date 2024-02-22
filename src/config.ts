@@ -12,7 +12,7 @@ import { getTelemetryId } from './redhatTelemetry';
 class Config {
   telemetryId: string;
   triggerFullStackAnalysis: string;
-  triggerRHRepositoryRecommendationNotification: string;
+  triggerTrackRecommendationAcceptance: string;
   utmSource: string;
   exhortSnykToken: string;
   matchManifestVersions: string;
@@ -59,7 +59,7 @@ class Config {
     const rhdaConfig = this.getRhdaConfig();
 
     this.triggerFullStackAnalysis = commands.TRIGGER_FULL_STACK_ANALYSIS;
-    this.triggerRHRepositoryRecommendationNotification = commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION;
+    this.triggerTrackRecommendationAcceptance = commands.TRIGGER_TRACK_RECOMMENDATION_ACCEPTANCE;
     this.utmSource = GlobalState.UTM_SOURCE;
     this.exhortSnykToken = rhdaConfig.exhortSnykToken;
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
@@ -80,7 +80,7 @@ class Config {
    */
   private setProcessEnv() {
     process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS'] = this.triggerFullStackAnalysis;
-    process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION'] = this.triggerRHRepositoryRecommendationNotification;
+    process.env['VSCEXT_TRIGGER_TRACK_RECOMMENDATION_ACCEPTANCE'] = this.triggerTrackRecommendationAcceptance;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = this.exhortSnykToken;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;

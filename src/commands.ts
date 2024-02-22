@@ -9,4 +9,4 @@ export const TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER = 'fabric8.stackAnalysisF
 export const TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN = 'fabric8.stackAnalysisFromPieBtn';
 export const TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR = 'fabric8.stackAnalysisFromEditor';
 export const TRIGGER_STACK_LOGS = 'fabric8.fabric8AnalyticsStackLogs';
-export const TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION = 'fabric8.RHRepositoryRecommendationNotification';
+export const TRIGGER_TRACK_RECOMMENDATION_ACCEPTANCE = 'fabric8.trackRecommendationAcceptance';

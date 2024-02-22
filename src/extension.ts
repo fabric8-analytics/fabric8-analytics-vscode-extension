@@ -60,14 +60,14 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
-    commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
-    () => {
-      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                    make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
-                    This ensures that the applied dependencies work correctly. 
-                    Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
-      vscode.window.showWarningMessage(msg);
+  const trackRecommendationAcceptance = vscode.commands.registerCommand(
+    commands.TRIGGER_TRACK_RECOMMENDATION_ACCEPTANCE,
+    (dependency, fileName) => {
+      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: dependency.split('@')[0], version: dependency.split('@')[1] });
+
+      if (fileName === 'pom.xml') {
+        showRHRepositoryRecommendationNotification();
+      }
     }
   );
 
@@ -151,7 +151,7 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
-        rhRepositoryRecommendationNotification,
+        trackRecommendationAcceptance,
         caStatusBarProvider,
       );
     })
@@ -211,6 +211,14 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/v${version}`));
     }
   }
+}
+
+function showRHRepositoryRecommendationNotification() {
+  const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
+                  make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
+                  This ensures that the applied dependencies work correctly. 
+                  Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
+  vscode.window.showWarningMessage(msg);
 }
 
 /**

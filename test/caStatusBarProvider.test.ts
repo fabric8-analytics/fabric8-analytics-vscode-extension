@@ -26,7 +26,6 @@ suite('CAStatusBarProvider module', () => {
         const uri = 'file:///mock/path';
 
         caStatusBarProvider.showSummary(text, uri);
-        console.log(caStatusBarProvider['statusBarItem'].command);
 
         expect(caStatusBarProvider['statusBarItem'].text).to.equal(text);
         expect(caStatusBarProvider['statusBarItem'].tooltip).to.equal(PromptText.FULL_STACK_PROMPT_TEXT);

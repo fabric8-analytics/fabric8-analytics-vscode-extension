@@ -57,7 +57,7 @@ async function tokenValidationService(options, source) {
       vscode.window.showWarningMessage(`Failed to validate token. Status: ${tokenValidationStatus}`);
     }
   } catch (error) {
-    vscode.window.showErrorMessage(`Failed to validate token, Error: ${error}`);
+    vscode.window.showErrorMessage(`Failed to validate token, Error: ${error.message}`);
   }
 }
 

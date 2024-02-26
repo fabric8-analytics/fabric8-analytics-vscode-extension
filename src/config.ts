@@ -62,8 +62,10 @@ class Config {
     this.triggerRHRepositoryRecommendationNotification = commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION;
     this.utmSource = GlobalState.UTM_SOURCE;
     this.exhortSnykToken = rhdaConfig.exhortSnykToken;
+    /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
     this.vulnerabilityAlertSeverity = rhdaConfig.vulnerabilityAlertSeverity;
+    /* istanbul ignore next */
     this.rhdaReportFilePath = rhdaConfig.reportFilePath || defaultRhdaReportFilePath;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;

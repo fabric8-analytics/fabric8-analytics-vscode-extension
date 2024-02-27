@@ -8,7 +8,7 @@ Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security 
 The Red Hat Dependency Analytics extension uses the following data sources for the most up-to-date vulnerability information available:
 
 - [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) is an industry-leading security intelligence service. Red Hat Dependency Analytics uses Snyk's REST API to query for the latest vulnerability information available.
-- The [ONGuard](https://github.com/RHEcosystemAppEng/ONguard) service, which integrates the [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources. When giving a set of package URLs (purls) to the ONGuard service, a query to OSV retrieves the associated vulnerability information, and also returns Common Vulnerability and Exposures (CVE) metrics.
+- The [ONGuard](https://github.com/RHEcosystemAppEng/ONguard) service, which integrates the [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources. When given a set of packages to the ONGuard service, a query to OSV retrieves the associated vulnerability information, and then a query to NVD for public Common Vulnerability and Exposures (CVE) information.
 
 **NOTE:**
 <br >The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.

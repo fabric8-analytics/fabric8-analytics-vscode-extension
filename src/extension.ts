@@ -10,7 +10,7 @@ import {
 } from 'vscode-languageclient/node';
 
 import * as commands from './commands';
-import { GlobalState, extensionQualifiedId, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
+import { GlobalState, extensionQualifiedId, redhatMavenRepository, redhatMavenRepositoryDocumentationURL, SNYK_TOKEN_KEY } from './constants';
 import { generateRHDAReport } from './stackAnalysis';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
@@ -29,6 +29,8 @@ export let outputChannelDep: DepOutputChannel;
  * @param context - The extension context.
  */
 export function activate(context: vscode.ExtensionContext) {
+  globalConfig.linkToSecretStorage(context);
+
   startUp(context);
 
   // show welcome message after first install or upgrade
@@ -68,6 +70,21 @@ export function activate(context: vscode.ExtensionContext) {
                     This ensures that the applied dependencies work correctly. 
                     Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
       vscode.window.showWarningMessage(msg);
+    }
+  );
+
+  const disposableSetSnykToken = vscode.commands.registerCommand(
+    commands.SET_SNYK_TOKEN_COMMAND,
+    async () => {
+      const token = await vscode.window.showInputBox({
+        prompt: 'Please enter your Snyk Token:',
+        placeHolder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+        password: true,
+        validateInput: validateSnykToken
+      });
+
+      if (!token) return;
+      await globalConfig.setSnykToken(token);
     }
   );
 
@@ -115,6 +132,7 @@ export function activate(context: vscode.ExtensionContext) {
         serverOptions,
         clientOptions
       );
+
       lspClient.start().then(() => {
 
         const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
@@ -148,10 +166,12 @@ export function activate(context: vscode.ExtensionContext) {
           record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: notification.errorMsg() });
         });
       });
+
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
         rhRepositoryRecommendationNotification,
+        disposableSetSnykToken,
         caStatusBarProvider,
       );
     })
@@ -161,13 +181,15 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
   vscode.workspace.onDidChangeConfiguration((event) => {
-
     globalConfig.loadData();
-
-    if (event.affectsConfiguration('redHatDependencyAnalytics.exhortSnykToken')) {
-      validateSnykToken();
-    }
   });
+
+  context.secrets.onDidChange(async (e) => {
+    if (e.key === SNYK_TOKEN_KEY) {
+      const token = await globalConfig.getSnykToken();
+      lspClient.sendNotification('snykTokenModified', token)
+    }
+  })
 }
 
 /**

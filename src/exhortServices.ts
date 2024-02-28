@@ -36,28 +36,28 @@ async function tokenValidationService(options, source) {
     if (
       tokenValidationStatus === 200
     ) {
-      vscode.window.showInformationMessage(`${source} Token Validated Successfully`);
+      return;
     } else if (
       tokenValidationStatus === 400
     ) {
-      vscode.window.showWarningMessage(`Missing token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
+      return `Missing token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
     } else if (
       tokenValidationStatus === 401
     ) {
-      vscode.window.showWarningMessage(`Invalid token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
+      return `Invalid token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
     } else if (
       tokenValidationStatus === 403
     ) {
-      vscode.window.showWarningMessage(`Forbidden. The token does not have permissions. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`);
+      return `Forbidden. The token does not have permissions. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
     } else if (
       tokenValidationStatus === 429
     ) {
-      vscode.window.showWarningMessage(`Too many requests. Rate limit exceeded. Please try again in a little while. Status: ${tokenValidationStatus}`);
+      return `Too many requests. Rate limit exceeded. Please try again in a little while. Status: ${tokenValidationStatus}`;
     } else {
-      vscode.window.showWarningMessage(`Failed to validate token. Status: ${tokenValidationStatus}`);
+      return `Failed to validate token. Status: ${tokenValidationStatus}`;
     }
   } catch (error) {
-    vscode.window.showErrorMessage(`Failed to validate token, Error: ${error.message}`);
+    return `Failed to validate token, Error: ${error.message}`;
   }
 }
 

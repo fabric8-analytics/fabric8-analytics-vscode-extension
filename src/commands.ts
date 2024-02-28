@@ -10,3 +10,4 @@ export const TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN = 'fabric8.stackAnalysisFr
 export const TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR = 'fabric8.stackAnalysisFromEditor';
 export const TRIGGER_STACK_LOGS = 'fabric8.fabric8AnalyticsStackLogs';
 export const TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION = 'fabric8.RHRepositoryRecommendationNotification';
+export const SET_SNYK_TOKEN_COMMAND = 'rhda.setSnykToken';

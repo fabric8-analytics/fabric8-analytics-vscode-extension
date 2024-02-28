@@ -34,6 +34,8 @@ export const extensionId = 'fabric8-analytics';
 export const extensionQualifiedId = `redhat.${extensionId}`;
 // UTM
 export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
+// Key for Snyk token secret
+export const SNYK_TOKEN_KEY = 'rhda.snykToken';
 // URL to Snyk webpage
 export const snykURL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
 // default Redhat Dependency Analytics report file path

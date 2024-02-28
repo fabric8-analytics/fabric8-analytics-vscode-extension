@@ -72,6 +72,11 @@
         "command": "fabric8.fabric8AnalyticsStackLogs",
         "title": "Debug logs",
         "category": "Red Hat Dependency Analytics"
+      },
+      {
+        "command": "rhda.setSnykToken",
+        "title": "Set Snyk Token",
+        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -168,10 +173,13 @@
           "default": "off",
           "description": "Traces the communication between VSCode and the Red Hat Dependency Analytics Language Server."
         },
-        "redHatDependencyAnalytics.exhortSnykToken": {
+        "redHatDependencyAnalytics.snykTokenStorage": {
           "type": "string",
-          "default": "",
-          "description": "Red Hat Dependency Analytics authentication token for Snyk.",
+          "enum": [
+            "Always use VS Code's secret storage"
+          ],
+          "default": "Always use VS Code's secret storage",
+          "markdownDescription": "Red Hat Dependency Analytics uses VS Code's [secret storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) to safely store the authentication token for Snyk. To set the token, run the VS Code command [RHDA: Set Snyk Token](command:rhda.setSnykToken).",
           "scope": "window"
         },
         "redHatDependencyAnalytics.matchManifestVersions": {

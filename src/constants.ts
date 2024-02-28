@@ -19,7 +19,7 @@ export enum StatusMessages {
 }
 
 export enum PromptText {
-  FULL_STACK_PROMPT_TEXT = `Open detailed vulnerability report`,
+  FULL_STACK_PROMPT_TEXT = `Open Red Hat Dependency Analytics Report`,
   LSP_FAILURE_TEXT = `Open the output window`,
 }
 
@@ -29,18 +29,18 @@ export enum Titles {
 }
 
 // Refer `name` from package.json
-export const extensionId = 'fabric8-analytics';
+export const EXTENSION_ID = 'fabric8-analytics';
 // publisher.name from package.json
-export const extensionQualifiedId = `redhat.${extensionId}`;
+export const EXTENSION_QUALIFIED_ID = `redhat.${EXTENSION_ID}`;
 // UTM
-export const registrationURL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
+export const REGISTRATION_URL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
 // Key for Snyk token secret
 export const SNYK_TOKEN_KEY = 'rhda.snykToken';
 // URL to Snyk webpage
-export const snykURL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
+export const SNYK_URL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
 // default Redhat Dependency Analytics report file path
-export const defaultRhdaReportFilePath = '/tmp/redhatDependencyAnalyticsReport.html';
+export const DEFAULT_RHDA_REPORT_FILE_PATH = '/tmp/redhatDependencyAnalyticsReport.html';
 // Red Hat GA Repository
-export const redhatMavenRepository = 'https://maven.repository.redhat.com/ga/';
+export const REDHAT_MAVEN_REPOSITORY = 'https://maven.repository.redhat.com/ga/';
 // Red Hat GA Repository documentation
-export const redhatMavenRepositoryDocumentationURL = 'https://access.redhat.com/maven-repository';
+export const REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL = 'https://access.redhat.com/maven-repository';

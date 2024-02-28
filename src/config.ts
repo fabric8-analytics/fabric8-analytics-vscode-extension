@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { GlobalState, defaultRhdaReportFilePath, SNYK_TOKEN_KEY } from './constants';
+import { GlobalState, DEFAULT_RHDA_REPORT_FILE_PATH, SNYK_TOKEN_KEY } from './constants';
 import * as commands from './commands';
 import { getTelemetryId } from './redhatTelemetry';
 
@@ -11,8 +11,8 @@ import { getTelemetryId } from './redhatTelemetry';
  */
 class Config {
   telemetryId: string;
-  triggerFullStackAnalysis: string;
-  triggerRHRepositoryRecommendationNotification: string;
+  stackAnalysisCommand: string;
+  rhRepositoryRecommendationNotificationCommand: string;
   utmSource: string;
   matchManifestVersions: string;
   vulnerabilityAlertSeverity: string;
@@ -24,7 +24,7 @@ class Config {
   exhortPythonPath: string;
   exhortPipPath: string;
   rhdaReportFilePath: string;
-  secrets: vscode.SecretStorage
+  secrets: vscode.SecretStorage;
 
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_NPM_EXECUTABLE = 'npm';
@@ -57,14 +57,14 @@ class Config {
   loadData() {
     const rhdaConfig = this.getRhdaConfig();
 
-    this.triggerFullStackAnalysis = commands.TRIGGER_FULL_STACK_ANALYSIS;
-    this.triggerRHRepositoryRecommendationNotification = commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION;
+    this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
+    this.rhRepositoryRecommendationNotificationCommand = commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
     this.vulnerabilityAlertSeverity = rhdaConfig.vulnerabilityAlertSeverity;
     /* istanbul ignore next */
-    this.rhdaReportFilePath = rhdaConfig.reportFilePath || defaultRhdaReportFilePath;
+    this.rhdaReportFilePath = rhdaConfig.reportFilePath || DEFAULT_RHDA_REPORT_FILE_PATH;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
     this.exhortGoPath = rhdaConfig.go.executable.path || this.DEFAULT_GO_EXECUTABLE;
@@ -79,8 +79,8 @@ class Config {
    * @private
    */
   private async setProcessEnv(): Promise<void> {
-    process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS'] = this.triggerFullStackAnalysis;
-    process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION'] = this.triggerRHRepositoryRecommendationNotification;
+    process.env['VSCEXT_STACK_ANALYSIS_COMMAND'] = this.stackAnalysisCommand;
+    process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND'] = this.rhRepositoryRecommendationNotificationCommand;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
@@ -120,7 +120,7 @@ class Config {
    * @returns A Promise that resolves when the token is set.
    */
   async setSnykToken(token: string | undefined): Promise<void> {
-    if (!token) return;
+    if (!token) { return; }
 
     try {
       await this.secrets.store(SNYK_TOKEN_KEY, token);

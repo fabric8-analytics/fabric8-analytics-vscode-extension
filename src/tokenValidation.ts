@@ -1,9 +1,7 @@
 'use strict';
 
-import * as vscode from 'vscode';
-
 import { globalConfig } from './config';
-import { snykURL } from './constants';
+import { SNYK_URL } from './constants';
 import { tokenValidationService } from './exhortServices';
 
 /**
@@ -29,7 +27,7 @@ async function validateSnykToken(token: string) {
 
         return `Please note that if you fail to provide a valid Snyk Token in the extension workspace settings, 
                                               Snyk vulnerabilities will not be displayed. 
-                                              To resolve this issue, please obtain a valid token from the following link: [here](${snykURL}).`;
+                                              To resolve this issue, please obtain a valid token from the following link: [here](${SNYK_URL}).`;
 
     }
 }

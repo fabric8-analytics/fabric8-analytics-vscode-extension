@@ -1,6 +1,5 @@
 'use strict';
 
-import * as vscode from 'vscode';
 import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
 
 /**

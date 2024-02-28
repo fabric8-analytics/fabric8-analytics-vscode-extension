@@ -48,12 +48,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "fabric8.stackAnalysis",
+        "command": "rhda.stackAnalysis",
         "title": "Red Hat Dependency Analytics Report...",
         "category": "Red Hat Dependency Analytics"
       },
       {
-        "command": "fabric8.stackAnalysisFromPieBtn",
+        "command": "rhda.stackAnalysisFromPieBtn",
         "title": "Open Red Hat Dependency Analytics Report",
         "icon": {
           "light": "icon/report-icon.png",
@@ -61,15 +61,15 @@
         }
       },
       {
-        "command": "fabric8.stackAnalysisFromEditor",
+        "command": "rhda.stackAnalysisFromEditor",
         "title": "Red Hat Dependency Analytics Report..."
       },
       {
-        "command": "fabric8.stackAnalysisFromExplorer",
+        "command": "rhda.stackAnalysisFromExplorer",
         "title": "Red Hat Dependency Analytics Report..."
       },
       {
-        "command": "fabric8.fabric8AnalyticsStackLogs",
+        "command": "rhda.stackLogs",
         "title": "Debug logs",
         "category": "Red Hat Dependency Analytics"
       },
@@ -82,73 +82,73 @@
     "menus": {
       "editor/title": [
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == pom.xml",
           "group": "navigation"
         },
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == package.json",
           "group": "navigation"
         },
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == go.mod",
           "group": "navigation"
         },
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == requirements.txt",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == go.mod"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == requirements.txt"
         }
       ],
       "editor/context": [
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == go.mod"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
         }
       ],
       "commandPalette": [
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "false"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "false"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "false"
         }
       ]

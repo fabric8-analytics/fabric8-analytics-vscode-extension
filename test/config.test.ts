@@ -24,10 +24,9 @@ suite('Config module', () => {
 
   test('should initialize Config properties with default extension settings', async () => {
 
-    expect(globalConfig.triggerFullStackAnalysis).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
-    expect(globalConfig.triggerRHRepositoryRecommendationNotification).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
+    expect(globalConfig.stackAnalysisCommand).to.eq(commands.STACK_ANALYSIS_COMMAND);
+    expect(globalConfig.rhRepositoryRecommendationNotificationCommand).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
     expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
-    expect(globalConfig.exhortSnykToken).to.eq('');
     expect(globalConfig.matchManifestVersions).to.eq('true');
     expect(globalConfig.vulnerabilityAlertSeverity).to.eq('Error');
     expect(globalConfig.rhdaReportFilePath).to.eq('/tmp/redhatDependencyAnalyticsReport.html');
@@ -39,8 +38,8 @@ suite('Config module', () => {
     expect(globalConfig.exhortPythonPath).to.eq('python');
     expect(globalConfig.exhortPipPath).to.eq('pip');
 
-    expect(process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS']).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
-    expect(process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION']).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
+    expect(process.env['VSCEXT_STACK_ANALYSIS_COMMAND']).to.eq(commands.STACK_ANALYSIS_COMMAND);
+    expect(process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND']).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
     expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.eq('');
     expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');

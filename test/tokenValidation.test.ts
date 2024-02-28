@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { globalConfig } from '../src/config';
 import { validateSnykToken } from '../src/tokenValidation'
 import * as exhortServices from '../src/exhortServices'
-import { snykURL } from '../src/constants';
+import { SNYK_URL } from '../src/constants';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -40,7 +40,7 @@ suite('TokenValidation module', () => {
 
     test('should validate empty Snyk token', async () => {
         globalConfig.exhortSnykToken = '';
-        const expectedMsg = `Please note that if you fail to provide a valid Snyk Token in the extension workspace settings, Snyk vulnerabilities will not be displayed. To resolve this issue, please obtain a valid token from the following link: [here](${snykURL}).`;
+        const expectedMsg = `Please note that if you fail to provide a valid Snyk Token in the extension workspace settings, Snyk vulnerabilities will not be displayed. To resolve this issue, please obtain a valid token from the following link: [here](${SNYK_URL}).`;
 
         const showInformationMessageStub = sandbox.stub(vscode.window, 'showInformationMessage');
 

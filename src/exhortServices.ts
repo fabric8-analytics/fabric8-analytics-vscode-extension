@@ -1,5 +1,6 @@
 'use strict';
 
+import * as vscode from 'vscode';
 import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
 
 /**
@@ -35,6 +36,7 @@ async function tokenValidationService(options, source): Promise<string> {
     if (
       tokenValidationStatus === 200
     ) {
+      vscode.window.showInformationMessage(`${source} token validated successfully`);
       return;
     } else if (
       tokenValidationStatus === 400

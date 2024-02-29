@@ -120,10 +120,11 @@ class Config {
    * @returns A Promise that resolves when the token is set.
    */
   async setSnykToken(token: string | undefined): Promise<void> {
-    if (!token) { return; }
+    if (token === undefined) { return; }
 
     try {
       await this.secrets.store(SNYK_TOKEN_KEY, token);
+      vscode.window.showInformationMessage(`Snyk token has been ${token === '' ? 'removed' : 'saved'} successfully`);
     } catch (error) {
       vscode.window.showErrorMessage(`Failed to save Snyk token to VSCode Secret Storage, Error: ${error.message}`);
     }

@@ -83,7 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
         validateInput: validateSnykToken
       });
 
-      if (!token) { return; }
+      if (token === undefined) { return; }
       await globalConfig.setSnykToken(token);
     }
   );

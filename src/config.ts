@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { GlobalState, defaultRhdaReportFilePath } from './constants';
+import { GlobalState, DEFAULT_RHDA_REPORT_FILE_PATH, SNYK_TOKEN_KEY } from './constants';
 import * as commands from './commands';
 import { getTelemetryId } from './redhatTelemetry';
 
@@ -11,10 +11,9 @@ import { getTelemetryId } from './redhatTelemetry';
  */
 class Config {
   telemetryId: string;
-  triggerFullStackAnalysis: string;
-  triggerRHRepositoryRecommendationNotification: string;
+  stackAnalysisCommand: string;
+  rhRepositoryRecommendationNotificationCommand: string;
   utmSource: string;
-  exhortSnykToken: string;
   matchManifestVersions: string;
   vulnerabilityAlertSeverity: string;
   exhortMvnPath: string;
@@ -25,6 +24,7 @@ class Config {
   exhortPythonPath: string;
   exhortPipPath: string;
   rhdaReportFilePath: string;
+  secrets: vscode.SecretStorage;
 
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_NPM_EXECUTABLE = 'npm';
@@ -40,7 +40,6 @@ class Config {
    */
   constructor() {
     this.loadData();
-    this.setProcessEnv();
   }
 
   /**
@@ -58,15 +57,14 @@ class Config {
   loadData() {
     const rhdaConfig = this.getRhdaConfig();
 
-    this.triggerFullStackAnalysis = commands.TRIGGER_FULL_STACK_ANALYSIS;
-    this.triggerRHRepositoryRecommendationNotification = commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION;
+    this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
+    this.rhRepositoryRecommendationNotificationCommand = commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
-    this.exhortSnykToken = rhdaConfig.exhortSnykToken;
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
     this.vulnerabilityAlertSeverity = rhdaConfig.vulnerabilityAlertSeverity;
     /* istanbul ignore next */
-    this.rhdaReportFilePath = rhdaConfig.reportFilePath || defaultRhdaReportFilePath;
+    this.rhdaReportFilePath = rhdaConfig.reportFilePath || DEFAULT_RHDA_REPORT_FILE_PATH;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
     this.exhortGoPath = rhdaConfig.go.executable.path || this.DEFAULT_GO_EXECUTABLE;
@@ -80,11 +78,10 @@ class Config {
    * Sets process environment variables based on configuration settings.
    * @private
    */
-  private setProcessEnv() {
-    process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS'] = this.triggerFullStackAnalysis;
-    process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION'] = this.triggerRHRepositoryRecommendationNotification;
+  private async setProcessEnv(): Promise<void> {
+    process.env['VSCEXT_STACK_ANALYSIS_COMMAND'] = this.stackAnalysisCommand;
+    process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND'] = this.rhRepositoryRecommendationNotificationCommand;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
-    process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = this.exhortSnykToken;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
@@ -94,15 +91,70 @@ class Config {
     process.env['VSCEXT_EXHORT_PIP3_PATH'] = this.exhortPip3Path;
     process.env['VSCEXT_EXHORT_PYTHON_PATH'] = this.exhortPythonPath;
     process.env['VSCEXT_EXHORT_PIP_PATH'] = this.exhortPipPath;
+    process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
+
+    const token = await this.getSnykToken();
+    process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = token;
   }
 
   /**
    * Authorizes the RHDA (Red Hat Dependency Analytics) service.
    * @param context The extension context for authorization.
    */
-  async authorizeRHDA(context) {
+  async authorizeRHDA(context): Promise<void> {
     this.telemetryId = await getTelemetryId(context);
-    process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
+    await this.setProcessEnv();
+  }
+
+  /**
+   * Links the secret storage to the configuration object.
+   * @param context The extension context.
+   */
+  linkToSecretStorage(context) {
+    this.secrets = context.secrets;
+  }
+
+  /**
+   * Sets the Snyk token.
+   * @param token The Snyk token.
+   * @returns A Promise that resolves when the token is set.
+   */
+  async setSnykToken(token: string | undefined): Promise<void> {
+    if (!token) { return; }
+
+    try {
+      await this.secrets.store(SNYK_TOKEN_KEY, token);
+    } catch (error) {
+      vscode.window.showErrorMessage(`Failed to save Snyk token to VSCode Secret Storage, Error: ${error.message}`);
+    }
+  }
+
+  /**
+   * Gets the Snyk token.
+   * @returns A Promise that resolves with the Snyk token.
+   */
+  async getSnykToken(): Promise<string> {
+    try {
+      const token = await this.secrets.get(SNYK_TOKEN_KEY);
+      return token || '';
+    } catch (error) {
+      vscode.window.showErrorMessage(`Failed to get Snyk token from VSCode Secret Storage, Error: ${error.message}`);
+      await this.clearSnykToken();
+      return '';
+    }
+  }
+
+  /**
+   * Clears the Snyk token.
+   * @returns A Promise that resolves when the token is cleared.
+   * @private
+   */
+  private async clearSnykToken(): Promise<void> {
+    try {
+      await this.secrets.delete(SNYK_TOKEN_KEY);
+    } catch (error) {
+      console.error(`Error while deleting Snyk token from VSCode Secret Storage, Error: ${error.message}`);
+    }
   }
 }
 

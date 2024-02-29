@@ -10,7 +10,7 @@ import {
 } from 'vscode-languageclient/node';
 
 import * as commands from './commands';
-import { GlobalState, extensionQualifiedId, redhatMavenRepository, redhatMavenRepositoryDocumentationURL } from './constants';
+import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, SNYK_TOKEN_KEY } from './constants';
 import { generateRHDAReport } from './stackAnalysis';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
@@ -29,13 +29,15 @@ export let outputChannelDep: DepOutputChannel;
  * @param context - The extension context.
  */
 export function activate(context: vscode.ExtensionContext) {
+  globalConfig.linkToSecretStorage(context);
+
   startUp(context);
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
 
   const disposableStackAnalysisCommand = vscode.commands.registerCommand(
-    commands.TRIGGER_FULL_STACK_ANALYSIS,
+    commands.STACK_ANALYSIS_COMMAND,
     async (uri: vscode.Uri) => {
       // uri will be null in case the user has used the context menu/file explorer
       const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
@@ -50,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   const disposableStackLogsCommand = vscode.commands.registerCommand(
-    commands.TRIGGER_STACK_LOGS,
+    commands.STACK_LOGS_COMMAND,
     () => {
       if (outputChannelDep) {
         outputChannelDep.showOutputChannel();
@@ -61,13 +63,28 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
-    commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION,
+    commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND,
     () => {
       const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                    make sure the Red Hat GA Repository (${redhatMavenRepository}) has been added to your project configuration. 
+                    make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
                     This ensures that the applied dependencies work correctly. 
-                    Learn how to add the repository: [Click here](${redhatMavenRepositoryDocumentationURL})`;
+                    Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
       vscode.window.showWarningMessage(msg);
+    }
+  );
+
+  const disposableSetSnykToken = vscode.commands.registerCommand(
+    commands.SET_SNYK_TOKEN_COMMAND,
+    async () => {
+      const token = await vscode.window.showInputBox({
+        prompt: 'Please enter your Snyk Token:',
+        placeHolder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+        password: true,
+        validateInput: validateSnykToken
+      });
+
+      if (!token) { return; }
+      await globalConfig.setSnykToken(token);
     }
   );
 
@@ -115,12 +132,13 @@ export function activate(context: vscode.ExtensionContext) {
         serverOptions,
         clientOptions
       );
+
       lspClient.start().then(() => {
 
         const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
           const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
-            vscode.commands.executeCommand(commands.TRIGGER_FULL_STACK_ANALYSIS);
+            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND);
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
           }
           else {
@@ -148,10 +166,12 @@ export function activate(context: vscode.ExtensionContext) {
           record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: notification.errorMsg() });
         });
       });
+
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
         rhRepositoryRecommendationNotification,
+        disposableSetSnykToken,
         caStatusBarProvider,
       );
     })
@@ -160,12 +180,14 @@ export function activate(context: vscode.ExtensionContext) {
       throw (error);
     });
 
-  vscode.workspace.onDidChangeConfiguration((event) => {
-
+  vscode.workspace.onDidChangeConfiguration(() => {
     globalConfig.loadData();
+  });
 
-    if (event.affectsConfiguration('redHatDependencyAnalytics.exhortSnykToken')) {
-      validateSnykToken();
+  context.secrets.onDidChange(async (e) => {
+    if (e.key === SNYK_TOKEN_KEY) {
+      const token = await globalConfig.getSnykToken();
+      lspClient.sendNotification('snykTokenModified', token);
     }
   });
 }
@@ -188,7 +210,7 @@ export function deactivate(): Thenable<void> {
  */
 async function showUpdateNotification(context: vscode.ExtensionContext) {
 
-  const packageJSON = vscode.extensions.getExtension(extensionQualifiedId).packageJSON;
+  const packageJSON = vscode.extensions.getExtension(EXTENSION_QUALIFIED_ID).packageJSON;
   const version = packageJSON.version;
   const previousVersion = context.globalState.get<string>(GlobalState.VERSION);
 
@@ -240,10 +262,10 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   };
 
   const stackAnalysisCommands = [
-    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EDITOR, TelemetryActions.vulnerabilityReportEditor),
-    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_EXPLORER, TelemetryActions.vulnerabilityReportExplorer),
-    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_PIE_BTN, TelemetryActions.vulnerabilityReportPieBtn),
-    registerCommand(commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR, TelemetryActions.vulnerabilityReportStatusBar),
+    registerCommand(commands.STACK_ANALYSIS_FROM_EDITOR_COMMAND, TelemetryActions.vulnerabilityReportEditor),
+    registerCommand(commands.STACK_ANALYSIS_FROM_EXPLORER_COMMAND, TelemetryActions.vulnerabilityReportExplorer),
+    registerCommand(commands.STACK_ANALYSIS_FROM_PIE_BTN_COMMAND, TelemetryActions.vulnerabilityReportPieBtn),
+    registerCommand(commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND, TelemetryActions.vulnerabilityReportStatusBar),
   ];
 
   context.subscriptions.push(...stackAnalysisCommands);

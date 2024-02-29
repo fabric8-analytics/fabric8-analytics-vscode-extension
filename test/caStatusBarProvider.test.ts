@@ -31,7 +31,7 @@ suite('CAStatusBarProvider module', () => {
         expect(caStatusBarProvider['statusBarItem'].tooltip).to.equal(PromptText.FULL_STACK_PROMPT_TEXT);
         expect(caStatusBarProvider['statusBarItem'].command).to.deep.equal({
             title: PromptText.FULL_STACK_PROMPT_TEXT,
-            command: commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
+            command: commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND,
             arguments: [vscode.Uri.parse(uri)]
         });
     });
@@ -42,7 +42,7 @@ suite('CAStatusBarProvider module', () => {
         expect(caStatusBarProvider['statusBarItem'].text).to.equal('$(error) RHDA analysis has failed');
         expect(caStatusBarProvider['statusBarItem'].command).to.deep.equal({
             title: PromptText.LSP_FAILURE_TEXT,
-            command: commands.TRIGGER_STACK_LOGS,
+            command: commands.STACK_LOGS_COMMAND,
         });
     });
 

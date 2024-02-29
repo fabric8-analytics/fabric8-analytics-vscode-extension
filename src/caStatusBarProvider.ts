@@ -27,7 +27,7 @@ class CAStatusBarProvider implements Disposable {
         this.statusBarItem.text = text;
         this.statusBarItem.command = {
             title: PromptText.FULL_STACK_PROMPT_TEXT,
-            command: commands.TRIGGER_FULL_STACK_ANALYSIS_FROM_STATUS_BAR,
+            command: commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND,
             arguments: [Uri.parse(uri)]
         };
         this.statusBarItem.tooltip = PromptText.FULL_STACK_PROMPT_TEXT;
@@ -41,7 +41,7 @@ class CAStatusBarProvider implements Disposable {
         this.statusBarItem.text = `$(error) RHDA analysis has failed`;
         this.statusBarItem.command = {
             title: PromptText.LSP_FAILURE_TEXT,
-            command: commands.TRIGGER_STACK_LOGS,
+            command: commands.STACK_LOGS_COMMAND,
         };
     }
 

@@ -21,6 +21,14 @@ suite('StackAnalysis module', () => {
 
   setup(() => {
     sandbox = sinon.createSandbox();
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => 'mockToken',
+        delete: () => sandbox.stub()
+      }
+    });
   });
 
   teardown(() => {
@@ -48,8 +56,6 @@ suite('StackAnalysis module', () => {
       callback(null);
     });
 
-    globalConfig.exhortSnykToken = 'mockToken';
-
     await generateRHDAReport(context, MockUri);
 
     expect(authorizeRHDAStub.calledOnce).to.be.true;
@@ -62,8 +68,6 @@ suite('StackAnalysis module', () => {
   test('should fail to generate RHDA report for supported file', async () => {
     const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').rejects(new Error('Mock Error'));
-
-    globalConfig.exhortSnykToken = '';
 
     await generateRHDAReport(context, MockUri)
       .then(() => {

@@ -17,8 +17,8 @@ suite('RedhatTelemetry module', async () => {
     }
 
     let sendEventMock = {
-        sendStartupEvent: sinon.spy(),
-        send: sinon.spy()
+        sendStartupEvent: sandbox.spy(),
+        send: sandbox.spy()
     }
 
     let getIdProviderMock = {

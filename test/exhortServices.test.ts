@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { rewireModule, cleanupRewireFiles } from './utils';
+import * as vscode from 'vscode';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -40,7 +41,11 @@ suite('ExhortServices module', async () => {
     });
 
     test('should perform token validation with Exhort Validate Token service', async () => {
+        sandbox.spy(vscode.window, 'showInformationMessage');
+
         expect(await exhortServicesRewire.tokenValidationService(200, 'provider')).to.equal(undefined);
+        expect(vscode.window.showInformationMessage).to.have.been.calledWith('provider token validated successfully');
+
         expect(await exhortServicesRewire.tokenValidationService(400, 'provider')).to.equal('Missing token. Please provide a valid provider Token in the extension workspace settings. Status: 400');
         expect(await exhortServicesRewire.tokenValidationService(401, 'provider')).to.equal('Invalid token. Please provide a valid provider Token in the extension workspace settings. Status: 401');
         expect(await exhortServicesRewire.tokenValidationService(403, 'provider')).to.equal('Forbidden. The token does not have permissions. Please provide a valid provider Token in the extension workspace settings. Status: 403');

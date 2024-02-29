@@ -124,6 +124,7 @@ class Config {
 
     try {
       await this.secrets.store(SNYK_TOKEN_KEY, token);
+      vscode.window.showInformationMessage('Snyk token has been saved successfully');
     } catch (error) {
       vscode.window.showErrorMessage(`Failed to save Snyk token to VSCode Secret Storage, Error: ${error.message}`);
     }
@@ -139,7 +140,7 @@ class Config {
       return token || '';
     } catch (error) {
       vscode.window.showErrorMessage(`Failed to get Snyk token from VSCode Secret Storage, Error: ${error.message}`);
-      await this.clearSnykToken();
+      await this.clearSnykToken(false);
       return '';
     }
   }
@@ -147,13 +148,21 @@ class Config {
   /**
    * Clears the Snyk token.
    * @returns A Promise that resolves when the token is cleared.
-   * @private
    */
-  private async clearSnykToken(): Promise<void> {
+  async clearSnykToken(notify: boolean): Promise<void> {
     try {
       await this.secrets.delete(SNYK_TOKEN_KEY);
+      if (notify) {
+        vscode.window.showInformationMessage('Snyk token has been removed successfully');
+      }
     } catch (error) {
-      console.error(`Error while deleting Snyk token from VSCode Secret Storage, Error: ${error.message}`);
+      const errorMsg = `Failed to delete Snyk token from VSCode Secret Storage, Error: ${error.message}`;
+      if (notify) {
+        vscode.window.showErrorMessage(errorMsg);
+      } else {
+        console.error(errorMsg);
+      }
+
     }
   }
 }

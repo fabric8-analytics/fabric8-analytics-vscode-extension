@@ -85,18 +85,18 @@ suite('Config module', () => {
         delete: () => sandbox.stub()
       }
     });
-
-    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
     const storeSecretSpy = sandbox.spy(globalConfig.secrets, 'store');
+    const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
+    sandbox.spy(vscode.window, 'showErrorMessage');
 
     await globalConfig.setSnykToken(mockToken);
 
     expect(storeSecretSpy).to.have.been.calledWith(SNYK_TOKEN_KEY, mockToken);
-    expect(showErrorMessageSpy.called).to.be.false;
+    expect(showInformationMessageSpy).to.have.been.calledWith('Snyk token has been saved successfully');
+    expect(vscode.window.showErrorMessage).to.not.be.called;
   });
 
   test('should fail to set Snyk token in VSCode SecretStorage', async () => {
-    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage')
 
     globalConfig.linkToSecretStorage({
       secrets: {
@@ -107,9 +107,12 @@ suite('Config module', () => {
         delete: () => sandbox.stub()
       }
     });
+    sandbox.spy(vscode.window, 'showInformationMessage');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage')
 
     await globalConfig.setSnykToken(mockToken);
 
+    expect(vscode.window.showInformationMessage).to.not.be.called;
     expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to save Snyk token to VSCode Secret Storage, Error: ${mockedError.message}`);
   });
 
@@ -122,14 +125,15 @@ suite('Config module', () => {
         delete: () => sandbox.stub()
       }
     });
-
-    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
-    const storeSecretSpy = sandbox.spy(globalConfig.secrets, 'store');
+    sandbox.spy(globalConfig.secrets, 'store');
+    sandbox.spy(vscode.window, 'showInformationMessage');
+    sandbox.spy(vscode.window, 'showErrorMessage');
 
     await globalConfig.setSnykToken(undefined);
 
-    expect(storeSecretSpy.called).to.be.false;
-    expect(showErrorMessageSpy.called).to.be.false;
+    expect(globalConfig.secrets.store).to.not.be.called;
+    expect(vscode.window.showInformationMessage).to.not.be.called;
+    expect(vscode.window.showErrorMessage).to.not.be.called;
   });
 
   test('should get Snyk token from VSCode SecretStorage', async () => {
@@ -169,16 +173,16 @@ suite('Config module', () => {
         delete: () => sandbox.stub()
       }
     });
-
-    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
     sandbox.spy(globalConfig.secrets, 'delete');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
 
     expect(await globalConfig.getSnykToken()).to.equal('');
+
     expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to get Snyk token from VSCode Secret Storage, Error: ${mockedError.message}`);
     expect(globalConfig.secrets.delete).to.be.called;
   });
 
-  test('should fail to delete Snyk token from VSCode SecretStorage', async () => {
+  test('should fail to get and delete Snyk token from VSCode SecretStorage', async () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
@@ -191,12 +195,54 @@ suite('Config module', () => {
         },
       }
     });
-
-    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
     sandbox.spy(globalConfig.secrets, 'delete');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
 
     expect(await globalConfig.getSnykToken()).to.equal('');
+
     expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to get Snyk token from VSCode Secret Storage, Error: ${mockedError.message}`);
     expect(globalConfig.secrets.delete).to.be.called;
+  });
+
+  test('should delete Snyk token from VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => '',
+        delete: () => sandbox.stub()
+      }
+    });
+    const deleteSecretSpy = sandbox.spy(globalConfig.secrets, 'delete');
+    const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
+    sandbox.spy(vscode.window, 'showErrorMessage');
+
+    await globalConfig.clearSnykToken(true);
+
+    expect(deleteSecretSpy).to.have.been.calledWith(SNYK_TOKEN_KEY);
+    expect(showInformationMessageSpy).to.have.been.calledWith('Snyk token has been removed successfully');
+    expect(vscode.window.showErrorMessage).to.not.be.called;
+  });
+
+  test('should fail to delete Snyk token from VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => '',
+        delete: async () => {
+          throw mockedError;
+        },
+      }
+    });
+    const deleteSecretSpy = sandbox.spy(globalConfig.secrets, 'delete');
+    sandbox.spy(vscode.window, 'showInformationMessage');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
+
+    await globalConfig.clearSnykToken(true);
+
+    expect(deleteSecretSpy).to.have.been.calledWith(SNYK_TOKEN_KEY);
+    expect(vscode.window.showInformationMessage).to.not.be.called;
+    expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to delete Snyk token from VSCode Secret Storage, Error: ${mockedError.message}`);
   });
 });

@@ -79,6 +79,7 @@ async function executeStackAnalysis(manifestFilePath): Promise<string> {
         };
 
         const snykToken = await globalConfig.getSnykToken();
+        /* istanbul ignore else */
         if (snykToken !== '') {
           options['EXHORT_SNYK_TOKEN'] = snykToken;
         }

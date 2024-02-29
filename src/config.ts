@@ -153,7 +153,7 @@ class Config {
     try {
       await this.secrets.delete(SNYK_TOKEN_KEY);
     } catch (error) {
-      console.error('Error while deleting Snyk token from VSCode Secret Storage:', error);
+      console.error(`Error while deleting Snyk token from VSCode Secret Storage, Error: ${error.message}`);
     }
   }
 }

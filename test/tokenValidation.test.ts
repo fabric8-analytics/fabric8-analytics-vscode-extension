@@ -23,7 +23,6 @@ suite('TokenValidation module', () => {
     });
 
     test('should validate non-empty Snyk token', async () => {
-        globalConfig.exhortSnykToken = 'mockToken';
         globalConfig.telemetryId = 'mockId';
         const options = {
             'RHDA_TOKEN': 'mockId',
@@ -33,21 +32,16 @@ suite('TokenValidation module', () => {
 
         const exhortServicesStub = sandbox.stub(exhortServices, 'tokenValidationService');
 
-        await validateSnykToken();
+        await validateSnykToken('mockToken');
 
         expect(exhortServicesStub.calledOnceWithExactly(options, 'Snyk')).to.be.true;
     });
 
     test('should validate empty Snyk token', async () => {
-        globalConfig.exhortSnykToken = '';
         const expectedMsg = `Please note that if you fail to provide a valid Snyk Token in the extension workspace settings, Snyk vulnerabilities will not be displayed. To resolve this issue, please obtain a valid token from the following link: [here](${SNYK_URL}).`;
 
-        const showInformationMessageStub = sandbox.stub(vscode.window, 'showInformationMessage');
+        const message = await validateSnykToken('');
 
-        await validateSnykToken();
-
-        const showInformationMessageCall = showInformationMessageStub.getCall(0);
-        const showInformationMessageMsg = showInformationMessageCall.args[0];
-        expect(showInformationMessageMsg.replace(/\s+/g, ' ').replace(/\n/g, ' ')).to.equal(expectedMsg);
+        expect(message.replace(/\s+/g, ' ').replace(/\n/g, ' ')).to.equal(expectedMsg);
     });
 });

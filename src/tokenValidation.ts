@@ -8,7 +8,7 @@ import { tokenValidationService } from './exhortServices';
  * Validates the Snyk token using the Exhort token validation service.
  * @returns A Promise that resolves when token has been validated.
  */
-async function validateSnykToken(token: string) {
+async function validateSnykToken(token: string): Promise<string> {
     if (token !== '') {
 
         // set up configuration options for the token validation request

@@ -8,7 +8,7 @@ import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
  * @param options Additional options for the analysis.
  * @returns A promise resolving to the stack analysis report in HTML format.
  */
-function stackAnalysisService(pathToManifest, options) {
+function stackAnalysisService(pathToManifest, options): Promise<any> {
   return new Promise<any>(async (resolve, reject) => {
     try {
       // Get stack analysis in HTML format
@@ -26,7 +26,7 @@ function stackAnalysisService(pathToManifest, options) {
  * @param source The source for which the token is being validated. Example values: 'Snyk', 'OSS Index'.
  * @returns A promise resolving after validating the token.
  */
-async function tokenValidationService(options, source) {
+async function tokenValidationService(options, source): Promise<string> {
   try {
 
     // Get token validation status code

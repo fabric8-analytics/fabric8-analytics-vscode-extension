@@ -85,11 +85,16 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 <br >The Snyk token allows Exhort to authenticate with the Snyk Vulnerability Database.
 If a Snyk token is not provided, Snyk vulnerability information is not displayed.
 
-If you leave this field blank, the following informational message is displayed.
-<br >![ Screenshot of the empty token dialog box ](images/screenshots/empty-token.png)
+To securely store your Snyk token, RHDA uses VS Code's [Secret Storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) feature.
+From VS Code's Command Palette, enter `RHDA: Set Snyk Token`.
+Next, enter your Snyk token.
+<br >![ Screenshot of the Snyk token dialog box](images/screenshots/RHDA_Snyk_Token_dialog_box.png)
 
-If you enter a invalid Snyk token, a pop-up message alerts you that your Snyk token is not valid.
-<br >![ Screenshot of the invalid token dialog box ](images/screenshots/invalid-token.png)
+If you enter a invalid Snyk token, the dialog box alerts you that your Snyk token is not valid.
+<br >![ Screenshot of the invalid Snyk token dialog box ](images/screenshots/RHDA_Invalid_Snyk_Token.png)
+
+In the extension settings, you can set RHDA to always use VS Code's Secret Storage.
+<br >![ Screenshot of the RHDA Snyk token storage setting](images/screenshots/RHDA_Snyk_Token_Storage_Setting.png)
 
 If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
 

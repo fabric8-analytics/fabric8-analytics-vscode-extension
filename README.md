@@ -61,10 +61,9 @@ Click the **Workspace** tab, search for the word _executable_, and specify the a
 7. (OPTIONAL) You can link your Snyk account to Red Hat Dependency Analytics by doing the following:
    1. Log into your [Snyk account](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
    2. On the account landing page, you can find your Snyk Token, copy the token.
-   3. Open the Red Hat Dependency Analytics extension settings.
-   4. Click the **Workspace** tab.
-   5. Paste the Snyk token in the **Exhort Snyk Token** field.
-   6. After adding your Snyk token, the vulnerability report gives you detailed information about security vulnerabilities unique to Snyk, and vulnerabilities that have publicly known exploits.
+   3. From VS Code's Command Palette, enter `RHDA: Set Snyk Token`.
+   4. Paste the Snyk token into the input field.
+   4. After adding your Snyk token, the vulnerability report gives you detailed information about security vulnerabilities unique to Snyk, and vulnerabilities that have publicly known exploits.
 
 ## Configuration
 
@@ -81,7 +80,7 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 
 ### Configurable parameters
 
-**Exhort Snyk Token** :
+**Snyk Token Storage** :
 <br >The Snyk token allows Exhort to authenticate with the Snyk Vulnerability Database.
 If a Snyk token is not provided, Snyk vulnerability information is not displayed.
 

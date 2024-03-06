@@ -1,4 +1,10 @@
 # Change Log
+## 0.9.3 (?)
+- enhancement - Red Hat Dependency Analytics reporting has integrated the ONGuard service by using [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources for additional vulnerability information.
+- enhancement - Integrated VS Code's [Secret Storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) feature for securing the Snyk token. See [PR689](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/689) for details.
+- fixes - Fixed an issue with displaying wrong data when the event handler for Component Analysis was triggered on a unsaved manifest file. Component Analysis is no longer triggered on unsaved manifest files. See [PR#239](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/239) for details.
+- fixes - Fixed an issue where the diagnostic source name is being obscured in the View Problem panel from an inline analysis. See [PR#239](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/239) for details.
+- informational - The naming convention for VS Code commands has changed from `fabric8` to `rhda`. For example, `fabric8.stackAnalysis` is now `rhda.stackAnalysis`.
 ## 0.9.2 (Feb 5th 2024)
 - informational - The `redHatDependencyAnalyticsReportFilePath` setting name has changed to `reportFilePath`. If you had a custom file path set for `redHatDependencyAnalyticsReportFilePath`, then you need to add your custom file path to the `reportFilePath` setting.
 - enhancement - Added a vulnerability severity alert level setting for the user to receive inline notifications for just errors or warnings. See [PR#674](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/674) for details.

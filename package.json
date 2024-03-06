@@ -48,12 +48,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "fabric8.stackAnalysis",
+        "command": "rhda.stackAnalysis",
         "title": "Red Hat Dependency Analytics Report...",
         "category": "Red Hat Dependency Analytics"
       },
       {
-        "command": "fabric8.stackAnalysisFromPieBtn",
+        "command": "rhda.stackAnalysisFromPieBtn",
         "title": "Open Red Hat Dependency Analytics Report",
         "icon": {
           "light": "icon/report-icon.png",
@@ -61,89 +61,94 @@
         }
       },
       {
-        "command": "fabric8.stackAnalysisFromEditor",
+        "command": "rhda.stackAnalysisFromEditor",
         "title": "Red Hat Dependency Analytics Report..."
       },
       {
-        "command": "fabric8.stackAnalysisFromExplorer",
+        "command": "rhda.stackAnalysisFromExplorer",
         "title": "Red Hat Dependency Analytics Report..."
       },
       {
-        "command": "fabric8.fabric8AnalyticsStackLogs",
+        "command": "rhda.stackLogs",
         "title": "Debug logs",
+        "category": "Red Hat Dependency Analytics"
+      },
+      {
+        "command": "rhda.setSnykToken",
+        "title": "Set Snyk Token",
         "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == pom.xml",
           "group": "navigation"
         },
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == package.json",
           "group": "navigation"
         },
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == go.mod",
           "group": "navigation"
         },
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == requirements.txt",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == go.mod"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == requirements.txt"
         }
       ],
       "editor/context": [
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == package.json"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == pom.xml"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == go.mod"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
         }
       ],
       "commandPalette": [
         {
-          "command": "fabric8.stackAnalysisFromPieBtn",
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "false"
         },
         {
-          "command": "fabric8.stackAnalysisFromEditor",
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "false"
         },
         {
-          "command": "fabric8.stackAnalysisFromExplorer",
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "false"
         }
       ]
@@ -168,10 +173,13 @@
           "default": "off",
           "description": "Traces the communication between VSCode and the Red Hat Dependency Analytics Language Server."
         },
-        "redHatDependencyAnalytics.exhortSnykToken": {
+        "redHatDependencyAnalytics.snykTokenStorage": {
           "type": "string",
-          "default": "",
-          "description": "Red Hat Dependency Analytics authentication token for Snyk.",
+          "enum": [
+            "Always use VS Code's secret storage"
+          ],
+          "default": "Always use VS Code's secret storage",
+          "markdownDescription": "Red Hat Dependency Analytics uses VS Code's [secret storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) to safely store the authentication token for Snyk. To set the token, run the VS Code command [RHDA: Set Snyk Token](command:rhda.setSnykToken).",
           "scope": "window"
         },
         "redHatDependencyAnalytics.matchManifestVersions": {
@@ -262,6 +270,7 @@
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
     "@vscode/test-electron": "^2.3.5",
+    "babel-plugin-rewire": "^1.2.0",
     "chai": "^4.3.10",
     "decache": "^4.6.2",
     "eslint": "^8.51.0",
@@ -278,7 +287,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.1-ea.0",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.2",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.14",
     "fs": "^0.0.1-security",

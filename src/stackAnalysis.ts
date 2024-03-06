@@ -21,6 +21,7 @@ const supportedFiles = [
  * @param data The data to update the panel with.
  */
 function updateWebviewPanel(data) {
+  /* istanbul ignore else */
   if (DependencyReportPanel.currentPanel) {
     DependencyReportPanel.currentPanel.doUpdatePanel(data);
   }
@@ -77,8 +78,10 @@ async function executeStackAnalysis(manifestFilePath): Promise<string> {
           'EXHORT_PIP_PATH': globalConfig.exhortPipPath
         };
 
-        if (globalConfig.exhortSnykToken !== '') {
-          options['EXHORT_SNYK_TOKEN'] = globalConfig.exhortSnykToken;
+        const snykToken = await globalConfig.getSnykToken();
+        /* istanbul ignore else */
+        if (snykToken !== '') {
+          options['EXHORT_SNYK_TOKEN'] = snykToken;
         }
 
         // execute stack analysis
@@ -133,6 +136,7 @@ async function generateRHDAReport(context, uri) {
 
       await triggerWebviewPanel(context);
       const resp = await executeStackAnalysis(uri.fsPath);
+      /* istanbul ignore else */
       if (DependencyReportPanel.currentPanel) {
         await writeReportToFile(resp);
       }

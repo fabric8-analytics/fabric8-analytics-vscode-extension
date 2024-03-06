@@ -1,9 +1,10 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import * as vscode from 'vscode';
 
 import { globalConfig } from '../src/config';
-import { GlobalState } from '../src/constants';
+import { GlobalState, SNYK_TOKEN_KEY } from '../src/constants';
 import * as commands from '../src/commands';
 import * as redhatTelemetry from '../src/redhatTelemetry';
 import { context } from './vscontext.mock';
@@ -13,6 +14,10 @@ chai.use(sinonChai);
 
 suite('Config module', () => {
   let sandbox: sinon.SinonSandbox;
+
+  const mockToken = 'mockToken';
+  const mockId = 'mockId';
+  const mockedError = new Error('Mock Error Message');
 
   setup(() => {
     sandbox = sinon.createSandbox();
@@ -24,10 +29,9 @@ suite('Config module', () => {
 
   test('should initialize Config properties with default extension settings', async () => {
 
-    expect(globalConfig.triggerFullStackAnalysis).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
-    expect(globalConfig.triggerRHRepositoryRecommendationNotification).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
+    expect(globalConfig.stackAnalysisCommand).to.eq(commands.STACK_ANALYSIS_COMMAND);
+    expect(globalConfig.rhRepositoryRecommendationNotificationCommand).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
     expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
-    expect(globalConfig.exhortSnykToken).to.eq('');
     expect(globalConfig.matchManifestVersions).to.eq('true');
     expect(globalConfig.vulnerabilityAlertSeverity).to.eq('Error');
     expect(globalConfig.rhdaReportFilePath).to.eq('/tmp/redhatDependencyAnalyticsReport.html');
@@ -38,9 +42,25 @@ suite('Config module', () => {
     expect(globalConfig.exhortPip3Path).to.eq('pip3');
     expect(globalConfig.exhortPythonPath).to.eq('python');
     expect(globalConfig.exhortPipPath).to.eq('pip');
+  });
 
-    expect(process.env['VSCEXT_TRIGGER_FULL_STACK_ANALYSIS']).to.eq(commands.TRIGGER_FULL_STACK_ANALYSIS);
-    expect(process.env['VSCEXT_TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION']).to.eq(commands.TRIGGER_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION);
+  test('should retrieve telemetry parameters from getTelemetryId and set process environment variables', async () => {
+    sandbox.stub(redhatTelemetry, 'getTelemetryId').resolves(mockId);
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => '',
+        delete: () => sandbox.stub()
+      }
+    })
+
+    await globalConfig.authorizeRHDA(context);
+
+    expect(globalConfig.telemetryId).to.equal(mockId);
+
+    expect(process.env['VSCEXT_STACK_ANALYSIS_COMMAND']).to.eq(commands.STACK_ANALYSIS_COMMAND);
+    expect(process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND']).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
     expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.eq('');
     expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');
@@ -52,14 +72,177 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_EXHORT_PIP3_PATH']).to.eq('pip3');
     expect(process.env['VSCEXT_EXHORT_PYTHON_PATH']).to.eq('python');
     expect(process.env['VSCEXT_EXHORT_PIP_PATH']).to.eq('pip');
+    expect(process.env['VSCEXT_TELEMETRY_ID']).to.equal(mockId);
+    expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.equal('');
   });
 
-  test('should call retrieve telemetry parameters from getTelemetryId', async () => {
-    sandbox.stub(redhatTelemetry, 'getTelemetryId').resolves('mockId');
+  test('should set Snyk token in VSCode SecretStorage', async () => {
 
-    await globalConfig.authorizeRHDA(context);
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => '',
+        delete: () => sandbox.stub()
+      }
+    });
+    const storeSecretSpy = sandbox.spy(globalConfig.secrets, 'store');
+    const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
+    sandbox.spy(vscode.window, 'showErrorMessage');
 
-    expect(globalConfig.telemetryId).to.equal('mockId');
-    expect(process.env['VSCEXT_TELEMETRY_ID']).to.equal('mockId');
+    await globalConfig.setSnykToken(mockToken);
+
+    expect(storeSecretSpy).to.have.been.calledWith(SNYK_TOKEN_KEY, mockToken);
+    expect(showInformationMessageSpy).to.have.been.calledWith('Snyk token has been saved successfully');
+    expect(vscode.window.showErrorMessage).to.not.be.called;
+  });
+
+  test('should fail to set Snyk token in VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: async () => {
+          throw mockedError;
+        },
+        get: () => '',
+        delete: () => sandbox.stub()
+      }
+    });
+    sandbox.spy(vscode.window, 'showInformationMessage');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage')
+
+    await globalConfig.setSnykToken(mockToken);
+
+    expect(vscode.window.showInformationMessage).to.not.be.called;
+    expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to save Snyk token to VSCode Secret Storage, Error: ${mockedError.message}`);
+  });
+
+  test('should not set Snyk token in VSCode SecretStorage when token is undefined', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => '',
+        delete: () => sandbox.stub()
+      }
+    });
+    sandbox.spy(globalConfig.secrets, 'store');
+    sandbox.spy(vscode.window, 'showInformationMessage');
+    sandbox.spy(vscode.window, 'showErrorMessage');
+
+    await globalConfig.setSnykToken(undefined);
+
+    expect(globalConfig.secrets.store).to.not.be.called;
+    expect(vscode.window.showInformationMessage).to.not.be.called;
+    expect(vscode.window.showErrorMessage).to.not.be.called;
+  });
+
+  test('should get Snyk token from VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => mockToken,
+        delete: () => sandbox.stub()
+      }
+    });
+
+    expect(await globalConfig.getSnykToken()).to.equal(mockToken);
+  });
+
+  test('should get Snyk token from VSCode SecretStorage and return empty string if token is undefined', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => undefined,
+        delete: () => sandbox.stub()
+      }
+    });
+
+    expect(await globalConfig.getSnykToken()).to.equal('');
+  });
+
+  test('should fail to get Snyk token from VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: async () => {
+          throw mockedError;
+        },
+        delete: () => sandbox.stub()
+      }
+    });
+    sandbox.spy(globalConfig.secrets, 'delete');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
+
+    expect(await globalConfig.getSnykToken()).to.equal('');
+
+    expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to get Snyk token from VSCode Secret Storage, Error: ${mockedError.message}`);
+    expect(globalConfig.secrets.delete).to.be.called;
+  });
+
+  test('should fail to get and delete Snyk token from VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: async () => {
+          throw mockedError;
+        },
+        delete: async () => {
+          throw mockedError;
+        },
+      }
+    });
+    sandbox.spy(globalConfig.secrets, 'delete');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
+
+    expect(await globalConfig.getSnykToken()).to.equal('');
+
+    expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to get Snyk token from VSCode Secret Storage, Error: ${mockedError.message}`);
+    expect(globalConfig.secrets.delete).to.be.called;
+  });
+
+  test('should delete Snyk token from VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => '',
+        delete: () => sandbox.stub()
+      }
+    });
+    const deleteSecretSpy = sandbox.spy(globalConfig.secrets, 'delete');
+    const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
+    sandbox.spy(vscode.window, 'showErrorMessage');
+
+    await globalConfig.clearSnykToken(true);
+
+    expect(deleteSecretSpy).to.have.been.calledWith(SNYK_TOKEN_KEY);
+    expect(showInformationMessageSpy).to.have.been.calledWith('Snyk token has been removed successfully');
+    expect(vscode.window.showErrorMessage).to.not.be.called;
+  });
+
+  test('should fail to delete Snyk token from VSCode SecretStorage', async () => {
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        store: () => sandbox.stub(),
+        get: () => '',
+        delete: async () => {
+          throw mockedError;
+        },
+      }
+    });
+    const deleteSecretSpy = sandbox.spy(globalConfig.secrets, 'delete');
+    sandbox.spy(vscode.window, 'showInformationMessage');
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
+
+    await globalConfig.clearSnykToken(true);
+
+    expect(deleteSecretSpy).to.have.been.calledWith(SNYK_TOKEN_KEY);
+    expect(vscode.window.showInformationMessage).to.not.be.called;
+    expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to delete Snyk token from VSCode Secret Storage, Error: ${mockedError.message}`);
   });
 });

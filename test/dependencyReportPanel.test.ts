@@ -6,7 +6,7 @@ import * as fs from 'fs';
 
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 import * as Templates from '../src/template';
-import { defaultRhdaReportFilePath } from '../src/constants';
+import { DEFAULT_RHDA_REPORT_FILE_PATH } from '../src/constants';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -86,8 +86,8 @@ suite('DependencyReportPanel Modules', () => {
 
     DependencyReportPanel.currentPanel.dispose();
 
-    expect(existsSyncStub).to.be.calledWith(defaultRhdaReportFilePath);
-    expect(unlinkSyncStub).to.be.calledWith(defaultRhdaReportFilePath);
+    expect(existsSyncStub).to.be.calledWith(DEFAULT_RHDA_REPORT_FILE_PATH);
+    expect(unlinkSyncStub).to.be.calledWith(DEFAULT_RHDA_REPORT_FILE_PATH);
     expect(DependencyReportPanel.data).equals(null);
     expect(DependencyReportPanel.currentPanel).equals(undefined);
   });

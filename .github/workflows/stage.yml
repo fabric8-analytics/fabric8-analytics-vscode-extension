@@ -81,17 +81,18 @@ jobs:
         run: |
           version="${{ steps.bump.outputs.version }}"
           version=${version#v}
-          notes=$(sed -n "/## $version/,/^##/p" ./CHANGELOG.md | grep -v '##')
+          notes=$(echo -e "## Changelog\n$(sed -n "/## $version/,/^##/p" ./CHANGELOG.md | grep -v '##')")
           if [ -z "$notes" ]; then
             echo "Release notes are missing for version $version."
             exit 1
           else
             echo "version=$version" >> "$GITHUB_OUTPUT"
 
-            notes="${notes//$'`'/%60}"
+            notes="${notes//$'\''/%27}"
+            notes="${notes//$'\n'/'%0A'}"
+            notes="${notes//$'\r'/'%0D'}"
             delimiter="$(openssl rand -hex 8)"
             echo "notes<<${delimiter}" >> "$GITHUB_OUTPUT"
-            echo "## Changelog" >> "$GITHUB_OUTPUT"
             echo "$notes" >> "$GITHUB_OUTPUT"
             echo "${delimiter}" >> "$GITHUB_OUTPUT"
           fi

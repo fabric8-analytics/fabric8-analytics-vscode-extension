@@ -1,5 +1,5 @@
 # Change Log
-## 0.9.3 (?)
+## 0.9.3 (Mar 6th 2024)
 - enhancement - Red Hat Dependency Analytics reporting has integrated the ONGuard service by using [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources for additional vulnerability information.
 - enhancement - Integrated VS Code's [Secret Storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) feature for securing the Snyk token. See [PR689](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/689) for details.
 - fixes - Fixed an issue with displaying wrong data when the event handler for Component Analysis was triggered on a unsaved manifest file. Component Analysis is no longer triggered on unsaved manifest files. See [PR#239](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/239) for details.

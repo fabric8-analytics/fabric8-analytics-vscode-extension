@@ -245,6 +245,12 @@
           "default": "Error",
           "description": "Defines the severity level of alerts for detected vulnerabilities in dependencies.",
           "scope": "window"
+        },
+        "redHatDependencyAnalytics.setPythonVirtualEnvironment": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automates the installation of missing packages in a Python virtual environment when set to true.",
+          "scope": "window"
         }
       }
     }
@@ -287,9 +293,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.2",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.4",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.14",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.25",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

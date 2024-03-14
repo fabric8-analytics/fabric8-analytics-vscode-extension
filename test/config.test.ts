@@ -33,6 +33,7 @@ suite('Config module', () => {
     expect(globalConfig.rhRepositoryRecommendationNotificationCommand).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
     expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
     expect(globalConfig.matchManifestVersions).to.eq('true');
+    expect(globalConfig.setPythonVirtualEnvironment).to.eq('false');
     expect(globalConfig.vulnerabilityAlertSeverity).to.eq('Error');
     expect(globalConfig.rhdaReportFilePath).to.eq('/tmp/redhatDependencyAnalyticsReport.html');
     expect(globalConfig.exhortMvnPath).to.eq('mvn');

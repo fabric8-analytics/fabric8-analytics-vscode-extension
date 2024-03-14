@@ -19,6 +19,7 @@ import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
 import { validateSnykToken } from './tokenValidation';
+import { applySettingNameMappings } from './utils';
 
 let lspClient: LanguageClient;
 
@@ -45,8 +46,9 @@ export function activate(context: vscode.ExtensionContext) {
         await generateRHDAReport(context, fileUri);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath) });
       } catch (error) {
-        vscode.window.showErrorMessage(error.message);
-        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath), error: error.message });
+        const message = applySettingNameMappings(error.message);
+        vscode.window.showErrorMessage(message);
+        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath), error: message });
       }
     }
   );
@@ -251,8 +253,9 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
       await generateRHDAReport(context, uri);
       record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath) });
     } catch (error) {
-      vscode.window.showErrorMessage(error.message);
-      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath), error: error.message });
+      const message = applySettingNameMappings(error.message);
+      vscode.window.showErrorMessage(message);
+      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath), error: message });
     }
   };
 

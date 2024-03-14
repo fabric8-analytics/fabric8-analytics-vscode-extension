@@ -13,6 +13,8 @@ class Config {
   telemetryId: string;
   stackAnalysisCommand: string;
   rhRepositoryRecommendationNotificationCommand: string;
+  trackQuickFixOpenedCommand: string;
+  trackRecommendationAcceptanceCommand: string;
   utmSource: string;
   matchManifestVersions: string;
   vulnerabilityAlertSeverity: string;
@@ -59,6 +61,8 @@ class Config {
 
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.rhRepositoryRecommendationNotificationCommand = commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND;
+    this.trackQuickFixOpenedCommand = commands.TRACK_QUICK_FIX_OPENED_COMMAND;
+    this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
@@ -81,6 +85,8 @@ class Config {
   private async setProcessEnv(): Promise<void> {
     process.env['VSCEXT_STACK_ANALYSIS_COMMAND'] = this.stackAnalysisCommand;
     process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND'] = this.rhRepositoryRecommendationNotificationCommand;
+    process.env['VSCEXT_TRACK_QUICK_FIX_OPENED_COMMAND'] = this.trackQuickFixOpenedCommand;
+    process.env['VSCEXT_TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND'] = this.trackRecommendationAcceptanceCommand;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;

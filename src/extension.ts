@@ -62,17 +62,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
-    commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND,
-    () => {
-      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                    make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
-                    This ensures that the applied dependencies work correctly. 
-                    Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
-      vscode.window.showWarningMessage(msg);
-    }
-  );
-
   const disposableSetSnykToken = vscode.commands.registerCommand(
     commands.SET_SNYK_TOKEN_COMMAND,
     async () => {
@@ -89,6 +78,25 @@ export function activate(context: vscode.ExtensionContext) {
         await globalConfig.clearSnykToken(true);
       } else {
         await globalConfig.setSnykToken(token);
+      }
+    }
+  );
+
+  const disposableTrackQuickFixOpened = vscode.commands.registerCommand(
+    commands.TRACK_QUICK_FIX_OPENED_COMMAND,
+    (uri: vscode.Uri) => {
+      const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+      record(context, TelemetryActions.componentAnalysisQuickFixOpened, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath) });
+    }
+  );
+
+  const disposableTrackRecommendationAcceptance = vscode.commands.registerCommand(
+    commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
+    (dependency, fileName) => {
+      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: dependency.split('@')[0], version: dependency.split('@')[1] });
+
+      if (fileName === 'pom.xml') {
+        showRHRepositoryRecommendationNotification();
       }
     }
   );
@@ -175,8 +183,8 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
-        rhRepositoryRecommendationNotification,
         disposableSetSnykToken,
+        disposableTrackRecommendationAcceptance,
         caStatusBarProvider,
       );
     })
@@ -239,6 +247,15 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
     }
   }
 }
+
+
+function showRHRepositoryRecommendationNotification() {
+  const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
+                  make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
+                  This ensures that the applied dependencies work correctly. 
+                  Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
+  vscode.window.showWarningMessage(msg);
+};
 
 /**
  * Registers stack analysis commands to track RHDA report generations.

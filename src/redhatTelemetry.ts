@@ -7,6 +7,8 @@ import { getRedHatService, TelemetryEvent, TelemetryService } from '@redhat-deve
 enum TelemetryActions {
   componentAnalysisDone = 'component_analysis_done',
   componentAnalysisFailed = 'component_analysis_failed',
+  componentAnalysisQuickFixOpened = 'component_analysis_quick_fix_opened',
+  componentAnalysisRecommendationAccepted = 'component_analysis_recommendation_accepted',
   vulnerabilityReportDone = 'vulnerability_report_done',
   vulnerabilityReportFailed = 'vulnerability_report_failed',
   vulnerabilityReportEditor = 'vulnerability_report_editor',

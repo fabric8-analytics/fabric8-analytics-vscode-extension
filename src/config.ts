@@ -15,6 +15,10 @@ class Config {
   rhRepositoryRecommendationNotificationCommand: string;
   utmSource: string;
   matchManifestVersions: string;
+  usePythonVirtualEnvironment: string;
+  useGoMVS: string;
+  enablePythonBestEffortsInstallation: string;
+  usePipDepTree: string;
   vulnerabilityAlertSeverity: string;
   exhortMvnPath: string;
   exhortNpmPath: string;
@@ -62,6 +66,14 @@ class Config {
     this.utmSource = GlobalState.UTM_SOURCE;
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
+    /* istanbul ignore next */
+    this.usePythonVirtualEnvironment = rhdaConfig.usePythonVirtualEnvironment ? 'true' : 'false';
+    /* istanbul ignore next */
+    this.useGoMVS = rhdaConfig.useGoMVS ? 'true' : 'false';
+    /* istanbul ignore next */
+    this.enablePythonBestEffortsInstallation = rhdaConfig.enablePythonBestEffortsInstallation ? 'true' : 'false';
+    /* istanbul ignore next */
+    this.usePipDepTree = rhdaConfig.usePipDepTree ? 'true' : 'false';
     this.vulnerabilityAlertSeverity = rhdaConfig.vulnerabilityAlertSeverity;
     /* istanbul ignore next */
     this.rhdaReportFilePath = rhdaConfig.reportFilePath || DEFAULT_RHDA_REPORT_FILE_PATH;
@@ -83,6 +95,10 @@ class Config {
     process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND'] = this.rhRepositoryRecommendationNotificationCommand;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
+    process.env['VSCEXT_USE_PYTHON_VIRTUAL_ENVIRONMENT'] = this.usePythonVirtualEnvironment;
+    process.env['VSCEXT_USE_GO_MVS'] = this.useGoMVS;
+    process.env['VSCEXT_ENABLE_PYTHON_BEST_EFFORTS_INSTALLATION'] = this.enablePythonBestEffortsInstallation;
+    process.env['VSCEXT_USE_PIP_DEP_TREE'] = this.usePipDepTree;
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
     process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;

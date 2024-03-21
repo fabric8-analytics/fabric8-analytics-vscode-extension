@@ -78,11 +78,11 @@ async function executeStackAnalysis(manifestFilePath): Promise<string> {
           'EXHORT_PIP_PATH': globalConfig.exhortPipPath
         };
 
-        const snykToken = await globalConfig.getSnykToken();
-        /* istanbul ignore else */
-        if (snykToken !== '') {
-          options['EXHORT_SNYK_TOKEN'] = snykToken;
-        }
+        // const snykToken = await globalConfig.getSnykToken();
+        // /* istanbul ignore else */
+        // if (snykToken !== '') {
+        //   options['EXHORT_SNYK_TOKEN'] = snykToken;
+        // }
 
         // execute stack analysis
         await stackAnalysisService(manifestFilePath, options)

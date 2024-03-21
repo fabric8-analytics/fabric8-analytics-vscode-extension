@@ -24,7 +24,7 @@ function stackAnalysisService(pathToManifest, options): Promise<any> {
 /**
  * Performes RHDA token validation based on the provided options and displays messages based on the validation status.
  * @param options The options for token validation.
- * @param source The source for which the token is being validated. Example values: 'Snyk', 'OSS Index'.
+ * @param source The source for which the token is being validated.
  * @returns A promise resolving after validating the token.
  */
 async function tokenValidationService(options, source): Promise<string> {

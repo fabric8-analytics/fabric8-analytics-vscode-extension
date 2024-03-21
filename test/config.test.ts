@@ -62,7 +62,6 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_STACK_ANALYSIS_COMMAND']).to.eq(commands.STACK_ANALYSIS_COMMAND);
     expect(process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND']).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
-    expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.eq('');
     expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');
     expect(process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY']).to.eq('Error');
     expect(process.env['VSCEXT_EXHORT_MVN_PATH']).to.eq('mvn');
@@ -73,7 +72,7 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_EXHORT_PYTHON_PATH']).to.eq('python');
     expect(process.env['VSCEXT_EXHORT_PIP_PATH']).to.eq('pip');
     expect(process.env['VSCEXT_TELEMETRY_ID']).to.equal(mockId);
-    expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.equal('');
+    // expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.equal('');
   });
 
   test('should set Snyk token in VSCode SecretStorage', async () => {

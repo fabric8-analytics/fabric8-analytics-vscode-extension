@@ -1,4 +1,6 @@
 # Change Log
+## 0.9.4 (?)
+- informational - Removing access to Snyk's Vulnerability Database.
 ## 0.9.3 (Mar 6th 2024)
 - enhancement - Red Hat Dependency Analytics reporting has integrated the ONGuard service by using [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources for additional vulnerability information.
 - enhancement - Integrated VS Code's [Secret Storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) feature for securing the Snyk token. See [PR689](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/689) for details.

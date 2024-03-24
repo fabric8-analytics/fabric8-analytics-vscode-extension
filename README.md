@@ -7,7 +7,6 @@
 Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you code your application.
 The Red Hat Dependency Analytics extension uses the following data sources for the most up-to-date vulnerability information available:
 
-- [Snyk's Vulnerability Database](https://snyk.io/product/vulnerability-database/) is an industry-leading security intelligence service. Red Hat Dependency Analytics uses Snyk's REST API to query for the latest vulnerability information available.
 - The [ONGuard](https://github.com/RHEcosystemAppEng/ONguard) service, integrates the [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources. When given a set of packages to the ONGuard service, a query to OSV retrieves the associated vulnerability information, and then a query to NVD for public Common Vulnerability and Exposures (CVE) information.
 
 **NOTE:**
@@ -58,12 +57,6 @@ Click the **Workspace** tab, search for the word _executable_, and specify the a
    - Open a manifest file, and click the **pie chart** icon ![ Pie chart icon ](icon/report-icon.png).
    - Right click on a manifest file in the **Explorer** view, and click **Red Hat Dependency Analytics Report...**.
    - From the vulnerability pop-up alert message, click **Open detailed vulnerability report**.
-7. (OPTIONAL) You can link your Snyk account to Red Hat Dependency Analytics by doing the following:
-   1. Log into your [Snyk account](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
-   2. On the account landing page, you can find your Snyk Token, copy the token.
-   3. From VS Code's Command Palette, enter `RHDA: Set Snyk Token`.
-   4. Paste the Snyk token into the input field.
-   4. After adding your Snyk token, the vulnerability report gives you detailed information about security vulnerabilities unique to Snyk, and vulnerabilities that have publicly known exploits.
 
 ## Configuration
 
@@ -79,23 +72,6 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
    ![Red Hat Dependency Analytics extension workspace settings](images/screenshots/extension-workspace-settings.png)
 
 ### Configurable parameters
-
-**Snyk Token Storage** :
-<br >The Snyk token allows Exhort to authenticate with the Snyk Vulnerability Database.
-If a Snyk token is not provided, Snyk vulnerability information is not displayed.
-
-To securely store your Snyk token, RHDA uses VS Code's [Secret Storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) feature.
-From VS Code's Command Palette, enter `RHDA: Set Snyk Token`.
-Next, enter your Snyk token.
-<br >![ Screenshot of the Snyk token dialog box](images/screenshots/RHDA_Snyk_Token_dialog_box.png)
-
-If you enter a invalid Snyk token, the dialog box alerts you that your Snyk token is not valid.
-<br >![ Screenshot of the invalid Snyk token dialog box ](images/screenshots/RHDA_Invalid_Snyk_Token.png)
-
-In the extension settings, you can set RHDA to always use VS Code's Secret Storage.
-<br >![ Screenshot of the RHDA Snyk token storage setting](images/screenshots/RHDA_Snyk_Token_Storage_Setting.png)
-
-If you need a new Snyk token, you can generate a new token [here](https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9).
 
 **Red Hat Dependency Analytics Report File Path** :
 <br >Specify the local path to create the Red Hat Dependency Analytics report file.
@@ -143,7 +119,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	```
 
 	If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
-	If `exhortignore` is followed by a list of comma-separated Snyk vulnerability IDs, only the listed vulnerabilities will be ignored during analysis.
+	If `exhortignore` is followed by a list of comma-separated vulnerability IDs, only the listed vulnerabilities are ignored during analysis.
 	For example:
 
 	```json

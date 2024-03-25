@@ -5,9 +5,7 @@
 [![Codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
 Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you code your application.
-The Red Hat Dependency Analytics extension uses the following data sources for the most up-to-date vulnerability information available:
-
-- The [ONGuard](https://github.com/RHEcosystemAppEng/ONguard) service, integrates the [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources. When given a set of packages to the ONGuard service, a query to OSV retrieves the associated vulnerability information, and then a query to NVD for public Common Vulnerability and Exposures (CVE) information.
+The Red Hat Dependency Analytics extension uses vulnerability data sources for the most up-to-date vulnerability information available.
 
 **NOTE:**
 <br >The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.

@@ -93,8 +93,8 @@ class Config {
     process.env['VSCEXT_EXHORT_PIP_PATH'] = this.exhortPipPath;
     process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
 
-    const token = await this.getSnykToken();
-    process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = token;
+    // const token = await this.getSnykToken();
+    // process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = token;
   }
 
   /**

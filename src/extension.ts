@@ -10,7 +10,7 @@ import {
 } from 'vscode-languageclient/node';
 
 import * as commands from './commands';
-import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, SNYK_TOKEN_KEY } from './constants';
+import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL } from './constants';
 import { generateRHDAReport } from './stackAnalysis';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
@@ -18,7 +18,7 @@ import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
-import { validateSnykToken } from './tokenValidation';
+// import { validateSnykToken } from './tokenValidation';
 
 let lspClient: LanguageClient;
 
@@ -73,25 +73,25 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const disposableSetSnykToken = vscode.commands.registerCommand(
-    commands.SET_SNYK_TOKEN_COMMAND,
-    async () => {
-      const token = await vscode.window.showInputBox({
-        prompt: 'Please enter your Snyk Token:',
-        placeHolder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-        password: true,
-        validateInput: validateSnykToken
-      });
+  // const disposableSetSnykToken = vscode.commands.registerCommand(
+  //   commands.SET_SNYK_TOKEN_COMMAND,
+  //   async () => {
+  //     const token = await vscode.window.showInputBox({
+  //       prompt: 'Please enter your Snyk Token:',
+  //       placeHolder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+  //       password: true,
+  //       validateInput: validateSnykToken
+  //     });
 
-      if (token === undefined) {
-        return;
-      } else if (token === '') {
-        await globalConfig.clearSnykToken(true);
-      } else {
-        await globalConfig.setSnykToken(token);
-      }
-    }
-  );
+  //     if (token === undefined) {
+  //       return;
+  //     } else if (token === '') {
+  //       await globalConfig.clearSnykToken(true);
+  //     } else {
+  //       await globalConfig.setSnykToken(token);
+  //     }
+  //   }
+  // );
 
   registerStackAnalysisCommands(context);
 
@@ -176,7 +176,7 @@ export function activate(context: vscode.ExtensionContext) {
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
         rhRepositoryRecommendationNotification,
-        disposableSetSnykToken,
+        // disposableSetSnykToken,
         caStatusBarProvider,
       );
     })
@@ -189,12 +189,12 @@ export function activate(context: vscode.ExtensionContext) {
     globalConfig.loadData();
   });
 
-  context.secrets.onDidChange(async (e) => {
-    if (e.key === SNYK_TOKEN_KEY) {
-      const token = await globalConfig.getSnykToken();
-      lspClient.sendNotification('snykTokenModified', token);
-    }
-  });
+  // context.secrets.onDidChange(async (e) => {
+  //   if (e.key === SNYK_TOKEN_KEY) {
+  //     const token = await globalConfig.getSnykToken();
+  //     lspClient.sendNotification('snykTokenModified', token);
+  //   }
+  // });
 }
 
 /**

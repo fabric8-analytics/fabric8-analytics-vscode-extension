@@ -12,7 +12,7 @@ import { getTelemetryId } from './redhatTelemetry';
 class Config {
   telemetryId: string;
   stackAnalysisCommand: string;
-  rhRepositoryRecommendationNotificationCommand: string;
+  trackRecommendationAcceptanceCommand: string;
   utmSource: string;
   matchManifestVersions: string;
   usePythonVirtualEnvironment: string;
@@ -62,7 +62,7 @@ class Config {
     const rhdaConfig = this.getRhdaConfig();
 
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
-    this.rhRepositoryRecommendationNotificationCommand = commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND;
+    this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
@@ -92,7 +92,7 @@ class Config {
    */
   private async setProcessEnv(): Promise<void> {
     process.env['VSCEXT_STACK_ANALYSIS_COMMAND'] = this.stackAnalysisCommand;
-    process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND'] = this.rhRepositoryRecommendationNotificationCommand;
+    process.env['VSCEXT_TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND'] = this.trackRecommendationAcceptanceCommand;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
     process.env['VSCEXT_USE_PYTHON_VIRTUAL_ENVIRONMENT'] = this.usePythonVirtualEnvironment;

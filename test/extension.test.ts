@@ -19,6 +19,7 @@ suite('Fabric8 Analytics Extension', () => {
     const FABRIC8_COMMANDS: string[] = [
       Commands.STACK_ANALYSIS_COMMAND,
       Commands.STACK_LOGS_COMMAND,
+      Commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
       Commands.STACK_ANALYSIS_FROM_EDITOR_COMMAND,
       Commands.STACK_ANALYSIS_FROM_EXPLORER_COMMAND,
       Commands.STACK_ANALYSIS_FROM_PIE_BTN_COMMAND,

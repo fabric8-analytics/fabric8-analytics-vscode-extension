@@ -30,9 +30,13 @@ suite('Config module', () => {
   test('should initialize Config properties with default extension settings', async () => {
 
     expect(globalConfig.stackAnalysisCommand).to.eq(commands.STACK_ANALYSIS_COMMAND);
-    expect(globalConfig.rhRepositoryRecommendationNotificationCommand).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
+    expect(globalConfig.trackRecommendationAcceptanceCommand).to.eq(commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND);
     expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
     expect(globalConfig.matchManifestVersions).to.eq('true');
+    expect(globalConfig.usePythonVirtualEnvironment).to.eq('false');
+    expect(globalConfig.useGoMVS).to.eq('false');
+    expect(globalConfig.enablePythonBestEffortsInstallation).to.eq('false');
+    expect(globalConfig.usePipDepTree).to.eq('false');
     expect(globalConfig.vulnerabilityAlertSeverity).to.eq('Error');
     expect(globalConfig.rhdaReportFilePath).to.eq('/tmp/redhatDependencyAnalyticsReport.html');
     expect(globalConfig.exhortMvnPath).to.eq('mvn');
@@ -60,9 +64,13 @@ suite('Config module', () => {
     expect(globalConfig.telemetryId).to.equal(mockId);
 
     expect(process.env['VSCEXT_STACK_ANALYSIS_COMMAND']).to.eq(commands.STACK_ANALYSIS_COMMAND);
-    expect(process.env['VSCEXT_REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND']).to.eq(commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND);
+    expect(process.env['VSCEXT_TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND']).to.eq(commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
     expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');
+    expect(process.env['VSCEXT_USE_PYTHON_VIRTUAL_ENVIRONMENT']).to.eq('false');
+    expect(process.env['VSCEXT_USE_GO_MVS']).to.eq('false');
+    expect(process.env['VSCEXT_ENABLE_PYTHON_BEST_EFFORTS_INSTALLATION']).to.eq('false');
+    expect(process.env['VSCEXT_USE_PIP_DEP_TREE']).to.eq('false');
     expect(process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY']).to.eq('Error');
     expect(process.env['VSCEXT_EXHORT_MVN_PATH']).to.eq('mvn');
     expect(process.env['VSCEXT_EXHORT_NPM_PATH']).to.eq('npm');

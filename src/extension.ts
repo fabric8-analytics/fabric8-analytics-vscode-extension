@@ -19,6 +19,7 @@ import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
 // import { validateSnykToken } from './tokenValidation';
+import { applySettingNameMappings } from './utils';
 
 let lspClient: LanguageClient;
 
@@ -45,8 +46,9 @@ export function activate(context: vscode.ExtensionContext) {
         await generateRHDAReport(context, fileUri);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath) });
       } catch (error) {
-        vscode.window.showErrorMessage(error.message);
-        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath), error: error.message });
+        const message = applySettingNameMappings(error.message);
+        vscode.window.showErrorMessage(message);
+        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath), error: message });
       }
     }
   );
@@ -62,14 +64,14 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
-    commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND,
-    () => {
-      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                    make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
-                    This ensures that the applied dependencies work correctly. 
-                    Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
-      vscode.window.showWarningMessage(msg);
+  const disposableTrackRecommendationAcceptance = vscode.commands.registerCommand(
+    commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
+    (dependency, fileName) => {
+      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: dependency.split('@')[0], version: dependency.split('@')[1] });
+
+      if (fileName === 'pom.xml') {
+        showRHRepositoryRecommendationNotification();
+      }
     }
   );
 
@@ -175,7 +177,7 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
-        rhRepositoryRecommendationNotification,
+        disposableTrackRecommendationAcceptance,
         // disposableSetSnykToken,
         caStatusBarProvider,
       );
@@ -240,6 +242,14 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   }
 }
 
+function showRHRepositoryRecommendationNotification() {
+  const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
+                  make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
+                  This ensures that the applied dependencies work correctly. 
+                  Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
+  vscode.window.showWarningMessage(msg);
+}
+
 /**
  * Registers stack analysis commands to track RHDA report generations.
  * @param context - The extension context.
@@ -251,8 +261,9 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
       await generateRHDAReport(context, uri);
       record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath) });
     } catch (error) {
-      vscode.window.showErrorMessage(error.message);
-      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath), error: error.message });
+      const message = applySettingNameMappings(error.message);
+      vscode.window.showErrorMessage(message);
+      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath), error: message });
     }
   };
 

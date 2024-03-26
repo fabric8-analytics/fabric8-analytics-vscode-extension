@@ -64,14 +64,14 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
-    commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND,
-    () => {
-      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                    make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
-                    This ensures that the applied dependencies work correctly. 
-                    Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
-      vscode.window.showWarningMessage(msg);
+  const disposableTrackRecommendationAcceptance = vscode.commands.registerCommand(
+    commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
+    (dependency, fileName) => {
+      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: dependency.split('@')[0], version: dependency.split('@')[1] });
+
+      if (fileName === 'pom.xml') {
+        showRHRepositoryRecommendationNotification();
+      }
     }
   );
 
@@ -177,7 +177,7 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
-        rhRepositoryRecommendationNotification,
+        disposableTrackRecommendationAcceptance,
         // disposableSetSnykToken,
         caStatusBarProvider,
       );
@@ -240,6 +240,17 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/v${version}`));
     }
   }
+}
+
+/**
+ * Shows a notification regarding Red Hat Dependency Analytics recommendations.
+ */
+function showRHRepositoryRecommendationNotification() {
+  const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
+                  make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
+                  This ensures that the applied dependencies work correctly. 
+                  Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
+  vscode.window.showWarningMessage(msg);
 }
 
 /**

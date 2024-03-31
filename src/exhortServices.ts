@@ -2,6 +2,47 @@
 
 import * as vscode from 'vscode';
 import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
+import { execSync } from 'child_process';
+
+import { IImageRef, IOptions } from './imageAnalysis';
+
+/**
+ * Performs RHDA stack analysis based on the provided manifest path and options.
+ * @param pathToManifest The path to the manifest file for analysis.
+ * @param options Additional options for the analysis.
+ * @returns A promise resolving to the stack analysis report in HTML format.
+ */
+function imageAnalysisService(images: IImageRef[], options: IOptions): Promise<any> {
+  return new Promise<any>(async (resolve, reject) => {
+    const jarPath = '/home/Ilonas/Documents/SSSC/RHDA/fabric8-analytics-vscode-extension/javaApiAdapter/exhort-java-api-adapter-1.0-SNAPSHOT-jar-with-dependencies.jar';
+    let reportType = 'html';
+    let parameters = ""
+    let properties = ""
+
+    images.forEach(image => {
+      if (image.platform) {
+        parameters += ` ${image.image}^^${image.platform}`
+      } else {
+        parameters += ` ${image.image}`
+      }
+    });
+
+    for (const setting in options) {
+      if (options[setting]) {
+        properties += ` -D${setting}=${options[setting]}`
+      }
+    };
+
+    try {
+      let result = execSync(`java${properties} -jar ${jarPath} ${reportType}${parameters}`, {
+        maxBuffer: 1000 * 1000 * 10, // 10 MB
+      })
+      resolve(result.toString());
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
 /**
  * Performs RHDA stack analysis based on the provided manifest path and options.
@@ -62,4 +103,4 @@ async function tokenValidationService(options, source): Promise<string> {
   }
 }
 
-export { stackAnalysisService, tokenValidationService };
+export { imageAnalysisService, stackAnalysisService, tokenValidationService };

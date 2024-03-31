@@ -10,8 +10,8 @@ import {
 } from 'vscode-languageclient/node';
 
 import * as commands from './commands';
-import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL } from './constants';
-import { generateRHDAReport } from './stackAnalysis';
+import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, REDHAT_CATALOG } from './constants';
+import { generateRHDAReport } from './rhda';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
@@ -69,6 +69,9 @@ export function activate(context: vscode.ExtensionContext) {
     (dependency, fileName) => {
       record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: dependency.split('@')[0], version: dependency.split('@')[1] });
 
+      if (fileName === 'Dockerfile') {
+        redirectToRedHatCatalog();
+      }
       if (fileName === 'pom.xml') {
         showRHRepositoryRecommendationNotification();
       }
@@ -128,7 +131,8 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'plaintext' },
           { scheme: 'file', language: 'pip-requirements' },
           { scheme: 'file', language: 'go' },
-          { scheme: 'file', language: 'go.mod' }
+          { scheme: 'file', language: 'go.mod' },
+          { scheme: 'file', language: 'dockerfile' }
         ]
       };
 
@@ -241,6 +245,10 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`${packageJSON.repository.url}/releases/tag/v${version}`));
     }
   }
+}
+
+function redirectToRedHatCatalog() {
+  vscode.env.openExternal(vscode.Uri.parse(REDHAT_CATALOG));
 }
 
 /**

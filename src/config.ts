@@ -29,6 +29,18 @@ class Config {
   exhortPipPath: string;
   rhdaReportFilePath: string;
   secrets: vscode.SecretStorage;
+  exhortSyftPath: string;
+  exhortSyftConfigPath: string;
+  exhortSyftImageSource: string;
+  exhortSkopeoPath: string;
+  exhortSkopeoConfigPath: string;
+  exhortImageServiceEndpoint: string;
+  exhortDockerPath: string;
+  exhortPodmanPath: string;
+  exhortImagePlatform: string;
+  exhortImageOS: string;
+  exhortImageArch: string;
+  exhortImageVariant: string;
 
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_NPM_EXECUTABLE = 'npm';
@@ -37,6 +49,10 @@ class Config {
   private readonly DEFAULT_PIP3_EXECUTABLE = 'pip3';
   private readonly DEFAULT_PYTHON_EXECUTABLE = 'python';
   private readonly DEFAULT_PIP_EXECUTABLE = 'pip';
+  private readonly DEFAULT_SYFT_EXECUTABLE = 'syft';
+  private readonly DEFAULT_SKOPEO_EXECUTABLE = 'skopeo';
+  private readonly DEFAULT_DOCKER_EXECUTABLE = 'docker';
+  private readonly DEFAULT_PODMAN_EXECUTABLE = 'podman';
 
   /**
    * Creates an instance of the Config class.
@@ -84,6 +100,18 @@ class Config {
     this.exhortPip3Path = rhdaConfig.pip3.executable.path || this.DEFAULT_PIP3_EXECUTABLE;
     this.exhortPythonPath = rhdaConfig.python.executable.path || this.DEFAULT_PYTHON_EXECUTABLE;
     this.exhortPipPath = rhdaConfig.pip.executable.path || this.DEFAULT_PIP_EXECUTABLE;
+    this.exhortSyftPath = rhdaConfig.syft.executable.path || this.DEFAULT_SYFT_EXECUTABLE;
+    this.exhortSyftConfigPath = rhdaConfig.syft.config.path;
+    this.exhortSyftImageSource = rhdaConfig.syft.imageSource;
+    this.exhortSkopeoPath = rhdaConfig.skopeo.executable.path || this.DEFAULT_SKOPEO_EXECUTABLE;
+    this.exhortSkopeoConfigPath = rhdaConfig.skopeo.config.path;
+    this.exhortImageServiceEndpoint = rhdaConfig.image.serviceEndpoint;
+    this.exhortDockerPath = rhdaConfig.docker.executable.path || this.DEFAULT_DOCKER_EXECUTABLE;
+    this.exhortPodmanPath = rhdaConfig.podman.executable.path || this.DEFAULT_PODMAN_EXECUTABLE;
+    this.exhortImagePlatform = rhdaConfig.image.platform;
+    this.exhortImageOS = rhdaConfig.image.OS;
+    this.exhortImageArch = rhdaConfig.image.arch;
+    this.exhortImageVariant = rhdaConfig.image.variant;
   }
 
   /**
@@ -108,6 +136,18 @@ class Config {
     process.env['VSCEXT_EXHORT_PYTHON_PATH'] = this.exhortPythonPath;
     process.env['VSCEXT_EXHORT_PIP_PATH'] = this.exhortPipPath;
     process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
+    process.env['VSCEXT_EXHORT_SYFT_PATH'] = this.exhortSyftPath;
+    process.env['VSCEXT_EXHORT_SYFT_CONFIG_PATH'] = this.exhortSyftConfigPath;
+    process.env['VSCEXT_EXHORT_SYFT_IMAGE_SOURCE'] = this.exhortSyftImageSource;
+    process.env['VSCEXT_EXHORT_SKOPEO_PATH'] = this.exhortSkopeoPath;
+    process.env['VSCEXT_EXHORT_SKOPEO_CONFIG_PATH'] = this.exhortSkopeoConfigPath;
+    process.env['VSCEXT_EXHORT_IMAGE_SERVICE_ENDPOINT'] = this.exhortImageServiceEndpoint;
+    process.env['VSCEXT_EXHORT_DOCKER_PATH'] = this.exhortDockerPath;
+    process.env['VSCEXT_EXHORT_PODMAN_PATH'] = this.exhortPodmanPath;
+    process.env['VSCEXT_EXHORT_IMAGE_PLATFORM'] = this.exhortImagePlatform;
+    process.env['VSCEXT_EXHORT_IMAGE_OS'] = this.exhortImageOS;
+    process.env['VSCEXT_EXHORT_IMAGE_ARCH'] = this.exhortImageArch;
+    process.env['VSCEXT_EXHORT_IMAGE_VARIANT'] = this.exhortImageVariant;
 
     // const token = await this.getSnykToken();
     // process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = token;

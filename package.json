@@ -42,7 +42,8 @@
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",
     "workspaceContains:**/go.mod",
-    "workspaceContains:**/requirements.txt"
+    "workspaceContains:**/requirements.txt",
+    "workspaceContains:**/Dockerfile"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -95,6 +96,11 @@
           "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == requirements.txt",
           "group": "navigation"
+        },
+        {
+          "command": "rhda.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == Dockerfile",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -113,6 +119,10 @@
         {
           "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromExplorer",
+          "when": "resourceFilename == Dockerfile"
         }
       ],
       "editor/context": [
@@ -131,6 +141,10 @@
         {
           "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromEditor",
+          "when": "resourceFilename == Dockerfile"
         }
       ],
       "commandPalette": [
@@ -254,6 +268,78 @@
           "type": "boolean",
           "default": false,
           "description": "Use lightweight pipdeptree command line tool as the data source for building the Python dependency tree. This may significantly enhance analysis time.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.syft.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.syft.config.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.syft.imageSource": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.skopeo.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.skopeo.config.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.image.serviceEndpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.docker.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.podman.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.image.platform": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.image.OS": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.image.arch": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.image.variant": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
           "scope": "window"
         }
       }

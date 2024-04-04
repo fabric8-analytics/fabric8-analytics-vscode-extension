@@ -39,16 +39,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   const disposableStackAnalysisCommand = vscode.commands.registerCommand(
     commands.STACK_ANALYSIS_COMMAND,
-    async (uri: vscode.Uri) => {
-      // uri will be null in case the user has used the context menu/file explorer
-      const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+    async (filePath: string) => {
+      filePath = filePath ? filePath : vscode.window.activeTextEditor.document.uri.fsPath;
+      const fileName = path.basename(filePath);
       try {
-        await generateRHDAReport(context, fileUri);
-        record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath) });
+        await generateRHDAReport(context, filePath);
+        record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
         const message = applySettingNameMappings(error.message);
         vscode.window.showErrorMessage(message);
-        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath), error: message });
+        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
       }
     }
   );
@@ -142,10 +142,11 @@ export function activate(context: vscode.ExtensionContext) {
 
       lspClient.start().then(() => {
 
-        const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
+        const showVulnerabilityFoundPrompt = async (msg: string, filePath: string) => {
+          const fileName = path.basename(filePath);
           const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
-            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND);
+            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
           }
           else {
@@ -157,7 +158,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (notification.hasWarning()) {
-            showVulnerabilityFoundPrompt(notification.popupText(), path.basename(notification.origin()));
+            showVulnerabilityFoundPrompt(notification.popupText(), notification.origin());
             record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()) });
           }
         });
@@ -259,21 +260,23 @@ function showRHRepositoryRecommendationNotification() {
  */
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
 
-  const invokeFullStackReport = async (uri: vscode.Uri) => {
+  const invokeFullStackReport = async (filePath: string) => {
+    const fileName = path.basename(filePath);
     try {
-      await generateRHDAReport(context, uri);
-      record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath) });
+      await generateRHDAReport(context, filePath);
+      record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
     } catch (error) {
       const message = applySettingNameMappings(error.message);
       vscode.window.showErrorMessage(message);
-      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath), error: message });
+      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
     }
   };
 
   const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
     const fileUri = uri || vscode.window.activeTextEditor.document.uri;
-    record(context, origin, { manifest: fileUri.fsPath.split('/').pop(), fileName: fileUri.fsPath.split('/').pop() });
-    invokeFullStackReport(fileUri);
+    const filePath = fileUri.fsPath;
+    record(context, origin, { manifest: filePath.split('/').pop(), fileName: filePath.split('/').pop() });
+    invokeFullStackReport(filePath);
   };
 
   const registerCommand = (cmd: string, action: TelemetryActions) => {

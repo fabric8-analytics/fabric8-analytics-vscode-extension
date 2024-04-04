@@ -16,7 +16,7 @@ chai.use(sinonChai);
 
 suite('StackAnalysis module', () => {
   let sandbox: sinon.SinonSandbox;
-  const MockUri = vscode.Uri.file('/mock/path/pom.xml');
+  const mockPath = '/mock/path/pom.xml';
   const mockReponse = '<html> mockResponse </html>';
 
   setup(() => {
@@ -36,16 +36,16 @@ suite('StackAnalysis module', () => {
   });
 
   test('should ignore unsoported file', async () => {
-    const unsupportedUri = vscode.Uri.file('/mock/path/yarn.lock');
+    const unsupportedFilePath = '/mock/path/yarn.lock';
     const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
     const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
 
-    await generateRHDAReport(context, unsupportedUri);
+    await generateRHDAReport(context, unsupportedFilePath);
 
     expect(authorizeRHDAStub.calledOnce).to.be.false;
     expect(stackAnalysisServiceStub.calledOnce).to.be.false;
-    expect(showInformationMessageSpy.calledOnceWith(`File ${unsupportedUri.fsPath} is not supported!!`)).to.be.true;
+    expect(showInformationMessageSpy.calledOnceWith(`File ${unsupportedFilePath} is not supported!!`)).to.be.true;
   });
 
   test('should generate RHDA report for supported file and successfully save HTML data locally', async () => {
@@ -56,7 +56,7 @@ suite('StackAnalysis module', () => {
       callback(null);
     });
 
-    await generateRHDAReport(context, MockUri);
+    await generateRHDAReport(context, mockPath);
 
     expect(authorizeRHDAStub.calledOnce).to.be.true;
     expect(stackAnalysisServiceStub.calledOnce).to.be.true;
@@ -69,7 +69,7 @@ suite('StackAnalysis module', () => {
     const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').rejects(new Error('Mock Error'));
 
-    await generateRHDAReport(context, MockUri)
+    await generateRHDAReport(context, mockPath)
       .then(() => {
         throw (new Error('should have thrown error'))
       })
@@ -89,7 +89,7 @@ suite('StackAnalysis module', () => {
       callback(new Error('Mock Error'));
     });
 
-    await generateRHDAReport(context, MockUri)
+    await generateRHDAReport(context, mockPath)
       .then(() => {
         throw (new Error('should have thrown error'))
       })
@@ -108,7 +108,7 @@ suite('StackAnalysis module', () => {
     sandbox.stub(fs, 'existsSync').returns(false);
     const mkdirSyncStub = sandbox.stub(fs, 'mkdirSync').throws(new Error('Mock Error'));
 
-    await generateRHDAReport(context, MockUri)
+    await generateRHDAReport(context, mockPath)
       .then(() => {
         throw (new Error('should have thrown error'))
 

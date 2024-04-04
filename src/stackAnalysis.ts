@@ -134,12 +134,12 @@ async function triggerWebviewPanel(context) {
  * @param uri The URI of the manifest file for analysis.
  * @returns A promise that resolves once the report generation is complete.
  */
-async function generateRHDAReport(context, uri) {
-  if (uri.fsPath && supportedFiles.includes(path.basename(uri.fsPath))) {
+async function generateRHDAReport(context, filePath) {
+  if (supportedFiles.includes(path.basename(filePath))) {
     try {
 
       await triggerWebviewPanel(context);
-      const resp = await executeStackAnalysis(uri.fsPath);
+      const resp = await executeStackAnalysis(filePath);
       /* istanbul ignore else */
       if (DependencyReportPanel.currentPanel) {
         await writeReportToFile(resp);
@@ -150,7 +150,7 @@ async function generateRHDAReport(context, uri) {
     }
   } else {
     vscode.window.showInformationMessage(
-      `File ${uri.fsPath} is not supported!!`
+      `File ${filePath} is not supported!!`
     );
   }
 }

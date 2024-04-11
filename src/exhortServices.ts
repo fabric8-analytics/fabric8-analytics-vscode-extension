@@ -15,28 +15,28 @@ import { IImageRef, IOptions } from './imageAnalysis';
 function imageAnalysisService(images: IImageRef[], options: IOptions): Promise<any> {
   return new Promise<any>(async (resolve, reject) => {
     const jarPath = '/home/Ilonas/Documents/SSSC/RHDA/fabric8-analytics-vscode-extension/javaApiAdapter/exhort-java-api-adapter-1.0-SNAPSHOT-jar-with-dependencies.jar';
-    let reportType = 'html';
-    let parameters = ""
-    let properties = ""
+    const reportType = 'html';
+    let parameters = '';
+    let properties = '';
 
     images.forEach(image => {
       if (image.platform) {
-        parameters += ` ${image.image}^^${image.platform}`
+        parameters += ` ${image.image}^^${image.platform}`;
       } else {
-        parameters += ` ${image.image}`
+        parameters += ` ${image.image}`;
       }
     });
 
     for (const setting in options) {
       if (options[setting]) {
-        properties += ` -D${setting}=${options[setting]}`
+        properties += ` -D${setting}=${options[setting]}`;
       }
-    };
+    }
 
     try {
-      let result = execSync(`java${properties} -jar ${jarPath} ${reportType}${parameters}`, {
+      const result = execSync(`java${properties} -jar ${jarPath} ${reportType}${parameters}`, {
         maxBuffer: 1000 * 1000 * 10, // 10 MB
-      })
+      });
       resolve(result.toString());
     } catch (error) {
       reject(error);

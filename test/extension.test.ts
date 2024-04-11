@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 
 import * as Commands from '../src/commands';
 
-suite('Fabric8 Analytics Extension', () => {
+suite('Extension module', () => {
   test('Extension should be present', () => {
     assert.ok(vscode.extensions.getExtension('redhat.fabric8-analytics'));
   });

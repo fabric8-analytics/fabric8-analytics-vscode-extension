@@ -1,14 +1,11 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as vscode from 'vscode';
-import * as fs from 'fs';
 
 import * as exhortServices from '../src/exhortServices';
 import { globalConfig } from '../src/config';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
-import { generateRHDAReport } from '../src/stackAnalysis'
-import { context } from './vscontext.mock';
+import { executeStackAnalysis } from '../src/stackAnalysis'
 import * as templates from '../src/template';
 
 const expect = chai.expect;
@@ -35,90 +32,26 @@ suite('StackAnalysis module', () => {
     sandbox.restore();
   });
 
-  test('should ignore unsoported file', async () => {
-    const unsupportedFilePath = '/mock/path/yarn.lock';
-    const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
+  test('should generate RHDA report for supported file', async () => {
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
-    const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
 
-    await generateRHDAReport(context, unsupportedFilePath);
+    await executeStackAnalysis(mockPath);
 
-    expect(authorizeRHDAStub.calledOnce).to.be.false;
-    expect(stackAnalysisServiceStub.calledOnce).to.be.false;
-    expect(showInformationMessageSpy.calledOnceWith(`File ${unsupportedFilePath} is not supported!!`)).to.be.true;
-  });
-
-  test('should generate RHDA report for supported file and successfully save HTML data locally', async () => {
-    const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
-    const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
-    const existsSyncStub = sandbox.stub(fs, 'existsSync').returns(true);
-    const writeFileStub = sandbox.stub(fs, 'writeFile').callsFake((path, data, callback) => {
-      callback(null);
-    });
-
-    await generateRHDAReport(context, mockPath);
-
-    expect(authorizeRHDAStub.calledOnce).to.be.true;
     expect(stackAnalysisServiceStub.calledOnce).to.be.true;
-    expect(existsSyncStub.calledOnce).to.be.true;
-    expect(writeFileStub.calledWithMatch('/tmp/redhatDependencyAnalyticsReport.html', 'mockResponse')).to.be.true;
     expect(DependencyReportPanel.data).to.eq(mockReponse);
   });
 
   test('should fail to generate RHDA report for supported file', async () => {
-    const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').rejects(new Error('Mock Error'));
 
-    await generateRHDAReport(context, mockPath)
+    await executeStackAnalysis(mockPath)
       .then(() => {
         throw (new Error('should have thrown error'))
       })
       .catch(error => {
         expect(error.message).to.eq('Mock Error');
-        expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(stackAnalysisServiceStub.calledOnce).to.be.true;
         expect(DependencyReportPanel.data).to.eq(templates.ERROR_TEMPLATE);
-      })
-  });
-
-  test('should generate RHDA report for supported file successfully but fail to save HTML locally', async () => {
-    const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
-    const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
-    sandbox.stub(fs, 'existsSync').returns(false);
-    const writeFileStub = sandbox.stub(fs, 'writeFile').callsFake((path, data, callback) => {
-      callback(new Error('Mock Error'));
-    });
-
-    await generateRHDAReport(context, mockPath)
-      .then(() => {
-        throw (new Error('should have thrown error'))
-      })
-      .catch(error => {
-        expect(error.message).to.eq('Mock Error');
-        expect(authorizeRHDAStub.calledOnce).to.be.true;
-        expect(stackAnalysisServiceStub.calledOnce).to.be.true;
-        expect(writeFileStub.calledOnce).to.be.true;
-        expect(DependencyReportPanel.data).to.eq(mockReponse);
-      })
-  });
-
-  test('should generate RHDA report for supported file successfully but fail to create directory to save HTML locally', async () => {
-    const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
-    const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
-    sandbox.stub(fs, 'existsSync').returns(false);
-    const mkdirSyncStub = sandbox.stub(fs, 'mkdirSync').throws(new Error('Mock Error'));
-
-    await generateRHDAReport(context, mockPath)
-      .then(() => {
-        throw (new Error('should have thrown error'))
-
-      })
-      .catch(error => {
-        expect(error.message).to.eq('Mock Error');
-        expect(authorizeRHDAStub.calledOnce).to.be.true;
-        expect(stackAnalysisServiceStub.calledOnce).to.be.true;
-        expect(mkdirSyncStub.calledOnce).to.be.true;
-        expect(DependencyReportPanel.data).to.eq(mockReponse);
       })
   });
 });

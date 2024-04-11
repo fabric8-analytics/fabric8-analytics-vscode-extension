@@ -1,12 +1,12 @@
 'use strict';
 
-import * as fs from "fs";
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 import { globalConfig } from './config';
 import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
-import { updateCurrentWebviewPanel } from './rhda'
+import { updateCurrentWebviewPanel } from './rhda';
 
 interface IOptions {
     RHDA_TOKEN: string;
@@ -113,8 +113,8 @@ class DockerImageAnalysis implements IImageAnalysis {
     private parseLine(line: string): IImageRef | null {
         const argMatch = line.match(this.ARG_REGEX);
         if (argMatch) {
-            let argData = argMatch[1].trim().split('=');
-            this.args.set(argData[0], argData[1])
+            const argData = argMatch[1].trim().split('=');
+            this.args.set(argData[0], argData[1]);
         }
 
         const imageMatch = line.match(this.FROM_REGEX);

@@ -9,30 +9,30 @@ import { DependencyReportPanel } from './dependencyReportPanel';
 import { globalConfig } from './config';
 import { executeDockerImageAnalysis } from './imageAnalysis';
 
-type SupportedFileTypes = "go" | "maven" | "npm" | "python" | "docker";
+type supportedFileTypes = 'go' | 'maven' | 'npm' | 'python' | 'docker';
 
-const GO_MOD = "go.mod";
-const POM_XML = "pom.xml";
-const PACKAGE_JSON = "package.json";
-const REQUIREMENTS_TXT = "requirements.txt";
-const DOCKERFILE = "Dockerfile";
+const GO_MOD = 'go.mod';
+const POM_XML = 'pom.xml';
+const PACKAGE_JSON = 'package.json';
+const REQUIREMENTS_TXT = 'requirements.txt';
+const DOCKERFILE = 'Dockerfile';
 
-function getFileType(file: string): SupportedFileTypes | undefined {
+function getFileType(file: string): supportedFileTypes | undefined {
   const basename = path.basename(file);
   if (basename === GO_MOD) {
-    return "go";
+    return 'go';
   }
   else if (basename === POM_XML) {
-    return "maven";
+    return 'maven';
   }
   else if (basename === PACKAGE_JSON) {
-    return "npm";
+    return 'npm';
   }
   else if (basename === REQUIREMENTS_TXT) {
-    return "python";
+    return 'python';
   }
   else if (basename === DOCKERFILE) {
-    return "docker";
+    return 'docker';
   }
 
   return undefined;
@@ -52,7 +52,7 @@ async function triggerWebviewPanel(context) {
  * Updates the webview panel with data.
  * @param data The data to update the panel with.
  */
-export function updateCurrentWebviewPanel(data) {
+function updateCurrentWebviewPanel(data) {
   /* istanbul ignore else */
   if (DependencyReportPanel.currentPanel) {
     DependencyReportPanel.currentPanel.doUpdatePanel(data);
@@ -116,4 +116,4 @@ async function generateRHDAReport(context, filePath) {
   }
 }
 
-export { generateRHDAReport };
+export { generateRHDAReport, updateCurrentWebviewPanel };

@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { StatusMessages, Titles } from './constants';
 import { stackAnalysisService } from './exhortServices';
 import { globalConfig } from './config';
-import { updateCurrentWebviewPanel } from './rhda'
+import { updateCurrentWebviewPanel } from './rhda';
 
 
 /**

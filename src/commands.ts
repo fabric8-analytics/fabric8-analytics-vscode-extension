@@ -9,5 +9,5 @@ export const STACK_ANALYSIS_FROM_EXPLORER_COMMAND = 'rhda.stackAnalysisFromExplo
 export const STACK_ANALYSIS_FROM_PIE_BTN_COMMAND = 'rhda.stackAnalysisFromPieBtn';
 export const STACK_ANALYSIS_FROM_EDITOR_COMMAND = 'rhda.stackAnalysisFromEditor';
 export const STACK_LOGS_COMMAND = 'rhda.stackLogs';
-export const REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND = 'rhda.rhRepositoryRecommendationNotification';
 export const SET_SNYK_TOKEN_COMMAND = 'rhda.setSnykToken';
+export const TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND = 'rhda.trackRecommendationAcceptance';

@@ -69,6 +69,10 @@ async function executeStackAnalysis(manifestFilePath): Promise<string> {
           'RHDA_TOKEN': globalConfig.telemetryId,
           'RHDA_SOURCE': globalConfig.utmSource,
           'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
+          'EXHORT_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
+          'EXHORT_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
+          'EXHORT_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
+          'EXHORT_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
           'EXHORT_MVN_PATH': globalConfig.exhortMvnPath,
           'EXHORT_NPM_PATH': globalConfig.exhortNpmPath,
           'EXHORT_GO_PATH': globalConfig.exhortGoPath,
@@ -130,12 +134,12 @@ async function triggerWebviewPanel(context) {
  * @param uri The URI of the manifest file for analysis.
  * @returns A promise that resolves once the report generation is complete.
  */
-async function generateRHDAReport(context, uri) {
-  if (uri.fsPath && supportedFiles.includes(path.basename(uri.fsPath))) {
+async function generateRHDAReport(context, filePath) {
+  if (supportedFiles.includes(path.basename(filePath))) {
     try {
 
       await triggerWebviewPanel(context);
-      const resp = await executeStackAnalysis(uri.fsPath);
+      const resp = await executeStackAnalysis(filePath);
       /* istanbul ignore else */
       if (DependencyReportPanel.currentPanel) {
         await writeReportToFile(resp);
@@ -146,7 +150,7 @@ async function generateRHDAReport(context, uri) {
     }
   } else {
     vscode.window.showInformationMessage(
-      `File ${uri.fsPath} is not supported!!`
+      `File ${filePath} is not supported!!`
     );
   }
 }

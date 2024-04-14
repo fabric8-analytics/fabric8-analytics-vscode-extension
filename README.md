@@ -81,6 +81,16 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 **Inline Vulnerability Severity Alerts** :
 <br >You can set the vulnerability severity alert level to `Error` or `Warning` for inline notifications of detected vulnerabilities.
 
+**Python** : 
+* `usePythonVirtualEnvironment` : Automates the installation of missing packages in a Python virtual environment.
+* `enablePythonBestEffortsInstallation` : Installs Python packages for the Python version is use, disregarding declared versions.
+  This configuration option requires the _Match Manifest Versions_ option set to `false`, and _Use Python Virtual Environment_ option set to `true`.
+* `usePipDepTree` : Use the `pipdeptree` command-line tool for building the Python dependency tree.
+  This can enhance analysis time.
+
+**Golang** :
+* `useGoMVS` : Use the minimal version selection algorithm to select a set of module versions to use when building Go packages.
+
 ## Features
 
 - **Component analysis**

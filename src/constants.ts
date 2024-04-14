@@ -28,6 +28,10 @@ export enum Titles {
   REPORT_TITLE = `Red Hat Dependency Analytics Report`,
 }
 
+export const settingNameMappings: { [key: string]: string } = {
+  'EXHORT_PYTHON_VIRTUAL_ENV': 'Use Python Virtual Environment'
+};
+
 // Refer `name` from package.json
 export const EXTENSION_ID = 'fabric8-analytics';
 // publisher.name from package.json

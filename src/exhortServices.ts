@@ -14,7 +14,7 @@ import { IImageRef, IOptions } from './imageAnalysis';
  */
 function imageAnalysisService(images: IImageRef[], options: IOptions): Promise<any> {
   return new Promise<any>(async (resolve, reject) => {
-    const jarPath = '/home/Ilonas/Documents/SSSC/RHDA/fabric8-analytics-vscode-extension/javaApiAdapter/exhort-java-api-adapter-1.0-SNAPSHOT-jar-with-dependencies.jar';
+    const jarPath = `${__dirname}/../javaApiAdapter/exhort-java-api-adapter-1.0-SNAPSHOT-jar-with-dependencies.jar`;
     const reportType = 'html';
     let parameters = '';
     let properties = '';

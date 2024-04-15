@@ -22,6 +22,7 @@ const POM_XML = 'pom.xml';
 const PACKAGE_JSON = 'package.json';
 const REQUIREMENTS_TXT = 'requirements.txt';
 const DOCKERFILE = 'Dockerfile';
+const CONTAINERFILE = 'Containerfile';
 
 /**
  * Determines the type of the provided file based on its name.
@@ -42,7 +43,7 @@ function getFileType(filePath: string): supportedFileTypes | undefined {
   else if (basename === REQUIREMENTS_TXT) {
     return 'python';
   }
-  else if (basename === DOCKERFILE) {
+  else if (basename === DOCKERFILE || basename === CONTAINERFILE) {
     return 'docker';
   }
 

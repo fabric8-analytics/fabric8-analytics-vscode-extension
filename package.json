@@ -43,7 +43,8 @@
     "workspaceContains:**/pom.xml",
     "workspaceContains:**/go.mod",
     "workspaceContains:**/requirements.txt",
-    "workspaceContains:**/Dockerfile"
+    "workspaceContains:**/Dockerfile",
+    "workspaceContains:**/Containerfile"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -99,7 +100,7 @@
         },
         {
           "command": "rhda.stackAnalysisFromPieBtn",
-          "when": "resourceFilename == Dockerfile",
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile",
           "group": "navigation"
         }
       ],
@@ -122,7 +123,7 @@
         },
         {
           "command": "rhda.stackAnalysisFromExplorer",
-          "when": "resourceFilename == Dockerfile"
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
         }
       ],
       "editor/context": [
@@ -144,7 +145,7 @@
         },
         {
           "command": "rhda.stackAnalysisFromEditor",
-          "when": "resourceFilename == Dockerfile"
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
         }
       ],
       "commandPalette": [
@@ -383,7 +384,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.11",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.12",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.29",
     "fs": "^0.0.1-security",

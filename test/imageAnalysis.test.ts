@@ -5,17 +5,15 @@ import * as fs from 'fs';
 
 import * as exhortServices from '../src/exhortServices';
 import { globalConfig } from '../src/config';
-import { DependencyReportPanel } from '../src/dependencyReportPanel';
 import { executeDockerImageAnalysis } from '../src/imageAnalysis'
 import * as rhda from '../src/rhda'
-import * as templates from '../src/template';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
 suite('ImageAnalysis module', () => {
     let sandbox: sinon.SinonSandbox;
-    const mockPath = '/mock/path/Dockerfile';
+    const mockPath = '/mock/path/to/file';
     const mockReponse = '<html> mockResponse </html>';
     const mockFileContent = `
 ARG ARG_IMAGE=alpine
@@ -42,7 +40,7 @@ FROM scratch
         sandbox.restore();
     });
 
-    test('should generate RHDA report for Dockerfile', async () => {
+    test('should generate RHDA report for file', async () => {
         const imageAnalysisServiceStub = sandbox.stub(exhortServices, 'imageAnalysisService').resolves(mockReponse)
         sandbox.stub(fs, 'readFileSync').returns(encodedMockFileContent);
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
@@ -54,7 +52,7 @@ FROM scratch
         expect(updateCurrentWebviewPanelSpy.calledOnceWithExactly(response)).to.be.true;
     });
 
-    test('should fail to generate RHDA report for Dockerfile', async () => {
+    test('should fail to generate RHDA report for file', async () => {
         const imageAnalysisServiceStub = sandbox.stub(exhortServices, 'imageAnalysisService').rejects(new Error('Mock Error'));
         sandbox.stub(fs, 'readFileSync').returns(encodedMockFileContent);
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');

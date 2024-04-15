@@ -21,7 +21,8 @@ suite('RHDA module', () => {
     const mockMavenPath = '/mock/path/pom.xml';
     const mockNpmPath = '/mock/path/package.json';
     const mockPythonPath = '/mock/path/requirements.txt';
-    const mockDockerPath = '/mock/path/Dockerfile';
+    const mockDockerfilePath = '/mock/path/Dockerfile';
+    const mockContainerfilePath = '/mock/path/Containerfile';
     const mockReponse = '<html> mockResponse </html>';
 
     setup(() => {
@@ -76,7 +77,7 @@ suite('RHDA module', () => {
             callback(null);
         });
 
-        await rhda.generateRHDAReport(context, mockDockerPath);
+        await rhda.generateRHDAReport(context, mockDockerfilePath);
 
         expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(imageAnalysisServiceStub.calledOnce).to.be.true;
@@ -102,7 +103,7 @@ suite('RHDA module', () => {
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const imageAnalysisServiceStub = sandbox.stub(imageAnalysis, 'executeDockerImageAnalysis').rejects(new Error('Mock Error'));
 
-        await rhda.generateRHDAReport(context, mockDockerPath)
+        await rhda.generateRHDAReport(context, mockContainerfilePath)
             .then(() => {
                 throw (new Error('should have thrown error'))
             })

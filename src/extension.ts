@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
     (dependency, fileName) => {
       record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: dependency.split('@')[0], version: dependency.split('@')[1] });
 
-      if (fileName === 'Dockerfile') {
+      if (fileName === 'Dockerfile' || fileName === 'Containerfile') {
         redirectToRedHatCatalog();
       }
       if (fileName === 'pom.xml') {

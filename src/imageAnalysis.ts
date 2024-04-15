@@ -90,12 +90,12 @@ class DockerImageAnalysis implements IImageAnalysis {
     imageAnalysisReportHtml: string = '';
 
     /**
-     * Regular expression for matching 'FROM' statements in Dockerfiles.
+     * Regular expression for matching 'FROM' statements.
      */
     FROM_REGEX: RegExp = /^\s*FROM\s+(.*)/;
 
     /**
-     * Regular expression for matching 'ARG' statements in Dockerfiles.
+     * Regular expression for matching 'ARG' statements.
      */
     ARG_REGEX: RegExp = /^\s*ARG\s+(.*)/;
 

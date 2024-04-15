@@ -7,10 +7,10 @@ import { execSync } from 'child_process';
 import { IImageRef, IOptions } from './imageAnalysis';
 
 /**
- * Performs RHDA stack analysis based on the provided manifest path and options.
- * @param pathToManifest The path to the manifest file for analysis.
- * @param options Additional options for the analysis.
- * @returns A promise resolving to the stack analysis report in HTML format.
+ * Executes RHDA image analysis using the provided images and options.
+ * @param images - The images to analyze.
+ * @param options - The options for running image analysis.
+ * @returns A Promise resolving to the analysis response in HTML format.
  */
 function imageAnalysisService(images: IImageRef[], options: IOptions): Promise<any> {
   return new Promise<any>(async (resolve, reject) => {

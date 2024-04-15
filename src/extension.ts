@@ -247,6 +247,9 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
   }
 }
 
+/**
+ * Redirects the user to the Red Hat certified image catalog website.
+ */
 function redirectToRedHatCatalog() {
   vscode.env.openExternal(vscode.Uri.parse(REDHAT_CATALOG));
 }

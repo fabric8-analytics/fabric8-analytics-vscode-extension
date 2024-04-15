@@ -8,6 +8,9 @@ import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
 import { updateCurrentWebviewPanel } from './rhda';
 
+/**
+ * Represents options for image analysis.
+ */
 interface IOptions {
     RHDA_TOKEN: string;
     RHDA_SOURCE: string;
@@ -25,13 +28,16 @@ interface IOptions {
     EXHORT_IMAGE_VARIANT: string;
 }
 
+/**
+ * Represents a reference to an image.
+ */
 interface IImageRef {
     image: string;
     platform: string;
 }
 
 /**
- * Represents data specification related to a dependency.
+ * Represents the result of an image analysis.
  */
 interface IImageAnalysis {
     options: IOptions;
@@ -39,13 +45,28 @@ interface IImageAnalysis {
     images: IImageRef[];
     imageAnalysisReportHtml: string;
 
+    /**
+     * Parses the provided file and returns its contents as an array of lines.
+     * @param filePath - The path to the file to parse.
+     * @returns An array of strings representing the lines of the file.
+     */
     parseTxtDoc(filePath: string): string[];
+
+    /**
+     * Collects image references from the provided lines of text.
+     * @param lines - The lines of text to process.
+     * @returns An array of image references.
+     */
     collectImages(lines: string[]): IImageRef[];
+
+    /**
+     * Runs the image analysis process.
+     */
     runImageAnalysis(): Promise<void>;
 }
 
 /**
- * Implementation of IImageAnalysis interface.
+ * Represents an analysis of Docker images.
  */
 class DockerImageAnalysis implements IImageAnalysis {
     options: IOptions = {
@@ -68,9 +89,24 @@ class DockerImageAnalysis implements IImageAnalysis {
     images: IImageRef[] = [];
     imageAnalysisReportHtml: string = '';
 
+    /**
+     * Regular expression for matching 'FROM' statements in Dockerfiles.
+     */
     FROM_REGEX: RegExp = /^\s*FROM\s+(.*)/;
+
+    /**
+     * Regular expression for matching 'ARG' statements in Dockerfiles.
+     */
     ARG_REGEX: RegExp = /^\s*ARG\s+(.*)/;
+
+    /**
+     * Regular expression for matching platform information in 'FROM' statements.
+     */
     PLATFORM_REGEX: RegExp = /--platform=([^\s]+)/g;
+
+    /**
+     * Regular expression for matching 'AS' statements in 'FROM' statements.
+     */
     AS_REGEX: RegExp = /\s+AS\s+\S+/gi;
 
     constructor(filePath: string) {
@@ -79,11 +115,6 @@ class DockerImageAnalysis implements IImageAnalysis {
         this.images = this.collectImages(lines);
     }
 
-    /**
-     * Parses the provided string as an array of lines.
-     * @param contents - The string content to parse into lines.
-     * @returns An array of strings representing lines from the provided content.
-     */
     parseTxtDoc(filePath: string): string[] {
         try {
             const contentBuffer = fs.readFileSync(filePath);
@@ -97,6 +128,12 @@ class DockerImageAnalysis implements IImageAnalysis {
         }
     }
 
+    /**
+     * Replaces placeholders in a string with values from a args map.
+     * @param imageData - The string containing placeholders.
+     * @returns The string with placeholders replaced by corresponding values from the args map.
+     * @private
+     */
     private replaceArgsInString(imageData: string): string {
         return imageData.replace(/\${([^{}]+)}/g, (match, key) => {
             const value = this.args.get(key) || '';
@@ -105,10 +142,10 @@ class DockerImageAnalysis implements IImageAnalysis {
     }
 
     /**
-     * Parses a line from the file and extracts dependency information.
-     * @param line - The line to parse for dependency information.
-     * @param index - The index of the line in the file.
-     * @returns An IDependency object representing the parsed dependency or null if no dependency is found.
+     * Parses a line from the file and extracts image information.
+     * @param line - The line to parse for image information.
+     * @returns An IImage object representing the parsed image or null if no image is found.
+     * @private
      */
     private parseLine(line: string): IImageRef | null {
         const argMatch = line.match(this.ARG_REGEX);
@@ -140,11 +177,6 @@ class DockerImageAnalysis implements IImageAnalysis {
         return;
     }
 
-    /**
-     * Extracts dependencies from lines parsed from the file.
-     * @param lines - An array of strings representing lines from the file.
-     * @returns An array of IDependency objects representing extracted dependencies.
-     */
     collectImages(lines: string[]): IImageRef[] {
         return lines.reduce((images: IImageRef[], line: string) => {
             const parsedImage = this.parseLine(line);
@@ -197,8 +229,8 @@ class DockerImageAnalysis implements IImageAnalysis {
 }
 
 /**
- * Performs RHDA component analysis on provided manifest contents and fileType based on ecosystem.
- * @param filePath - The path to the manifest file to analyze.
+ * Performs RHDA image analysis on provided image file.
+ * @param filePath - The path to the image file to analyze.
  * @returns A Promise resolving to an Analysis Report HTML.
  */
 async function executeDockerImageAnalysis(filePath: string): Promise<string> {

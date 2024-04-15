@@ -48,5 +48,5 @@ export const DEFAULT_RHDA_REPORT_FILE_PATH = '/tmp/redhatDependencyAnalyticsRepo
 export const REDHAT_MAVEN_REPOSITORY = 'https://maven.repository.redhat.com/ga/';
 // Red Hat GA Repository documentation
 export const REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL = 'https://access.redhat.com/maven-repository';
-//
+// Red Hat certified container image catalog
 export const REDHAT_CATALOG = 'https://catalog.redhat.com/software/containers/search';

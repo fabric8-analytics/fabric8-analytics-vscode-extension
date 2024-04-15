@@ -9,16 +9,27 @@ import { DependencyReportPanel } from './dependencyReportPanel';
 import { globalConfig } from './config';
 import { executeDockerImageAnalysis } from './imageAnalysis';
 
+/**
+ * Represents supported file types for analysis.
+ */
 type supportedFileTypes = 'go' | 'maven' | 'npm' | 'python' | 'docker';
 
+/**
+ * Represents supported file names for analysis.
+ */
 const GO_MOD = 'go.mod';
 const POM_XML = 'pom.xml';
 const PACKAGE_JSON = 'package.json';
 const REQUIREMENTS_TXT = 'requirements.txt';
 const DOCKERFILE = 'Dockerfile';
 
-function getFileType(file: string): supportedFileTypes | undefined {
-  const basename = path.basename(file);
+/**
+ * Determines the type of the provided file based on its name.
+ * @param filePath The path of the file to determine its type.
+ * @returns A supported file type if the file is recognized, otherwise undefined.
+ */
+function getFileType(filePath: string): supportedFileTypes | undefined {
+  const basename = path.basename(filePath);
   if (basename === GO_MOD) {
     return 'go';
   }
@@ -84,9 +95,9 @@ function writeReportToFile(data) {
 }
 
 /**
- * Generates the RHDA report based on the provided manifest URI.
+ * Generates the RHDA report based on the provided file.
  * @param context The extension context.
- * @param uri The URI of the manifest file for analysis.
+ * @param filePath The path of the file for analysis.
  * @returns A promise that resolves once the report generation is complete.
  */
 async function generateRHDAReport(context, filePath) {

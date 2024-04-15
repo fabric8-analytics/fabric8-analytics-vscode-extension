@@ -65,7 +65,6 @@ export class DependencyReportPanel {
     this._panel = panel;
 
     // Set the webview's initial html content
-    // this._update();
     this._updateWebViewPanel();
 
     // Listen for when the panel is disposed

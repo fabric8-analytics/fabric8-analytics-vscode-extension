@@ -256,7 +256,7 @@
         "redHatDependencyAnalytics.useGoMVS": {
           "type": "boolean",
           "default": false,
-          "description": "Uses the Minimal version selection (MVS) algorithm to select a set of module versions to use when building Go packages.",
+          "description": "Use the Minimal Version Selection (MVS) algorithm to select a set of module versions to use when building Go packages.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.enablePythonBestEffortsInstallation": {
@@ -274,73 +274,73 @@
         "redHatDependencyAnalytics.syft.executable.path": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies absolute path of syft executable.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.syft.config.path": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies absolute path to the syft configuration file.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.syft.imageSource": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies source from which syft looks for the images (e.g. docker, podman, registry).",
           "scope": "window"
         },
         "redHatDependencyAnalytics.skopeo.executable.path": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies absolute path of skopeo executable.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.skopeo.config.path": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies absolute path to the authentication file used by 'skopeo inspect'.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.image.serviceEndpoint": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies host endpoint of the container runtime daemon / service.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.docker.executable.path": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies absolute path of docker executable.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.podman.executable.path": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies absolute path of podman executable.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.image.platform": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies platform used for multi-arch images.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.image.OS": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies OS used for multi-arch images when image platform is not set.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.image.arch": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies architecture used for multi-arch images when image platform is not set.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.image.variant": {
           "type": "string",
           "default": "",
-          "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
+          "description": "Specifies variant used for multi-arch images when image platform is not set.",
           "scope": "window"
         }
       }

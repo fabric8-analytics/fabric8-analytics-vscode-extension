@@ -48,16 +48,11 @@ suite('Config module', () => {
     expect(globalConfig.exhortPipPath).to.eq('pip');
     expect(globalConfig.exhortSyftPath).to.eq('syft');
     expect(globalConfig.exhortSyftConfigPath).to.eq('');
-    expect(globalConfig.exhortSyftImageSource).to.eq('');
     expect(globalConfig.exhortSkopeoPath).to.eq('skopeo');
     expect(globalConfig.exhortSkopeoConfigPath).to.eq('');
-    expect(globalConfig.exhortImageServiceEndpoint).to.eq('');
     expect(globalConfig.exhortDockerPath).to.eq('docker');
     expect(globalConfig.exhortPodmanPath).to.eq('podman');
     expect(globalConfig.exhortImagePlatform).to.eq('');
-    expect(globalConfig.exhortImageOS).to.eq('');
-    expect(globalConfig.exhortImageArch).to.eq('');
-    expect(globalConfig.exhortImageVariant).to.eq('');
   });
 
   test('should retrieve telemetry parameters from getTelemetryId and set process environment variables', async () => {
@@ -95,16 +90,11 @@ suite('Config module', () => {
     // expect(process.env['VSCEXT_EXHORT_SNYK_TOKEN']).to.equal('');
     expect(process.env['VSCEXT_EXHORT_SYFT_PATH']).to.equal('syft');
     expect(process.env['VSCEXT_EXHORT_SYFT_CONFIG_PATH']).to.equal('');
-    expect(process.env['VSCEXT_EXHORT_SYFT_IMAGE_SOURCE']).to.equal('');
     expect(process.env['VSCEXT_EXHORT_SKOPEO_PATH']).to.equal('skopeo');
     expect(process.env['VSCEXT_EXHORT_SKOPEO_CONFIG_PATH']).to.equal('');
-    expect(process.env['VSCEXT_EXHORT_IMAGE_SERVICE_ENDPOINT']).to.equal('');
     expect(process.env['VSCEXT_EXHORT_DOCKER_PATH']).to.equal('docker');
     expect(process.env['VSCEXT_EXHORT_PODMAN_PATH']).to.equal('podman');
     expect(process.env['VSCEXT_EXHORT_IMAGE_PLATFORM']).to.equal('');
-    expect(process.env['VSCEXT_EXHORT_IMAGE_OS']).to.equal('');
-    expect(process.env['VSCEXT_EXHORT_IMAGE_ARCH']).to.equal('');
-    expect(process.env['VSCEXT_EXHORT_IMAGE_VARIANT']).to.equal('');
   });
 
   test('should set Snyk token in VSCode SecretStorage', async () => {

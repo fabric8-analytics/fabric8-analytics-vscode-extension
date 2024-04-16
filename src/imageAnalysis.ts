@@ -16,16 +16,11 @@ interface IOptions {
     RHDA_SOURCE: string;
     EXHORT_SYFT_PATH: string;
     EXHORT_SYFT_CONFIG_PATH: string;
-    EXHORT_SYFT_IMAGE_SOURCE: string;
     EXHORT_SKOPEO_PATH: string;
     EXHORT_SKOPEO_CONFIG_PATH: string;
-    EXHORT_IMAGE_SERVICE_ENDPOINT: string;
     EXHORT_DOCKER_PATH: string;
     EXHORT_PODMAN_PATH: string;
     EXHORT_IMAGE_PLATFORM: string;
-    EXHORT_IMAGE_OS: string;
-    EXHORT_IMAGE_ARCH: string;
-    EXHORT_IMAGE_VARIANT: string;
 }
 
 /**
@@ -74,16 +69,11 @@ class DockerImageAnalysis implements IImageAnalysis {
         'RHDA_SOURCE': globalConfig.utmSource,
         'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
         'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
-        'EXHORT_SYFT_IMAGE_SOURCE': globalConfig.exhortSyftImageSource,
         'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
         'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
-        'EXHORT_IMAGE_SERVICE_ENDPOINT': globalConfig.exhortImageServiceEndpoint,
         'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
         'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
         'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
-        'EXHORT_IMAGE_OS': globalConfig.exhortImageOS,
-        'EXHORT_IMAGE_ARCH': globalConfig.exhortImageArch,
-        'EXHORT_IMAGE_VARIANT': globalConfig.exhortImageVariant
     };
     args: Map<string, string> = new Map<string, string>();
     images: IImageRef[] = [];

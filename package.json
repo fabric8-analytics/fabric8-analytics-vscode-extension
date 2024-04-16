@@ -283,12 +283,6 @@
           "description": "Specifies absolute path to the syft configuration file.",
           "scope": "window"
         },
-        "redHatDependencyAnalytics.syft.imageSource": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies source from which syft looks for the images (e.g. docker, podman, registry).",
-          "scope": "window"
-        },
         "redHatDependencyAnalytics.skopeo.executable.path": {
           "type": "string",
           "default": "",
@@ -299,12 +293,6 @@
           "type": "string",
           "default": "",
           "description": "Specifies absolute path to the authentication file used by 'skopeo inspect'.",
-          "scope": "window"
-        },
-        "redHatDependencyAnalytics.image.serviceEndpoint": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies host endpoint of the container runtime daemon / service.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.docker.executable.path": {
@@ -319,28 +307,10 @@
           "description": "Specifies absolute path of podman executable.",
           "scope": "window"
         },
-        "redHatDependencyAnalytics.image.platform": {
+        "redHatDependencyAnalytics.imagePlatform": {
           "type": "string",
           "default": "",
           "description": "Specifies platform used for multi-arch images.",
-          "scope": "window"
-        },
-        "redHatDependencyAnalytics.image.OS": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies OS used for multi-arch images when image platform is not set.",
-          "scope": "window"
-        },
-        "redHatDependencyAnalytics.image.arch": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies architecture used for multi-arch images when image platform is not set.",
-          "scope": "window"
-        },
-        "redHatDependencyAnalytics.image.variant": {
-          "type": "string",
-          "default": "",
-          "description": "Specifies variant used for multi-arch images when image platform is not set.",
           "scope": "window"
         }
       }
@@ -384,7 +354,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.12",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.13",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.29",
     "fs": "^0.0.1-security",

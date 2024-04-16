@@ -125,7 +125,8 @@ class DockerImageAnalysis implements IImageAnalysis {
      * @private
      */
     private replaceArgsInString(imageData: string): string {
-        return imageData.replace(/\${([^{}]+)}/g, (match, key) => {
+        return imageData.replace(/(\$\{([^{}]+)\}|\$([^{}]+))/g, (match, fullMatch, key1, key2) => {
+            const key = key1 || key2;
             const value = this.args.get(key) || '';
             return value;
         });

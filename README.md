@@ -94,8 +94,8 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 ## Features
 
 - **Component analysis**
-	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a scan starts the analysis process.
-	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
+	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a vulnerability scan starts the analysis process.
+	The scan provides immediate inline feedback on detected security vulnerabilities for your application's, and container's dependencies.
 	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from the available data sources.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
 	
@@ -103,19 +103,36 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
 	![ Animated screenshot showing the inline reporting feature of Red Hat Dependency Analytics ](images/screencasts/component-analysis.gif)
 
-- **Recommendations and remediations** 
-    <br >After running a detailed analysis report on a specific component version, you can view recommendations and remediations by using the _Quick Fix..._ menu.
+- **Recommendations and remediation** 
+    <br >After running a detailed analysis report on a specific component version, you can view recommendations and remediation by using the _Quick Fix..._ menu.
 	If there is a Red Hat recommended package version available, you can replace your version with Red Hat's version.
 
 	![ Animated screenshot showing how to access the _Quick Fix..._ menu, and switching to a Red Hat recommended package version ](images/screencasts/quickfix.gif)
 
 	<br >**IMPORTANT:** For Maven projects only, when analyzing a `pom.xml` file.
-	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediations.
+	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediation.
 	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
 
+- **Docker scanning**
+    <br >Upon opening a Dockerfile, a vulnerability scan starts analyzing the images within the Dockerfile.
+    After the analysis finishes, you can view any recommendations and remediation by clicking the _Quick Fix..._ menu from the highlighted image name.
+	Any recommendations for an alternative image does not replace the current image.
+	By clicking _Switch to..._, you go to Red Hat's Ecosystem Catalog for the recommended image.
+
+	<br >You must have the [`syft`](https://github.com/anchore/syft#installation) and [`skopeo`](https://www.redhat.com/en/topics/containers/what-is-skopeo) binaries installed on your workstation to use the Docker scanning feature.
+	You can specify a specific path to these binaries, and others by settings the following parameters:
+
+	* `syft.executable.path` : Specify the absolute path of `syft` executable.
+    * `syft.config.path` : Specify the absolute path to the Syft configuration file.
+    * `skopeo.executable.path` : Specify the absolute path of `skopeo` executable.
+    * `skopeo.config.path` : Specify the absolute path to the authentication file used by the `skopeo inspect` command.
+    * `docker.executable.path` : Specify the absolute path of `docker` executable.
+    * `podman.executable.path` : Specify the absolute path of `podman` executable.
+    * `image.platform` : Specify the platform used for multi-arch images.
+  
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
-	If you wish to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
+	If you want to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
 	For example:
 
 	```xml

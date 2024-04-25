@@ -42,7 +42,9 @@
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",
     "workspaceContains:**/go.mod",
-    "workspaceContains:**/requirements.txt"
+    "workspaceContains:**/requirements.txt",
+    "workspaceContains:**/Dockerfile",
+    "workspaceContains:**/Containerfile"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -95,6 +97,11 @@
           "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == requirements.txt",
           "group": "navigation"
+        },
+        {
+          "command": "rhda.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -113,6 +120,10 @@
         {
           "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromExplorer",
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
         }
       ],
       "editor/context": [
@@ -131,6 +142,10 @@
         {
           "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromEditor",
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
         }
       ],
       "commandPalette": [
@@ -231,6 +246,72 @@
           "default": "Error",
           "description": "Defines the severity level of alerts for detected vulnerabilities in dependencies.",
           "scope": "window"
+        },
+        "redHatDependencyAnalytics.usePythonVirtualEnvironment": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automates the installation of missing packages in a Python virtual environment.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.useGoMVS": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use the Minimal Version Selection (MVS) algorithm to select a set of module versions to use when building Go packages.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.enablePythonBestEffortsInstallation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Installs Python packages tailored to the Python version in use, disregarding declared versions. Note: Requires settings Match Manifest Versions to be set to false and Use Python Virtual Environment to be set to true.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.usePipDepTree": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use lightweight pipdeptree command line tool as the data source for building the Python dependency tree. This may significantly enhance analysis time.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.syft.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of syft executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.syft.config.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path to the syft configuration file.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.skopeo.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of skopeo executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.skopeo.config.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path to the authentication file used by 'skopeo inspect'.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.docker.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of docker executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.podman.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of podman executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.imagePlatform": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies platform used for multi-arch images.",
+          "scope": "window"
         }
       }
     }
@@ -273,9 +354,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.2",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.14",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.14",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.29",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

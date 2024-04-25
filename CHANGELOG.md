@@ -1,9 +1,10 @@
 # Change Log
 ## 0.9.5 (?)
-- enhancement - New settings for Python and Go ecosystems.
-- enhancement - Support for using private GitHub Registries.
+- enhancement - Added support for vulnerability analysis on images in Dockerfiles.
+- enhancement - Added new settings for the Python and Go ecosystems.
+- enhancement - Added support for private GitHub Registries.
 - fixes - Fixed an issue by removing a redundant `/` at the beginning of Windows URI paths that was causing some `mvn` commands to fail. See [PR#692](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/692) for details.
-- fixes - Fixed an issue with the Stack Analysis on an open file that is not in the manifest. See [PR#692](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/692) for details.
+- fixes - Fixed an issue with the Stack Analysis running on an open file, instead of running on an opened manifest file. See [PR#692](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/692) for details.
 - informational - Added a telemetry event to track Red Hat's recommended version acceptance.
 ## 0.9.4 (Mar 25th 2024)
 - informational - Removing access to Snyk's Vulnerability Database.

@@ -12,7 +12,7 @@ import { executeDockerImageAnalysis } from './imageAnalysis';
 /**
  * Represents supported file types for analysis.
  */
-type supportedFileTypes = 'go' | 'maven' | 'npm' | 'python' | 'docker';
+type supportedFileTypes = 'go' | 'maven' | 'npm' | 'python' | 'gradle' | 'docker';
 
 /**
  * Represents supported file names for analysis.
@@ -21,6 +21,7 @@ const GO_MOD = 'go.mod';
 const POM_XML = 'pom.xml';
 const PACKAGE_JSON = 'package.json';
 const REQUIREMENTS_TXT = 'requirements.txt';
+const BUILD_GRADLE = 'build.gradle';
 const DOCKERFILE = 'Dockerfile';
 const CONTAINERFILE = 'Containerfile';
 
@@ -42,6 +43,9 @@ function getFileType(filePath: string): supportedFileTypes | undefined {
   }
   else if (basename === REQUIREMENTS_TXT) {
     return 'python';
+  }
+  else if (basename === BUILD_GRADLE) {
+    return 'gradle';
   }
   else if (basename === DOCKERFILE || basename === CONTAINERFILE) {
     return 'docker';

@@ -43,6 +43,7 @@
     "workspaceContains:**/pom.xml",
     "workspaceContains:**/go.mod",
     "workspaceContains:**/requirements.txt",
+    "workspaceContains:**/build.gradle",
     "workspaceContains:**/Dockerfile",
     "workspaceContains:**/Containerfile"
   ],
@@ -100,6 +101,11 @@
         },
         {
           "command": "rhda.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == build.gradle",
+          "group": "navigation"
+        },
+        {
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile",
           "group": "navigation"
         }
@@ -123,6 +129,10 @@
         },
         {
           "command": "rhda.stackAnalysisFromExplorer",
+          "when": "resourceFilename == build.gradle"
+        },
+        {
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
         }
       ],
@@ -142,6 +152,10 @@
         {
           "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromEditor",
+          "when": "resourceFilename == build.gradle"
         },
         {
           "command": "rhda.stackAnalysisFromEditor",
@@ -356,7 +370,7 @@
   "dependencies": {
     "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.14",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.29",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.31",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

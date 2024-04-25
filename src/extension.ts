@@ -39,9 +39,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   const disposableStackAnalysisCommand = vscode.commands.registerCommand(
     commands.STACK_ANALYSIS_COMMAND,
-    async (filePath: string) => {
+    async (filePath: string, isFromCA: boolean = false) => {
       filePath = filePath ? filePath : vscode.window.activeTextEditor.document.uri.fsPath;
       const fileName = path.basename(filePath);
+      if (isFromCA) {
+        record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
+      }
       try {
         await generateRHDAReport(context, filePath);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
@@ -152,8 +155,8 @@ export function activate(context: vscode.ExtensionContext) {
           const fileName = path.basename(filePath);
           const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
-            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
+            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
           }
           else {
             record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });

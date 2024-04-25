@@ -7,15 +7,16 @@ import { getRedHatService, TelemetryEvent, TelemetryService } from '@redhat-deve
 enum TelemetryActions {
   componentAnalysisDone = 'component_analysis_done',
   componentAnalysisFailed = 'component_analysis_failed',
-  componentAnalysisRecommendationAccepted = 'component_analysis_recommendation_accepted',
   vulnerabilityReportDone = 'vulnerability_report_done',
   vulnerabilityReportFailed = 'vulnerability_report_failed',
   vulnerabilityReportEditor = 'vulnerability_report_editor',
   vulnerabilityReportExplorer = 'vulnerability_report_explorer',
-  vulnerabilityReportPopupOpened = 'vulnerability_report_popup_opened',
-  vulnerabilityReportPopupIgnored = 'vulnerability_report_popup_ignored',
   vulnerabilityReportPieBtn = 'vulnerability_report_pie_btn',
   vulnerabilityReportStatusBar = 'vulnerability_report_status_bar',
+  vulnerabilityReportPopupOpened = 'vulnerability_report_popup_opened',
+  vulnerabilityReportPopupIgnored = 'vulnerability_report_popup_ignored',
+  componentAnalysisVulnerabilityReportQuickfixOption = 'component_analysis_vulnerability_report_quickfix_option',
+  componentAnalysisRecommendationAccepted = 'component_analysis_recommendation_accepted',
 }
 
 let telemetryServiceObj: TelemetryService = null;

@@ -21,6 +21,7 @@ class Config {
   usePipDepTree: string;
   vulnerabilityAlertSeverity: string;
   exhortMvnPath: string;
+  exhortGradlePath: string;
   exhortNpmPath: string;
   exhortGoPath: string;
   exhortPython3Path: string;
@@ -38,6 +39,7 @@ class Config {
   exhortImagePlatform: string;
 
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
+  private readonly DEFAULT_GRADLE_EXECUTABLE = 'gradle';
   private readonly DEFAULT_NPM_EXECUTABLE = 'npm';
   private readonly DEFAULT_GO_EXECUTABLE = 'go';
   private readonly DEFAULT_PYTHON3_EXECUTABLE = 'python3';
@@ -89,6 +91,7 @@ class Config {
     /* istanbul ignore next */
     this.rhdaReportFilePath = rhdaConfig.reportFilePath || DEFAULT_RHDA_REPORT_FILE_PATH;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
+    this.exhortGradlePath = rhdaConfig.gradle.executable.path || this.DEFAULT_GRADLE_EXECUTABLE;
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
     this.exhortGoPath = rhdaConfig.go.executable.path || this.DEFAULT_GO_EXECUTABLE;
     this.exhortPython3Path = rhdaConfig.python3.executable.path || this.DEFAULT_PYTHON3_EXECUTABLE;
@@ -119,6 +122,7 @@ class Config {
     process.env['VSCEXT_USE_PIP_DEP_TREE'] = this.usePipDepTree;
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
+    process.env['VSCEXT_EXHORT_GRADLE_PATH'] = this.exhortGradlePath;
     process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;
     process.env['VSCEXT_EXHORT_GO_PATH'] = this.exhortGoPath;
     process.env['VSCEXT_EXHORT_PYTHON3_PATH'] = this.exhortPython3Path;

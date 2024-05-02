@@ -40,6 +40,7 @@ suite('Config module', () => {
     expect(globalConfig.vulnerabilityAlertSeverity).to.eq('Error');
     expect(globalConfig.rhdaReportFilePath).to.eq('/tmp/redhatDependencyAnalyticsReport.html');
     expect(globalConfig.exhortMvnPath).to.eq('mvn');
+    expect(globalConfig.exhortGradlePath).to.eq('gradle');
     expect(globalConfig.exhortNpmPath).to.eq('npm');
     expect(globalConfig.exhortGoPath).to.eq('go');
     expect(globalConfig.exhortPython3Path).to.eq('python3');
@@ -80,6 +81,7 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_USE_PIP_DEP_TREE']).to.eq('false');
     expect(process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY']).to.eq('Error');
     expect(process.env['VSCEXT_EXHORT_MVN_PATH']).to.eq('mvn');
+    expect(process.env['VSCEXT_EXHORT_GRADLE_PATH']).to.eq('gradle');
     expect(process.env['VSCEXT_EXHORT_NPM_PATH']).to.eq('npm');
     expect(process.env['VSCEXT_EXHORT_GO_PATH']).to.eq('go');
     expect(process.env['VSCEXT_EXHORT_PYTHON3_PATH']).to.eq('python3');

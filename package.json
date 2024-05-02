@@ -215,6 +215,12 @@
           "description": "Specifies absolute path of mvn executable.",
           "scope": "window"
         },
+        "redHatDependencyAnalytics.gradle.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of gradle executable.",
+          "scope": "window"
+        },
         "redHatDependencyAnalytics.npm.executable.path": {
           "type": "string",
           "default": "",
@@ -368,7 +374,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.15",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.16",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
     "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.34",
     "fs": "^0.0.1-security",

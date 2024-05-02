@@ -21,6 +21,7 @@ suite('RHDA module', () => {
     const mockMavenPath = '/mock/path/pom.xml';
     const mockNpmPath = '/mock/path/package.json';
     const mockPythonPath = '/mock/path/requirements.txt';
+    const mockGradlePath = '/mock/path/build.gradle';
     const mockDockerfilePath = '/mock/path/Dockerfile';
     const mockContainerfilePath = '/mock/path/Containerfile';
     const mockReponse = '<html> mockResponse </html>';
@@ -159,7 +160,7 @@ suite('RHDA module', () => {
             callback(null);
         });
 
-        await rhda.generateRHDAReport(context, mockGoPath);
+        await rhda.generateRHDAReport(context, mockGradlePath);
 
         expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(stackAnalysisServiceStub.calledOnce).to.be.true;

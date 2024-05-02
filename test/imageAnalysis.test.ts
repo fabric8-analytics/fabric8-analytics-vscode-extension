@@ -18,7 +18,7 @@ suite('ImageAnalysis module', () => {
     const mockFileContent = `
 ARG ARG_IMAGE=alpine
 ARG ARG_TAG=latest
-FROM --platform=linux/amd64 \${ARG_IMAGE}:\${ARG_TAG} as stage1\${ARG_FAKE}
+FROM --platform=linux/amd64 \${ARG_IMAGE}:\${ARG_TAG} as stage1\$ARG_FAKE
 FROM ubuntu
 FROM scratch
     `;

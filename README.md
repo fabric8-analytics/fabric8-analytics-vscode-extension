@@ -36,6 +36,7 @@ In future releases, Red Hat plans to support other programming languages.
 - For Node projects, analyzing a `package.json` file, you must have the `npm` binary in your system’s `PATH` environment.
 - For Golang projects, analyzing a `go.mod` file, you must have the `go` binary in your system’s `PATH` environment.
 - For Python projects, analyzing a `requirements.txt` file, you must have the `python3/pip3` or `python/pip` binaries in your system’s `PATH` environment.
+- For Gradle projects, analyzing a `build.gradle` file, you must have the `gradle` binary in your system's `PATH` environment.
 - For base images in a `Dockerfile`.
 
 <br >**IMPORTANT:** 

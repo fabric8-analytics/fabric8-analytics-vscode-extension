@@ -349,7 +349,6 @@
     "lint": "eslint -c .eslintrc.js --ext .ts src/"
   },
   "devDependencies": {
-    "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.2",
     "@types/node": "^20.8.4",
     "@types/sinon": "^10.0.19",
@@ -374,11 +373,14 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.18",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.19",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.39",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.42",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"
+  },
+  "overrides": {
+    "glob": "8.1.0"
   }
 }

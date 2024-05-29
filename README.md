@@ -12,7 +12,7 @@ The Red Hat Dependency Analytics extension uses vulnerability data sources for t
 Red Hat Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
 **IMPORTANT:**
-<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`) and Python (`pip`) ecosystems.
+<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`), Python (`pip`), and Gradle (`gradle`) ecosystems.
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents

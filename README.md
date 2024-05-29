@@ -136,7 +136,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	<br >You can exclude a package from analysis by marking the package for exclusion.
 	How you exclude a package varies based on the your project's language:
 
-	- **XML**
+	- **Maven**
 	<br >If you want to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `<!--exhortignore-->` to the end of the line as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
 	For example:
     
@@ -148,7 +148,7 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	     </dependency>
 	    ```
 
-	- **JSON**
+	- **Node**
 	<br >If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
 	The value for `exhortignore` is a list of comma-separated vulnerability IDs.
 	This list of vulnerabilities are ignored during analysis.

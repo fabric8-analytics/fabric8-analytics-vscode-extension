@@ -12,7 +12,7 @@ The Red Hat Dependency Analytics extension uses vulnerability data sources for t
 Red Hat Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
 **IMPORTANT:**
-<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`) and Python (`pip`) ecosystems.
+<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`), Python (`pip`), and Gradle (`gradle`) ecosystems.
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents
@@ -134,55 +134,89 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
   
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
-	If you want to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
+	How you exclude a package varies based on the your project's language:
+
+	- **Maven**
+	<br >If you want to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `<!--exhortignore-->` to the end of the line as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
+	For example:
+    
+	     ```xml
+	     <dependency> <!--exhortignore-->
+		     <groupId>...</groupId>
+		     <artifactId>...</artifactId>
+		     <version>...</version>
+	     </dependency>
+	    ```
+
+	- **Node**
+	<br >If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
+	The value for `exhortignore` is a list of comma-separated vulnerability IDs.
+	This list of vulnerabilities are ignored during analysis.
 	For example:
 
-	```xml
-	<dependency> <!--exhortignore-->
-		<groupId>...</groupId>
-		<artifactId>...</artifactId>
-		<version>...</version>
-	</dependency>
-	```
+	     ```json
+	     {
+		     "name": "sample",
+		     "version": "1.0.0",
+		     "description": "",
+		     "main": "index.js",
+		     "keywords": [],
+		     "author": "",
+		     "license": "ISC",
+		     "dependencies": {
+			     "dotenv": "^8.2.0",
+			     "express": "^4.17.1",
+			     "jsonwebtoken": "^8.5.1",
+			     "mongoose": "^5.9.18"
+		     },
+		     "exhortignore": [
+			     "jsonwebtoken"
+		     ]
+	     }
+	     ```
 
-	If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
-	If `exhortignore` is followed by a list of comma-separated vulnerability IDs, only the listed vulnerabilities are ignored during analysis.
+	- **Go**
+	<br >If you want to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `// exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
 
-	```json
-	{
-		"name": "sample",
-		"version": "1.0.0",
-		"description": "",
-		"main": "index.js",
-		"keywords": [],
-		"author": "",
-		"license": "ISC",
-		"dependencies": {
-			"dotenv": "^8.2.0",
-			"express": "^4.17.1",
-			"jsonwebtoken": "^8.5.1",
-			"mongoose": "^5.9.18"
-		},
-		"exhortignore": [
-			"jsonwebtoken"
-		]
-	}
-	```
+	     ```go
+	     require (
+		     golang.org/x/sys v1.6.7 // exhortignore
+	     )
+	     ```
 
-	If you want to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	- **Python**
+	<br >If you want to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `# exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
-	```
-	require (
-		golang.org/x/sys v1.6.7 // exhortignore
-	)
-	```
 
-	If you want to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	     ```python
+	     requests==2.28.1 # exhortignore
+	     ```
+
+	- **Gradle**
+    <br >If you want to ignore vulnerabilities for a dependency in a `build.gradle` file, you must add `// exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
-	```
-	requests==2.28.1 # exhortignore
-	```
+
+	     ```gradle
+	     plugins {
+	     id 'java'
+	     }
+
+	     group = 'groupName'
+	     version = 'version'
+     
+	     repositories {
+		     mavenCentral()
+	     }
+     
+	     dependencies {
+		     implementation "groupId:artifactId:version" // exhortignore
+	     }
+     
+	     test {
+		     useJUnitPlatform()
+	     }
+	     ```
 
 - **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
@@ -221,9 +255,9 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	}
 	```
 
-	For example, setting `exclude` attributte in the `go.mod` file:
+	For example, setting the `exclude` attribute in the `go.mod` file:
 
-	```
+	```go
 	exclude golang.org/x/sys v1.6.7
 
 	exclude (

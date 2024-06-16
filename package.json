@@ -360,8 +360,8 @@
     "chai": "^4.3.10",
     "decache": "^4.6.2",
     "eslint": "^8.51.0",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
+    "mocha": "^10.4.0",
+    "nyc": "^17.0.0",
     "sinon": "^16.1.0",
     "sinon-chai": "^3.7.0",
     "source-map-loader": "^4.0.1",
@@ -373,14 +373,11 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.20",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.24",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.42",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.48",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"
-  },
-  "overrides": {
-    "glob": "8.1.0"
   }
 }

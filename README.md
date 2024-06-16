@@ -22,6 +22,7 @@ In future releases, Red Hat plans to support other programming languages.
 	- [Configuration](#configuration)
 		- [Configurable parameters](#configurable-parameters)
 	- [Features](#features)
+	- [Known Issues](#known-issues)
 	- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
 	- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)
 	- [Data and telemetry](#data-and-telemetry)
@@ -37,7 +38,7 @@ In future releases, Red Hat plans to support other programming languages.
 - For Golang projects, analyzing a `go.mod` file, you must have the `go` binary in your system’s `PATH` environment.
 - For Python projects, analyzing a `requirements.txt` file, you must have the `python3/pip3` or `python/pip` binaries in your system’s `PATH` environment.
 - For Gradle projects, analyzing a `build.gradle` file, you must have the `gradle` binary in your system's `PATH` environment.
-- For base images in a `Dockerfile`.
+- For base images in a `Dockerfile` or `Containerfile`, you must have `Java version 20` or later.
 
 <br >**IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
@@ -265,8 +266,19 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	)
 	```
 
-	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there instead.
+	For example, setting a dependency as test in the `build.gradle` file by placing it under one of the test configurations: `testImplementation`, `testCompileOnly`, `testRuntimeOnly`
 
+	```gradle
+	dependencies {
+		implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.4'
+    	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.7.4'
+		testCompileOnly 'junit:junit:4.13.1'
+		testRuntimeOnly 'org.mockito:mockito-core:3.3.3'
+	}
+	```
+
+	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there instead.
+	
 - **Red Hat Dependency Analytics report** 
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.
 	Closing the tab removes the temporary HTML file.
@@ -285,6 +297,25 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	The user can start Visual Studio Code with the [`EXHORT_PYTHON_VIRTUAL_ENV`](https://github.com/RHEcosystemAppEng/exhort-javascript-api#:~:text=EXHORT_PYTHON_VIRTUAL_ENV) variable set to `true`.
 	Doing this allows Red Hat Dependency Analytics to install Python packages into a virtual environment to perform the analysis.
 	The benefit is having a clean Python environment not influenced by earlier installations, but the downside is a significantly slower analysis process.
+
+## Known Issues
+
+### Issue: Error when using options "Use Pip Dep Tree" and "Use Python Virtual Environment" simultaneously
+
+In the `Python` ecosystem, when selecting both `Use Pip Dep Tree` and `Use Python Virtual Environment` options simultaneously, the application throws an error because pipdeptree is not configured in the virtual environment's Python interpreter.
+
+Furthermore, there is no practical value in using both configurations together. The primary goal of the `Use Pip Dep Tree` option is to optimize performance for Python version 3.11 and higher. On the other hand, the `Use Python Virtual Environment` option naturally works much slower than running in a local environment because installations are performed within the virtual environment.
+
+Since these options contradict each other, the expected function of the `Use Pip Dep Tree` option will be neutralized. It is recommended to use either one of these options, depending on your specific requirements, but not both simultaneously.
+
+### Issue: Dependency Analysis Limitations for Maven and Gradle
+
+When a manifest includes dependencies with the `provided` scope in `Maven` or the `compileOnly` and `compileOnlyApi` configurations in `Gradle`, RHDA may not reliably detect vulnerabilities for these dependencies. This is due to the nature of these scopes and configurations where the version of the dependency used during the build process may not necessarily match the version used at runtime. This discrepancy occurs because the dependency is not packaged within the application's JAR file, meaning that the runtime environment must supply the necessary artifacts. This can lead to two potential issues:
+
+* ClassNotFoundException: If the runtime environment lacks the required artifacts on its classpath, the application will fail to run due to missing classes.
+* Version Mismatch: If the runtime environment provides different versions of the artifacts, it can cause application crashes, unexpected security vulnerabilities, or false positives in RHDA vulnerability scans.
+
+It is up to the users to ensure the runtime environment includes the correct versions of these dependencies to avoid such issues.
 
 ## Using Red Hat Dependency Analytics for CI builds
 

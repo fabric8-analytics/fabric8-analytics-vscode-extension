@@ -12,7 +12,7 @@ The Red Hat Dependency Analytics extension uses vulnerability data sources for t
 Red Hat Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
 **IMPORTANT:**
-<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`) and Python (`pip`) ecosystems.
+<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`), Python (`pip`), and Gradle (`gradle`) ecosystems.
 In future releases, Red Hat plans to support other programming languages.
 
 ##### Table of Contents
@@ -36,6 +36,8 @@ In future releases, Red Hat plans to support other programming languages.
 - For Node projects, analyzing a `package.json` file, you must have the `npm` binary in your system’s `PATH` environment.
 - For Golang projects, analyzing a `go.mod` file, you must have the `go` binary in your system’s `PATH` environment.
 - For Python projects, analyzing a `requirements.txt` file, you must have the `python3/pip3` or `python/pip` binaries in your system’s `PATH` environment.
+- For Gradle projects, analyzing a `build.gradle` file, you must have the `gradle` binary in your system's `PATH` environment.
+- For base images in a `Dockerfile`.
 
 <br >**IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
@@ -81,11 +83,21 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 **Inline Vulnerability Severity Alerts** :
 <br >You can set the vulnerability severity alert level to `Error` or `Warning` for inline notifications of detected vulnerabilities.
 
+**Python** : 
+* `usePythonVirtualEnvironment` : Automates the installation of missing packages in a Python virtual environment.
+* `enablePythonBestEffortsInstallation` : Installs Python packages for the Python version is use, disregarding declared versions.
+  This configuration option requires the _Match Manifest Versions_ option set to `false`, and _Use Python Virtual Environment_ option set to `true`.
+* `usePipDepTree` : Use the `pipdeptree` command-line tool for building the Python dependency tree.
+  This can enhance analysis time.
+
+**Golang** :
+* `useGoMVS` : Use the minimal version selection algorithm to select a set of module versions to use when building Go packages.
+
 ## Features
 
 - **Component analysis**
-	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a scan starts the analysis process.
-	The scan provides immediate inline feedback on detected security vulnerabilities for your application's dependencies.
+	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a vulnerability scan starts the analysis process.
+	The scan provides immediate inline feedback on detected security vulnerabilities for your application's, and container's dependencies.
 	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from the available data sources.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
 	
@@ -93,67 +105,118 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
 	![ Animated screenshot showing the inline reporting feature of Red Hat Dependency Analytics ](images/screencasts/component-analysis.gif)
 
-- **Recommendations and remediations** 
-    <br >After running a detailed analysis report on a specific component version, you can view recommendations and remediations by using the _Quick Fix..._ menu.
+- **Recommendations and remediation** 
+    <br >After running a detailed analysis report on a specific component version, you can view recommendations and remediation by using the _Quick Fix..._ menu.
 	If there is a Red Hat recommended package version available, you can replace your version with Red Hat's version.
 
 	![ Animated screenshot showing how to access the _Quick Fix..._ menu, and switching to a Red Hat recommended package version ](images/screencasts/quickfix.gif)
 
 	<br >**IMPORTANT:** For Maven projects only, when analyzing a `pom.xml` file.
-	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediations.
+	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediation.
 	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
 
+- **Docker scanning**
+    <br >Upon opening a Dockerfile, a vulnerability scan starts analyzing the images within the Dockerfile.
+    After the analysis finishes, you can view any recommendations and remediation by clicking the _Quick Fix..._ menu from the highlighted image name.
+	Any recommendations for an alternative image does not replace the current image.
+	By clicking _Switch to..._, you go to Red Hat's Ecosystem Catalog for the recommended image.
+
+	<br >You must have the [`syft`](https://github.com/anchore/syft#installation) and [`skopeo`](https://www.redhat.com/en/topics/containers/what-is-skopeo) binaries installed on your workstation to use the Docker scanning feature.
+	You can specify a specific path to these binaries, and others by settings the following parameters:
+
+	* `syft.executable.path` : Specify the absolute path of `syft` executable.
+    * `syft.config.path` : Specify the absolute path to the Syft configuration file.
+    * `skopeo.executable.path` : Specify the absolute path of `skopeo` executable.
+    * `skopeo.config.path` : Specify the absolute path to the authentication file used by the `skopeo inspect` command.
+    * `docker.executable.path` : Specify the absolute path of `docker` executable.
+    * `podman.executable.path` : Specify the absolute path of `podman` executable.
+    * `image.platform` : Specify the platform used for multi-arch images.
+  
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
-	If you wish to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `exhortignore` as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
+	How you exclude a package varies based on the your project's language:
+
+	- **Maven**
+	<br >If you want to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `<!--exhortignore-->` to the end of the line as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
+	For example:
+    
+	     ```xml
+	     <dependency> <!--exhortignore-->
+		     <groupId>...</groupId>
+		     <artifactId>...</artifactId>
+		     <version>...</version>
+	     </dependency>
+	    ```
+
+	- **Node**
+	<br >If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
+	The value for `exhortignore` is a list of comma-separated vulnerability IDs.
+	This list of vulnerabilities are ignored during analysis.
 	For example:
 
-	```xml
-	<dependency> <!--exhortignore-->
-		<groupId>...</groupId>
-		<artifactId>...</artifactId>
-		<version>...</version>
-	</dependency>
-	```
+	     ```json
+	     {
+		     "name": "sample",
+		     "version": "1.0.0",
+		     "description": "",
+		     "main": "index.js",
+		     "keywords": [],
+		     "author": "",
+		     "license": "ISC",
+		     "dependencies": {
+			     "dotenv": "^8.2.0",
+			     "express": "^4.17.1",
+			     "jsonwebtoken": "^8.5.1",
+			     "mongoose": "^5.9.18"
+		     },
+		     "exhortignore": [
+			     "jsonwebtoken"
+		     ]
+	     }
+	     ```
 
-	If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
-	If `exhortignore` is followed by a list of comma-separated vulnerability IDs, only the listed vulnerabilities are ignored during analysis.
+	- **Go**
+	<br >If you want to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `// exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
 
-	```json
-	{
-		"name": "sample",
-		"version": "1.0.0",
-		"description": "",
-		"main": "index.js",
-		"keywords": [],
-		"author": "",
-		"license": "ISC",
-		"dependencies": {
-			"dotenv": "^8.2.0",
-			"express": "^4.17.1",
-			"jsonwebtoken": "^8.5.1",
-			"mongoose": "^5.9.18"
-		},
-		"exhortignore": [
-			"jsonwebtoken"
-		]
-	}
-	```
+	     ```go
+	     require (
+		     golang.org/x/sys v1.6.7 // exhortignore
+	     )
+	     ```
 
-	If you want to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	- **Python**
+	<br >If you want to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `# exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
-	```
-	require (
-		golang.org/x/sys v1.6.7 // exhortignore
-	)
-	```
 
-	If you want to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `exhortignore` as a comment against the dependency in the manifest file.
+	     ```python
+	     requests==2.28.1 # exhortignore
+	     ```
+
+	- **Gradle**
+    <br >If you want to ignore vulnerabilities for a dependency in a `build.gradle` file, you must add `// exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
-	```
-	requests==2.28.1 # exhortignore
-	```
+
+	     ```gradle
+	     plugins {
+	     id 'java'
+	     }
+
+	     group = 'groupName'
+	     version = 'version'
+     
+	     repositories {
+		     mavenCentral()
+	     }
+     
+	     dependencies {
+		     implementation "groupId:artifactId:version" // exhortignore
+	     }
+     
+	     test {
+		     useJUnitPlatform()
+	     }
+	     ```
 
 - **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
@@ -192,9 +255,9 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	}
 	```
 
-	For example, setting `exclude` attributte in the `go.mod` file:
+	For example, setting the `exclude` attribute in the `go.mod` file:
 
-	```
+	```go
 	exclude golang.org/x/sys v1.6.7
 
 	exclude (

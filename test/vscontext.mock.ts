@@ -36,7 +36,8 @@ export const context: vscode.ExtensionContext = {
   logUri: undefined,
   globalStorageUri: undefined,
   secrets: undefined,
-  extension: undefined
+  extension: undefined,
+  languageModelAccessInformation: undefined
 };
 
 

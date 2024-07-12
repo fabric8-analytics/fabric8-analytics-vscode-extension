@@ -20,7 +20,8 @@ In future releases, Red Hat plans to support other programming languages.
 				- [Table of Contents](#table-of-contents)
 	- [Quick start](#quick-start)
 	- [Configuration](#configuration)
-		- [Configurable parameters](#configurable-parameters)
+		- [Configurable parameters](#configurable-parameters)![20231214_073746](https://github.com/user-attachments/assets/0cb9ed0f-b72f-4dc2-b39a-f5fc51c52aca)
+
 	- [Features](#features)
 	- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
 	- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)

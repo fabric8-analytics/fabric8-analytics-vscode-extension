@@ -373,9 +373,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.24",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.25",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.48",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.49",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

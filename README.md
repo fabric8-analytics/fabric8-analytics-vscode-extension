@@ -324,14 +324,6 @@ This discrepancy occurs because the dependency is not packaged within the applic
 
 <br >Ensure your runtime environment includes the correct versions of these dependencies to avoid such issues.
 
-### Package version mismatch between the API response and the HTML report
-
-<br >Opening a manifest file for analysis can give you a different package version number between the RHDA HTML report and an API client response.
-Before analyzing the manifest file, the API client compares package versions in the manifest file to the installed package versions within the client's environment.
-When there is a difference in package version, you receive an error message containing the first package version mismatch.
-To workaround this issue, you can disable the `Match Manifest Versions` option of RHDA.
-By disabling this option, RHDA will ignore all package version differences.
-
 ## Using Red Hat Dependency Analytics for CI builds
 
 You can automate the analysis of your application's vulnerabilities within the build and release pipeline.

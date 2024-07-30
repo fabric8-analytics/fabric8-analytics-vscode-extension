@@ -22,11 +22,14 @@ In future releases, Red Hat plans to support other programming languages.
 	- [Configuration](#configuration)
 		- [Configurable parameters](#configurable-parameters)
 	- [Features](#features)
-	- [Known Issues](#known-issues)
 	- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
-	- [Know more about the Red Hat Dependency Analytics platform](#know-more-about-the-red-hat-dependency-analytics-platform)
 	- [Data and telemetry](#data-and-telemetry)
+	- [Known issues](#known-issues)
+		- [Error when using options the `Use Pip Dep Tree` and `Use Python Virtual Environment` simultaneously](#error-when-using-options-the-use-pip-dep-tree-and-use-python-virtual-environment-simultaneously)
+		- [Red Hat Dependency Analytics limitations for Maven and Gradle](#red-hat-dependency-analytics-limitations-for-maven-and-gradle)
+		- [Package version mismatch between the API response and the HTML report](#package-version-mismatch-between-the-api-response-and-the-html-report)
 	- [Support, feedback \& questions](#support-feedback--questions)
+	- [Learn more about the Red Hat Dependency Analytics platform](#learn-more-about-the-red-hat-dependency-analytics-platform)
 	- [License](#license)
 
 ## Quick start
@@ -298,24 +301,28 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	Doing this allows Red Hat Dependency Analytics to install Python packages into a virtual environment to perform the analysis.
 	The benefit is having a clean Python environment not influenced by earlier installations, but the downside is a significantly slower analysis process.
 
-## Known Issues
+## Known issues
 
-### Issue: Error when using options "Use Pip Dep Tree" and "Use Python Virtual Environment" simultaneously
+### Error when using options the `Use Pip Dep Tree` and `Use Python Virtual Environment` simultaneously
 
-In the `Python` ecosystem, when selecting both `Use Pip Dep Tree` and `Use Python Virtual Environment` options simultaneously, the application throws an error because pipdeptree is not configured in the virtual environment's Python interpreter.
+<br >In the Python ecosystem, when selecting both `Use Pip Dep Tree` and `Use Python Virtual Environment` options simultaneously, the application gives an error because `pipdeptree` is not configured for the Python's virtual environment.
 
-Furthermore, there is no practical value in using both configurations together. The primary goal of the `Use Pip Dep Tree` option is to optimize performance for Python version 3.11 and higher. On the other hand, the `Use Python Virtual Environment` option naturally works much slower than running in a local environment because installations are performed within the virtual environment.
+<br >Furthermore, there is no practical value in using both configurations together.
+Since these options contradict each other, the expected function of the `Use Pip Dep Tree` option has not effect when used with the `Use Python Virtual Environment` option.
+The primary goal of the `Use Pip Dep Tree` option is to optimize performance for Python version 3.11 and later.
+However, the `Use Python Virtual Environment` option works much slower than running in a local environment, because installations happen within the virtual environment.
+Red Hat recommends only using one of these options, depending on your specific requirements, but not both simultaneously.
 
-Since these options contradict each other, the expected function of the `Use Pip Dep Tree` option will be neutralized. It is recommended to use either one of these options, depending on your specific requirements, but not both simultaneously.
+### Red Hat Dependency Analytics limitations for Maven and Gradle
 
-### Issue: Dependency Analysis Limitations for Maven and Gradle
+<br >When a manifest includes dependencies with the `provided` scope in `Maven` or the `compileOnly` and `compileOnlyApi` configurations in `Gradle`, RHDA might not reliably detect vulnerabilities for these dependencies.
+This is due to the nature of the scopes and configurations where the version of the dependency used during the build process might not necessarily match the version used at runtime.
+This discrepancy occurs because the dependency is not packaged within the application's JAR file, meaning that the runtime environment must supply the necessary artifacts. This can lead to two potential issues:
 
-When a manifest includes dependencies with the `provided` scope in `Maven` or the `compileOnly` and `compileOnlyApi` configurations in `Gradle`, RHDA may not reliably detect vulnerabilities for these dependencies. This is due to the nature of these scopes and configurations where the version of the dependency used during the build process may not necessarily match the version used at runtime. This discrepancy occurs because the dependency is not packaged within the application's JAR file, meaning that the runtime environment must supply the necessary artifacts. This can lead to two potential issues:
+* `ClassNotFoundException`: If the runtime environment lacks the required artifacts on its `classpath`, the application will fail to run due to missing classes.
+* `Version Mismatch`: If the runtime environment provides different versions of the artifacts, it can cause application crashes, unexpected security vulnerabilities, or false positives in RHDA vulnerability scans.
 
-* ClassNotFoundException: If the runtime environment lacks the required artifacts on its classpath, the application will fail to run due to missing classes.
-* Version Mismatch: If the runtime environment provides different versions of the artifacts, it can cause application crashes, unexpected security vulnerabilities, or false positives in RHDA vulnerability scans.
-
-It is up to the users to ensure the runtime environment includes the correct versions of these dependencies to avoid such issues.
+<br >Ensure your runtime environment includes the correct versions of these dependencies to avoid such issues.
 
 ## Using Red Hat Dependency Analytics for CI builds
 
@@ -325,7 +332,7 @@ Red Hat offers integration with these Continuous Integration (CI) platforms:
 - [Red Hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
 - [Red Hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
 
-## Know more about the Red Hat Dependency Analytics platform
+## Learn more about the Red Hat Dependency Analytics platform
 
 The goal of this project is to significantly enhance a developer's experience by providing helpful vulnerability insights for their applications.
 

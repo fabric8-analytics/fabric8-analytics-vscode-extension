@@ -27,7 +27,6 @@ In future releases, Red Hat plans to support other programming languages.
 	- [Known issues](#known-issues)
 		- [Error when using options the `Use Pip Dep Tree` and `Use Python Virtual Environment` simultaneously](#error-when-using-options-the-use-pip-dep-tree-and-use-python-virtual-environment-simultaneously)
 		- [Red Hat Dependency Analytics limitations for Maven and Gradle](#red-hat-dependency-analytics-limitations-for-maven-and-gradle)
-		- [Package version mismatch between the API response and the HTML report](#package-version-mismatch-between-the-api-response-and-the-html-report)
 	- [Support, feedback \& questions](#support-feedback--questions)
 	- [Learn more about the Red Hat Dependency Analytics platform](#learn-more-about-the-red-hat-dependency-analytics-platform)
 	- [License](#license)

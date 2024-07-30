@@ -8,7 +8,6 @@
 - fixes - Fixed an issue with the Stack Analysis running on an open file, instead of running on an opened manifest file. See [PR#692](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/692) for details.
 - known issue - You can get an error by using the `Use Pip Dep Tree` and `Use Python Virtual Environment` options simultaneously. See the [Known Issues section](README.md#known-issues) of the README for more information.
 - known issue - Red Hat Dependency Analytics has limitations for Maven and Gradle. See the [Known Issues section](README.md#known-issues) of the README for more information.
-- known issue - Package version mismatch between the API response and the HTML report. See the [Known Issues section](README.md#known-issues) of the README for more information.
 - informational - Added a telemetry event to track Red Hat's recommended version acceptance.
 ## 0.9.4 (Mar 25th 2024)
 - informational - Removing access to Snyk's Vulnerability Database.

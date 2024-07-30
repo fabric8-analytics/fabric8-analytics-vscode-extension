@@ -10,8 +10,8 @@ import {
 } from 'vscode-languageclient/node';
 
 import * as commands from './commands';
-import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL } from './constants';
-import { generateRHDAReport } from './stackAnalysis';
+import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, REDHAT_CATALOG } from './constants';
+import { generateRHDAReport } from './rhda';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
@@ -19,6 +19,7 @@ import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
 // import { validateSnykToken } from './tokenValidation';
+import { applySettingNameMappings } from './utils';
 
 let lspClient: LanguageClient;
 
@@ -38,15 +39,19 @@ export function activate(context: vscode.ExtensionContext) {
 
   const disposableStackAnalysisCommand = vscode.commands.registerCommand(
     commands.STACK_ANALYSIS_COMMAND,
-    async (uri: vscode.Uri) => {
-      // uri will be null in case the user has used the context menu/file explorer
-      const fileUri = uri ? uri : vscode.window.activeTextEditor.document.uri;
+    async (filePath: string, isFromCA: boolean = false) => {
+      filePath = filePath ? filePath : vscode.window.activeTextEditor.document.uri.fsPath;
+      const fileName = path.basename(filePath);
+      if (isFromCA) {
+        record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
+      }
       try {
-        await generateRHDAReport(context, fileUri);
-        record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath) });
+        await generateRHDAReport(context, filePath);
+        record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
-        vscode.window.showErrorMessage(error.message);
-        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(fileUri.fsPath), fileName: path.basename(fileUri.fsPath), error: error.message });
+        const message = applySettingNameMappings(error.message);
+        vscode.window.showErrorMessage(message);
+        record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
       }
     }
   );
@@ -62,14 +67,17 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  const rhRepositoryRecommendationNotification = vscode.commands.registerCommand(
-    commands.REDHAT_REPOSITORY_RECOMMENDATION_NOTIFICATION_COMMAND,
-    () => {
-      const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                    make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
-                    This ensures that the applied dependencies work correctly. 
-                    Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
-      vscode.window.showWarningMessage(msg);
+  const disposableTrackRecommendationAcceptance = vscode.commands.registerCommand(
+    commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
+    (dependency, fileName) => {
+      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: dependency.split('@')[0], version: dependency.split('@')[1] });
+
+      if (fileName === 'Dockerfile' || fileName === 'Containerfile') {
+        redirectToRedHatCatalog();
+      }
+      if (fileName === 'pom.xml') {
+        showRHRepositoryRecommendationNotification();
+      }
     }
   );
 
@@ -126,7 +134,10 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'plaintext' },
           { scheme: 'file', language: 'pip-requirements' },
           { scheme: 'file', language: 'go' },
-          { scheme: 'file', language: 'go.mod' }
+          { scheme: 'file', language: 'go.mod' },
+          { scheme: 'file', language: 'groovy' },
+          { scheme: 'file', language: 'kotlin' },
+          { scheme: 'file', language: 'dockerfile' }
         ]
       };
 
@@ -140,11 +151,12 @@ export function activate(context: vscode.ExtensionContext) {
 
       lspClient.start().then(() => {
 
-        const showVulnerabilityFoundPrompt = async (msg: string, fileName: string) => {
+        const showVulnerabilityFoundPrompt = async (msg: string, filePath: string) => {
+          const fileName = path.basename(filePath);
           const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
-            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND);
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
+            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
           }
           else {
             record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
@@ -155,7 +167,7 @@ export function activate(context: vscode.ExtensionContext) {
           const notification = new CANotification(respData);
           caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
           if (notification.hasWarning()) {
-            showVulnerabilityFoundPrompt(notification.popupText(), path.basename(notification.origin()));
+            showVulnerabilityFoundPrompt(notification.popupText(), notification.origin());
             record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()) });
           }
         });
@@ -175,7 +187,7 @@ export function activate(context: vscode.ExtensionContext) {
       context.subscriptions.push(
         disposableStackAnalysisCommand,
         disposableStackLogsCommand,
-        rhRepositoryRecommendationNotification,
+        disposableTrackRecommendationAcceptance,
         // disposableSetSnykToken,
         caStatusBarProvider,
       );
@@ -241,25 +253,46 @@ async function showUpdateNotification(context: vscode.ExtensionContext) {
 }
 
 /**
+ * Redirects the user to the Red Hat certified image catalog website.
+ */
+function redirectToRedHatCatalog() {
+  vscode.env.openExternal(vscode.Uri.parse(REDHAT_CATALOG));
+}
+
+/**
+ * Shows a notification regarding Red Hat Dependency Analytics recommendations.
+ */
+function showRHRepositoryRecommendationNotification() {
+  const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
+                  make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
+                  This ensures that the applied dependencies work correctly. 
+                  Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
+  vscode.window.showWarningMessage(msg);
+}
+
+/**
  * Registers stack analysis commands to track RHDA report generations.
  * @param context - The extension context.
  */
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
 
-  const invokeFullStackReport = async (uri: vscode.Uri) => {
+  const invokeFullStackReport = async (filePath: string) => {
+    const fileName = path.basename(filePath);
     try {
-      await generateRHDAReport(context, uri);
-      record(context, TelemetryActions.vulnerabilityReportDone, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath) });
+      await generateRHDAReport(context, filePath);
+      record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
     } catch (error) {
-      vscode.window.showErrorMessage(error.message);
-      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: path.basename(uri.fsPath), fileName: path.basename(uri.fsPath), error: error.message });
+      const message = applySettingNameMappings(error.message);
+      vscode.window.showErrorMessage(message);
+      record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
     }
   };
 
   const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
     const fileUri = uri || vscode.window.activeTextEditor.document.uri;
-    record(context, origin, { manifest: fileUri.fsPath.split('/').pop(), fileName: fileUri.fsPath.split('/').pop() });
-    invokeFullStackReport(fileUri);
+    const filePath = fileUri.fsPath;
+    record(context, origin, { manifest: filePath.split('/').pop(), fileName: filePath.split('/').pop() });
+    invokeFullStackReport(filePath);
   };
 
   const registerCommand = (cmd: string, action: TelemetryActions) => {

@@ -1,5 +1,5 @@
 # Change Log
-## 0.9.5 (?)
+## 0.9.5 (Jul 30th 2024)
 - enhancement - Added support for vulnerability analysis for Gradle build manifests.
 - enhancement - Added support for vulnerability analysis on images in Dockerfiles.
 - enhancement - Added new settings for the Python and Go ecosystems.

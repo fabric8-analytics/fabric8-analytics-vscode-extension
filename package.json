@@ -181,6 +181,18 @@
       "type": "object",
       "title": "Red Hat Dependency Analytics configuration",
       "properties": {
+        "redHatDependencyAnalytics.analyzeOnOpenDocument": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Automatically run analysis upon opening any supported manifest file (package.json, pom.xml, go.mod, requirements.txt, build.gradle, Dockerfile, Containerfile).",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.analyzeOnSaveDocument": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Automatically run analysis upon saving any supported manifest file (package.json, pom.xml, go.mod, requirements.txt, build.gradle, Dockerfile, Containerfile).",
+          "scope": "window"
+        },
         "redhat.telemetry.enabled": {
           "type": "boolean",
           "default": null,

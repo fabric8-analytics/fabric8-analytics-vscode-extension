@@ -10,6 +10,10 @@ import { getTelemetryId } from './redhatTelemetry';
  * Represents the configuration settings for the extension.
  */
 class Config {
+
+  analyzeOnOpenDocument: string;
+  analyzeOnSaveDocument: string;
+
   telemetryId: string;
   stackAnalysisCommand: string;
   trackRecommendationAcceptanceCommand: string;
@@ -74,6 +78,9 @@ class Config {
   loadData() {
     const rhdaConfig = this.getRhdaConfig();
 
+    this.analyzeOnOpenDocument = rhdaConfig.analyzeOnOpenDocument ? 'true' : 'false';
+    this.analyzeOnSaveDocument = rhdaConfig.analyzeOnSaveDocument ? 'true' : 'false';
+
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
@@ -112,6 +119,11 @@ class Config {
    * @private
    */
   private async setProcessEnv(): Promise<void> {
+
+    process.env['VSCEXT_ANALYZE_ON_OPEN_DOCUMENT'] = this.analyzeOnOpenDocument;
+    process.env['VSCEXT_ANALYZE_ON_SAVE_DOCUMENT'] = this.analyzeOnSaveDocument;
+
+
     process.env['VSCEXT_STACK_ANALYSIS_COMMAND'] = this.stackAnalysisCommand;
     process.env['VSCEXT_TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND'] = this.trackRecommendationAcceptanceCommand;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;

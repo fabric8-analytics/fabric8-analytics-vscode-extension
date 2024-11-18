@@ -282,7 +282,7 @@
     "supports-color": "^9.4.0",
     "ts-loader": "^9.5.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2",
+    "typescript": "^5.6.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },

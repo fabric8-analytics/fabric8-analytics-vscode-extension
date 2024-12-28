@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Red Hat Dependency Analytics",
   "description": "Provides insights on security vulnerabilities in your application dependencies.",
-  "version": "0.9.3",
+  "version": "0.9.5",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -42,7 +42,10 @@
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",
     "workspaceContains:**/go.mod",
-    "workspaceContains:**/requirements.txt"
+    "workspaceContains:**/requirements.txt",
+    "workspaceContains:**/build.gradle",
+    "workspaceContains:**/Dockerfile",
+    "workspaceContains:**/Containerfile"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -72,11 +75,6 @@
         "command": "rhda.stackLogs",
         "title": "Debug logs",
         "category": "Red Hat Dependency Analytics"
-      },
-      {
-        "command": "rhda.setSnykToken",
-        "title": "Set Snyk Token",
-        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -100,6 +98,16 @@
           "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == requirements.txt",
           "group": "navigation"
+        },
+        {
+          "command": "rhda.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == build.gradle",
+          "group": "navigation"
+        },
+        {
+          "command": "rhda.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile",
+          "group": "navigation"
         }
       ],
       "explorer/context": [
@@ -118,6 +126,14 @@
         {
           "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromExplorer",
+          "when": "resourceFilename == build.gradle"
+        },
+        {
+          "command": "rhda.stackAnalysisFromExplorer",
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
         }
       ],
       "editor/context": [
@@ -136,6 +152,14 @@
         {
           "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromEditor",
+          "when": "resourceFilename == build.gradle"
+        },
+        {
+          "command": "rhda.stackAnalysisFromEditor",
+          "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
         }
       ],
       "commandPalette": [
@@ -173,15 +197,6 @@
           "default": "off",
           "description": "Traces the communication between VSCode and the Red Hat Dependency Analytics Language Server."
         },
-        "redHatDependencyAnalytics.snykTokenStorage": {
-          "type": "string",
-          "enum": [
-            "Always use VS Code's secret storage"
-          ],
-          "default": "Always use VS Code's secret storage",
-          "markdownDescription": "Red Hat Dependency Analytics uses VS Code's [secret storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) to safely store the authentication token for Snyk. To set the token, run the VS Code command [RHDA: Set Snyk Token](command:rhda.setSnykToken).",
-          "scope": "window"
-        },
         "redHatDependencyAnalytics.matchManifestVersions": {
           "type": "boolean",
           "default": true,
@@ -198,6 +213,12 @@
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of mvn executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.gradle.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of gradle executable.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.npm.executable.path": {
@@ -245,6 +266,72 @@
           "default": "Error",
           "description": "Defines the severity level of alerts for detected vulnerabilities in dependencies.",
           "scope": "window"
+        },
+        "redHatDependencyAnalytics.usePythonVirtualEnvironment": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automates the installation of missing packages in a Python virtual environment.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.useGoMVS": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use the Minimal Version Selection (MVS) algorithm to select a set of module versions to use when building Go packages.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.enablePythonBestEffortsInstallation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Installs Python packages tailored to the Python version in use, disregarding declared versions. Note: Requires settings Match Manifest Versions to be set to false and Use Python Virtual Environment to be set to true.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.usePipDepTree": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use lightweight pipdeptree command line tool as the data source for building the Python dependency tree. This may significantly enhance analysis time.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.syft.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of syft executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.syft.config.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path to the syft configuration file.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.skopeo.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of skopeo executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.skopeo.config.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path to the authentication file used by 'skopeo inspect'.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.docker.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of docker executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.podman.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of podman executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.imagePlatform": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies platform used for multi-arch images.",
+          "scope": "window"
         }
       }
     }
@@ -262,7 +349,6 @@
     "lint": "eslint -c .eslintrc.js --ext .ts src/"
   },
   "devDependencies": {
-    "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.2",
     "@types/node": "^20.8.4",
     "@types/sinon": "^10.0.19",
@@ -274,8 +360,8 @@
     "chai": "^4.3.10",
     "decache": "^4.6.2",
     "eslint": "^8.51.0",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
+    "mocha": "^10.4.0",
+    "nyc": "^17.0.0",
     "sinon": "^16.1.0",
     "sinon-chai": "^3.7.0",
     "source-map-loader": "^4.0.1",
@@ -287,9 +373,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.2",
-    "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.14",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.26",
+    "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
+    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.50",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

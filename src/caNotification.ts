@@ -1,5 +1,7 @@
 'use strict';
 
+import { applySettingNameMappings } from './utils';
+
 /**
  * Interface representing the data structure for a Component Analysis (CA) Notification.
  */
@@ -35,7 +37,7 @@ class CANotification {
    * @param respData The data used to create the notification.
    */
   constructor(respData: CANotificationData) {
-    this.errorMessage = respData.errorMessage || '';
+    this.errorMessage = applySettingNameMappings(respData.errorMessage || '');
     this.done = respData.done === true;
     this.uri = respData.uri;
     this.diagCount = respData.diagCount || 0;

@@ -1,8 +1,9 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { rewireModule, cleanupRewireFiles } from './utils';
 import * as vscode from 'vscode';
+
+import { rewireModule, cleanupRewireFiles } from './utils';
 
 const expect = chai.expect;
 chai.use(sinonChai);

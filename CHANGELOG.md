@@ -1,8 +1,20 @@
 # Change Log
+## 0.9.5 (Jul 30th 2024)
+- enhancement - Added support for vulnerability analysis for Gradle build manifests.
+- enhancement - Added support for vulnerability analysis on images in Dockerfiles.
+- enhancement - Added new settings for the Python and Go ecosystems.
+- enhancement - Added support for private GitHub Registries.
+- fixes - Fixed an issue by removing a redundant `/` at the beginning of Windows URI paths that was causing some `mvn` commands to fail. See [PR#692](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/692) for details.
+- fixes - Fixed an issue with the Stack Analysis running on an open file, instead of running on an opened manifest file. See [PR#692](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/692) for details.
+- known issue - You can get an error by using the `Use Pip Dep Tree` and `Use Python Virtual Environment` options simultaneously. See the [Known Issues section](README.md#known-issues) of the README for more information.
+- known issue - Red Hat Dependency Analytics has limitations for Maven and Gradle. See the [Known Issues section](README.md#known-issues) of the README for more information.
+- informational - Added a telemetry event to track Red Hat's recommended version acceptance.
+## 0.9.4 (Mar 25th 2024)
+- informational - Removing access to Snyk's Vulnerability Database.
 ## 0.9.3 (Mar 6th 2024)
 - enhancement - Red Hat Dependency Analytics reporting has integrated the ONGuard service by using [Open Source Vulnerability (OSV)](https://google.github.io/osv.dev/) and the [National Vulnerability Database (NVD)](https://nvd.nist.gov/) data sources for additional vulnerability information.
-- enhancement - Integrated VS Code's [Secret Storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) feature for securing the Snyk token. See [PR689](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/689) for details.
-- fixes - Fixed an issue with displaying wrong data when the event handler for Component Analysis was triggered on a unsaved manifest file. Component Analysis is no longer triggered on unsaved manifest files. See [PR#239](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/239) for details.
+- enhancement - Integrated VS Code's [Secret Storage](https://code.visualstudio.com/api/references/vscode-api#SecretStorage) feature for securing the Snyk token. See [PR#689](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/689) for details.
+- fixes - Fixed an issue with displaying wrong data when triggering the event handler for Component Analysis on a unsaved manifest file. Component Analysis is no longer triggered on unsaved manifest files. See [PR#239](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/239) for details.
 - fixes - Fixed an issue where the diagnostic source name is being obscured in the View Problem panel from an inline analysis. See [PR#239](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/239) for details.
 - informational - The naming convention for VS Code commands has changed from `fabric8` to `rhda`. For example, `fabric8.stackAnalysis` is now `rhda.stackAnalysis`.
 ## 0.9.2 (Feb 5th 2024)

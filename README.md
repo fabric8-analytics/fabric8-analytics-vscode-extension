@@ -4,31 +4,34 @@
 ![CI](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/workflows/CI/badge.svg?branch=master)
 [![Codecov](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension/branch/master/graph/badge.svg?token=rHIO4KNlJ0)](https://codecov.io/gh/fabric8-analytics/fabric8-analytics-vscode-extension)
 
-Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you code your application.
+<br >Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you code your application.
 The Red Hat Dependency Analytics extension uses vulnerability data sources for the most up-to-date vulnerability information available.
 
-**NOTE:**
-<br >The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
+<br >Dependency Analytics only supports the following project ecosystems:
+- Maven
+- Node
+- Golang
+- Python
+- Gradle
+
+<br >**NOTE:**
+The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
 Red Hat Dependency Analytics only accesses your manifest files to analyze your application dependencies before displaying the vulnerability report.
 
-**IMPORTANT:**
-<br >Currently, Red Hat Dependency Analytics only supports projects that use Maven (`mvn`), Node (`npm`), Golang (`go mod`), Python (`pip`), and Gradle (`gradle`) ecosystems.
-In future releases, Red Hat plans to support other programming languages.
-
-##### Table of Contents
+## Table of Contents
 - [Red Hat Dependency Analytics](#red-hat-dependency-analytics)
-				- [Table of Contents](#table-of-contents)
+	      - [Table of Contents](#table-of-contents)
 	- [Quick start](#quick-start)
 	- [Configuration](#configuration)
 		- [Configurable parameters](#configurable-parameters)
 	- [Features](#features)
 	- [Using Red Hat Dependency Analytics for CI builds](#using-red-hat-dependency-analytics-for-ci-builds)
-	- [Data and telemetry](#data-and-telemetry)
 	- [Known issues](#known-issues)
 		- [Error when using options the `Use Pip Dep Tree` and `Use Python Virtual Environment` simultaneously](#error-when-using-options-the-use-pip-dep-tree-and-use-python-virtual-environment-simultaneously)
 		- [Red Hat Dependency Analytics limitations for Maven and Gradle](#red-hat-dependency-analytics-limitations-for-maven-and-gradle)
-	- [Support, feedback \& questions](#support-feedback--questions)
 	- [Learn more about the Red Hat Dependency Analytics platform](#learn-more-about-the-red-hat-dependency-analytics-platform)
+	- [Data and telemetry](#data-and-telemetry)
+	- [Support, feedback \& questions](#support-feedback--questions)
 	- [License](#license)
 
 ## Quick start
@@ -46,7 +49,7 @@ In future releases, Red Hat plans to support other programming languages.
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
 You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
 You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
-Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for Maven, Node or Golang.
+Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for your project.
 
 **Procedure**
 
@@ -300,6 +303,14 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	Doing this allows Red Hat Dependency Analytics to install Python packages into a virtual environment to perform the analysis.
 	The benefit is having a clean Python environment not influenced by earlier installations, but the downside is a significantly slower analysis process.
 
+## Using Red Hat Dependency Analytics for CI builds
+
+You can automate the analysis of your application's vulnerabilities within the build and release pipeline.
+Red Hat offers integration with these Continuous Integration (CI) platforms:
+
+- [Red Hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
+- [Red Hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
+
 ## Known issues
 
 ### Error when using options the `Use Pip Dep Tree` and `Use Python Virtual Environment` simultaneously
@@ -322,14 +333,6 @@ This discrepancy occurs because the dependency is not packaged within the applic
 * `Version Mismatch`: If the runtime environment provides different versions of the artifacts, it can cause application crashes, unexpected security vulnerabilities, or false positives in RHDA vulnerability scans.
 
 <br >Ensure your runtime environment includes the correct versions of these dependencies to avoid such issues.
-
-## Using Red Hat Dependency Analytics for CI builds
-
-You can automate the analysis of your application's vulnerabilities within the build and release pipeline.
-Red Hat offers integration with these Continuous Integration (CI) platforms:
-
-- [Red Hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
-- [Red Hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
 
 ## Learn more about the Red Hat Dependency Analytics platform
 

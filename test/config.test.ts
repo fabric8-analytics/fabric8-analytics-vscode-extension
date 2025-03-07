@@ -71,6 +71,9 @@ suite('Config module', () => {
 
     expect(globalConfig.telemetryId).to.equal(mockId);
 
+    expect(process.env['VSCEXT_ANALYZE_ON_OPEN_DOCUMENT']).to.eq('false');
+    expect(process.env['VSCEXT_ANALYZE_ON_SAVE_DOCUMENT']).to.eq('false');
+
     expect(process.env['VSCEXT_STACK_ANALYSIS_COMMAND']).to.eq(commands.STACK_ANALYSIS_COMMAND);
     expect(process.env['VSCEXT_TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND']).to.eq(commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);

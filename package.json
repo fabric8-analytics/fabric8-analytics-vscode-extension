@@ -215,6 +215,12 @@
           "description": "Specifies absolute path of mvn executable.",
           "scope": "window"
         },
+        "redHatDependencyAnalytics.mvn.preferWrapper": {
+          "type": "string",
+          "enum": ["true", "false", "fallback"],
+          "default": "fallback",
+          "markdownDescription": "Specifies whether to use the local maven wrapper. The 'fallback' option will default to the value of `#maven.executable.preferMavenWrapper#` from the `Maven for Java` extension, else defaulting to 'true'."
+        },
         "redHatDependencyAnalytics.gradle.executable.path": {
           "type": "string",
           "default": "",

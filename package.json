@@ -217,7 +217,11 @@
         },
         "redHatDependencyAnalytics.mvn.preferWrapper": {
           "type": "string",
-          "enum": ["true", "false", "fallback"],
+          "enum": [
+            "true",
+            "false",
+            "fallback"
+          ],
           "default": "fallback",
           "markdownDescription": "Specifies whether to use the local maven wrapper. The 'fallback' option will default to the value of `#maven.executable.preferMavenWrapper#` from the `Maven for Java` extension, else defaulting to 'true'."
         },
@@ -381,7 +385,7 @@
   "dependencies": {
     "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.26",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.50",
+    "@trustification/exhort-javascript-api": "^0.1.1-ea.54",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

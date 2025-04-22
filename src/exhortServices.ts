@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import exhort from '@trustification/exhort-javascript-api';
+import exhort, { ImageRef, parseImageRef } from '@trustification/exhort-javascript-api';
 
 import { IImageRef, IOptions } from './imageAnalysis';
 
@@ -11,13 +11,13 @@ import { IImageRef, IOptions } from './imageAnalysis';
  * @param options - The options for running image analysis.
  * @returns A Promise resolving to the analysis response in HTML format.
  */
-async function imageAnalysisService(images: IImageRef[], options: IOptions): Promise<any> {
+async function imageAnalysisService(images: IImageRef[], html: boolean, options: IOptions): Promise<any> {
   return await exhort.imageAnalysis(images.map(img => {
     if (img.platform) {
       return `${img.image}^^${img.platform}`;
     }
     return img.image;
-  }), true, options);
+  }), html, options);
 }
 
 /**
@@ -29,6 +29,15 @@ async function imageAnalysisService(images: IImageRef[], options: IOptions): Pro
 async function stackAnalysisService(pathToManifest: string, options: object): Promise<string> {
   // Get stack analysis in HTML format
   return await exhort.stackAnalysis(pathToManifest, true, options);
+}
+
+// TODO: comment
+function parseImageReference(image: IImageRef): ImageRef {
+  if (image.platform) {
+    return parseImageRef(`${image.image}^^${image.platform}`);
+  } else {
+    return parseImageRef(image.image);
+  }
 }
 
 /**
@@ -63,4 +72,4 @@ async function tokenValidationService(options: { [key: string]: string }, source
   }
 }
 
-export { imageAnalysisService, stackAnalysisService, tokenValidationService };
+export { imageAnalysisService, stackAnalysisService, tokenValidationService, parseImageReference };

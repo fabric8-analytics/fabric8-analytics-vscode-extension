@@ -2,24 +2,17 @@
 
 'use strict';
 
-const webpack = require('webpack');
-const path = require('path');
-const glob = require('glob');
+import * as webpack from 'webpack';
+import * as path from 'path';
 
-module.exports = (env, argv) => {
-  let entry = {
-    'extension': './src/extension.ts',
-    'server': './node_modules/@fabric8-analytics/fabric8-analytics-lsp-server/dist/server.js',
-  };
-  /**@type {import('webpack').Configuration}*/
-  const config = {
+module.exports = () => {
+  const config: webpack.Configuration = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
-
-    entry: entry, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+    entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
     output: {
       // the bundle is stored in the 'out' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
       path: path.resolve(__dirname, 'dist'),
-      filename: '[name].js',
+      filename: 'extension.js',
       libraryTarget: 'commonjs2',
       devtoolModuleFilenameTemplate: '../[resource-path]'
     },
@@ -36,8 +29,7 @@ module.exports = (env, argv) => {
         test: /\.js$/,
         enforce: 'pre',
         use: ['source-map-loader'],
-      },
-      {
+      }, {
         test: /\.ts$/,
         use: [{
           loader: 'ts-loader',

@@ -6,6 +6,7 @@
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
+  "type": "commonjs",
   "contributors": [
     {
       "name": "Ilona Shishov",
@@ -375,42 +376,50 @@
     "test-compile": "tsc -p ./",
     "posttest-compile": "./transformToDynamicImport.sh",
     "pretest": "npm run test-compile",
-    "test": "node ./out/test/runTest.js",
+    "test": "vscode-test",
     "coverage": "nyc npm run test",
     "reinstall": "npm cache verify && npm install",
     "lint": "eslint -c .eslintrc.js --ext .ts src/"
   },
   "devDependencies": {
+    "@types/chai": "^5.2.2",
+    "@types/json-to-ast": "^2.1.0",
     "@types/mocha": "^10.0.2",
     "@types/node": "^20.8.4",
     "@types/sinon": "^10.0.19",
+    "@types/sinon-chai": "^3.0.0",
     "@types/vscode": "^1.76.0",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
+    "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.3.5",
     "babel-plugin-rewire": "^1.2.0",
     "chai": "^4.3.10",
+    "chai-subset": "^1.6.0",
     "decache": "^4.6.2",
     "eslint": "^8.51.0",
+    "glob": "^11.0.2",
     "mocha": "^10.8.2",
     "nyc": "^17.0.0",
+    "packageurl-js": "^2.0.1",
     "sinon": "^16.1.0",
     "sinon-chai": "^3.7.0",
     "source-map-loader": "^4.0.1",
     "supports-color": "^9.4.0",
     "ts-loader": "^9.5.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2",
+    "typescript": "^5.8.3",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.10.7",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustification/exhort-api-spec": "^1.0.13",
     "@trustification/exhort-javascript-api": "^0.2.3",
+    "@xml-tools/ast": "^5.0.5",
+    "@xml-tools/parser": "^1.0.11",
     "fs": "^0.0.1-security",
-    "path": "^0.12.7",
-    "vscode-languageclient": "^8.1.0"
+    "json-to-ast": "^2.1.0",
+    "path": "^0.12.7"
   }
 }

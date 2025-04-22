@@ -14,7 +14,7 @@ suite('ExhortServices module', async () => {
   const compiledFilePath = 'out/src/exhortServices';
   const stackAnalysisReportHtmlMock = '<html>RHDA Report Mock</html>';
 
-  let exhortMock = {
+  const exhortMock = {
     default: {
       stackAnalysis: async () => stackAnalysisReportHtmlMock,
       validateToken: async (statusCode) => ({ status: statusCode }),
@@ -38,7 +38,7 @@ suite('ExhortServices module', async () => {
     await exhortServicesRewire.stackAnalysisService('mock/path/to/manifest', {})
       .then((result) => {
         expect(result).to.equal(stackAnalysisReportHtmlMock);
-      })
+      });
   });
 
   test('should perform token validation with Exhort Validate Token service', async () => {
@@ -56,7 +56,8 @@ suite('ExhortServices module', async () => {
 
   test('should fail to generate RHDA report HTML from Exhort Stack Analysis service and reject with error', async () => {
 
-    let exhortMock = {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const exhortMock = {
       default: {
         stackAnalysis: async () => {
           throw new Error('Analysis Error');
@@ -68,16 +69,17 @@ suite('ExhortServices module', async () => {
 
     await exhortServicesRewire.stackAnalysisService('mock/path/to/manifest', {})
       .then(() => {
-        throw new Error('should have thrown Analysis Error')
+        throw new Error('should have thrown Analysis Error');
       })
       .catch((error) => {
         expect(error.message).to.equal('Analysis Error');
-      })
+      });
   });
 
   test('should fail to perform token validation with Exhort Validate Token service and display error message', async () => {
 
-    let exhortMock = {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const exhortMock = {
       default: {
         validateToken: async () => {
           throw new Error('Validation Error');

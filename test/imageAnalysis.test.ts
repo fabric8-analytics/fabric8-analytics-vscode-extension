@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
@@ -5,13 +6,13 @@ import * as fs from 'fs';
 
 import * as exhortServices from '../src/exhortServices';
 import { globalConfig } from '../src/config';
-import { executeDockerImageAnalysis } from '../src/imageAnalysis'
-import * as rhda from '../src/rhda'
+import { executeDockerImageAnalysis } from '../src/imageAnalysis';
+import * as rhda from '../src/rhda';
 import { DepOutputChannel } from '../src/depOutputChannel';
 
 const expect = chai.expect;
 chai.use(sinonChai);
-const outputChannel = new DepOutputChannel('test')
+const outputChannel = new DepOutputChannel('test');
 
 suite('ImageAnalysis module', () => {
     let sandbox: sinon.SinonSandbox;
@@ -20,7 +21,7 @@ suite('ImageAnalysis module', () => {
     const mockFileContent = `
 ARG ARG_IMAGE=alpine
 ARG ARG_TAG=latest
-FROM --platform=linux/amd64 \${ARG_IMAGE}:\${ARG_TAG} as stage1\$ARG_FAKE
+FROM --platform=linux/amd64 \${ARG_IMAGE}:\${ARG_TAG} as stage1$ARG_FAKE
 FROM ubuntu
 FROM scratch
     `;
@@ -43,7 +44,7 @@ FROM scratch
     });
 
     test('should generate RHDA report for file', async () => {
-        const imageAnalysisServiceStub = sandbox.stub(exhortServices, 'imageAnalysisService').resolves(mockReponse)
+        const imageAnalysisServiceStub = sandbox.stub(exhortServices, 'imageAnalysisService').resolves(mockReponse);
         sandbox.stub(fs, 'readFileSync').returns(encodedMockFileContent);
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
 
@@ -61,13 +62,13 @@ FROM scratch
 
         await executeDockerImageAnalysis(mockPath, outputChannel)
             .then(() => {
-                throw (new Error('should have thrown error'))
+                throw (new Error('should have thrown error'));
             })
             .catch(error => {
                 expect(error.message).to.eq('Mock Error');
                 expect(imageAnalysisServiceStub.calledOnce).to.be.true;
                 expect(updateCurrentWebviewPanelSpy.calledOnceWithExactly('error')).to.be.true;
-            })
+            });
     });
 
     test('should fail to read provided filepath', async () => {
@@ -76,11 +77,11 @@ FROM scratch
 
         await executeDockerImageAnalysis(mockPath, outputChannel)
             .then(() => {
-                throw (new Error('should have thrown error'))
+                throw (new Error('should have thrown error'));
             })
             .catch(error => {
                 expect(error.message).to.eq('Mock Error');
                 expect(updateCurrentWebviewPanelSpy.calledOnceWithExactly('error')).to.be.true;
-            })
+            });
     });
 });

@@ -189,7 +189,7 @@ class DockerImageAnalysis implements IImageAnalysis {
                 this.outputChannel.info(`generating image analysis report for "${this.filePath}"`);
 
                 // execute image analysis
-                const promise = imageAnalysisService(this.images, this.options);
+                const promise = imageAnalysisService(this.images, true, this.options);
                 p.report({ message: StatusMessages.WIN_GENERATING_DEPENDENCIES });
 
                 const resp = await promise;

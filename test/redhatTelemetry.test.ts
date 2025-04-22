@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
@@ -12,21 +13,21 @@ suite('RedhatTelemetry module', async () => {
     const compiledFilePath = 'out/src/redhatTelemetry';
     const redHatUUIDMock = 'Mock UUID';
 
-    let getRedHatUUIDMock = {
+    const getRedHatUUIDMock = {
         getRedHatUUID: async () => redHatUUIDMock
-    }
+    };
 
-    let sendEventMock = {
+    const sendEventMock = {
         sendStartupEvent: sandbox.spy(),
         send: sandbox.spy()
-    }
+    };
 
-    let getIdProviderMock = {
+    const getIdProviderMock = {
         getIdProvider: async () => getRedHatUUIDMock,
         getTelemetryService: async () => sendEventMock
-    }
+    };
 
-    let getRedHatServiceMock = {
+    const getRedHatServiceMock = {
         getRedHatService: async () => getIdProviderMock
     };
 
@@ -44,17 +45,17 @@ suite('RedhatTelemetry module', async () => {
     });
 
     test('should get UUID from vscode redhat telemetry service', async () => {
-        let telemetryId = await redhatTelemetryRewire.getTelemetryId({})
+        const telemetryId = await redhatTelemetryRewire.getTelemetryId({});
         expect(telemetryId).to.equal(redHatUUIDMock);
     });
 
     test('should send statup telemetry event', async () => {
-        await redhatTelemetryRewire.startUp({})
+        await redhatTelemetryRewire.startUp({});
         expect(sendEventMock.sendStartupEvent).to.have.been.calledOnce;
     });
 
     test('should record telemetry event', async () => {
-        await redhatTelemetryRewire.record({}, 'telemetry_event_mock', { mockProp: 'mockValue' })
+        await redhatTelemetryRewire.record({}, 'telemetry_event_mock', { mockProp: 'mockValue' });
         expect(sendEventMock.send).to.have.been.calledWith({
             type: 'track',
             name: 'telemetry_event_mock',

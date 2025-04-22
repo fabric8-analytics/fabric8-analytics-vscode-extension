@@ -13,7 +13,7 @@ import { updateCurrentWebviewPanel } from './rhda';
  * @param manifestFilePath The file path to the manifest file for analysis.
  * @returns The stack analysis response string.
  */
-export async function executeStackAnalysis(manifestFilePath): Promise<string> {
+export async function executeStackAnalysis(manifestFilePath: string): Promise<string> {
   try {
     return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
       return new Promise<string>(async (resolve, reject) => {
@@ -31,6 +31,7 @@ export async function executeStackAnalysis(manifestFilePath): Promise<string> {
           'EXHORT_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
           'EXHORT_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
           'EXHORT_MVN_PATH': globalConfig.exhortMvnPath,
+          'EXHORT_PREFER_MVNW': globalConfig.exhortPreferMvnw,
           'EXHORT_GRADLE_PATH': globalConfig.exhortGradlePath,
           'EXHORT_NPM_PATH': globalConfig.exhortNpmPath,
           'EXHORT_GO_PATH': globalConfig.exhortGoPath,

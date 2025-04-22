@@ -22,7 +22,7 @@
 - enhancement - Added a vulnerability severity alert level setting for the user to receive inline notifications for just errors or warnings. See [PR#674](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/674) for details.
 - fixes - Fixed an issue with the `codeActionsMap` call. When multiple manifest documents are open that have the same dependency, one of the document entries gets deleted. This gave a wrong result in the analysis. See [PR#236](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/236) for details.
 - fixes - Fixed an issue in the Exhort Javascript API. This fix enables and supports analysis of `pom.xml` manifests that include local modules, and a parent Project Object Model (POM). See the [PR#237](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/237) for details.
-- fixes - Fixed an issue with the analysis report not displaying because of spaces in the manifest file path. See [PR#100](https://github.com/RHEcosystemAppEng/exhort-javascript-api/pull/100) for details.
+- fixes - Fixed an issue with the analysis report not displaying because of spaces in the manifest file path. See [PR#100](https://github.com/trustification/exhort-javascript-api/pull/100) for details.
 ## 0.9.1 (Dec 24th 2023)
 - fixes - Resolved endpoint configuration issue by removing EXHORT_DEV_MODE environment configuration parameter. See [PR#672](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/672) for details.
 ## 0.9.0 (Dec 21th 2023)
@@ -31,9 +31,9 @@
 - enhancement - Added support for error observation by using Sentry.
 - enhancement - Support for more complex SPDX SBOM relationships.
 - enhancement - Added recommendations and remediations in the _Quick Fix..._ tab.
-- fixes - Fixed an issue where unique Snyk vulnerability information was not being displayed in the Dependency Analytics report. See [PR#217](https://github.com/RHEcosystemAppEng/exhort/pull/217) for details.
-- fixes - Better valid and invalid token alert messages for the Snyk vulnerability information provider. See [PR#218](https://github.com/RHEcosystemAppEng/exhort/pull/218) for details.
-- fixes - Fixed analysis report discrepancies between Red Hat Dependency Analytics and Snyk’s analytics. See [PR#219](https://github.com/RHEcosystemAppEng/exhort/pull/219) for details.
+- fixes - Fixed an issue where unique Snyk vulnerability information was not being displayed in the Dependency Analytics report. See [PR#217](https://github.com/trustification/exhort/pull/217) for details.
+- fixes - Better valid and invalid token alert messages for the Snyk vulnerability information provider. See [PR#218](https://github.com/trustification/exhort/pull/218) for details.
+- fixes - Fixed analysis report discrepancies between Red Hat Dependency Analytics and Snyk’s analytics. See [PR#219](https://github.com/trustification/exhort/pull/219) for details.
 - fixes - Fixed the Go and Python package links so they point to their specific package manager website.
 ## 0.7.3 (Nov 8th 2023)
 - enhancement - Support for Golang and Python ecosystems. See [PR#656](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/656) for details.

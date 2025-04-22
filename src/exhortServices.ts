@@ -1,7 +1,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import exhort from '@RHEcosystemAppEng/exhort-javascript-api';
+import exhort from '@trustification/exhort-javascript-api';
 import { execSync } from 'child_process';
 
 import { IImageRef, IOptions } from './imageAnalysis';
@@ -50,7 +50,7 @@ function imageAnalysisService(images: IImageRef[], options: IOptions): Promise<a
  * @param options Additional options for the analysis.
  * @returns A promise resolving to the stack analysis report in HTML format.
  */
-function stackAnalysisService(pathToManifest, options): Promise<any> {
+function stackAnalysisService(pathToManifest: string, options: object): Promise<any> {
   return new Promise<any>(async (resolve, reject) => {
     try {
       // Get stack analysis in HTML format

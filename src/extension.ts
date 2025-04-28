@@ -110,6 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
       const clientOptions: LanguageClientOptions = {
         documentSelector: [
           { scheme: 'file', language: 'json' },
+          { scheme: 'file', language: 'jsonc' },
           { scheme: 'file', language: 'xml' },
           { scheme: 'file', language: 'plaintext' },
           { scheme: 'file', language: 'pip-requirements' },

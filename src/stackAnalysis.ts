@@ -39,7 +39,7 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
 
     // execute stack analysis
     try {
-      const promise = stackAnalysisService(manifestFilePath, options)
+      const promise = stackAnalysisService(manifestFilePath, options);
 
       p.report({ message: StatusMessages.WIN_GENERATING_DEPENDENCIES });
 
@@ -49,7 +49,7 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
 
       p.report({ message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS });
 
-      return resp
+      return resp;
     } catch (err) {
       p.report({ message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS });
 

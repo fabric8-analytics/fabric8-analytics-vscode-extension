@@ -78,7 +78,7 @@ class DockerImageAnalysis implements IImageAnalysis {
     args: Map<string, string> = new Map<string, string>();
     images: IImageRef[] = [];
     imageAnalysisReportHtml: string = '';
-    filePath: string
+    filePath: string;
 
     /**
      * Regular expression for matching 'FROM' statements.
@@ -102,7 +102,7 @@ class DockerImageAnalysis implements IImageAnalysis {
 
     constructor(filePath: string) {
         const lines = this.parseTxtDoc(filePath);
-        this.filePath = filePath
+        this.filePath = filePath;
         this.images = this.collectImages(lines);
     }
 
@@ -184,7 +184,7 @@ class DockerImageAnalysis implements IImageAnalysis {
             try {
 
                 // execute image analysis
-                const promise = imageAnalysisService(this.images, this.options)
+                const promise = imageAnalysisService(this.images, this.options);
                 p.report({ message: StatusMessages.WIN_GENERATING_DEPENDENCIES });
 
                 const resp = await promise;
@@ -198,7 +198,7 @@ class DockerImageAnalysis implements IImageAnalysis {
 
                 updateCurrentWebviewPanel('error');
 
-                throw error
+                throw error;
             }
         });
     }

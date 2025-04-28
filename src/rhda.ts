@@ -87,7 +87,7 @@ async function writeReportToFile(data: string) {
     fs.mkdirSync(reportDirectoryPath, { recursive: true });
   }
 
-  await fs.promises.writeFile(reportFilePath, data)
+  await fs.promises.writeFile(reportFilePath, data);
 }
 
 /**

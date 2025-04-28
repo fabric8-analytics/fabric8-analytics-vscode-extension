@@ -78,6 +78,7 @@ class DockerImageAnalysis implements IImageAnalysis {
     args: Map<string, string> = new Map<string, string>();
     images: IImageRef[] = [];
     imageAnalysisReportHtml: string = '';
+    filePath: string
 
     /**
      * Regular expression for matching 'FROM' statements.
@@ -101,20 +102,18 @@ class DockerImageAnalysis implements IImageAnalysis {
 
     constructor(filePath: string) {
         const lines = this.parseTxtDoc(filePath);
-
+        this.filePath = filePath
         this.images = this.collectImages(lines);
     }
 
     parseTxtDoc(filePath: string): string[] {
         try {
             const contentBuffer = fs.readFileSync(filePath);
-
             const contentString = contentBuffer.toString('utf-8');
-
             return contentString.split('\n');
         } catch (err) {
             updateCurrentWebviewPanel('error');
-            throw (err);
+            throw err;
         }
     }
 
@@ -179,43 +178,29 @@ class DockerImageAnalysis implements IImageAnalysis {
     }
 
     async runImageAnalysis() {
-        try {
-            return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
-                return new Promise<void>(async (resolve, reject) => {
-                    p.report({
-                        message: StatusMessages.WIN_ANALYZING_DEPENDENCIES
-                    });
+        return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
+            p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
-                    // execute image analysis
-                    await imageAnalysisService(this.images, this.options)
-                        .then(async (resp) => {
-                            p.report({
-                                message: StatusMessages.WIN_GENERATING_DEPENDENCIES
-                            });
+            try {
 
-                            updateCurrentWebviewPanel(resp);
+                // execute image analysis
+                const promise = imageAnalysisService(this.images, this.options)
+                p.report({ message: StatusMessages.WIN_GENERATING_DEPENDENCIES });
 
-                            p.report({
-                                message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS
-                            });
+                const resp = await promise;
+                updateCurrentWebviewPanel(resp);
 
-                            this.imageAnalysisReportHtml = resp;
+                p.report({ message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS });
 
-                            resolve();
-                        })
-                        .catch(err => {
-                            p.report({
-                                message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS
-                            });
+                this.imageAnalysisReportHtml = resp;
+            } catch (error) {
+                p.report({ message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS });
 
-                            reject(err);
-                        });
-                });
-            });
-        } catch (err) {
-            updateCurrentWebviewPanel('error');
-            throw (err);
-        }
+                updateCurrentWebviewPanel('error');
+
+                throw error
+            }
+        });
     }
 }
 
@@ -225,13 +210,9 @@ class DockerImageAnalysis implements IImageAnalysis {
  * @returns A Promise resolving to an Analysis Report HTML.
  */
 async function executeDockerImageAnalysis(filePath: string): Promise<string> {
-    try {
-        const dockerImageAnalysis = new DockerImageAnalysis(filePath);
-        await dockerImageAnalysis.runImageAnalysis();
-        return dockerImageAnalysis.imageAnalysisReportHtml;
-    } catch (error) {
-        throw (error);
-    }
+    const dockerImageAnalysis = new DockerImageAnalysis(filePath);
+    await dockerImageAnalysis.runImageAnalysis();
+    return dockerImageAnalysis.imageAnalysisReportHtml;
 }
 
 export { executeDockerImageAnalysis, IImageRef, IOptions };

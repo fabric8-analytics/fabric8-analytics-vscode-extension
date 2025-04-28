@@ -153,7 +153,7 @@ class Config {
    * Authorizes the RHDA (Red Hat Dependency Analytics) service.
    * @param context The extension context for authorization.
    */
-  async authorizeRHDA(context): Promise<void> {
+  async authorizeRHDA(context: vscode.ExtensionContext): Promise<void> {
     this.telemetryId = await getTelemetryId(context);
     await this.setProcessEnv();
   }
@@ -214,7 +214,6 @@ class Config {
       } else {
         console.error(errorMsg);
       }
-
     }
   }
 }

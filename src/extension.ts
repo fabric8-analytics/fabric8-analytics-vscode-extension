@@ -81,26 +81,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // const disposableSetSnykToken = vscode.commands.registerCommand(
-  //   commands.SET_SNYK_TOKEN_COMMAND,
-  //   async () => {
-  //     const token = await vscode.window.showInputBox({
-  //       prompt: 'Please enter your Snyk Token:',
-  //       placeHolder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-  //       password: true,
-  //       validateInput: validateSnykToken
-  //     });
-
-  //     if (token === undefined) {
-  //       return;
-  //     } else if (token === '') {
-  //       await globalConfig.clearSnykToken(true);
-  //     } else {
-  //       await globalConfig.setSnykToken(token);
-  //     }
-  //   }
-  // );
-
   registerStackAnalysisCommands(context);
 
   globalConfig.authorizeRHDA(context)
@@ -157,8 +137,7 @@ export function activate(context: vscode.ExtensionContext) {
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
             vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
-          }
-          else {
+          } else {
             record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
           }
         };
@@ -194,19 +173,12 @@ export function activate(context: vscode.ExtensionContext) {
     })
     .catch(error => {
       vscode.window.showErrorMessage(`Failed to Authorize Red Hat Dependency Analytics extension: ${error.message}`);
-      throw (error);
+      throw error;
     });
 
   vscode.workspace.onDidChangeConfiguration(() => {
     globalConfig.loadData();
   });
-
-  // context.secrets.onDidChange(async (e) => {
-  //   if (e.key === SNYK_TOKEN_KEY) {
-  //     const token = await globalConfig.getSnykToken();
-  //     lspClient.sendNotification('snykTokenModified', token);
-  //   }
-  // });
 }
 
 /**
@@ -214,10 +186,7 @@ export function activate(context: vscode.ExtensionContext) {
  * @returns A `Thenable` for void.
  */
 export function deactivate(): Thenable<void> {
-  if (!lspClient) {
-    return undefined;
-  }
-  return lspClient.stop();
+  return lspClient?.stop();
 }
 
 /**
@@ -263,10 +232,10 @@ function redirectToRedHatCatalog() {
  * Shows a notification regarding Red Hat Dependency Analytics recommendations.
  */
 function showRHRepositoryRecommendationNotification() {
-  const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                  make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
-                  This ensures that the applied dependencies work correctly. 
-                  Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
+  const msg = 'Important: If you apply Red Hat Dependency Analytics recommendations, ' +
+    `make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. ` +
+    'This ensures that the applied dependencies work correctly. ' +
+    `Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
   vscode.window.showWarningMessage(msg);
 }
 

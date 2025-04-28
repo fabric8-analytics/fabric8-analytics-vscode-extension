@@ -59,7 +59,7 @@ function getFileType(filePath: string): supportedFileTypes | undefined {
  * @param context The extension context.
  * @returns A Promise that resolves once the webview panel has been triggered.
  */
-async function triggerWebviewPanel(context) {
+async function triggerWebviewPanel(context: vscode.ExtensionContext) {
   await globalConfig.authorizeRHDA(context);
   DependencyReportPanel.createOrShowWebviewPanel();
 }
@@ -78,25 +78,16 @@ function updateCurrentWebviewPanel(data) {
 /**
  * Writes the report data to a file.
  * @param data The data to write to the file.
- * @returns A promise that resolves once the file is written.
  */
-function writeReportToFile(data) {
-  return new Promise<void>((resolve, reject) => {
-    const reportFilePath = globalConfig.rhdaReportFilePath;
-    const reportDirectoryPath = path.dirname(reportFilePath);
+async function writeReportToFile(data: string) {
+  const reportFilePath = globalConfig.rhdaReportFilePath;
+  const reportDirectoryPath = path.dirname(reportFilePath);
 
-    if (!fs.existsSync(reportDirectoryPath)) {
-      fs.mkdirSync(reportDirectoryPath, { recursive: true });
-    }
+  if (!fs.existsSync(reportDirectoryPath)) {
+    fs.mkdirSync(reportDirectoryPath, { recursive: true });
+  }
 
-    fs.writeFile(reportFilePath, data, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
+  await fs.promises.writeFile(reportFilePath, data)
 }
 
 /**
@@ -105,30 +96,22 @@ function writeReportToFile(data) {
  * @param filePath The path of the file for analysis.
  * @returns A promise that resolves once the report generation is complete.
  */
-async function generateRHDAReport(context, filePath) {
+async function generateRHDAReport(context: vscode.ExtensionContext, filePath: string) {
   const fileType = getFileType(filePath);
   if (fileType) {
-    try {
-
-      await triggerWebviewPanel(context);
-      let resp: string;
-      if (fileType === 'docker') {
-        resp = await executeDockerImageAnalysis(filePath);
-      } else {
-        resp = await executeStackAnalysis(filePath);
-      }
-      /* istanbul ignore else */
-      if (DependencyReportPanel.currentPanel) {
-        await writeReportToFile(resp);
-      }
-
-    } catch (error) {
-      throw (error);
+    await triggerWebviewPanel(context);
+    let resp: string;
+    if (fileType === 'docker') {
+      resp = await executeDockerImageAnalysis(filePath);
+    } else {
+      resp = await executeStackAnalysis(filePath);
+    }
+    /* istanbul ignore else */
+    if (DependencyReportPanel.currentPanel) {
+      await writeReportToFile(resp);
     }
   } else {
-    vscode.window.showInformationMessage(
-      `File ${filePath} is not supported!!`
-    );
+    vscode.window.showInformationMessage(`File ${filePath} is not supported.`);
   }
 }
 

@@ -18,8 +18,7 @@ import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
-// import { validateSnykToken } from './tokenValidation';
-import { applySettingNameMappings } from './utils';
+import { applySettingNameMappings, buildErrorMessage } from './utils';
 
 let lspClient: LanguageClient;
 
@@ -51,6 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
       } catch (error) {
         const message = applySettingNameMappings(error.message);
         vscode.window.showErrorMessage(message);
+        outputChannelDep.error(buildErrorMessage(error));
         record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
       }
     }
@@ -60,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
     commands.STACK_LOGS_COMMAND,
     () => {
       if (outputChannelDep) {
-        outputChannelDep.showOutputChannel();
+        outputChannelDep.show();
       } else {
         vscode.window.showInformationMessage(StatusMessages.WIN_SHOW_LOGS);
       }
@@ -254,6 +254,7 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
     } catch (error) {
       const message = applySettingNameMappings(error.message);
       vscode.window.showErrorMessage(message);
+      outputChannelDep.error(buildErrorMessage(error));
       record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
     }
   };

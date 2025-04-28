@@ -6,7 +6,8 @@ import { StatusMessages, Titles } from './constants';
 import { stackAnalysisService } from './exhortServices';
 import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
-
+import { outputChannelDep } from './extension';
+import { buildErrorMessage } from './utils';
 
 /**
  * Executes the RHDA stack analysis process.
@@ -39,6 +40,8 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
 
     // execute stack analysis
     try {
+      outputChannelDep.info(`generating stack analysis report for "${manifestFilePath}"`);
+
       const promise = stackAnalysisService(manifestFilePath, options);
 
       p.report({ message: StatusMessages.WIN_GENERATING_DEPENDENCIES });
@@ -47,6 +50,8 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
 
       updateCurrentWebviewPanel(resp);
 
+      outputChannelDep.info(`done generating stack analysis report for "${manifestFilePath}"`);
+
       p.report({ message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS });
 
       return resp;
@@ -54,6 +59,8 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
       p.report({ message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS });
 
       updateCurrentWebviewPanel('error');
+
+      outputChannelDep.error(buildErrorMessage(err));
 
       throw err;
     }

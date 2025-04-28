@@ -7,6 +7,8 @@ import { globalConfig } from './config';
 import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
 import { updateCurrentWebviewPanel } from './rhda';
+import { outputChannelDep } from './extension';
+import { buildErrorMessage } from './utils';
 
 /**
  * Represents options for image analysis.
@@ -182,6 +184,7 @@ class DockerImageAnalysis implements IImageAnalysis {
             p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
             try {
+                outputChannelDep.info(`generating image analysis report for "${this.filePath}"`);
 
                 // execute image analysis
                 const promise = imageAnalysisService(this.images, this.options);
@@ -192,11 +195,15 @@ class DockerImageAnalysis implements IImageAnalysis {
 
                 p.report({ message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS });
 
+                outputChannelDep.info(`done generating image analysis report for "${this.filePath}"`);
+
                 this.imageAnalysisReportHtml = resp;
             } catch (error) {
                 p.report({ message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS });
 
                 updateCurrentWebviewPanel('error');
+
+                outputChannelDep.error(buildErrorMessage(error));
 
                 throw error;
             }

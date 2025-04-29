@@ -42,7 +42,7 @@ suite('RHDA module', () => {
         sandbox.restore();
     });
 
-    test('should ignore unsoported file', async () => {
+    test('should ignore unsupported file', async () => {
         const unsupportedFilePath = mockInvalidPath;
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').resolves(mockReponse)
@@ -54,7 +54,7 @@ suite('RHDA module', () => {
         expect(authorizeRHDAStub.calledOnce).to.be.false;
         expect(stackAnalysisServiceStub.calledOnce).to.be.false;
         expect(imageAnalysisServiceStub.calledOnce).to.be.false;
-        expect(showInformationMessageSpy.calledOnceWith(`File ${unsupportedFilePath} is not supported!!`)).to.be.true;
+        expect(showInformationMessageSpy.calledOnceWith(`File ${unsupportedFilePath} is not supported.`)).to.be.true;
     });
 
     test('should receive RHDA report for supported dependency file and successfully save HTML data locally', async () => {

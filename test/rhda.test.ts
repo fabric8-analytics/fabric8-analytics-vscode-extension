@@ -60,9 +60,7 @@ suite('RHDA module', () => {
     test('should receive RHDA report for supported dependency file and successfully save HTML data locally', async () => {
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').resolves(mockReponse)
-        const writeFileStub = sandbox.stub(fs, 'writeFile').callsFake((path, data, callback) => {
-            callback(null);
-        });
+        const writeFileStub = sandbox.stub(fs.promises, 'writeFile').resolves(null)
 
         await rhda.generateRHDAReport(context, mockGoPath);
 
@@ -74,9 +72,7 @@ suite('RHDA module', () => {
     test('should receive RHDA report for supported image file and successfully save HTML data locally', async () => {
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const imageAnalysisServiceStub = sandbox.stub(imageAnalysis, 'executeDockerImageAnalysis').resolves(mockReponse)
-        const writeFileStub = sandbox.stub(fs, 'writeFile').callsFake((path, data, callback) => {
-            callback(null);
-        });
+        const writeFileStub = sandbox.stub(fs.promises, 'writeFile').resolves(null)
 
         await rhda.generateRHDAReport(context, mockDockerfilePath);
 
@@ -118,9 +114,7 @@ suite('RHDA module', () => {
     test('should generate RHDA report for supported file successfully but fail to save HTML locally', async () => {
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').resolves(mockReponse)
-        const writeFileStub = sandbox.stub(fs, 'writeFile').callsFake((path, data, callback) => {
-            callback(new Error('Mock Error'));
-        });
+        const writeFileStub = sandbox.stub(fs.promises, 'writeFile').throws(new Error('Mock Error'))
 
         await rhda.generateRHDAReport(context, mockNpmPath)
             .then(() => {
@@ -156,9 +150,7 @@ suite('RHDA module', () => {
     test('should trigger and update webview panel', async () => {
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').resolves(mockReponse)
-        const writeFileStub = sandbox.stub(fs, 'writeFile').callsFake((path, data, callback) => {
-            callback(null);
-        });
+        const writeFileStub = sandbox.stub(fs.promises, 'writeFile').resolves(null)
 
         await rhda.generateRHDAReport(context, mockGradlePath);
 

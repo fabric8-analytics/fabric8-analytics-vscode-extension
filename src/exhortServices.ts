@@ -59,19 +59,20 @@ async function tokenValidationService(options: object, source: string): Promise<
     // Get token validation status code
     const tokenValidationStatus = await exhort.validateToken(options);
 
-    if (tokenValidationStatus === 200) {
-      vscode.window.showInformationMessage(`${source} token validated successfully`);
-      return;
-    } else if (tokenValidationStatus === 400) {
-      return `Missing token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
-    } else if (tokenValidationStatus === 401) {
-      return `Invalid token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
-    } else if (tokenValidationStatus === 403) {
-      return `Forbidden. The token does not have permissions. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
-    } else if (tokenValidationStatus === 429) {
-      return `Too many requests. Rate limit exceeded. Please try again in a little while. Status: ${tokenValidationStatus}`;
-    } else {
-      return `Failed to validate token. Status: ${tokenValidationStatus}`;
+    switch (tokenValidationStatus) {
+      case 200:
+        vscode.window.showInformationMessage(`${source} token validated successfully`);
+        return;
+      case 400:
+        return `Missing token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
+      case 401:
+        return `Invalid token. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
+      case 403:
+        return `Forbidden. The token does not have permissions. Please provide a valid ${source} Token in the extension workspace settings. Status: ${tokenValidationStatus}`;
+      case 429:
+        return `Too many requests. Rate limit exceeded. Please try again in a little while. Status: ${tokenValidationStatus}`;
+      default:
+        return `Failed to validate token. Status: ${tokenValidationStatus}`;
     }
   } catch (error) {
     return `Failed to validate token, Error: ${error.message}`;

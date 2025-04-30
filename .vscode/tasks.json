@@ -36,8 +36,8 @@
         ],
         "background": {
           "activeOnStart": true,
-          "beginsPattern": "Compilation \\w+ starting…",
-          "endsPattern": "Compilation\\s+finished"
+          "beginsPattern": "assets by status",
+          "endsPattern": "compiled successfully in"
         }
       }
     }

@@ -10,9 +10,12 @@ import { globalConfig } from '../src/config';
 import * as rhda from '../src/rhda'
 import { context } from './vscontext.mock';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
+import { DepOutputChannel } from '../src/depOutputChannel';
 
 const expect = chai.expect;
 chai.use(sinonChai);
+const outputChannel = new DepOutputChannel('test')
+
 
 suite('RHDA module', () => {
     let sandbox: sinon.SinonSandbox;
@@ -49,7 +52,7 @@ suite('RHDA module', () => {
         const imageAnalysisServiceStub = sandbox.stub(imageAnalysis, 'executeDockerImageAnalysis').resolves(mockReponse)
         const showInformationMessageSpy = sandbox.spy(vscode.window, 'showInformationMessage');
 
-        await rhda.generateRHDAReport(context, unsupportedFilePath);
+        await rhda.generateRHDAReport(context, unsupportedFilePath, outputChannel);
 
         expect(authorizeRHDAStub.calledOnce).to.be.false;
         expect(stackAnalysisServiceStub.calledOnce).to.be.false;
@@ -62,7 +65,7 @@ suite('RHDA module', () => {
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').resolves(mockReponse)
         const writeFileStub = sandbox.stub(fs.promises, 'writeFile').resolves(null)
 
-        await rhda.generateRHDAReport(context, mockGoPath);
+        await rhda.generateRHDAReport(context, mockGoPath, outputChannel);
 
         expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(stackAnalysisServiceStub.calledOnce).to.be.true;
@@ -74,7 +77,7 @@ suite('RHDA module', () => {
         const imageAnalysisServiceStub = sandbox.stub(imageAnalysis, 'executeDockerImageAnalysis').resolves(mockReponse)
         const writeFileStub = sandbox.stub(fs.promises, 'writeFile').resolves(null)
 
-        await rhda.generateRHDAReport(context, mockDockerfilePath);
+        await rhda.generateRHDAReport(context, mockDockerfilePath, outputChannel);
 
         expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(imageAnalysisServiceStub.calledOnce).to.be.true;
@@ -85,7 +88,7 @@ suite('RHDA module', () => {
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').rejects(new Error('Mock Error'));
 
-        await rhda.generateRHDAReport(context, mockMavenPath)
+        await rhda.generateRHDAReport(context, mockMavenPath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'))
             })
@@ -100,7 +103,7 @@ suite('RHDA module', () => {
         const authorizeRHDAStub = sandbox.stub(globalConfig, 'authorizeRHDA').resolves();
         const imageAnalysisServiceStub = sandbox.stub(imageAnalysis, 'executeDockerImageAnalysis').rejects(new Error('Mock Error'));
 
-        await rhda.generateRHDAReport(context, mockContainerfilePath)
+        await rhda.generateRHDAReport(context, mockContainerfilePath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'))
             })
@@ -116,7 +119,7 @@ suite('RHDA module', () => {
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').resolves(mockReponse)
         const writeFileStub = sandbox.stub(fs.promises, 'writeFile').throws(new Error('Mock Error'))
 
-        await rhda.generateRHDAReport(context, mockNpmPath)
+        await rhda.generateRHDAReport(context, mockNpmPath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'))
             })
@@ -134,7 +137,7 @@ suite('RHDA module', () => {
         sandbox.stub(fs, 'existsSync').returns(false);
         const mkdirSyncStub = sandbox.stub(fs, 'mkdirSync').throws(new Error('Mock Error'));
 
-        await rhda.generateRHDAReport(context, mockPythonPath)
+        await rhda.generateRHDAReport(context, mockPythonPath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'))
 
@@ -152,7 +155,7 @@ suite('RHDA module', () => {
         const stackAnalysisServiceStub = sandbox.stub(stackAnalysis, 'executeStackAnalysis').resolves(mockReponse)
         const writeFileStub = sandbox.stub(fs.promises, 'writeFile').resolves(null)
 
-        await rhda.generateRHDAReport(context, mockGradlePath);
+        await rhda.generateRHDAReport(context, mockGradlePath, outputChannel);
 
         expect(authorizeRHDAStub.calledOnce).to.be.true;
         expect(stackAnalysisServiceStub.calledOnce).to.be.true;

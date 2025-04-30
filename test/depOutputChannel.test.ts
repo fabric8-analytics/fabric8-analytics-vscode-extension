@@ -61,7 +61,7 @@ suite('DepOutputChannel module', () => {
 
   test('addMsgOutputChannel should call add() once', () => {
     const depOutputChannel = new DepOutputChannel();
-    const appendStub = sandbox.stub(depOutputChannel.outputChannel, 'append');
+    const appendStub = sandbox.stub(depOutputChannel.outputChannel, 'appendLine');
 
     depOutputChannel.info('Mock Message');
 

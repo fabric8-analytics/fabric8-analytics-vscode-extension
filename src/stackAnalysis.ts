@@ -6,15 +6,15 @@ import { StatusMessages, Titles } from './constants';
 import { stackAnalysisService } from './exhortServices';
 import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
-import { outputChannelDep } from './extension';
 import { buildErrorMessage } from './utils';
+import { DepOutputChannel } from './depOutputChannel';
 
 /**
  * Executes the RHDA stack analysis process.
  * @param manifestFilePath The file path to the manifest file for analysis.
  * @returns The stack analysis response string.
  */
-export async function executeStackAnalysis(manifestFilePath: string): Promise<string> {
+export async function executeStackAnalysis(manifestFilePath: string, outputChannel: DepOutputChannel): Promise<string> {
   return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
     p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
@@ -40,7 +40,7 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
 
     // execute stack analysis
     try {
-      outputChannelDep.info(`generating stack analysis report for "${manifestFilePath}"`);
+      outputChannel.info(`generating stack analysis report for "${manifestFilePath}"`);
 
       const promise = stackAnalysisService(manifestFilePath, options);
 
@@ -50,7 +50,7 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
 
       updateCurrentWebviewPanel(resp);
 
-      outputChannelDep.info(`done generating stack analysis report for "${manifestFilePath}"`);
+      outputChannel.info(`done generating stack analysis report for "${manifestFilePath}"`);
 
       p.report({ message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS });
 
@@ -60,7 +60,7 @@ export async function executeStackAnalysis(manifestFilePath: string): Promise<st
 
       updateCurrentWebviewPanel('error');
 
-      outputChannelDep.error(buildErrorMessage(err));
+      outputChannel.error(buildErrorMessage(err));
 
       throw err;
     }

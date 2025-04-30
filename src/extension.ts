@@ -45,7 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
         record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
       }
       try {
-        await generateRHDAReport(context, filePath);
+        await generateRHDAReport(context, filePath, outputChannelDep);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
         const message = applySettingNameMappings(error.message);
@@ -249,7 +249,7 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   const invokeFullStackReport = async (filePath: string) => {
     const fileName = path.basename(filePath);
     try {
-      await generateRHDAReport(context, filePath);
+      await generateRHDAReport(context, filePath, outputChannelDep);
       record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
     } catch (error) {
       const message = applySettingNameMappings(error.message);

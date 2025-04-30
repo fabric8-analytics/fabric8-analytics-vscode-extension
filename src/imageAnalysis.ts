@@ -7,8 +7,8 @@ import { globalConfig } from './config';
 import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
 import { updateCurrentWebviewPanel } from './rhda';
-import { outputChannelDep } from './extension';
 import { buildErrorMessage } from './utils';
+import { DepOutputChannel } from './depOutputChannel';
 
 /**
  * Represents options for image analysis.
@@ -81,6 +81,7 @@ class DockerImageAnalysis implements IImageAnalysis {
     images: IImageRef[] = [];
     imageAnalysisReportHtml: string = '';
     filePath: string;
+    outputChannel: DepOutputChannel;
 
     /**
      * Regular expression for matching 'FROM' statements.
@@ -102,10 +103,11 @@ class DockerImageAnalysis implements IImageAnalysis {
      */
     AS_REGEX: RegExp = /\s+AS\s+\S+/gi;
 
-    constructor(filePath: string) {
+    constructor(filePath: string, outputChannel: DepOutputChannel) {
         const lines = this.parseTxtDoc(filePath);
         this.filePath = filePath;
         this.images = this.collectImages(lines);
+        this.outputChannel = outputChannel;
     }
 
     parseTxtDoc(filePath: string): string[] {
@@ -184,7 +186,7 @@ class DockerImageAnalysis implements IImageAnalysis {
             p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
             try {
-                outputChannelDep.info(`generating image analysis report for "${this.filePath}"`);
+                this.outputChannel.info(`generating image analysis report for "${this.filePath}"`);
 
                 // execute image analysis
                 const promise = imageAnalysisService(this.images, this.options);
@@ -195,7 +197,7 @@ class DockerImageAnalysis implements IImageAnalysis {
 
                 p.report({ message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS });
 
-                outputChannelDep.info(`done generating image analysis report for "${this.filePath}"`);
+                this.outputChannel.info(`done generating image analysis report for "${this.filePath}"`);
 
                 this.imageAnalysisReportHtml = resp;
             } catch (error) {
@@ -203,7 +205,7 @@ class DockerImageAnalysis implements IImageAnalysis {
 
                 updateCurrentWebviewPanel('error');
 
-                outputChannelDep.error(buildErrorMessage(error));
+                this.outputChannel.error(buildErrorMessage(error));
 
                 throw error;
             }
@@ -216,8 +218,8 @@ class DockerImageAnalysis implements IImageAnalysis {
  * @param filePath - The path to the image file to analyze.
  * @returns A Promise resolving to an Analysis Report HTML.
  */
-async function executeDockerImageAnalysis(filePath: string): Promise<string> {
-    const dockerImageAnalysis = new DockerImageAnalysis(filePath);
+async function executeDockerImageAnalysis(filePath: string, outputChannel: DepOutputChannel): Promise<string> {
+    const dockerImageAnalysis = new DockerImageAnalysis(filePath, outputChannel);
     await dockerImageAnalysis.runImageAnalysis();
     return dockerImageAnalysis.imageAnalysisReportHtml;
 }

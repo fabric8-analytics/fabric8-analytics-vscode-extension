@@ -7,9 +7,11 @@ import * as exhortServices from '../src/exhortServices';
 import { globalConfig } from '../src/config';
 import { executeDockerImageAnalysis } from '../src/imageAnalysis'
 import * as rhda from '../src/rhda'
+import { DepOutputChannel } from '../src/depOutputChannel';
 
 const expect = chai.expect;
 chai.use(sinonChai);
+const outputChannel = new DepOutputChannel('test')
 
 suite('ImageAnalysis module', () => {
     let sandbox: sinon.SinonSandbox;
@@ -45,7 +47,7 @@ FROM scratch
         sandbox.stub(fs, 'readFileSync').returns(encodedMockFileContent);
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
 
-        const response = await executeDockerImageAnalysis(mockPath);
+        const response = await executeDockerImageAnalysis(mockPath, outputChannel);
 
         expect(imageAnalysisServiceStub.calledOnce).to.be.true;
         expect(response).to.eq(mockReponse);
@@ -57,7 +59,7 @@ FROM scratch
         sandbox.stub(fs, 'readFileSync').returns(encodedMockFileContent);
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
 
-        await executeDockerImageAnalysis(mockPath)
+        await executeDockerImageAnalysis(mockPath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'))
             })
@@ -72,7 +74,7 @@ FROM scratch
         sandbox.stub(fs, 'readFileSync').throws(new Error('Mock Error'));
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
 
-        await executeDockerImageAnalysis(mockPath)
+        await executeDockerImageAnalysis(mockPath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'))
             })

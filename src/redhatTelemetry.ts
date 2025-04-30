@@ -66,7 +66,7 @@ async function startUp(context: vscode.ExtensionContext) {
  * @param context The extension context.
  * @returns A promise resolving to the telemetry ID.
  */
-async function getTelemetryId(context) {
+async function getTelemetryId(context: vscode.ExtensionContext) {
   const redhatService = await getRedHatService(context);
   const redhatIdProvider = await redhatService.getIdProvider();
   const telemetryId = await redhatIdProvider.getRedHatUUID();

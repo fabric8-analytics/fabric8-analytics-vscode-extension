@@ -8,6 +8,7 @@ import { executeStackAnalysis } from './stackAnalysis';
 import { DependencyReportPanel } from './dependencyReportPanel';
 import { globalConfig } from './config';
 import { executeDockerImageAnalysis } from './imageAnalysis';
+import { DepOutputChannel } from './depOutputChannel';
 
 /**
  * Represents supported file types for analysis.
@@ -96,15 +97,15 @@ async function writeReportToFile(data: string) {
  * @param filePath The path of the file for analysis.
  * @returns A promise that resolves once the report generation is complete.
  */
-async function generateRHDAReport(context: vscode.ExtensionContext, filePath: string) {
+async function generateRHDAReport(context: vscode.ExtensionContext, filePath: string, outputChannel: DepOutputChannel) {
   const fileType = getFileType(filePath);
   if (fileType) {
     await triggerWebviewPanel(context);
     let resp: string;
     if (fileType === 'docker') {
-      resp = await executeDockerImageAnalysis(filePath);
+      resp = await executeDockerImageAnalysis(filePath, outputChannel);
     } else {
-      resp = await executeStackAnalysis(filePath);
+      resp = await executeStackAnalysis(filePath, outputChannel);
     }
     /* istanbul ignore else */
     if (DependencyReportPanel.currentPanel) {

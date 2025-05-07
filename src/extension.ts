@@ -16,6 +16,10 @@ import { applySettingNameMappings, buildLogErrorMessage } from './utils';
 import { clearCodeActionsMap, getDiagnosticsCodeActions } from './codeActionHandler';
 import { AnalysisMatcher } from './fileHandler';
 import { EventEmitter } from 'node:events';
+import { llmAnalysis } from './llmAnalysis';
+import { LLMAnalysisReportPanel, ReportData } from './llmAnalysisReportPanel';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import CliTable3 = require('cli-table3');
 
 export let outputChannelDep: DepOutputChannel;
 
@@ -52,6 +56,110 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
+
+  const llmAnalysisDiagnosticsCollection = vscode.languages.createDiagnosticCollection('rhdaLLM');
+  context.subscriptions.push(llmAnalysisDiagnosticsCollection);
+  const llmAnalysisDataPerDoc = new Map<vscode.Uri, Map<vscode.Range, ReportData>>();
+
+  context.subscriptions.push(vscode.languages.registerCodeActionsProvider('*',
+    new class implements vscode.CodeActionProvider {
+      // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-unused-vars
+      provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
+        if (!(context.diagnostics[0].code?.toString() === 'rhdallm')) {
+          return;
+        }
+
+        // document.getText(context.diagnostics[0].range)
+
+        return [{
+          title: 'Open LLM Evaluation Report',
+          command: {
+            command: commands.LLM_MODELS_ANALYSIS_REPORT,
+            title: 'Show LLM Analysis Report',
+            arguments: [document.getText(context.diagnostics[0].range), document.uri, context.diagnostics[0].range],
+          },
+          kind: vscode.CodeActionKind.QuickFix
+        }];
+      }
+    }(), {
+    providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
+  }));
+
+  const indexOfSubstrings = function* (str: string, searchValue: string) {
+    let i = 0;
+    while (true) {
+      const r = str.indexOf(searchValue, i);
+      if (r !== -1) {
+        yield r;
+        i = r + 1;
+      } else { return; }
+    }
+  };
+
+  const doLLMAnalysis = async (doc: vscode.TextDocument) => {
+    const text = doc.getText();
+    const diagnostics: vscode.Diagnostic[] = [];
+    const rangeToData = new Map<vscode.Range, ReportData>();
+    llmAnalysisDataPerDoc.set(doc.uri, rangeToData);
+
+    const LLAMA_MODEL_NAME = 'meta-llama/Llama-3.1-8B-Instruct';
+
+    for (const match of indexOfSubstrings(text, LLAMA_MODEL_NAME)) {
+      const warnings = await llmAnalysis(LLAMA_MODEL_NAME);
+      if (!warnings?.length) {
+        return;
+      }
+
+      const table = new CliTable3({
+        head: ['Safety Metric', 'Score', 'Assessment'],
+        chars: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'top': '', 'top-mid': '', 'top-left': '', 'top-right': '',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'left': '', 'left-mid': '', 'mid': '─', 'mid-mid': '',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'right': '', 'right-mid': '', 'middle': ' '
+        },
+        style: { compact: true, border: [], head: [] },
+      });
+
+      for (const warning of warnings) {
+        table.push([warning.task, warning.score.toFixed(3), warning.assessment]);
+      }
+
+      const startPos = doc.positionAt(match);
+      const endPos: vscode.Position = new vscode.Position(startPos.line, startPos.character + LLAMA_MODEL_NAME.length);
+      const range = new vscode.Range(startPos, endPos);
+
+      rangeToData.set(range, { model: LLAMA_MODEL_NAME, tasks: warnings.map(w => w.task), scores: warnings.map(w => w.score) });
+
+      diagnostics.push({
+        range: range,
+        message: table.toString() + `\n\nRecommendation: Based on TrustyAI LLM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.\n`,
+        severity: vscode.DiagnosticSeverity.Information,
+        source: 'Red Hat LLM Dependency Analytics',
+        code: `rhdallm`
+      });
+    }
+
+    llmAnalysisDiagnosticsCollection.set(doc.uri, diagnostics);
+  };
+
+  vscode.workspace.textDocuments.forEach(doLLMAnalysis);
+  vscode.workspace.onDidOpenTextDocument(doLLMAnalysis);
+  vscode.workspace.onDidChangeTextDocument((event) => doLLMAnalysis(event.document));
+
+  const disposableLLMAnalysisReportCommand = vscode.commands.registerCommand(
+    commands.LLM_MODELS_ANALYSIS_REPORT,
+    async (model: string, uri: vscode.Uri, range: vscode.Range) => {
+      LLMAnalysisReportPanel.createOrShowPanel();
+      LLMAnalysisReportPanel.currentPanel?.updatePanel({
+        model, scores: llmAnalysisDataPerDoc.get(uri).get(range).scores, tasks: llmAnalysisDataPerDoc.get(uri).get(range).tasks
+      });
+    }
+  );
 
   const disposableStackAnalysisCommand = vscode.commands.registerCommand(
     commands.STACK_ANALYSIS_COMMAND,
@@ -142,6 +250,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
+    disposableLLMAnalysisReportCommand,
     disposableStackAnalysisCommand,
     disposableStackLogsCommand,
     disposableTrackRecommendationAcceptance,

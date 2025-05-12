@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -33,9 +33,9 @@ jobs:
 
       - name: Create .npmrc
         run: |
-          echo "@trustification:registry=https://npm.pkg.github.com" > ~/.npmrc
-          echo "@fabric8-analytics:registry=https://npm.pkg.github.com" >> ~/.npmrc
-      
+          echo "@trustification:registry=https://npm.pkg.github.com" > .npmrc
+          echo "@fabric8-analytics:registry=https://npm.pkg.github.com" >> .npmrc
+
       - name: Install @vscode/vsce
         run: npm i -g @vscode/vsce
 

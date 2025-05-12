@@ -237,6 +237,12 @@
           "description": "Specifies absolute path of npm executable.",
           "scope": "window"
         },
+        "redHatDependencyAnalytics.pnpm.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of pnpm executable.",
+          "scope": "window"
+        },
         "redHatDependencyAnalytics.go.executable.path": {
           "type": "string",
           "default": "",
@@ -383,9 +389,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.28",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.31",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
-    "@trustification/exhort-javascript-api": "^0.1.1-ea.62",
+    "@trustification/exhort-javascript-api": "^0.1.1-ea.67",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

@@ -33,7 +33,7 @@ jobs:
 
       - name: Create .npmrc
         run: |
-          echo "@RHEcosystemAppEng:registry=https://npm.pkg.github.com" > ~/.npmrc
+          echo "@trustification:registry=https://npm.pkg.github.com" > ~/.npmrc
           echo "@fabric8-analytics:registry=https://npm.pkg.github.com" >> ~/.npmrc
       
       - name: Install @vscode/vsce

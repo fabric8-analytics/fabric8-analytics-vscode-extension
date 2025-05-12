@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Red Hat Dependency Analytics",
   "description": "Provides insights on security vulnerabilities in your application dependencies.",
-  "version": "0.9.5",
+  "version": "0.9.10",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -215,6 +215,16 @@
           "description": "Specifies absolute path of mvn executable.",
           "scope": "window"
         },
+        "redHatDependencyAnalytics.mvn.preferWrapper": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false",
+            "fallback"
+          ],
+          "default": "fallback",
+          "markdownDescription": "Specifies whether to use the local maven wrapper. The 'fallback' option will default to the value of `#maven.executable.preferMavenWrapper#` from the `Maven for Java` extension, else defaulting to 'true'."
+        },
         "redHatDependencyAnalytics.gradle.executable.path": {
           "type": "string",
           "default": "",
@@ -373,9 +383,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.26",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.9.4-ea.28",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
-    "@RHEcosystemAppEng/exhort-javascript-api": "^0.1.1-ea.50",
+    "@trustification/exhort-javascript-api": "^0.1.1-ea.62",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "vscode-languageclient": "^8.1.0"

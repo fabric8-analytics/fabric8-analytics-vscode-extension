@@ -19,3 +19,12 @@ export function applySettingNameMappings(message: string): string {
 
     return modifiedMessage;
 }
+
+export function buildErrorMessage(error: Error): string {
+    let message = error.message;
+    while (error.cause) {
+        message = `${message}: ${(error.cause as Error).message}`;
+        error = error.cause as Error;
+    }
+    return message;
+}

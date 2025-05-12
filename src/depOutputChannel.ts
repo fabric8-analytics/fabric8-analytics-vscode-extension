@@ -18,34 +18,26 @@ export class DepOutputChannel {
   }
 
   /**
-   * Retrieves the VS Code OutputChannel instance.
-   * Clears the channel before returning.
-   * @returns The VS Code OutputChannel instance.
-   */
-  getOutputChannel(): vscode.OutputChannel {
-    this.outputChannel.clear();
-    return this.outputChannel;
-  }
-
-  /**
    * Shows the output channel in the VS Code UI.
    */
-  showOutputChannel(): void {
+  show(): void {
     this.outputChannel.show();
   }
 
   /**
    * Clears the content of the output channel.
    */
-  clearOutputChannel(): void {
+  clear(): void {
     this.outputChannel.clear();
   }
 
-  /**
-   * Appends a message to the output channel.
-   * @param msg The message to append to the output channel.
-   */
-  addMsgOutputChannel(msg: string): void {
-    this.outputChannel.append(msg);
+  debug(msg: string) { this.write('DEBUG', msg); }
+  info(msg: string) { this.write('INFO', msg); }
+  warn(msg: string) { this.write('WARN', msg); }
+  error(msg: string) { this.write('ERROR', msg); }
+
+  private write(label: string, msg: string): void {
+    const datetime = new Date().toLocaleString();
+    this.outputChannel.appendLine(`${label} ${datetime}: ${msg}`);
   }
 }

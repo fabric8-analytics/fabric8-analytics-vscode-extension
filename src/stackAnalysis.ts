@@ -32,6 +32,7 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
       'EXHORT_GRADLE_PATH': globalConfig.exhortGradlePath,
       'EXHORT_NPM_PATH': globalConfig.exhortNpmPath,
       'EXHORT_PNPM_PATH': globalConfig.exhortPnpmPath,
+      'EXHORT_YARN_PATH': globalConfig.exhortYarnPath,
       'EXHORT_GO_PATH': globalConfig.exhortGoPath,
       'EXHORT_PYTHON3_PATH': globalConfig.exhortPython3Path,
       'EXHORT_PIP3_PATH': globalConfig.exhortPip3Path,

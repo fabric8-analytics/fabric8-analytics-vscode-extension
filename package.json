@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Red Hat Dependency Analytics",
   "description": "Provides insights on security vulnerabilities in your application dependencies.",
-  "version": "0.9.10",
+  "version": "0.9.13",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,
@@ -379,7 +379,7 @@
     "ts-loader": "^9.5.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
-    "webpack": "^5.88.2",
+    "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {

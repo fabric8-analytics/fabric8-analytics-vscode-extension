@@ -28,7 +28,7 @@ suite('DepOutputChannel module', () => {
   test('getOutputChannel should return OutputChannel with default name', () => {
     const depOutputChannel = new DepOutputChannel();
 
-    let outputChannel = depOutputChannel.getOutputChannel();
+    let outputChannel = depOutputChannel.outputChannel
 
     expect(outputChannel.name).equals(Titles.EXT_TITLE);
   });
@@ -36,7 +36,7 @@ suite('DepOutputChannel module', () => {
   test('getOutputChannel should return OutputChannel with custom name', () => {
     const depOutputChannel = new DepOutputChannel('Mock Channel');
 
-    let outputChannel = depOutputChannel.getOutputChannel();
+    let outputChannel = depOutputChannel.outputChannel
 
     expect(outputChannel.name).equals('Mock Channel');
   });
@@ -45,7 +45,7 @@ suite('DepOutputChannel module', () => {
     const depOutputChannel = new DepOutputChannel();
     const showStub = sandbox.stub(depOutputChannel.outputChannel, 'show');
 
-    depOutputChannel.showOutputChannel();
+    depOutputChannel.show();
 
     expect(showStub).to.be.calledOnce;
   });
@@ -54,16 +54,16 @@ suite('DepOutputChannel module', () => {
     const depOutputChannel = new DepOutputChannel();
     const clearStub = sandbox.stub(depOutputChannel.outputChannel, 'clear');
 
-    depOutputChannel.clearOutputChannel();
+    depOutputChannel.clear();
 
     expect(clearStub).to.be.calledOnce;
   });
 
   test('addMsgOutputChannel should call add() once', () => {
     const depOutputChannel = new DepOutputChannel();
-    const appendStub = sandbox.stub(depOutputChannel.outputChannel, 'append');
+    const appendStub = sandbox.stub(depOutputChannel.outputChannel, 'appendLine');
 
-    depOutputChannel.addMsgOutputChannel('Mock Message');
+    depOutputChannel.info('Mock Message');
 
     expect(appendStub).to.be.calledOnce;
   });

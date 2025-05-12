@@ -7,9 +7,11 @@ import { globalConfig } from '../src/config';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
 import { executeStackAnalysis } from '../src/stackAnalysis'
 import * as templates from '../src/template';
+import { DepOutputChannel } from '../src/depOutputChannel';
 
 const expect = chai.expect;
 chai.use(sinonChai);
+const outputChannel = new DepOutputChannel('test')
 
 suite('StackAnalysis module', () => {
   let sandbox: sinon.SinonSandbox;
@@ -35,7 +37,7 @@ suite('StackAnalysis module', () => {
   test('should generate RHDA report for supported file', async () => {
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
 
-    await executeStackAnalysis(mockPath);
+    await executeStackAnalysis(mockPath, outputChannel);
 
     expect(stackAnalysisServiceStub.calledOnce).to.be.true;
     expect(DependencyReportPanel.data).to.eq(mockReponse);
@@ -44,7 +46,7 @@ suite('StackAnalysis module', () => {
   test('should fail to generate RHDA report for supported file', async () => {
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').rejects(new Error('Mock Error'));
 
-    await executeStackAnalysis(mockPath)
+    await executeStackAnalysis(mockPath, outputChannel)
       .then(() => {
         throw (new Error('should have thrown error'))
       })

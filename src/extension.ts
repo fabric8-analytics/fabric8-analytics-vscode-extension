@@ -18,8 +18,7 @@ import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
-// import { validateSnykToken } from './tokenValidation';
-import { applySettingNameMappings } from './utils';
+import { applySettingNameMappings, buildErrorMessage } from './utils';
 
 let lspClient: LanguageClient;
 
@@ -46,11 +45,12 @@ export function activate(context: vscode.ExtensionContext) {
         record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
       }
       try {
-        await generateRHDAReport(context, filePath);
+        await generateRHDAReport(context, filePath, outputChannelDep);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
         const message = applySettingNameMappings(error.message);
         vscode.window.showErrorMessage(message);
+        outputChannelDep.error(buildErrorMessage(error));
         record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
       }
     }
@@ -60,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
     commands.STACK_LOGS_COMMAND,
     () => {
       if (outputChannelDep) {
-        outputChannelDep.showOutputChannel();
+        outputChannelDep.show();
       } else {
         vscode.window.showInformationMessage(StatusMessages.WIN_SHOW_LOGS);
       }
@@ -80,26 +80,6 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   );
-
-  // const disposableSetSnykToken = vscode.commands.registerCommand(
-  //   commands.SET_SNYK_TOKEN_COMMAND,
-  //   async () => {
-  //     const token = await vscode.window.showInputBox({
-  //       prompt: 'Please enter your Snyk Token:',
-  //       placeHolder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-  //       password: true,
-  //       validateInput: validateSnykToken
-  //     });
-
-  //     if (token === undefined) {
-  //       return;
-  //     } else if (token === '') {
-  //       await globalConfig.clearSnykToken(true);
-  //     } else {
-  //       await globalConfig.setSnykToken(token);
-  //     }
-  //   }
-  // );
 
   registerStackAnalysisCommands(context);
 
@@ -130,6 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
       const clientOptions: LanguageClientOptions = {
         documentSelector: [
           { scheme: 'file', language: 'json' },
+          { scheme: 'file', language: 'jsonc' },
           { scheme: 'file', language: 'xml' },
           { scheme: 'file', language: 'plaintext' },
           { scheme: 'file', language: 'pip-requirements' },
@@ -157,8 +138,7 @@ export function activate(context: vscode.ExtensionContext) {
           if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
             record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
             vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
-          }
-          else {
+          } else {
             record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
           }
         };
@@ -194,19 +174,12 @@ export function activate(context: vscode.ExtensionContext) {
     })
     .catch(error => {
       vscode.window.showErrorMessage(`Failed to Authorize Red Hat Dependency Analytics extension: ${error.message}`);
-      throw (error);
+      throw error;
     });
 
   vscode.workspace.onDidChangeConfiguration(() => {
     globalConfig.loadData();
   });
-
-  // context.secrets.onDidChange(async (e) => {
-  //   if (e.key === SNYK_TOKEN_KEY) {
-  //     const token = await globalConfig.getSnykToken();
-  //     lspClient.sendNotification('snykTokenModified', token);
-  //   }
-  // });
 }
 
 /**
@@ -214,10 +187,7 @@ export function activate(context: vscode.ExtensionContext) {
  * @returns A `Thenable` for void.
  */
 export function deactivate(): Thenable<void> {
-  if (!lspClient) {
-    return undefined;
-  }
-  return lspClient.stop();
+  return lspClient?.stop();
 }
 
 /**
@@ -263,10 +233,10 @@ function redirectToRedHatCatalog() {
  * Shows a notification regarding Red Hat Dependency Analytics recommendations.
  */
 function showRHRepositoryRecommendationNotification() {
-  const msg = `Important: If you apply Red Hat Dependency Analytics recommendations, 
-                  make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. 
-                  This ensures that the applied dependencies work correctly. 
-                  Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
+  const msg = 'Important: If you apply Red Hat Dependency Analytics recommendations, ' +
+    `make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. ` +
+    'This ensures that the applied dependencies work correctly. ' +
+    `Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
   vscode.window.showWarningMessage(msg);
 }
 
@@ -279,11 +249,12 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   const invokeFullStackReport = async (filePath: string) => {
     const fileName = path.basename(filePath);
     try {
-      await generateRHDAReport(context, filePath);
+      await generateRHDAReport(context, filePath, outputChannelDep);
       record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
     } catch (error) {
       const message = applySettingNameMappings(error.message);
       vscode.window.showErrorMessage(message);
+      outputChannelDep.error(buildErrorMessage(error));
       record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
     }
   };

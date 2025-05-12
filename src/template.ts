@@ -265,23 +265,24 @@ export const LOADER_TEMPLATE = `<!DOCTYPE html>
 export const ERROR_TEMPLATE = `<!DOCTYPE html>
     <html lang="en">
     <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-    html,body {
-    width: 99%;
-    height: 99%;
-    font-size: 16px;
-    }
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+        html,body {
+            width: 99%;
+            height: 99%;
+            font-size: 16px;
+        }
 
-    body {
-    background: #ffffff;
-    }
+        body {
+            background: #ffffff;
+        }
 
-    </style>
+        </style>
     </head>
     <body>
-    <div>
-    <p style='color:#000000;text-align: center;'>Unable to analyze your stack.</p>
-    </div>
-    </body></html>`;
+        <div>
+            <p style='color:#000000;text-align: center;'>Unable to analyze your stack.</p>
+        </div>
+    </body>
+    </html>`;

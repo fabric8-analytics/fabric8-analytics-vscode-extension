@@ -21,6 +21,7 @@ class Config {
   usePipDepTree: string;
   vulnerabilityAlertSeverity: string;
   exhortMvnPath: string;
+  exhortPreferMvnw: string;
   exhortGradlePath: string;
   exhortNpmPath: string;
   exhortGoPath: string;
@@ -74,6 +75,10 @@ class Config {
   loadData() {
     const rhdaConfig = this.getRhdaConfig();
 
+    const rhdaPreferMavenWrapper = vscode.workspace.getConfiguration('redHatDependencyAnalytics.mvn').get('preferWrapper') as 'true' | 'false' | 'fallback';
+    const msftPreferMavenWrapper = vscode.workspace.getConfiguration('maven.executable').get('preferMavenWrapper', true);
+    const preferMavenWrapper = rhdaPreferMavenWrapper === 'fallback' ? msftPreferMavenWrapper : rhdaPreferMavenWrapper === 'true';
+
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
@@ -91,6 +96,7 @@ class Config {
     /* istanbul ignore next */
     this.rhdaReportFilePath = rhdaConfig.reportFilePath || DEFAULT_RHDA_REPORT_FILE_PATH;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
+    this.exhortPreferMvnw = preferMavenWrapper.toString();
     this.exhortGradlePath = rhdaConfig.gradle.executable.path || this.DEFAULT_GRADLE_EXECUTABLE;
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
     this.exhortGoPath = rhdaConfig.go.executable.path || this.DEFAULT_GO_EXECUTABLE;
@@ -122,6 +128,7 @@ class Config {
     process.env['VSCEXT_USE_PIP_DEP_TREE'] = this.usePipDepTree;
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
+    process.env['VSCEXT_EXHORT_PREFER_MVNW'] = this.exhortPreferMvnw;
     process.env['VSCEXT_EXHORT_GRADLE_PATH'] = this.exhortGradlePath;
     process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;
     process.env['VSCEXT_EXHORT_GO_PATH'] = this.exhortGoPath;
@@ -146,7 +153,7 @@ class Config {
    * Authorizes the RHDA (Red Hat Dependency Analytics) service.
    * @param context The extension context for authorization.
    */
-  async authorizeRHDA(context): Promise<void> {
+  async authorizeRHDA(context: vscode.ExtensionContext): Promise<void> {
     this.telemetryId = await getTelemetryId(context);
     await this.setProcessEnv();
   }
@@ -207,7 +214,6 @@ class Config {
       } else {
         console.error(errorMsg);
       }
-
     }
   }
 }

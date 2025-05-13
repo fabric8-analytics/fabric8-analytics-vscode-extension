@@ -37,7 +37,8 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
       'EXHORT_PYTHON3_PATH': globalConfig.exhortPython3Path,
       'EXHORT_PIP3_PATH': globalConfig.exhortPip3Path,
       'EXHORT_PYTHON_PATH': globalConfig.exhortPythonPath,
-      'EXHORT_PIP_PATH': globalConfig.exhortPipPath
+      'EXHORT_PIP_PATH': globalConfig.exhortPipPath,
+      'EXHORT_PROXY_URL': globalConfig.exhortProxyUrl
     };
 
     // execute stack analysis

@@ -32,6 +32,7 @@ suite('Config module', () => {
     expect(globalConfig.stackAnalysisCommand).to.eq(commands.STACK_ANALYSIS_COMMAND);
     expect(globalConfig.trackRecommendationAcceptanceCommand).to.eq(commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND);
     expect(globalConfig.utmSource).to.eq(GlobalState.UTM_SOURCE);
+    expect(globalConfig.exhortProxyUrl).to.eq('');
     expect(globalConfig.matchManifestVersions).to.eq('true');
     expect(globalConfig.usePythonVirtualEnvironment).to.eq('false');
     expect(globalConfig.useGoMVS).to.eq('false');
@@ -74,6 +75,7 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_STACK_ANALYSIS_COMMAND']).to.eq(commands.STACK_ANALYSIS_COMMAND);
     expect(process.env['VSCEXT_TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND']).to.eq(commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND);
     expect(process.env['VSCEXT_UTM_SOURCE']).to.eq(GlobalState.UTM_SOURCE);
+    expect(process.env['VSCEXT_PROXY_URL']).to.eq('');
     expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');
     expect(process.env['VSCEXT_USE_PYTHON_VIRTUAL_ENVIRONMENT']).to.eq('false');
     expect(process.env['VSCEXT_USE_GO_MVS']).to.eq('false');

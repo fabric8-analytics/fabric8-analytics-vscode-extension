@@ -14,6 +14,7 @@ class Config {
   stackAnalysisCommand: string;
   trackRecommendationAcceptanceCommand: string;
   utmSource: string;
+  exhortProxyUrl: string;
   matchManifestVersions: string;
   usePythonVirtualEnvironment: string;
   useGoMVS: string;
@@ -86,6 +87,7 @@ class Config {
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
+    this.exhortProxyUrl = this.getEffectiveHttpProxyUrl();
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
     /* istanbul ignore next */
@@ -119,6 +121,32 @@ class Config {
     this.exhortImagePlatform = rhdaConfig.imagePlatform;
   }
 
+  private getEffectiveHttpProxyUrl(): string {
+    const httpConfig = vscode.workspace.getConfiguration('http');
+
+    const proxySupport = httpConfig.get<string>('proxySupport');
+    if (proxySupport === 'off') {
+      return '';
+    }
+
+    const proxyFromSettings = httpConfig.get<string>('proxy');
+    if (proxyFromSettings && proxyFromSettings.trim() !== '') {
+      return proxyFromSettings.trim();
+    }
+
+    const envProxy =
+      process.env.HTTPS_PROXY ||
+      process.env.https_proxy ||
+      process.env.HTTP_PROXY ||
+      process.env.http_proxy;
+
+    if (envProxy && envProxy.trim() !== '') {
+      return envProxy.trim();
+    }
+
+    return '';
+  }
+
   /**
    * Sets process environment variables based on configuration settings.
    * @private
@@ -127,6 +155,7 @@ class Config {
     process.env['VSCEXT_STACK_ANALYSIS_COMMAND'] = this.stackAnalysisCommand;
     process.env['VSCEXT_TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND'] = this.trackRecommendationAcceptanceCommand;
     process.env['VSCEXT_UTM_SOURCE'] = this.utmSource;
+    process.env['VSCEXT_PROXY_URL'] = this.exhortProxyUrl;
     process.env['VSCEXT_MATCH_MANIFEST_VERSIONS'] = this.matchManifestVersions;
     process.env['VSCEXT_USE_PYTHON_VIRTUAL_ENVIRONMENT'] = this.usePythonVirtualEnvironment;
     process.env['VSCEXT_USE_GO_MVS'] = this.useGoMVS;

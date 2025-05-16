@@ -2,7 +2,6 @@
 
 import * as vscode from 'vscode';
 import exhort from '@trustification/exhort-javascript-api';
-import { execSync } from 'child_process';
 
 import { IImageRef, IOptions } from './imageAnalysis';
 
@@ -13,28 +12,12 @@ import { IImageRef, IOptions } from './imageAnalysis';
  * @returns A Promise resolving to the analysis response in HTML format.
  */
 async function imageAnalysisService(images: IImageRef[], options: IOptions): Promise<any> {
-  const jarPath = `${__dirname}/../javaApiAdapter/exhort-java-api-adapter-1.0-SNAPSHOT-jar-with-dependencies.jar`;
-  const reportType = 'html';
-  let parameters = '';
-  let properties = '';
-
-  images.forEach(image => {
-    if (image.platform) {
-      parameters += ` ${image.image}^^${image.platform}`;
-    } else {
-      parameters += ` ${image.image}`;
+  return await exhort.imageAnalysis(images.map(img => {
+    if (img.platform) {
+      return `${img.image}^^${img.platform}`;
     }
-  });
-
-  for (const setting in options) {
-    if (options[setting]) {
-      properties += ` -D${setting}=${options[setting]}`;
-    }
-  }
-
-  return execSync(`java${properties} -jar ${jarPath} ${reportType}${parameters}`, {
-    maxBuffer: 1000 * 1000 * 10, // 10 MB
-  }).toString();
+    return img.image;
+  }), true, options);
 }
 
 /**

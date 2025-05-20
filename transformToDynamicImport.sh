@@ -1,1 +1,1 @@
-find out/ | grep -E 'js$' | xargs -i sed -i 's/require("@trustification\/exhort-javascript-api")/import("@trustification\/exhort-javascript-api")/g' {}
+find out/ | grep -E 'js$' | xargs -I {} sed -i.bak 's|require("@trustification/exhort-javascript-api")|import("@trustification/exhort-javascript-api")|g' {} && find out/ -name "*.bak" -delete

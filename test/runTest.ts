@@ -22,7 +22,12 @@ async function main() {
       stdio: 'inherit'
     });
     // Download VS Code, unzip it and run the integration test
-    await runTests({ vscodeExecutablePath, extensionDevelopmentPath, extensionTestsPath });
+    await runTests({
+      vscodeExecutablePath,
+      extensionDevelopmentPath,
+      extensionTestsPath,
+      launchArgs: ['--user-data-dir=/tmp/vscode-test']
+    });
   } catch (err) {
     console.error(`Failed to run tests. ${err}`);
     process.exit(1);

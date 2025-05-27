@@ -118,6 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
           { scheme: 'file', language: 'go.mod' },
           { scheme: 'file', language: 'groovy' },
           { scheme: 'file', language: 'kotlin' },
+          { scheme: 'file', language: 'gradle' },
           { scheme: 'file', language: 'dockerfile' }
         ]
       };

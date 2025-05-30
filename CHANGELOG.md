@@ -1,4 +1,29 @@
 # Change Log
+## 0.9.6 (May 30th 2025)
+- chore - Changed how releases are generated. Use EA intermediate releases and manually trigger final releases. See [PR#786](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/786), [PR#784](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/784), [PR#783](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/783)
+- chore - Updated the Exhort Java Script API to 0.2.2, and updated the LSP server to 0.10.4. See [PR#785](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/785) for details.
+- chore - Updated the Exhort Java Script API to 0.2.1, and updated the LSP server to 0.10.2. See [PR#780](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/780) for details.
+- fixes - Resolved a conflict with the Gradle for Java extension. See [PR#777](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/777) for details.
+- enhancement - Built-in Open Container Initiative (OCI) image analysis. Red Hat Dependency Analytics no longer uses the Exhort Java API. See [PR#772](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/772) for details.
+- chore - Updated the Exhort Java Script API to 0.1.1. See [PR#775](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/775) for details.
+- chore - Updated the Exhort Java Script API to 0.1.1-ea.74. See [PR#774](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/774) for details.
+- fixes - The `package.json` version was a version behind. See [PR#773](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/773) for details.
+- enhancement - Added support for HTTP proxy servers. See [PR#769](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/769) for details.
+- enhancement - Added support for the `yarn` package manager. See [Issue#766](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/766) for details.
+- enhancement - Added support for the `pnpm` package manager. See [Issue#765](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/765) for details.
+- chore - `axios` updated from 1.7.2 to 1.9.0. See [PR#763](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/763) for details.
+- chore - `serialize-javascript` updated from 6.0.0 to 6.0.2, and `mocha` updated from 10.4.0 to 10.8.2. See [PR#762](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/762) for details.
+- chore - `webpack` updated from 5.92.0 to 5.95.0. See [PR#744](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/744) for details.
+- chore - `fast-xml-parser` updated from 4.4.0 to 4.5.0. See [PR#742](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/742) for details.
+- chore - `@babel/helpers` updated from 7.24.7 to 7.27.1. See [PR#764](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/764) for details.
+- chore - `dset` updated from 3.1.3 to 3.1.4. See [PR#737](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/737) for details.
+- chore - `cross-spawn` updated from 7.0.3 to 7.0.6. See [PR#747](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/747) for details.
+- enhancement - Added debug logging output for Red Hat Dependency Analytics reports. See [PR#761](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/761) for details.
+- fixes - Fixed an issue with file diagnostics not triggering on `package.json` files when associated with the `jsonc` language ID. See [PR#759](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/759) for details.
+- chore - Refactoring the use of `new Promise` into async-awaits. See [PR#758](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/758) for details.
+- documentation - Minor re-organizing of the README content. See [PR#749](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/749) for details.
+- enhancement - Added support for configuring Maven wrapper usage. See [PR#757](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/757) for details.
+
 ## 0.9.5 (Jul 30th 2024)
 - enhancement - Added support for vulnerability analysis for Gradle build manifests.
 - enhancement - Added support for vulnerability analysis on images in Dockerfiles.

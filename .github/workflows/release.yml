@@ -79,6 +79,10 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
+      - name: Create release branch
+        run: |
+          git checkout -b release/${{ needs.build.outputs.version }}
+
       - name: Create release notes from changelog
         id: release-notes
         run: |
@@ -134,13 +138,33 @@ jobs:
           name: vsix
           path: ./vsix
 
-      - name: Commit and push package modifications
+      - name: Commit changes
         run: |
           git add CHANGELOG.md
           git add package.json
           git add package-lock.json
           git commit -m "release: updated package to ${{ needs.build.outputs.version }} [skip ci]"
-          git push
+
+      - name: Push changes
+        run: |
+          git push origin release/${{ needs.build.outputs.version }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "release: updated package to ${{ needs.build.outputs.version }} [skip ci]"
+          title: "Release ${{ needs.build.outputs.version }}"
+          body: |
+            This PR contains the changes for release ${{ needs.build.outputs.version }}.
+            Changes:
+            - Updated version in package.json
+            - Updated changelog
+          branch: release/${{ needs.build.outputs.version }}
+          base: master
+          labels: |
+            release
+            ${{ needs.build.outputs.version }}
 
       - name: Create a release
         id: new_release

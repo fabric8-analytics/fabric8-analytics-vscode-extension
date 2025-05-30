@@ -21,3 +21,7 @@ ca-lsp-server/
 .DS_Store
 *.tar.*
 .history
+
+# VSIX package files
+*.vsix
+*.vsix.sha256

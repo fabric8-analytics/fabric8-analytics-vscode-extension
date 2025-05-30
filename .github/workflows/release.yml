@@ -14,10 +14,12 @@ on:
           - major
 
 jobs:
-  build:
+  release:
+    permissions: write-all
     runs-on: ubuntu-latest
     if: github.repository_owner == 'fabric8-analytics'
-    name: Build plugin
+    name: Create a release
+    environment: production
 
     steps:
       - name: Checkout repository
@@ -47,7 +49,8 @@ jobs:
       - name: Update package with new version
         id: bump
         run: |
-          echo "version=$(npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version)" >> "$GITHUB_OUTPUT"
+          new_version=$(npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version)
+          echo "version=$new_version" >> "$GITHUB_OUTPUT"
 
       - name: Compile for test
         run: npm run test-compile
@@ -55,24 +58,9 @@ jobs:
       - name: VSCE package
         run: vsce package --out fabric8-analytics-${{ steps.bump.outputs.version }}.vsix
 
-      - name: Upload vsix package as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vsix
-          path: ./fabric8-analytics-${{ steps.bump.outputs.version }}.vsix
-
-  release:
-    permissions: write-all
-    runs-on: ubuntu-latest
-    name: Create a release
-    environment: production
-    needs: build
-
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.DEPLOY_KEY }}
+      - name: Create SHA256 checksum
+        run: |
+          sha256sum fabric8-analytics-${{ steps.bump.outputs.version }}.vsix > fabric8-analytics-${{ steps.bump.outputs.version }}.vsix.sha256
 
       - name: Configure git
         run: |
@@ -81,12 +69,12 @@ jobs:
 
       - name: Create release branch
         run: |
-          git checkout -b release/${{ needs.build.outputs.version }}
+          git checkout -b release/${{ steps.bump.outputs.version }}
 
       - name: Create release notes from changelog
         id: release-notes
         run: |
-          version="${{ needs.build.outputs.version }}"
+          version="${{ steps.bump.outputs.version }}"
           version=${version#v}
           notes=$(echo -e "## Changelog\n$(sed -n "/## $version/,/^##/p" ./CHANGELOG.md | grep -v '##')")
           if [ -z "$notes" ]; then
@@ -119,7 +107,7 @@ jobs:
           fi
 
           today="$(date +"%b %-d")$suffix $(date +"%Y")"
-          version="${{ needs.build.outputs.version }}"
+          version="${{ steps.bump.outputs.version }}"
 
           if grep -qE "## $version \([^)]*\)" ./CHANGELOG.md; then
             current_date=$(grep -oP "(?<=## $version \()[^\)]*" ./CHANGELOG.md)
@@ -132,39 +120,34 @@ jobs:
             sed -E -i "s/## $version/## $version ($today)/" CHANGELOG.md
           fi
 
-      - name: Download vsix package artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: vsix
-          path: ./vsix
-
       - name: Commit changes
         run: |
           git add CHANGELOG.md
           git add package.json
           git add package-lock.json
-          git commit -m "release: updated package to ${{ needs.build.outputs.version }} [skip ci]"
+          git commit -m "release: updated package to ${{ steps.bump.outputs.version }} [skip ci]"
 
       - name: Push changes
         run: |
-          git push origin release/${{ needs.build.outputs.version }}
+          git push origin release/${{ steps.bump.outputs.version }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "release: updated package to ${{ needs.build.outputs.version }} [skip ci]"
-          title: "Release ${{ needs.build.outputs.version }}"
+          commit-message: "release: updated package to ${{ steps.bump.outputs.version }} [skip ci]"
+          title: "Release ${{ steps.bump.outputs.version }}"
           body: |
-            This PR contains the changes for release ${{ needs.build.outputs.version }}.
+            This PR contains the changes for release ${{ steps.bump.outputs.version }}.
+            
             Changes:
             - Updated version in package.json
             - Updated changelog
-          branch: release/${{ needs.build.outputs.version }}
+          branch: release/${{ steps.bump.outputs.version }}
           base: master
           labels: |
             release
-            ${{ needs.build.outputs.version }}
+            ${{ steps.bump.outputs.version }}
 
       - name: Create a release
         id: new_release
@@ -174,22 +157,17 @@ jobs:
           script: |
             const repo_name = context.payload.repository.full_name
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
-              tag_name: '${{ needs.build.outputs.version }}',
-              name: '${{ needs.build.outputs.version }}',
+              tag_name: '${{ steps.bump.outputs.version }}',
+              name: '${{ steps.bump.outputs.version }}',
               body: '${{ steps.release-notes.outputs.notes }}',
               prerelease: false,
               generate_release_notes: true
             })
             core.setOutput('upload_url', response.data.upload_url)
 
-      - name: Create SHA256 checksum
-        run: |
-          sha256sum vsix/fabric8-analytics-${{ needs.build.outputs.version }}.vsix > vsix/fabric8-analytics-${{ needs.build.outputs.version }}.vsix.sha256
-
       - name: Upload packages and checksums as release assets
-        working-directory: vsix
         run: |
-          for file in *
+          for file in fabric8-analytics-${{ steps.bump.outputs.version }}.vsix*
           do
             asset_name=$(basename "$file")
             upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")

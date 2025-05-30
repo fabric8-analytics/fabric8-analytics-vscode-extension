@@ -144,7 +144,7 @@ jobs:
             - Updated version in package.json
             - Updated changelog
           branch: release/${{ steps.bump.outputs.version }}
-          base: master
+          base: main
           labels: |
             release
             ${{ steps.bump.outputs.version }}

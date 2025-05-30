@@ -37,7 +37,7 @@
 - fixes - Fixed the Go and Python package links so they point to their specific package manager website.
 ## 0.7.3 (Nov 8th 2023)
 - enhancement - Support for Golang and Python ecosystems. See [PR#656](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/656) for details.
-- enhancement - A new setting for Python and Go environments to restrict package analysis when there is a package version mis-match between the environment and the manifest file. See the [Features section](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md#features) of the README for more information.
+- enhancement - A new setting for Python and Go environments to restrict package analysis when there is a package version mis-match between the environment and the manifest file. See the [Features section](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/main/README.md#features) of the README for more information.
 ## 0.7.0 (Sep 11th 2023)
 - informational - Alpha release of the new Red Hat Dependency Analytics (RHDA) extension.
 - informational - Code base refactoring from CRDA to RHDA alpha. See [PR#636](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/636) for details.

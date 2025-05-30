@@ -1,0 +1,176 @@
+---
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type (patch, minor, major)'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'fabric8-analytics'
+    name: Build plugin
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://npm.pkg.github.com'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create .npmrc
+        run: |
+          echo "@trustification:registry=https://npm.pkg.github.com" > ~/.npmrc
+          echo "@fabric8-analytics:registry=https://npm.pkg.github.com" >> ~/.npmrc
+      
+      - name: Install @vscode/vsce
+        run: npm i -g @vscode/vsce
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Update package with new version
+        id: bump
+        run: |
+          echo "version=$(npm version ${{ github.event.inputs.version_bump }} --no-git-tag-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Compile for test
+        run: npm run test-compile
+
+      - name: VSCE package
+        run: vsce package --out fabric8-analytics-${{ steps.bump.outputs.version }}.vsix
+
+      - name: Upload vsix package as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vsix
+          path: ./fabric8-analytics-${{ steps.bump.outputs.version }}.vsix
+
+  release:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    name: Create a release
+    environment: production
+    needs: build
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Configure git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Create release notes from changelog
+        id: release-notes
+        run: |
+          version="${{ needs.build.outputs.version }}"
+          version=${version#v}
+          notes=$(echo -e "## Changelog\n$(sed -n "/## $version/,/^##/p" ./CHANGELOG.md | grep -v '##')")
+          if [ -z "$notes" ]; then
+            echo "Release notes are missing for version $version."
+            exit 1
+          else
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+
+            notes="${notes//$'\''/%27}"
+            notes="${notes//$'\n'/'%0A'}"
+            notes="${notes//$'\r'/'%0D'}"
+            delimiter="$(openssl rand -hex 8)"
+            echo "notes<<${delimiter}" >> "$GITHUB_OUTPUT"
+            echo "$notes" >> "$GITHUB_OUTPUT"
+            echo "${delimiter}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update current version date in changelog
+        run: |
+          day_suffix=$(date +"%e" | sed 's/^[[:space:]]*//')   
+
+          if [ "$day_suffix" = "1" ] || [ "$day_suffix" = "21" ] || [ "$day_suffix" = "31" ]; then
+            suffix="st"
+          elif [ "$day_suffix" = "2" ] || [ "$day_suffix" = "22" ]; then
+            suffix="nd"
+          elif [ "$day_suffix" = "3" ] || [ "$day_suffix" = "23" ]; then
+            suffix="rd"
+          else
+            suffix="th"
+          fi
+
+          today="$(date +"%b %-d")$suffix $(date +"%Y")"
+          version="${{ needs.build.outputs.version }}"
+
+          if grep -qE "## $version \([^)]*\)" ./CHANGELOG.md; then
+            current_date=$(grep -oP "(?<=## $version \()[^\)]*" ./CHANGELOG.md)
+
+            if [ "$current_date" != "$today" ]; then
+              sed -E -i "s/## $version \([^)]*\)/## $version ($today)/" CHANGELOG.md
+            fi
+
+          else
+            sed -E -i "s/## $version/## $version ($today)/" CHANGELOG.md
+          fi
+
+      - name: Download vsix package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vsix
+          path: ./vsix
+
+      - name: Commit and push package modifications
+        run: |
+          git add CHANGELOG.md
+          git add package.json
+          git add package-lock.json
+          git commit -m "release: updated package to ${{ needs.build.outputs.version }} [skip ci]"
+          git push
+
+      - name: Create a release
+        id: new_release
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const repo_name = context.payload.repository.full_name
+            const response = await github.request('POST /repos/' + repo_name + '/releases', {
+              tag_name: '${{ needs.build.outputs.version }}',
+              name: '${{ needs.build.outputs.version }}',
+              body: '${{ steps.release-notes.outputs.notes }}',
+              prerelease: false,
+              generate_release_notes: true
+            })
+            core.setOutput('upload_url', response.data.upload_url)
+
+      - name: Create SHA256 checksum
+        run: |
+          sha256sum vsix/fabric8-analytics-${{ needs.build.outputs.version }}.vsix > vsix/fabric8-analytics-${{ needs.build.outputs.version }}.vsix.sha256
+
+      - name: Upload packages and checksums as release assets
+        working-directory: vsix
+        run: |
+          for file in *
+          do
+            asset_name=$(basename "$file")
+            upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
+            curl --data-binary @"$file" \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Content-Type: application/octet-stream" \
+              "$upload_url"
+          done

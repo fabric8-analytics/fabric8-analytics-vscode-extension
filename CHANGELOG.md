@@ -1,4 +1,37 @@
 # Change Log
+## 0.9.6 (May 30th 2025)
+
+### Fixes
+- Resolved a conflict with the Gradle for Java extension. See [PR#777](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/777) for details.
+- The `package.json` version was a version behind. See [PR#773](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/773) for details.
+- Fixed an issue with file diagnostics not triggering on `package.json` files when associated with the `jsonc` language ID. See [PR#759](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/759) for details.
+
+### Enhancements
+- Built-in Open Container Initiative (OCI) image analysis. Red Hat Dependency Analytics no longer uses the Exhort Java API. See [PR#772](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/772) for details.
+- Added support for HTTP proxy servers. See [PR#769](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/769) for details.
+- Added support for the `yarn` package manager. See [Issue#766](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/766) for details.
+- Added support for the `pnpm` package manager. See [Issue#765](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/765) for details.
+- Added debug logging output for Red Hat Dependency Analytics reports. See [PR#761](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/761) for details.
+- Added support for configuring Maven wrapper usage. See [PR#757](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/757) for details.
+
+### Chores
+- Changed how releases are generated. Use EA intermediate releases and manually trigger final releases. See [PR#786](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/786), [PR#784](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/784), [PR#783](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/783)
+- Updated the Exhort Java Script API to 0.2.2, and updated the LSP server to 0.10.4. See [PR#785](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/785) for details.
+- Updated the Exhort Java Script API to 0.2.1, and updated the LSP server to 0.10.2. See [PR#780](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/780) for details.
+- Updated the Exhort Java Script API to 0.1.1. See [PR#775](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/775) for details.
+- Updated the Exhort Java Script API to 0.1.1-ea.74. See [PR#774](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/774) for details.
+- `axios` updated from 1.7.2 to 1.9.0. See [PR#763](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/763) for details.
+- `serialize-javascript` updated from 6.0.0 to 6.0.2, and `mocha` updated from 10.4.0 to 10.8.2. See [PR#762](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/762) for details.
+- `webpack` updated from 5.92.0 to 5.95.0. See [PR#744](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/744) for details.
+- `fast-xml-parser` updated from 4.4.0 to 4.5.0. See [PR#742](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/742) for details.
+- `@babel/helpers` updated from 7.24.7 to 7.27.1. See [PR#764](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/764) for details.
+- `dset` updated from 3.1.3 to 3.1.4. See [PR#737](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/737) for details.
+- `cross-spawn` updated from 7.0.3 to 7.0.6. See [PR#747](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/747) for details.
+- Refactoring the use of `new Promise` into async-awaits. See [PR#758](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/758) for details.
+
+### Documentation
+- Minor re-organizing of the README content. See [PR#749](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/749) for details.
+
 ## 0.9.5 (Jul 30th 2024)
 - enhancement - Added support for vulnerability analysis for Gradle build manifests.
 - enhancement - Added support for vulnerability analysis on images in Dockerfiles.
@@ -33,7 +66,7 @@
 - enhancement - Added recommendations and remediations in the _Quick Fix..._ tab.
 - fixes - Fixed an issue where unique Snyk vulnerability information was not being displayed in the Dependency Analytics report. See [PR#217](https://github.com/trustification/exhort/pull/217) for details.
 - fixes - Better valid and invalid token alert messages for the Snyk vulnerability information provider. See [PR#218](https://github.com/trustification/exhort/pull/218) for details.
-- fixes - Fixed analysis report discrepancies between Red Hat Dependency Analytics and Snyk’s analytics. See [PR#219](https://github.com/trustification/exhort/pull/219) for details.
+- fixes - Fixed analysis report discrepancies between Red Hat Dependency Analytics and Snyk's analytics. See [PR#219](https://github.com/trustification/exhort/pull/219) for details.
 - fixes - Fixed the Go and Python package links so they point to their specific package manager website.
 ## 0.7.3 (Nov 8th 2023)
 - enhancement - Support for Golang and Python ecosystems. See [PR#656](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/656) for details.
@@ -133,7 +166,7 @@
     - Number of Known Security Vulnerabilities and Security Advisories for each dependency.
     - Highest Severity of vulnerabilities for each affected Dependency. (`Low`/`Medium`/`High`/`Critical`)
     - Recommended version for dependencies having Known Security Vulnerabilities.
-    - Added Snyk attribution “Powered by Snyk” in the source of the Diagnostic. See [#121](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/121)
+    - Added Snyk attribution "Powered by Snyk" in the source of the Diagnostic. See [#121](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/121)
     - Removed CVE-IDs from message.
 - enhancement - Upadated Stack Report UI: See [#142](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/142)
     - Updated Security Issue Card content: See [#142](https://github.com/fabric8-analytics/fabric8-analytics-stack-report-ui/pull/142/commits/37d61cf99c1e198c7f85d004b5009ef35d99ff9c)
@@ -144,7 +177,7 @@
         - Added Vulnerability Titles with Severity (`Low`/`Medium`/`High`/`Critical`) and removed Tags.
         - Added hyperlink to package name, Snyk Vulnerability ID, and Vulnerability Titles.
     - Dependency Details card rearranged in order of preference.
-    - Attribution to Snyk “Powered by Snyk” with a `Sign UP`/`Sign In` Hyperlink to Snyk Login page.
+    - Attribution to Snyk "Powered by Snyk" with a `Sign UP`/`Sign In` Hyperlink to Snyk Login page.
 - fixes - Upgraded typescript to fix tsc-watch misbehave. See [#373](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/373)
 - fixes - Upgraded node version to 14.x LTS. See [#377](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/377)
 - fixes - Quick fixes on hover don't show associated code actions however click on version does. See [#297](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/297)

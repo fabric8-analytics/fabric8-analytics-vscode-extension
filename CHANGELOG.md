@@ -5,6 +5,9 @@
 - Resolved a conflict with the Gradle for Java extension. See [PR#777](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/777) for details.
 - The `package.json` version was a version behind. See [PR#773](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/773) for details.
 - Fixed an issue with file diagnostics not triggering on `package.json` files when associated with the `jsonc` language ID. See [PR#759](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/759) for details.
+- Fixed a parsing issue that was causing version numbers to be considered floating
+point numbers. As a consequence version `1.80` was considered `1.8` and causing
+false positives. See [Javascript API : PR#221](https://github.com/trustification/exhort-javascript-api/pull/221)
 
 ### Enhancements
 - Built-in Open Container Initiative (OCI) image analysis. Red Hat Dependency Analytics no longer uses the Exhort Java API. See [PR#772](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/772) for details.

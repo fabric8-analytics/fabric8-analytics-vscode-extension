@@ -121,9 +121,9 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
   - `fallback`: Use VS Code's proxy settings (default behavior)
 
 **Maven Wrapper** :
-* `preferWrapper` : Configure whether to use Maven or Gradle wrapper. There are three options available:
-  - `on`: Always use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
-  - `off`: Never use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
+* `preferWrapper` : Configure whether to use Maven wrapper. There are three options available:
+  - `true`: Always use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
+  - `false`: Never use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
   - `fallback`: Use VS Code's `maven.preferMavenWrapper` setting (default behavior)
 
 ```json

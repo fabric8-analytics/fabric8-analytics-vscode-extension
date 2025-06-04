@@ -38,20 +38,29 @@ Red Hat Dependency Analytics only accesses your manifest files to analyze your a
 
 ## Quick start
 
-**Prerequisites**
+### Prerequisites
 
-- For Maven projects, analyzing a `pom.xml` file, you must have the `mvn` binary in your system's `PATH` environment.
-- For NPM projects, analyzing a `package.json` file, you must have the `npm` binary in your system's `PATH` environment.
-- For PNPM projects, analyzing a `package.json` file, you must have the `pnpm` binary in your system's `PATH` environment.
-- For Yarn projects, analyzing a `package.json` file, you must have the `yarn` binary in your system's `PATH` environment.
-  <br >**Note:** For NPM, PNPM, and Yarn projects, you can use [fnm](https://github.com/Schniz/fnm) or [nvm](https://github.com/nvm-sh/nvm) for Node.js version management. The extension will automatically detect and use the binary path from the `FNM_DIR` or `NVM_DIR` environment variables.
-- For Golang projects, analyzing a `go.mod` file, you must have the `go` binary in your system's `PATH` environment.
-- For Python projects, analyzing a `requirements.txt` file, you must have the `python3/pip3` or `python/pip` binaries in your system's `PATH` environment.
-- For Gradle Groovy DSL projects, analyzing a `build.gradle` file, you must have the `gradle` binary in your system's `PATH` environment.
-- For Gradle Kotlin DSL projects, analyzing a `build.gradle` file, you must have the `gradle` binary in your system's `PATH` environment.
-- For base images in a `Dockerfile` or `Containerfile`, you must have `Java version 20` or later.
+The extension requires the following package managers to be available in your system. You can provide the binary location in two ways:
+1. Through the system's `PATH` environment variable
+2. By configuring a specific path in the extension settings (e.g., `redHatDependencyAnalytics.mvn.executable.path`)
 
-<br >**IMPORTANT:** 
+When a specific path is configured in the settings, it takes precedence over the `PATH` environment variable.
+
+| Project Type | Binary | Manifest File |
+|-------------|---------|---------------|
+| Maven | `mvn` | `pom.xml` |
+| NPM | `npm` | `package.json` |
+| PNPM | `pnpm` | `package.json` |
+| Yarn | `yarn` | `package.json` |
+| Golang | `go` | `go.mod` |
+| Python | `python3/pip3` or `python/pip` | `requirements.txt` |
+| Gradle | `gradle` | `build.gradle` |
+
+**Note:** For NPM, PNPM, and Yarn projects, you can use [fnm](https://github.com/Schniz/fnm) or [nvm](https://github.com/nvm-sh/nvm) for Node.js version management. The extension will automatically detect and use the binary path from the `FNM_DIR` or `NVM_DIR` environment variables.
+
+For base images in a `Dockerfile` or `Containerfile`, you must have `Java version 20` or later.
+
+**IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
 You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
 You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
@@ -111,11 +120,19 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
   - `off`: Never use the HTTP proxy regardless of VS Code's proxy settings
   - `fallback`: Use VS Code's proxy settings (default behavior)
 
-**Maven and Gradle Wrapper** :
-* `mavenWrapper` : Configure whether to use Maven or Gradle wrapper. There are three options available:
+**Maven Wrapper** :
+* `preferWrapper` : Configure whether to use Maven or Gradle wrapper. There are three options available:
   - `on`: Always use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
   - `off`: Never use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
   - `fallback`: Use VS Code's `maven.preferMavenWrapper` setting (default behavior)
+
+```json
+"redHatDependencyAnalytics": {
+    "mvn": {
+        "preferWrapper": "true/false/fallback"
+    }
+}
+```
 
 ## Features
 

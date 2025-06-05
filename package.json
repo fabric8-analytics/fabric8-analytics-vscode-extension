@@ -231,6 +231,16 @@
           "description": "Specifies absolute path of gradle executable.",
           "scope": "window"
         },
+        "redHatDependencyAnalytics.gradle.preferWrapper": {
+          "type": "string",
+          "enum": [
+            "true",
+            "false",
+            "fallback"
+          ],
+          "default": "fallback",
+          "markdownDescription": "Specifies whether to use the local gradle wrapper. The 'fallback' option will default to the value of `#java.import.gradle.wrapper.enabled` from the 'Language Support for Java(TM) by Red Hat' extension, else defaulting to 'true'."
+        },
         "redHatDependencyAnalytics.npm.executable.path": {
           "type": "string",
           "default": "",
@@ -395,7 +405,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.10.5",
+    "@fabric8-analytics/fabric8-analytics-lsp-server": "^0.10.6",
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustification/exhort-api-spec": "^1.0.13",
     "@trustification/exhort-javascript-api": "^0.2.3-ea.1",

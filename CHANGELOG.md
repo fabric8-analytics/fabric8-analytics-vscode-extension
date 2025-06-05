@@ -10,6 +10,7 @@ false positives. See [PR#221](https://github.com/trustification/exhort-javascrip
 - Fixed issue with ignoring Maven dependencies with version defined in properties. See [PR#219](https://github.com/trustification/exhort-javascript-api/pull/219) for details.
 - Do not generate package-lock file for non npm projects. See [PR#151](https://github.com/trustification/exhort-javascript-api/pull/151) for details.
 - Fix self-adding of npm workspace to package.json. See [PR#189](https://github.com/trustification/exhort-javascript-api/pull/189) for details.
+- Fix problem with Gradle projects including missing dependencies that were causing false positives. See [PR#225](https://github.com/trustification/exhort-javascript-api/pull/225) for details.
 
 ### Enhancements
 - Built-in Open Container Initiative (OCI) image analysis. Red Hat Dependency Analytics no longer uses the Exhort Java API. See [PR#772](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/772) for details.

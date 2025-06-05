@@ -3,23 +3,26 @@
 
 ### Fixes
 - Resolved a conflict with the Gradle for Java extension. See [PR#777](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/777) for details.
-- The `package.json` version was a version behind. See [PR#773](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/773) for details.
 - Fixed an issue with file diagnostics not triggering on `package.json` files when associated with the `jsonc` language ID. See [PR#759](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/759) for details.
+- Fixed a parsing issue that was causing version numbers to be considered floating
+point numbers. As a consequence version `1.80` was considered `1.8` and causing
+false positives. See [PR#221](https://github.com/trustification/exhort-javascript-api/pull/221) for details.
+- Fixed issue with ignoring Maven dependencies with version defined in properties. See [PR#219](https://github.com/trustification/exhort-javascript-api/pull/219) for details.
+- Do not generate package-lock file for non npm projects. See [PR#151](https://github.com/trustification/exhort-javascript-api/pull/151) for details.
+- Fix self-adding of npm workspace to package.json. See [PR#189](https://github.com/trustification/exhort-javascript-api/pull/189) for details.
+- Fix problem with Gradle projects including missing dependencies that were causing false positives. See [PR#225](https://github.com/trustification/exhort-javascript-api/pull/225) for details.
 
 ### Enhancements
 - Built-in Open Container Initiative (OCI) image analysis. Red Hat Dependency Analytics no longer uses the Exhort Java API. See [PR#772](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/772) for details.
 - Added support for HTTP proxy servers. See [PR#769](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/769) for details.
-- Added support for the `yarn` package manager. See [Issue#766](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/766) for details.
+- Added support for the `yarn` (Berry and Classic) package manager. See [Issue#766](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/766) for details.
 - Added support for the `pnpm` package manager. See [Issue#765](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/765) for details.
 - Added debug logging output for Red Hat Dependency Analytics reports. See [PR#761](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/761) for details.
 - Added support for configuring Maven wrapper usage. See [PR#757](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/757) for details.
+- Improve error messages for package manager invocations. See [PR#159](https://github.com/trustification/exhort-javascript-api/pull/159), [PR#183](https://github.com/trustification/exhort-javascript-api/pull/183), [PR#185](https://github.com/trustification/exhort-javascript-api/pull/185) for details.
+- Support node version managers FNM and NVM. See [PR#206](https://github.com/trustification/exhort-javascript-api/pull/206) for details.
 
 ### Chores
-- Changed how releases are generated. Use EA intermediate releases and manually trigger final releases. See [PR#786](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/786), [PR#784](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/784), [PR#783](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/783)
-- Updated the Exhort Java Script API to 0.2.2, and updated the LSP server to 0.10.4. See [PR#785](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/785) for details.
-- Updated the Exhort Java Script API to 0.2.1, and updated the LSP server to 0.10.2. See [PR#780](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/780) for details.
-- Updated the Exhort Java Script API to 0.1.1. See [PR#775](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/775) for details.
-- Updated the Exhort Java Script API to 0.1.1-ea.74. See [PR#774](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/774) for details.
 - `axios` updated from 1.7.2 to 1.9.0. See [PR#763](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/763) for details.
 - `serialize-javascript` updated from 6.0.0 to 6.0.2, and `mocha` updated from 10.4.0 to 10.8.2. See [PR#762](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/762) for details.
 - `webpack` updated from 5.92.0 to 5.95.0. See [PR#744](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/744) for details.

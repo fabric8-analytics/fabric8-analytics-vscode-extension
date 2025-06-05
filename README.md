@@ -7,12 +7,14 @@
 <br >Red Hat's Dependency Analytics (RHDA) extension gives you awareness to security concerns within your software supply chain while you code your application.
 The Red Hat Dependency Analytics extension uses vulnerability data sources for the most up-to-date vulnerability information available.
 
-<br >Dependency Analytics only supports the following project ecosystems:
+<br >Dependency Analytics supports the following project ecosystems:
 - Maven
-- Node
+- NPM
+- PNPM
+- Yarn (Classic / Berry)
 - Golang
 - Python
-- Gradle
+- Gradle (Kotlin / Groovy DSL)
 
 <br >**NOTE:**
 The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
@@ -38,14 +40,25 @@ Red Hat Dependency Analytics only accesses your manifest files to analyze your a
 
 **Prerequisites**
 
-- For Maven projects, analyzing a `pom.xml` file, you must have the `mvn` binary in your system’s `PATH` environment.
-- For Node projects, analyzing a `package.json` file, you must have the `npm` binary in your system’s `PATH` environment.
-- For Golang projects, analyzing a `go.mod` file, you must have the `go` binary in your system’s `PATH` environment.
-- For Python projects, analyzing a `requirements.txt` file, you must have the `python3/pip3` or `python/pip` binaries in your system’s `PATH` environment.
-- For Gradle projects, analyzing a `build.gradle` file, you must have the `gradle` binary in your system's `PATH` environment.
-- For base images in a `Dockerfile` or `Containerfile`, you must have `Java version 20` or later.
+The extension requires the following package managers to be available in your system. You can provide the binary location in two ways:
+1. Through the system's `PATH` environment variable
+2. By configuring a specific path in the extension settings (e.g., `redHatDependencyAnalytics.mvn.executable.path`)
 
-<br >**IMPORTANT:** 
+When a specific path is configured in the settings, it takes precedence over the `PATH` environment variable.
+
+| Project Type | Binary | Manifest File |
+|-------------|---------|---------------|
+| Maven | `mvn` | `pom.xml` |
+| NPM | `npm` | `package.json` |
+| PNPM | `pnpm` | `package.json` |
+| Yarn | `yarn` | `package.json` |
+| Golang | `go` | `go.mod` |
+| Python | `python3/pip3` or `python/pip` | `requirements.txt` |
+| Gradle | `gradle` | `build.gradle` |
+
+**Note:** For NPM, PNPM, and Yarn projects, you can use [fnm](https://github.com/Schniz/fnm) or [nvm](https://github.com/nvm-sh/nvm) for Node.js version management. The extension will automatically detect and use the binary path from the `FNM_DIR` or `NVM_DIR` environment variables.
+
+**IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
 You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
 You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
@@ -99,6 +112,29 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 **Golang** :
 * `useGoMVS` : Use the minimal version selection algorithm to select a set of module versions to use when building Go packages.
 
+**HTTP Proxy** :
+* `httpProxy` : Configure HTTP proxy settings for the extension. There are three options available:
+  - `on`: Always use the HTTP proxy regardless of VS Code's proxy settings
+  - `off`: Never use the HTTP proxy regardless of VS Code's proxy settings
+  - `fallback`: Use VS Code's proxy settings (default behavior)
+
+**Maven and Gradle Wrappers** :
+* `preferWrapper` : Configure whether to use Maven or Gradle wrappers. There are three options available:
+  - `true`: Always use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
+  - `false`: Never use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
+  - `fallback`: Use VS Code's `maven.preferMavenWrapper` setting (default behavior)
+
+```json
+"redHatDependencyAnalytics": {
+    "mvn": {
+        "preferWrapper": "true/false/fallback"
+    },
+    "gradle": {
+        preferWrapper": "true/false/fallback"
+    }
+}
+```
+
 ## Features
 
 - **Component analysis**
@@ -130,13 +166,13 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 	<br >You must have the [`syft`](https://github.com/anchore/syft#installation) and [`skopeo`](https://www.redhat.com/en/topics/containers/what-is-skopeo) binaries installed on your workstation to use the Docker scanning feature.
 	You can specify a specific path to these binaries, and others by settings the following parameters:
 
-	* `syft.executable.path` : Specify the absolute path of `syft` executable.
-    * `syft.config.path` : Specify the absolute path to the Syft configuration file.
-    * `skopeo.executable.path` : Specify the absolute path of `skopeo` executable.
-    * `skopeo.config.path` : Specify the absolute path to the authentication file used by the `skopeo inspect` command.
-    * `docker.executable.path` : Specify the absolute path of `docker` executable.
-    * `podman.executable.path` : Specify the absolute path of `podman` executable.
-    * `image.platform` : Specify the platform used for multi-arch images.
+	* `syft.executable.path`: Specify the absolute path of `syft` executable
+	* `syft.config.path`: Specify the absolute path to the Syft configuration file
+	* `skopeo.executable.path`: Specify the absolute path of `skopeo` executable
+	* `skopeo.config.path`: Specify the absolute path to the authentication file used by the `skopeo inspect` command
+	* `docker.executable.path`: Specify the absolute path of `docker` executable
+	* `podman.executable.path`: Specify the absolute path of `podman` executable
+	* `image.platform`: Specify the platform used for multi-arch images
   
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
@@ -311,6 +347,7 @@ Red Hat offers integration with these Continuous Integration (CI) platforms:
 - [Red Hat Dependency Analytics Tekton Task](https://hub.tekton.dev/tekton/task/redhat-dependency-analytics)
 - [Red Hat Dependency Analytics Jenkins Plugin](https://plugins.jenkins.io/redhat-dependency-analytics/)
 
+
 ## Known issues
 
 ### Error when using options the `Use Pip Dep Tree` and `Use Python Virtual Environment` simultaneously
@@ -323,7 +360,7 @@ The primary goal of the `Use Pip Dep Tree` option is to optimize performance for
 However, the `Use Python Virtual Environment` option works much slower than running in a local environment, because installations happen within the virtual environment.
 Red Hat recommends only using one of these options, depending on your specific requirements, but not both simultaneously.
 
-### Red Hat Dependency Analytics limitations for Maven and Gradle
+### Red Hat Dependency Analytics limitations for Maven and Gradle projects
 
 <br >When a manifest includes dependencies with the `provided` scope in `Maven` or the `compileOnly` and `compileOnlyApi` configurations in `Gradle`, RHDA might not reliably detect vulnerabilities for these dependencies.
 This is due to the nature of the scopes and configurations where the version of the dependency used during the build process might not necessarily match the version used at runtime.

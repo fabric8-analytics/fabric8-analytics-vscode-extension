@@ -12,6 +12,21 @@ on:
           - patch
           - minor
           - major
+      publishToMarketplace:
+        description: 'Publish to VSCode Marketplace'
+        required: true
+        type: boolean
+        default: true
+      publishToOVSX:
+        description: 'Publish to Open VSX Registry'
+        required: true
+        type: boolean
+        default: true
+      publishPreRelease:
+        description: 'Publish as pre-release version'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   release:
@@ -56,11 +71,11 @@ jobs:
         run: npm run test-compile
 
       - name: VSCE package
-        run: vsce package --out fabric8-analytics-${{ steps.bump.outputs.version }}.vsix
+        run: vsce package --out fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix
 
       - name: Create SHA256 checksum
         run: |
-          sha256sum fabric8-analytics-${{ steps.bump.outputs.version }}.vsix > fabric8-analytics-${{ steps.bump.outputs.version }}.vsix.sha256
+          sha256sum fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix > fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix.sha256
 
       - name: Configure git
         run: |
@@ -167,7 +182,7 @@ jobs:
 
       - name: Upload packages and checksums as release assets
         run: |
-          for file in fabric8-analytics-${{ steps.bump.outputs.version }}.vsix*
+          for file in fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix*
           do
             asset_name=$(basename "$file")
             upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
@@ -176,3 +191,13 @@ jobs:
               -H "Content-Type: application/octet-stream" \
               "$upload_url"
           done
+
+      - name: Publish to VSCode Marketplace
+        if: ${{ github.event.inputs.publishToMarketplace == 'true' }}
+        run: |
+          vsce publish --pat ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix ${{ github.event.inputs.publishPreRelease == 'true' && '--pre-release' || '' }}
+
+      - name: Publish to Open VSX Registry
+        if: ${{ github.event.inputs.publishToOVSX == 'true' }}
+        run: |
+          npx ovsx publish --pat ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix ${{ github.event.inputs.publishPreRelease == 'true' && '--pre-release' || '' }}

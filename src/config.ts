@@ -24,6 +24,7 @@ class Config {
   exhortMvnPath: string;
   exhortPreferMvnw: string;
   exhortGradlePath: string;
+  exhortPreferGradlew: string;
   exhortNpmPath: string;
   exhortPnpmPath: string;
   exhortYarnPath: string;
@@ -84,6 +85,10 @@ class Config {
     const msftPreferMavenWrapper = vscode.workspace.getConfiguration('maven.executable').get('preferMavenWrapper', true);
     const preferMavenWrapper = rhdaPreferMavenWrapper === 'fallback' ? msftPreferMavenWrapper : rhdaPreferMavenWrapper === 'true';
 
+    const rhdaPreferGradleWrapper = vscode.workspace.getConfiguration('redHatDependencyAnalytics.gradle').get('preferWrapper') as 'true' | 'false' | 'fallback';
+    const redhatPreferGradleWrapper = vscode.workspace.getConfiguration('java.import.gradle.wrapper').get('enabled', true);
+    const preferGradleWrapper = rhdaPreferGradleWrapper === 'fallback' ? redhatPreferGradleWrapper : rhdaPreferGradleWrapper === 'true';
+
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.utmSource = GlobalState.UTM_SOURCE;
@@ -104,6 +109,7 @@ class Config {
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortPreferMvnw = preferMavenWrapper.toString();
     this.exhortGradlePath = rhdaConfig.gradle.executable.path || this.DEFAULT_GRADLE_EXECUTABLE;
+    this.exhortPreferGradlew = preferGradleWrapper.toString();
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
     this.exhortPnpmPath = rhdaConfig.pnpm.executable.path || this.DEFAULT_PNPM_EXECUTABLE;
     this.exhortYarnPath = rhdaConfig.yarn.executable.path || this.DEFAULT_YARN_EXECUTABLE;
@@ -165,6 +171,7 @@ class Config {
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
     process.env['VSCEXT_EXHORT_PREFER_MVNW'] = this.exhortPreferMvnw;
     process.env['VSCEXT_EXHORT_GRADLE_PATH'] = this.exhortGradlePath;
+    process.env['VSCEXT_EXHORT_PREFER_GRADLEW'] = this.exhortPreferGradlew;
     process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;
     process.env['VSCEXT_EXHORT_YARN_PATH'] = this.exhortYarnPath;
     process.env['VSCEXT_EXHORT_PNPM_PATH'] = this.exhortPnpmPath;

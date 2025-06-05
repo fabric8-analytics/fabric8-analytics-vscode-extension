@@ -30,6 +30,7 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
       'EXHORT_MVN_PATH': globalConfig.exhortMvnPath,
       'EXHORT_PREFER_MVNW': globalConfig.exhortPreferMvnw,
       'EXHORT_GRADLE_PATH': globalConfig.exhortGradlePath,
+      'EXHORT_PREFER_GRADLEW': globalConfig.exhortPreferGradlew,
       'EXHORT_NPM_PATH': globalConfig.exhortNpmPath,
       'EXHORT_PNPM_PATH': globalConfig.exhortPnpmPath,
       'EXHORT_YARN_PATH': globalConfig.exhortYarnPath,

@@ -58,8 +58,6 @@ When a specific path is configured in the settings, it takes precedence over the
 
 **Note:** For NPM, PNPM, and Yarn projects, you can use [fnm](https://github.com/Schniz/fnm) or [nvm](https://github.com/nvm-sh/nvm) for Node.js version management. The extension will automatically detect and use the binary path from the `FNM_DIR` or `NVM_DIR` environment variables.
 
-For base images in a `Dockerfile` or `Containerfile`, you must have `Java version 20` or later.
-
 **IMPORTANT:** 
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
 You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
@@ -120,8 +118,8 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
   - `off`: Never use the HTTP proxy regardless of VS Code's proxy settings
   - `fallback`: Use VS Code's proxy settings (default behavior)
 
-**Maven Wrapper** :
-* `preferWrapper` : Configure whether to use Maven wrapper. There are three options available:
+**Maven and Gradle Wrappers** :
+* `preferWrapper` : Configure whether to use Maven or Gradle wrappers. There are three options available:
   - `true`: Always use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
   - `false`: Never use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
   - `fallback`: Use VS Code's `maven.preferMavenWrapper` setting (default behavior)
@@ -130,6 +128,9 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 "redHatDependencyAnalytics": {
     "mvn": {
         "preferWrapper": "true/false/fallback"
+    },
+    "gradle": {
+        preferWrapper": "true/false/fallback"
     }
 }
 ```

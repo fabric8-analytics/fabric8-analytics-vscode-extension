@@ -6,10 +6,10 @@
 - Fixed an issue with file diagnostics not triggering on `package.json` files when associated with the `jsonc` language ID. See [PR#759](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/759) for details.
 - Fixed a parsing issue that was causing version numbers to be considered floating
 point numbers. As a consequence version `1.80` was considered `1.8` and causing
-false positives. See [Javascript API : PR#221](https://github.com/trustification/exhort-javascript-api/pull/221)
-- Fixed issue with ignoring Maven dependencies with version defined in properties. See [PR#219](https://github.com/trustification/exhort-javascript-api/pull/219)
-- Do not generate package-lock file for non npm projects. See [PR#151](https://github.com/trustification/exhort-javascript-api/pull/151)
-- Fix self-adding of npm workspace to package.json [PR#189](https://github.com/trustification/exhort-javascript-api/pull/189)
+false positives. See [PR#221](https://github.com/trustification/exhort-javascript-api/pull/221) for details.
+- Fixed issue with ignoring Maven dependencies with version defined in properties. See [PR#219](https://github.com/trustification/exhort-javascript-api/pull/219) for details.
+- Do not generate package-lock file for non npm projects. See [PR#151](https://github.com/trustification/exhort-javascript-api/pull/151) for details.
+- Fix self-adding of npm workspace to package.json. See [PR#189](https://github.com/trustification/exhort-javascript-api/pull/189) for details.
 
 ### Enhancements
 - Built-in Open Container Initiative (OCI) image analysis. Red Hat Dependency Analytics no longer uses the Exhort Java API. See [PR#772](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/772) for details.
@@ -18,8 +18,8 @@ false positives. See [Javascript API : PR#221](https://github.com/trustification
 - Added support for the `pnpm` package manager. See [Issue#765](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/765) for details.
 - Added debug logging output for Red Hat Dependency Analytics reports. See [PR#761](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/761) for details.
 - Added support for configuring Maven wrapper usage. See [PR#757](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/757) for details.
-- Improve error messages for package manager invocations. See [PR#159](https://github.com/trustification/exhort-javascript-api/pull/159), [PR#183](https://github.com/trustification/exhort-javascript-api/pull/183), [PR#185](https://github.com/trustification/exhort-javascript-api/pull/185)
-- Support node version managers FNM and NVM. See [PR#206](https://github.com/trustification/exhort-javascript-api/pull/206)
+- Improve error messages for package manager invocations. See [PR#159](https://github.com/trustification/exhort-javascript-api/pull/159), [PR#183](https://github.com/trustification/exhort-javascript-api/pull/183), [PR#185](https://github.com/trustification/exhort-javascript-api/pull/185) for details.
+- Support node version managers FNM and NVM. See [PR#206](https://github.com/trustification/exhort-javascript-api/pull/206) for details.
 
 ### Chores
 - `axios` updated from 1.7.2 to 1.9.0. See [PR#763](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/763) for details.

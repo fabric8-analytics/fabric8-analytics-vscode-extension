@@ -38,7 +38,7 @@ Red Hat Dependency Analytics only accesses your manifest files to analyze your a
 
 ## Quick start
 
-### Prerequisites
+**Prerequisites**
 
 The extension requires the following package managers to be available in your system. You can provide the binary location in two ways:
 1. Through the system's `PATH` environment variable

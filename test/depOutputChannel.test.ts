@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
@@ -28,7 +29,7 @@ suite('DepOutputChannel module', () => {
   test('getOutputChannel should return OutputChannel with default name', () => {
     const depOutputChannel = new DepOutputChannel();
 
-    let outputChannel = depOutputChannel.outputChannel
+    const outputChannel = depOutputChannel.outputChannel;
 
     expect(outputChannel.name).equals(Titles.EXT_TITLE);
   });
@@ -36,7 +37,7 @@ suite('DepOutputChannel module', () => {
   test('getOutputChannel should return OutputChannel with custom name', () => {
     const depOutputChannel = new DepOutputChannel('Mock Channel');
 
-    let outputChannel = depOutputChannel.outputChannel
+    const outputChannel = depOutputChannel.outputChannel;
 
     expect(outputChannel.name).equals('Mock Channel');
   });

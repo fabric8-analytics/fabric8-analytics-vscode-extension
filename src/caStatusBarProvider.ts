@@ -1,7 +1,6 @@
 'use strict';
 
-import { StatusBarItem, window, StatusBarAlignment, Uri } from 'vscode';
-import { Disposable } from 'vscode-languageclient';
+import { StatusBarItem, window, StatusBarAlignment, Uri, Disposable } from 'vscode';
 import { PromptText } from './constants';
 import * as commands from './commands';
 
@@ -23,12 +22,12 @@ class CAStatusBarProvider implements Disposable {
      * @param text The text to display in the status bar.
      * @param uri The URI associated with the summary.
      */
-    public showSummary(text: string, uri: string): void {
+    public showSummary(text: string, uri: Uri): void {
         this.statusBarItem.text = text;
         this.statusBarItem.command = {
             title: PromptText.FULL_STACK_PROMPT_TEXT,
             command: commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND,
-            arguments: [Uri.parse(uri)]
+            arguments: [uri]
         };
         this.statusBarItem.tooltip = PromptText.FULL_STACK_PROMPT_TEXT;
         this.statusBarItem.show();

@@ -1,16 +1,13 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": [
-      "es6",
-      "es2022",
-      "dom"
-    ],
+    "lib": ["es2022"],
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "out",
     "sourceMap": true,
-    "rootDir": "."
+    "rootDir": ".",
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",

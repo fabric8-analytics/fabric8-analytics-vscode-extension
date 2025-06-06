@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 
 import { globalConfig } from '../src/config';
-import { validateSnykToken } from '../src/tokenValidation'
-import * as exhortServices from '../src/exhortServices'
+import { validateSnykToken } from '../src/tokenValidation';
+import * as exhortServices from '../src/exhortServices';
 import { SNYK_URL } from '../src/constants';
 
 const expect = chai.expect;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
@@ -5,13 +6,13 @@ import * as sinonChai from 'sinon-chai';
 import * as exhortServices from '../src/exhortServices';
 import { globalConfig } from '../src/config';
 import { DependencyReportPanel } from '../src/dependencyReportPanel';
-import { executeStackAnalysis } from '../src/stackAnalysis'
+import { executeStackAnalysis } from '../src/stackAnalysis';
 import * as templates from '../src/template';
 import { DepOutputChannel } from '../src/depOutputChannel';
 
 const expect = chai.expect;
 chai.use(sinonChai);
-const outputChannel = new DepOutputChannel('test')
+const outputChannel = new DepOutputChannel('test');
 
 suite('StackAnalysis module', () => {
   let sandbox: sinon.SinonSandbox;
@@ -19,6 +20,7 @@ suite('StackAnalysis module', () => {
   const mockReponse = '<html> mockResponse </html>';
 
   setup(() => {
+    DependencyReportPanel.createOrShowWebviewPanel();
     sandbox = sinon.createSandbox();
 
     globalConfig.linkToSecretStorage({
@@ -31,11 +33,12 @@ suite('StackAnalysis module', () => {
   });
 
   teardown(() => {
+    DependencyReportPanel.currentPanel?.dispose();
     sandbox.restore();
   });
 
   test('should generate RHDA report for supported file', async () => {
-    const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse)
+    const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse);
 
     await executeStackAnalysis(mockPath, outputChannel);
 
@@ -48,12 +51,12 @@ suite('StackAnalysis module', () => {
 
     await executeStackAnalysis(mockPath, outputChannel)
       .then(() => {
-        throw (new Error('should have thrown error'))
+        throw (new Error('should have thrown error'));
       })
       .catch(error => {
         expect(error.message).to.eq('Mock Error');
         expect(stackAnalysisServiceStub.calledOnce).to.be.true;
         expect(DependencyReportPanel.data).to.eq(templates.ERROR_TEMPLATE);
-      })
+      });
   });
 });

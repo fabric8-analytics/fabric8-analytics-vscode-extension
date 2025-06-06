@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as vscode from 'vscode';
 
 import { caStatusBarProvider } from '../src/caStatusBarProvider';
 import { PromptText } from '../src/constants';
 import * as commands from '../src/commands';
+import { Uri } from 'vscode';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -23,7 +24,7 @@ suite('CAStatusBarProvider module', () => {
 
     test('should show summary with provided text and URI', async () => {
         const text = 'Mock Text';
-        const uri = 'file:///mock/path';
+        const uri = Uri.parse('file:///mock/path');
 
         caStatusBarProvider.showSummary(text, uri);
 
@@ -32,7 +33,7 @@ suite('CAStatusBarProvider module', () => {
         expect(caStatusBarProvider['statusBarItem'].command).to.deep.equal({
             title: PromptText.FULL_STACK_PROMPT_TEXT,
             command: commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND,
-            arguments: [vscode.Uri.parse(uri)]
+            arguments: [uri]
         });
     });
 

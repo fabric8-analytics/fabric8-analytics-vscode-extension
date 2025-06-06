@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-import * as Commands from '../src/commands';
+import * as commands from '../src/commands';
 
 suite('Extension module', () => {
   test('Extension should be present', () => {
@@ -9,7 +9,7 @@ suite('Extension module', () => {
   });
 
   test('should activate', async () => {
-    const api = await vscode.extensions
+    await vscode.extensions
       .getExtension('redhat.fabric8-analytics')
       .activate();
     assert.ok(true);
@@ -17,15 +17,15 @@ suite('Extension module', () => {
 
   test('should register all fabric8 commands', async function () {
     const FABRIC8_COMMANDS: string[] = [
-      Commands.STACK_ANALYSIS_COMMAND,
-      Commands.STACK_LOGS_COMMAND,
-      Commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
-      Commands.STACK_ANALYSIS_FROM_EDITOR_COMMAND,
-      Commands.STACK_ANALYSIS_FROM_EXPLORER_COMMAND,
-      Commands.STACK_ANALYSIS_FROM_PIE_BTN_COMMAND,
-      Commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND
+      commands.STACK_ANALYSIS_COMMAND,
+      commands.STACK_LOGS_COMMAND,
+      commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
+      commands.STACK_ANALYSIS_FROM_EDITOR_COMMAND,
+      commands.STACK_ANALYSIS_FROM_EXPLORER_COMMAND,
+      commands.STACK_ANALYSIS_FROM_PIE_BTN_COMMAND,
+      commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND
     ];
-    // @ts-ignore
+    // @ts-expect-error
     assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
   });
 });

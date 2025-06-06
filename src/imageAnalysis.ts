@@ -30,42 +30,13 @@ interface IOptions {
  */
 interface IImageRef {
     image: string;
-    platform: string;
-}
-
-/**
- * Represents the result of an image analysis.
- */
-interface IImageAnalysis {
-    options: IOptions;
-    args: Map<string, string>;
-    images: IImageRef[];
-    imageAnalysisReportHtml: string;
-
-    /**
-     * Parses the provided file and returns its contents as an array of lines.
-     * @param filePath - The path to the file to parse.
-     * @returns An array of strings representing the lines of the file.
-     */
-    parseTxtDoc(filePath: string): string[];
-
-    /**
-     * Collects image references from the provided lines of text.
-     * @param lines - The lines of text to process.
-     * @returns An array of image references.
-     */
-    collectImages(lines: string[]): IImageRef[];
-
-    /**
-     * Runs the image analysis process.
-     */
-    runImageAnalysis(): Promise<void>;
+    platform: string | undefined;
 }
 
 /**
  * Represents an analysis of Docker images.
  */
-class DockerImageAnalysis implements IImageAnalysis {
+class DockerImageAnalysis {
     options: IOptions = {
         'RHDA_TOKEN': globalConfig.telemetryId,
         'RHDA_SOURCE': globalConfig.utmSource,
@@ -110,7 +81,12 @@ class DockerImageAnalysis implements IImageAnalysis {
         this.outputChannel = outputChannel;
     }
 
-    parseTxtDoc(filePath: string): string[] {
+    /**
+     * Parses the provided file and returns its contents as an array of lines.
+     * @param filePath - The path to the file to parse.
+     * @returns An array of strings representing the lines of the file.
+     */
+    public parseTxtDoc(filePath: string): string[] {
         try {
             const contentBuffer = fs.readFileSync(filePath);
             const contentString = contentBuffer.toString('utf-8');
@@ -141,7 +117,7 @@ class DockerImageAnalysis implements IImageAnalysis {
      * @returns An IImage object representing the parsed image or null if no image is found.
      * @private
      */
-    private parseLine(line: string): IImageRef | null {
+    private parseLine(line: string): IImageRef | undefined {
         const argMatch = line.match(this.ARG_REGEX);
         if (argMatch) {
             const argData = argMatch[1].trim().split('=');
@@ -171,7 +147,12 @@ class DockerImageAnalysis implements IImageAnalysis {
         return;
     }
 
-    collectImages(lines: string[]): IImageRef[] {
+    /**
+     * Collects image references from the provided lines of text.
+     * @param lines - The lines of text to process.
+     * @returns An array of image references.
+     */
+    public collectImages(lines: string[]): IImageRef[] {
         return lines.reduce((images: IImageRef[], line: string) => {
             const parsedImage = this.parseLine(line);
             if (parsedImage) {
@@ -181,7 +162,10 @@ class DockerImageAnalysis implements IImageAnalysis {
         }, []);
     }
 
-    async runImageAnalysis() {
+    /**
+     * Runs the image analysis process.
+     */
+    public async runImageAnalysis() {
         return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
             p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 

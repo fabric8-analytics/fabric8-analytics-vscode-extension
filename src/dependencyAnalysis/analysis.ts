@@ -168,7 +168,7 @@ async function executeComponentAnalysis(diagnosticFilePath: Uri, provider: IDepe
     };
 
     // Execute component analysis
-    const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.path, options);
+    const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options);
 
     return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider);
 }

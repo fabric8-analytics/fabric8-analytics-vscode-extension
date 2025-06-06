@@ -13,14 +13,14 @@ import { parseImageReference } from '../exhortServices';
 export interface IImage {
   name: IPositionedString;
   line: string;
-  platform: string;
+  platform: string | undefined;
 }
 
 /**
  * Represents an image and implements the IImage interface.
  */
 export class Image implements IImage {
-  public platform: string;
+  public platform: string | undefined;
 
   constructor(
     public name: IPositionedString,
@@ -62,7 +62,7 @@ export class ImageMap {
         platform: image.platform,
       });
       if (this.mapper.has(parsedImageRef.getPackageURL().toString())) {
-        this.mapper.get(parsedImageRef.getPackageURL().toString()).push(image);
+        this.mapper.get(parsedImageRef.getPackageURL().toString())!.push(image);
       } else {
         this.mapper.set(parsedImageRef.getPackageURL().toString(), [image]);
       }
@@ -77,14 +77,14 @@ export class ImageMap {
   public get(key: string): IImage[] {
     const images: IImage[] = [];
     if (this.mapper.has(key)) {
-      images.push(...this.mapper.get(key));
+      images.push(...this.mapper.get(key) ?? []);
     }
 
     // Check if the key includes ":latest"
     if (key.includes(':latest')) {
       const keyWithoutLatest = key.replace(':latest', '');
       if (this.mapper.has(keyWithoutLatest)) {
-        images.push(...this.mapper.get(keyWithoutLatest));
+        images.push(...this.mapper.get(keyWithoutLatest) ?? []);
       }
     }
 

@@ -106,7 +106,7 @@ function generateSwitchToRecommendedVersionAction(title: string, dependency: str
   codeAction.command = {
     title: 'Track recommendation acceptance',
     command: globalConfig.trackRecommendationAcceptanceCommand,
-    arguments: [dependency, path.basename(uri.path)],
+    arguments: [dependency, path.basename(uri.fsPath)],
   };
 
   return codeAction;

@@ -53,8 +53,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const disposableStackAnalysisCommand = vscode.commands.registerCommand(
     commands.STACK_ANALYSIS_COMMAND,
-    async (filePath: vscode.Uri, isFromCA: boolean = false) => {
-      const fspath = filePath ? filePath.path : vscode.window.activeTextEditor.document.uri.fsPath;
+    // filePath must be string as this can be invoked from the editor
+    async (filePath: string, isFromCA: boolean = false) => {
+      const fspath = filePath ? filePath : vscode.window.activeTextEditor.document.uri.fsPath;
       const fileName = path.basename(fspath);
       if (isFromCA) {
         record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
@@ -99,12 +100,12 @@ export async function activate(context: vscode.ExtensionContext) {
   registerStackAnalysisCommands(context);
 
   const showVulnerabilityFoundPrompt = async (msg: string, filePath: vscode.Uri) => {
-    const fileName = path.basename(filePath.path);
+    const fileName = path.basename(filePath.fsPath);
     const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
     if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
       record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
       // TODO: Uri not string path
-      vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
+      vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath.fsPath);
     } else {
       record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
     }
@@ -115,7 +116,7 @@ export async function activate(context: vscode.ExtensionContext) {
     caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
     if (notification.hasWarning()) {
       showVulnerabilityFoundPrompt(notification.popupText(), notification.origin());
-      record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin().path), fileName: path.basename(notification.origin().path) });
+      record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin().fsPath), fileName: path.basename(notification.origin().fsPath) });
     }
   });
 
@@ -127,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.showWarningMessage(notification.errorMsg());
 
     // Record telemetry event
-    record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin().path), fileName: path.basename(notification.origin().path), error: notification.errorMsg() });
+    record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin().fsPath), fileName: path.basename(notification.origin().fsPath), error: notification.errorMsg() });
   });
 
   try {
@@ -226,8 +227,8 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
 
   const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
     const fileUri = uri || vscode.window.activeTextEditor.document.uri;
-    const filePath = fileUri.path;
-    record(context, origin, { manifest: filePath.split('/').pop(), fileName: filePath.split('/').pop() });
+    const filePath = fileUri.fsPath;
+    record(context, origin, { manifest: path.basename(filePath), fileName: path.basename(filePath) });
     invokeFullStackReport(filePath);
   };
 

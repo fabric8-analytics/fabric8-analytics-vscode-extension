@@ -376,7 +376,7 @@
     "test-compile": "tsc -p ./",
     "posttest-compile": "./transformToDynamicImport.sh",
     "pretest": "npm run test-compile",
-    "test": "vscode-test",
+    "test": "vscode-test --coverage",
     "coverage": "nyc npm run test",
     "reinstall": "npm cache verify && npm install",
     "lint": "eslint -c .eslintrc.js --ext .ts src/"

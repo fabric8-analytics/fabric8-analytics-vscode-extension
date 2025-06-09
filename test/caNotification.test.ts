@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 
-import { CANotification } from '../src/caNotification';
-
 const expect = chai.expect;
 chai.use(sinonChai);
+
+import { CANotification } from '../src/caNotification';
+import { Uri } from 'vscode';
 
 suite('CANotification module', () => {
     let sandbox: sinon.SinonSandbox;
@@ -22,13 +24,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: null,
             done: null,
-            uri: '',
+            uri: Uri.parse('', false),
             diagCount: null,
             vulnCount: null,
         });
 
         expect(notification.errorMsg()).to.equal('');
-        expect(notification.origin()).to.equal('');
+        expect(notification.origin().toString()).to.equal('file:///');
         expect(notification.isDone()).to.be.false;
         expect(notification.hasWarning()).to.be.false;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');
@@ -40,13 +42,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: null,
             done: false,
-            uri: 'file:///mock/path',
+            uri: Uri.parse('file:///mock/path'),
             diagCount: null,
             vulnCount: null,
         });
 
         expect(notification.errorMsg()).to.equal('');
-        expect(notification.origin()).to.equal('file:///mock/path');
+        expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.false;
         expect(notification.hasWarning()).to.be.false;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');
@@ -59,13 +61,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: null,
             done: true,
-            uri: 'file:///mock/path',
+            uri: Uri.parse('file:///mock/path'),
             diagCount: 1,
             vulnCount: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
-        expect(notification.origin()).to.equal('file:///mock/path');
+        expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
         expect(notification.popupText()).to.equal('Found 1 direct vulnerability for Snyk Provider.');
@@ -78,13 +80,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: null,
             done: true,
-            uri: 'file:///mock/path',
+            uri: Uri.parse('file:///mock/path'),
             diagCount: 2,
             vulnCount: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
-        expect(notification.origin()).to.equal('file:///mock/path');
+        expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
         expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities for Snyk Provider.');
@@ -98,13 +100,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: null,
             done: true,
-            uri: 'file:///mock/path',
+            uri: Uri.parse('file:///mock/path'),
             diagCount: 2,
             vulnCount: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
-        expect(notification.origin()).to.equal('file:///mock/path');
+        expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
         expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities for Snyk Provider. Found 1 direct vulnerability for Oss-Index Provider.');
@@ -116,13 +118,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: null,
             done: true,
-            uri: 'file:///mock/path',
+            uri: Uri.parse('file:///mock/path'),
             diagCount: 0,
             vulnCount: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
-        expect(notification.origin()).to.equal('file:///mock/path');
+        expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.false;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');
@@ -134,13 +136,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: null,
             done: true,
-            uri: 'file:///mock/path',
+            uri: Uri.parse('file:///mock/path'),
             diagCount: 1,
             vulnCount: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
-        expect(notification.origin()).to.equal('file:///mock/path');
+        expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');
@@ -151,13 +153,13 @@ suite('CANotification module', () => {
         const notification = new CANotification({
             errorMessage: 'Mock error message',
             done: null,
-            uri: 'file:///mock/path',
+            uri: Uri.parse('file:///mock/path'),
             diagCount: null,
             vulnCount: null,
         });
 
         expect(notification.errorMsg()).to.equal('Mock error message');
-        expect(notification.origin()).to.equal('file:///mock/path');
+        expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.false;
         expect(notification.hasWarning()).to.be.false;
         expect(notification.popupText()).to.equal(' no vulnerabilities found for all the providers combined');

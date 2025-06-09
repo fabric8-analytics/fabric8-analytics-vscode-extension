@@ -1,5 +1,6 @@
 'use strict';
 
+import { Uri } from 'vscode';
 import { applySettingNameMappings } from './utils';
 
 /**
@@ -8,7 +9,7 @@ import { applySettingNameMappings } from './utils';
 interface CANotificationData {
   errorMessage: string;
   done: boolean;
-  uri: string;
+  uri: Uri;
   diagCount: number;
   vulnCount: Map<string, number>;
 }
@@ -19,7 +20,7 @@ interface CANotificationData {
 class CANotification {
   private readonly errorMessage: string;
   private readonly done: boolean;
-  private readonly uri: string;
+  private readonly uri: Uri;
   private readonly diagCount: number;
   private readonly vulnCount: Map<string, number>;
   private readonly totalVulnCount: number;
@@ -113,7 +114,7 @@ class CANotification {
    * Retrieves the URI associated with the notification.
    * @returns The URI string.
    */
-  public origin(): string {
+  public origin(): Uri {
     return this.uri;
   }
 

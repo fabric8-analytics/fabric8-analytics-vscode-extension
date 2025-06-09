@@ -2,12 +2,6 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import {
-  LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
-  TransportKind
-} from 'vscode-languageclient/node';
 
 import * as commands from './commands';
 import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, REDHAT_CATALOG } from './constants';
@@ -19,33 +13,55 @@ import { CANotification } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
 import { applySettingNameMappings, buildErrorMessage } from './utils';
-
-let lspClient: LanguageClient;
+import { clearCodeActionsMap, getDiagnosticsCodeActions } from './codeActionHandler';
+import { AnalysisMatcher } from './fileHandler';
+import { EventEmitter } from 'node:events';
 
 export let outputChannelDep: DepOutputChannel;
+
+export const notifications = new EventEmitter();
 
 /**
  * Activates the extension upon launch.
  * @param context - The extension context.
  */
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+  outputChannelDep = new DepOutputChannel();
+
   globalConfig.linkToSecretStorage(context);
 
   startUp(context);
+
+  context.subscriptions.push(vscode.languages.registerCodeActionsProvider('*', new class implements vscode.CodeActionProvider {
+    provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, ctx: vscode.CodeActionContext): vscode.ProviderResult<vscode.CodeAction[]> {
+      return getDiagnosticsCodeActions(ctx.diagnostics, document.uri);
+    }
+  }()));
+
+  const fileHandler = new AnalysisMatcher();
+  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => fileHandler.handle(doc)));
+  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => fileHandler.handle(doc)));
+  context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => clearCodeActionsMap(doc.uri)));
+  // iterate all open docs, as theres no "did open doc" event for these
+  // TODO: why is pom.xml not being picked up as background file
+  for (const doc of vscode.workspace.textDocuments) {
+    fileHandler.handle(doc);
+  }
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);
 
   const disposableStackAnalysisCommand = vscode.commands.registerCommand(
     commands.STACK_ANALYSIS_COMMAND,
+    // filePath must be string as this can be invoked from the editor
     async (filePath: string, isFromCA: boolean = false) => {
-      filePath = filePath ? filePath : vscode.window.activeTextEditor.document.uri.fsPath;
-      const fileName = path.basename(filePath);
+      const fspath = filePath ? filePath : vscode.window.activeTextEditor.document.uri.fsPath;
+      const fileName = path.basename(fspath);
       if (isFromCA) {
         record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
       }
       try {
-        await generateRHDAReport(context, filePath, outputChannelDep);
+        await generateRHDAReport(context, fspath, outputChannelDep);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
         const message = applySettingNameMappings(error.message);
@@ -83,100 +99,52 @@ export function activate(context: vscode.ExtensionContext) {
 
   registerStackAnalysisCommands(context);
 
-  globalConfig.authorizeRHDA(context)
-    .then(() => {
-      // Create output channel
-      outputChannelDep = new DepOutputChannel();
-      // The server is implemented in node
-      const serverModule = context.asAbsolutePath(
-        path.join('dist', 'server.js')
-      );
-      // The debug options for the server
-      // --inspect=6010: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-      const debugOptions = { execArgv: ['--nolazy', '--inspect=6010'] };
+  const showVulnerabilityFoundPrompt = async (msg: string, filePath: vscode.Uri) => {
+    const fileName = path.basename(filePath.fsPath);
+    const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
+    if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
+      record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
+      // TODO: Uri not string path
+      vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath.fsPath);
+    } else {
+      record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
+    }
+  };
 
-      // If the extension is launched in debug mode then the debug server options are used
-      // Otherwise the run options are used
-      const serverOptions: ServerOptions = {
-        run: { module: serverModule, transport: TransportKind.ipc },
-        debug: {
-          module: serverModule,
-          transport: TransportKind.ipc,
-          options: debugOptions
-        }
-      };
+  notifications.on('caNotification', respData => {
+    const notification = new CANotification(respData);
+    caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
+    if (notification.hasWarning()) {
+      showVulnerabilityFoundPrompt(notification.popupText(), notification.origin());
+      record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin().fsPath), fileName: path.basename(notification.origin().fsPath) });
+    }
+  });
 
-      // Options to control the language client
-      const clientOptions: LanguageClientOptions = {
-        documentSelector: [
-          { scheme: 'file', language: 'json' },
-          { scheme: 'file', language: 'jsonc' },
-          { scheme: 'file', language: 'xml' },
-          { scheme: 'file', language: 'plaintext' },
-          { scheme: 'file', language: 'pip-requirements' },
-          { scheme: 'file', language: 'go' },
-          { scheme: 'file', language: 'go.mod' },
-          { scheme: 'file', language: 'groovy' },
-          { scheme: 'file', language: 'kotlin' },
-          { scheme: 'file', language: 'gradle' },
-          { scheme: 'file', language: 'dockerfile' }
-        ]
-      };
+  notifications.on('caError', errorData => {
+    const notification = new CANotification(errorData);
+    caStatusBarProvider.setError();
 
-      // Create the language client and start the client.
-      lspClient = new LanguageClient(
-        'redHatDependencyAnalyticsServer',
-        'Red Hat Dependency Analytics Server',
-        serverOptions,
-        clientOptions
-      );
+    // Since CA is an automated feature, only warning message will be shown on failure
+    vscode.window.showWarningMessage(notification.errorMsg());
 
-      lspClient.start().then(() => {
+    // Record telemetry event
+    record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin().fsPath), fileName: path.basename(notification.origin().fsPath), error: notification.errorMsg() });
+  });
 
-        const showVulnerabilityFoundPrompt = async (msg: string, filePath: string) => {
-          const fileName = path.basename(filePath);
-          const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
-          if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
-            record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
-            vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath);
-          } else {
-            record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
-          }
-        };
+  try {
+    await globalConfig.authorizeRHDA(context);
+  } catch (err) {
+    vscode.window.showErrorMessage(`Failed to Authorize Red Hat Dependency Analytics extension: ${err.message}`);
+    throw err;
+  }
 
-        lspClient.onNotification('caNotification', respData => {
-          const notification = new CANotification(respData);
-          caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
-          if (notification.hasWarning()) {
-            showVulnerabilityFoundPrompt(notification.popupText(), notification.origin());
-            record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()) });
-          }
-        });
-
-        lspClient.onNotification('caError', errorData => {
-          const notification = new CANotification(errorData);
-          caStatusBarProvider.setError();
-
-          // Since CA is an automated feature, only warning message will be shown on failure
-          vscode.window.showWarningMessage(notification.errorMsg());
-
-          // Record telemetry event
-          record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin()), fileName: path.basename(notification.origin()), error: notification.errorMsg() });
-        });
-      });
-
-      context.subscriptions.push(
-        disposableStackAnalysisCommand,
-        disposableStackLogsCommand,
-        disposableTrackRecommendationAcceptance,
-        // disposableSetSnykToken,
-        caStatusBarProvider,
-      );
-    })
-    .catch(error => {
-      vscode.window.showErrorMessage(`Failed to Authorize Red Hat Dependency Analytics extension: ${error.message}`);
-      throw error;
-    });
+  context.subscriptions.push(
+    disposableStackAnalysisCommand,
+    disposableStackLogsCommand,
+    disposableTrackRecommendationAcceptance,
+    // disposableSetSnykToken,
+    caStatusBarProvider,
+  );
 
   vscode.workspace.onDidChangeConfiguration(() => {
     globalConfig.loadData();
@@ -185,11 +153,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 /**
  * Deactivates the extension.
- * @returns A `Thenable` for void.
  */
-export function deactivate(): Thenable<void> {
-  return lspClient?.stop();
-}
+export function deactivate(): Thenable<void> { return; }
 
 /**
  * Shows an update notification if the extension has been updated to a new version.
@@ -263,7 +228,7 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
     const fileUri = uri || vscode.window.activeTextEditor.document.uri;
     const filePath = fileUri.fsPath;
-    record(context, origin, { manifest: filePath.split('/').pop(), fileName: filePath.split('/').pop() });
+    record(context, origin, { manifest: path.basename(filePath), fileName: path.basename(filePath) });
     invokeFullStackReport(filePath);
   };
 

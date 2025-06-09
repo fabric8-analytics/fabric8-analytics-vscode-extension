@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-let dummyMomentoData = {};
+const dummyMomentoData = {};
 
 class DummyMemento implements vscode.Memento {
   get<T>(key: string): Promise<T | undefined> {

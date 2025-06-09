@@ -25,6 +25,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
+			"testConfiguration": "${workspaceFolder}/.vscode-test.mjs",
 			"args": [
 				"${workspaceFolder}/test/resources/",
 				"--extensionDevelopmentPath=${workspaceRoot}",

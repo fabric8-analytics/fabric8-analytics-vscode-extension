@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
@@ -66,7 +67,7 @@ suite('Config module', () => {
         get: () => '',
         delete: () => sandbox.stub()
       }
-    })
+    });
 
     await globalConfig.authorizeRHDA(context);
 
@@ -133,7 +134,7 @@ suite('Config module', () => {
       }
     });
     sandbox.spy(vscode.window, 'showInformationMessage');
-    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage')
+    const showErrorMessageSpy = sandbox.spy(vscode.window, 'showErrorMessage');
 
     await globalConfig.setSnykToken(mockToken);
 
@@ -270,4 +271,6 @@ suite('Config module', () => {
     expect(vscode.window.showInformationMessage).to.not.be.called;
     expect(showErrorMessageSpy).to.have.been.calledWith(`Failed to delete Snyk token from VSCode Secret Storage, Error: ${mockedError.message}`);
   });
+}).beforeEach(() => {
+  globalConfig.loadData();
 });

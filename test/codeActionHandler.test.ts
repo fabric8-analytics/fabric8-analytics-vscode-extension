@@ -192,8 +192,9 @@ suite('Code Action Handler tests', () => {
         config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
 
         const edit = new WorkspaceEdit();
-        edit.insert(Uri.file('mock/path/pom.xml'), new Position(321, 321), 'mockVersionReplacementString');
-        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage@mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], Uri.file('mock/path/pom.xml'));
+        const uri = Uri.file('mock/path/pom.xml');
+        edit.insert(uri, mockDiagnostic1[0].range.start, 'mockVersionReplacementString');
+        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage@mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri);
         expect(codeAction).to.deep.equal(
             {
                 'command': {
@@ -207,7 +208,7 @@ suite('Code Action Handler tests', () => {
                 'diagnostics': [
                     {
                         'message': 'another mock message',
-                        'range': new Range(321, 321, 654, 654),
+                        'range': mockDiagnostic1[0].range,
                         'severity': 3,
                         'source': 'mockSource'
                     }

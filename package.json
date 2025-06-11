@@ -365,6 +365,11 @@
           "default": "",
           "description": "Specifies platform used for multi-arch images.",
           "scope": "window"
+        },
+        "redHatDependencyAnalytics.recommendations.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Toggles recommending Red Hat repositories"
         }
       }
     }

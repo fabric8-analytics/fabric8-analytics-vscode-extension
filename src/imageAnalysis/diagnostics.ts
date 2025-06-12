@@ -10,8 +10,9 @@ import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
 import { clearCodeActionsMap, registerCodeAction, generateRedirectToRecommendedVersionAction } from '../codeActionHandler';
 import { executeImageAnalysis, ImageData } from './analysis';
 import { Vulnerability } from '../vulnerability';
-import { Diagnostic, Uri } from 'vscode';
+import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
+import { globalConfig } from '../config';
 
 /**
  * Implementation of DiagnosticsPipeline interface.
@@ -41,12 +42,16 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
                 const vulnerability = new Vulnerability(getRange(image), image.name.value, imageData);
 
                 const vulnerabilityDiagnostic = vulnerability.getDiagnostic();
+                if (vulnerabilityDiagnostic.severity === DiagnosticSeverity.Information && !globalConfig.recommendationsEnabled) {
+                    return;
+                }
+
                 this.diagnostics.push(vulnerabilityDiagnostic);
 
                 const loc = vulnerabilityDiagnostic.range.start.line + '|' + vulnerabilityDiagnostic.range.start.character;
 
                 imageData.forEach(id => {
-                    if (id.recommendationRef) {
+                    if (id.recommendationRef && globalConfig.recommendationsEnabled) {
                         this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic);
                     }
 

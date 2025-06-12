@@ -12,8 +12,9 @@ import { VERSION_PLACEHOLDER, GRADLE } from '../constants';
 import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction } from '../codeActionHandler';
 import { buildErrorMessage } from '../utils';
 import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
-import { Diagnostic, Uri } from 'vscode';
+import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
+import { globalConfig } from '../config';
 
 /**
  * Implementation of DiagnosticsPipeline interface.
@@ -44,11 +45,16 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
                 const vulnerability = new Vulnerability(getRange(dependency), ref, dependencyData);
 
                 const vulnerabilityDiagnostic = vulnerability.getDiagnostic();
+                if (vulnerabilityDiagnostic.severity === DiagnosticSeverity.Information && !globalConfig.recommendationsEnabled) {
+                    return;
+                }
+
                 this.diagnostics.push(vulnerabilityDiagnostic);
 
                 const loc = vulnerabilityDiagnostic.range.start.line + '|' + vulnerabilityDiagnostic.range.start.character;
 
                 dependencyData.forEach(dd => {
+                    // TODO: we never use DiagnosticSeverity.Hint aka 3, so this always selects dd.remediationRef
                     const actionRef = vulnerabilityDiagnostic.severity < 3 ? dd.remediationRef : dd.recommendationRef;
                     if (actionRef) {
                         this.createCodeAction(loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic);
@@ -91,7 +97,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
  */
 async function performDiagnostics(diagnosticFilePath: Uri, contents: string, provider: IDependencyProvider) {
     try {
-        const dependencies = await provider.collect(contents);
+        const dependencies = provider.collect(contents);
         const ecosystem = provider.getEcosystem();
         const dependencyMap = new DependencyMap(dependencies, ecosystem);
 

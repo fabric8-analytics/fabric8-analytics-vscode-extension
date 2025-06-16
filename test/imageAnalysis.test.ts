@@ -32,9 +32,10 @@ FROM scratch
 
         globalConfig.linkToSecretStorage({
             secrets: {
-                store: () => sandbox.stub(),
-                get: () => 'mockToken',
-                delete: () => sandbox.stub()
+                onDidChange: sandbox.stub(),
+                store: () => sandbox.stub() as any,
+                get: async () => 'mockToken',
+                delete: () => sandbox.stub() as any
             }
         });
     });

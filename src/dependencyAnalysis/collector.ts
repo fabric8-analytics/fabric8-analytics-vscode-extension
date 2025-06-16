@@ -14,20 +14,18 @@ import { Position, Range } from 'vscode';
  */
 export interface IDependency {
   name: IPositionedString;
-  version: IPositionedString;
-  context: IPositionedContext;
+  version: IPositionedString | undefined;
+  context: IPositionedContext | undefined;
 }
 
 /**
  * Represents a dependency and implements the IDependency interface.
  */
 export class Dependency implements IDependency {
-  public version: IPositionedString;
-  public context: IPositionedContext;
+  public version: IPositionedString | undefined;
+  public context: IPositionedContext | undefined;
 
-  constructor(
-    public name: IPositionedString
-  ) { }
+  constructor(public name: IPositionedString) { }
 }
 
 /**
@@ -47,7 +45,7 @@ export class DependencyMap {
    * @param key - The unique name key for the desired dependency.
    * @returns The dependency object linked to the specified unique name key.
    */
-  public get(key: string): IDependency {
+  public get(key: string): IDependency | undefined {
     return this.mapper.get(key);
   }
 }
@@ -117,6 +115,6 @@ export function getRange(dep: IDependency): Range {
     const length = dep.version.value.length;
     return new Range(new Position(pos.line - 1, pos.column - 1), new Position(pos.line - 1, pos.column + length - 1));
   } else {
-    return dep.context.range;
+    return dep.context!.range;
   }
 }

@@ -4,19 +4,17 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as chaiSubset from 'chai-subset';
 import * as exhortServices from '../../src/exhortServices';
 
 const expect = chai.expect;
 chai.use(sinonChai);
-chai.use(chaiSubset);
 
 import { Image, ImageMap, getRange } from '../../src/imageAnalysis/collector';
 import { ImageRef } from '@trustification/exhort-javascript-api';
 import { PackageURL } from 'packageurl-js';
 import { Range } from 'vscode';
 
-const imageToPurl = {
+const imageToPurl: { [key: string]: PackageURL } = {
     'alpine:3.21.3': new PackageURL(
         'oci', null, 'alpine', 'sha256:1c4eef651f65e2f7daee7ee785882ac164b02b78fb74503052a26dc061c90474',
         { 'arch': 'amd64', 'os': 'linux', 'tag': '3.21.3' }, null

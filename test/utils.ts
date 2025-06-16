@@ -7,7 +7,7 @@ import * as fs from 'fs';
  * @param filepath Path to the module to be imported.
  * @returns A promise that resolves to the module's exports.
  */
-async function dynamicImportProvider(filepath) {
+async function dynamicImportProvider(filepath: string) {
     return await import(filepath);
 }
 
@@ -16,10 +16,10 @@ async function dynamicImportProvider(filepath) {
  * @param filepath path to the compiled JavaScript file of the tested module.
  * @return A module instance that exposes private methods/functions/properties to be mocked/stubbed.
  */
-export function rewireModule(filepath) {
-    const moduleBuffeer = fs.readFileSync(filepath + '.js');
-    const moduleSource = babelCore.transform(moduleBuffeer, { plugins: ['babel-plugin-rewire'] }).code;
-    fs.writeFileSync(filepath + '_rewire.js', moduleSource);
+export function rewireModule(filepath: string) {
+    const moduleBuffer = fs.readFileSync(filepath + '.js').toString();
+    const moduleSource = babelCore.transform(moduleBuffer, { plugins: ['babel-plugin-rewire'] })?.code;
+    fs.writeFileSync(filepath + '_rewire.js', moduleSource!);
     return dynamicImportProvider('../../' + filepath + '_rewire.js');
 }
 
@@ -27,11 +27,11 @@ export function rewireModule(filepath) {
  * Removes rewired modules from file system.
  * @param filepath path to the compiled JavaScript file of the tested module.
  */
-export function cleanupRewireFiles(filepath) {
+export function cleanupRewireFiles(filepath: string) {
     const fileToRemove = filepath + '_rewire.js';
     try {
         fs.unlinkSync(fileToRemove);
     } catch (err) {
-        console.error(`Error deleting rewire module ${fileToRemove}: ${err.message}`);
+        console.error(`Error deleting rewire module ${fileToRemove}: ${(err as Error).message}`);
     }
 }

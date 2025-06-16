@@ -19,7 +19,7 @@ enum TelemetryActions {
   componentAnalysisRecommendationAccepted = 'component_analysis_recommendation_accepted',
 }
 
-let telemetryServiceObj: TelemetryService = null;
+let telemetryServiceObj: TelemetryService | null = null;
 
 /**
  * Retrieves the telemetry service.

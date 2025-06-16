@@ -17,11 +17,11 @@ suite('ExhortServices module', async () => {
   const exhortMock = {
     default: {
       stackAnalysis: async () => stackAnalysisReportHtmlMock,
-      validateToken: async (statusCode) => ({ status: statusCode }),
+      validateToken: async (statusCode: any) => ({ status: statusCode }),
     }
   };
 
-  let exhortServicesRewire;
+  let exhortServicesRewire: any;
 
   setup(async () => {
     sandbox = sinon.createSandbox();
@@ -36,7 +36,7 @@ suite('ExhortServices module', async () => {
 
   test('should generate RHDA report HTML from Exhort Stack Analysis service', async () => {
     await exhortServicesRewire.stackAnalysisService('mock/path/to/manifest', {})
-      .then((result) => {
+      .then((result: string) => {
         expect(result).to.equal(stackAnalysisReportHtmlMock);
       });
   });
@@ -71,7 +71,7 @@ suite('ExhortServices module', async () => {
       .then(() => {
         throw new Error('should have thrown Analysis Error');
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         expect(error.message).to.equal('Analysis Error');
       });
   });

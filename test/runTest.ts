@@ -15,7 +15,7 @@ async function main() {
     // Passed to --extensionTestsPath
     const extensionTestsPath = path.resolve(__dirname, './');
     const vscodeExecutablePath = await downloadAndUnzipVSCode('1.78.1');
-    const cliPath = resolveCliPathFromVSCodeExecutablePath(vscodeExecutablePath)
+    const cliPath = resolveCliPathFromVSCodeExecutablePath(vscodeExecutablePath);
     // Use cp.spawn / cp.exec for custom setup
     cp.spawnSync(cliPath, ['--install-extension', 'redhat.vscode-commons'], {
       encoding: 'utf-8',

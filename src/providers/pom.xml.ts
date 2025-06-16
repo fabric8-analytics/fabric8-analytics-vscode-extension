@@ -64,7 +64,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
             .map(node => node.subElements)
             .flat(1)
             .filter(e => e.name === 'dependency')
-            .filter(e => e.subElements.filter(elm => validElementNames.includes(elm.name)).length === validElementNames.length); // must include all validElementNames
+            .filter(e => e.subElements.filter(elm => validElementNames.includes(elm.name ?? '')).length === validElementNames.length); // must include all validElementNames
     }
 
     /**
@@ -80,11 +80,12 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         class PomDependency {
             public groupId: XMLElement;
             public artifactId: XMLElement;
-            public version: XMLElement;
+            public version: XMLElement | undefined;
 
             constructor(public element: XMLElement) {
-                this.groupId = element.subElements.find(e => e.name === 'groupId');
-                this.artifactId = element.subElements.find(e => e.name === 'artifactId');
+                // TODO: error check instead of null assert
+                this.groupId = element.subElements.find(e => e.name === 'groupId')!;
+                this.artifactId = element.subElements.find(e => e.name === 'artifactId')!;
                 this.version = element.subElements.find(e => e.name === 'version');
             }
 
@@ -103,7 +104,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
          * @param d - A PomDependency instance.
          * @returns An IDependency object derived from the PomDependency.
          */
-        const toDependency = (d: PomDependency): Dependency => {
+        function toDependency(d: PomDependency): Dependency {
             const dep: Dependency = new Dependency(
                 {
                     value: `${d.groupId.textContents[0].text}/${d.artifactId.textContents[0].text}`,
@@ -114,7 +115,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
             if (d.version && d.version.textContents.length > 0) {
                 const versionVal = d.version.textContents[0];
                 dep.version = {
-                    value: d.version.textContents[0].text,
+                    value: d.version.textContents[0].text ?? '',
                     position: { line: versionVal.position.startLine, column: versionVal.position.startColumn },
                 };
             } else {
@@ -127,14 +128,14 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
             }
 
             return dep;
-        };
+        }
 
         /**
          * Generates a dependency template for missing version information.
          * @param dep - A XMLElement representing the dependency.
          * @returns A string representing a dependency template with a placeholder for the version.
          */
-        const dependencyTemplate = (dep: XMLElement): string => {
+        function dependencyTemplate(dep: XMLElement): string {
             let template = '<dependency>';
             let idx = 0;
             const margin = dep.textContents[idx].text;
@@ -149,7 +150,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
             template += `${dep.textContents[idx].text}</dependency>`;
 
             return template;
-        };
+        }
 
         return deps
             .filter(elm => !elm.subElements.find(subElm => (subElm.name === 'scope' && subElm.textContents[0]?.text === 'test')))

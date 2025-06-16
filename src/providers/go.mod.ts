@@ -16,7 +16,7 @@ import { GOLANG } from '../constants';
  * @param str - The string to search for a Semantic Versioning pattern.
  * @returns An array of matched results for the Semantic Versioning pattern.
  */
-export function semVerRegExp(str: string): RegExpExecArray {
+export function semVerRegExp(str: string): RegExpExecArray | null {
     const regExp = /(?<=^v?|\sv?)(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-(?:0|[1-9]\d*|[\da-z-]*[a-z-][\da-z-]*)(?:\.(?:0|[1-9]\d*|[\da-z-]*[a-z-][\da-z-]*))*)?(?:\+[\da-z-]+(?:\.[\da-z-]+)*)?(?=$|\s)/ig;
     return regExp.exec(str);
 }
@@ -58,8 +58,8 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
      * @param line - The line to extract dependency data from.
      * @returns An object containing dependency data, or null if no matching version is found.
      */
-    static getDependencyData(line: string): { name: string, version: string, index: number } | null {
-        const versionMatches: RegExpExecArray = semVerRegExp(line);
+    static getDependencyData(line: string): { name: string, version: string | null, index: number | null } | null {
+        const versionMatches = semVerRegExp(line);
         if (versionMatches && versionMatches.length > 0) {
             const depName = DependencyProvider.clean(line).split(' ')[0];
             return { name: depName, version: versionMatches[0], index: versionMatches.index };
@@ -82,7 +82,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         if (!replacementDepData) { return; }
 
         const replaceDependency = new Dependency({ value: replacementDepData.name, position: { line: 0, column: 0 } });
-        replaceDependency.version = { value: 'v' + replacementDepData.version, position: { line: index + 1, column: (line.lastIndexOf(lineData[1]) + replacementDepData.index) } };
+        replaceDependency.version = { value: 'v' + replacementDepData.version, position: { line: index + 1, column: (line.lastIndexOf(lineData[1]) + (replacementDepData?.index ?? 0)) } };
 
         this.replacementMap.set(originalDepData.name + (originalDepData.version ? ('@v' + originalDepData.version) : ''), replaceDependency);
     }
@@ -94,7 +94,6 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
      * @returns An IDependency object representing the parsed dependency or null if no dependency is found.
      */
     private parseLine(line: string, index: number): IDependency | null {
-
         line = line.split('//')[0]; // Remove comments
         if (!DependencyProvider.clean(line)) { return null; } // Skip lines without dependencies
 
@@ -108,7 +107,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         if (!depData) { return null; }
 
         const dep = new Dependency({ value: depData.name, position: { line: 0, column: 0 } });
-        dep.version = { value: 'v' + depData.version, position: { line: index + 1, column: depData.index } };
+        // invariant: if depData is not null, depData.index should be set
+        // TODO: confirm regex wont parse of depData.index would be set to null
+        dep.version = { value: 'v' + depData.version, position: { line: index + 1, column: depData.index! } };
         return dep;
     }
 
@@ -118,7 +119,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
      * @returns The replaced dependency or the original one if no replacement is found.
      */
     private applyReplaceMap(dep: IDependency): IDependency {
-        return this.replacementMap.get(dep.name.value + '@' + dep.version.value) || this.replacementMap.get(dep.name.value) || dep;
+        // invariant: dep.version should be non-null if invariant in parseLine holds.
+        // TODO: can we improve the typings around all this a la Required<T>
+        return this.replacementMap.get(dep.name.value + '@' + dep.version!.value) || this.replacementMap.get(dep.name.value) || dep;
     }
 
     /**
@@ -129,7 +132,6 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     private extractDependenciesFromLines(lines: string[]): IDependency[] {
         let isExcluded: boolean = false;
         const goModDeps: IDependency[] = lines.reduce((dependencies: IDependency[], line: string, index: number) => {
-
             // ignore excluded dependency lines and scopes
             if (line.includes('exclude')) {
                 if (line.includes('(')) {
@@ -144,13 +146,12 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
                 return dependencies;
             }
 
-            const parsedDependency: IDependency = this.parseLine(line, index);
+            const parsedDependency = this.parseLine(line, index);
             if (parsedDependency) {
                 dependencies.push(parsedDependency);
             }
 
             return dependencies;
-
         }, []);
 
         return goModDeps.map(goModDep => this.applyReplaceMap(goModDep));

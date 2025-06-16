@@ -63,9 +63,10 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
-        get: () => '',
-        delete: () => sandbox.stub()
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => '',
+        delete: () => sandbox.stub() as any
       }
     });
 
@@ -106,9 +107,10 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
-        get: () => '',
-        delete: () => sandbox.stub()
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => '',
+        delete: () => sandbox.stub() as any
       }
     });
     const storeSecretSpy = sandbox.spy(globalConfig.secrets, 'store');
@@ -126,11 +128,12 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
+        onDidChange: sandbox.stub(),
         store: async () => {
           throw mockedError;
         },
-        get: () => '',
-        delete: () => sandbox.stub()
+        get: async () => '',
+        delete: () => sandbox.stub() as any
       }
     });
     sandbox.spy(vscode.window, 'showInformationMessage');
@@ -146,9 +149,10 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
-        get: () => '',
-        delete: () => sandbox.stub()
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => '',
+        delete: () => sandbox.stub() as any
       }
     });
     sandbox.spy(globalConfig.secrets, 'store');
@@ -166,9 +170,10 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
-        get: () => mockToken,
-        delete: () => sandbox.stub()
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => mockToken,
+        delete: () => sandbox.stub() as any
       }
     });
 
@@ -179,9 +184,10 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
-        get: () => undefined,
-        delete: () => sandbox.stub()
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => undefined,
+        delete: () => sandbox.stub() as any
       }
     });
 
@@ -192,11 +198,12 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
         get: async () => {
           throw mockedError;
         },
-        delete: () => sandbox.stub()
+        delete: () => sandbox.stub() as any
       }
     });
     sandbox.spy(globalConfig.secrets, 'delete');
@@ -212,7 +219,8 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
         get: async () => {
           throw mockedError;
         },
@@ -234,9 +242,10 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
-        get: () => '',
-        delete: () => sandbox.stub()
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => '',
+        delete: () => sandbox.stub() as any
       }
     });
     const deleteSecretSpy = sandbox.spy(globalConfig.secrets, 'delete');
@@ -254,8 +263,9 @@ suite('Config module', () => {
 
     globalConfig.linkToSecretStorage({
       secrets: {
-        store: () => sandbox.stub(),
-        get: () => '',
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => '',
         delete: async () => {
           throw mockedError;
         },

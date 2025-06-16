@@ -87,8 +87,9 @@ class AnalysisResponse implements IAnalysisResponse {
                             : new DependencyData(source.id, issuesCount, this.getRecommendation(d), '', this.getHighestSeverity(d));
 
                         const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
-                        this.dependencies[resolvedRef] = this.dependencies[resolvedRef] || [];
-                        this.dependencies[resolvedRef].push(dd);
+                        const something = (this.dependencies.get(resolvedRef) || []);
+                        something.push(dd);
+                        this.dependencies.set(resolvedRef, something);
                     }
                 });
             });

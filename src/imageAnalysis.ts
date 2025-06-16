@@ -38,7 +38,7 @@ interface IImageRef {
  */
 class DockerImageAnalysis {
     options: IOptions = {
-        'RHDA_TOKEN': globalConfig.telemetryId,
+        'RHDA_TOKEN': globalConfig.telemetryId ?? '',
         'RHDA_SOURCE': globalConfig.utmSource,
         'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
         'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
@@ -189,7 +189,7 @@ class DockerImageAnalysis {
 
                 updateCurrentWebviewPanel('error');
 
-                this.outputChannel.error(buildErrorMessage(error));
+                this.outputChannel.error(buildErrorMessage(error as Error));
 
                 throw error;
             }

@@ -68,7 +68,7 @@ async function tokenValidationService(options: { [key: string]: string }, source
         return `Failed to validate token. Status: ${status}`;
     }
   } catch (error) {
-    return `Failed to validate token, Error: ${error.message}`;
+    return `Failed to validate token, Error: ${(error as Error).message}`;
   }
 }
 

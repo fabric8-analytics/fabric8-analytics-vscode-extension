@@ -101,7 +101,6 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     private parseLine(line: string, cleanLine: string, index: number): IDependency | null {
         const myClassObj = { group: '', name: '', version: '' };
         let depData: string;
-        let quoteUsed: string;
 
         const keyValuePairs = cleanLine.match(this.FIND_KEY_VALUE_PAIRS_WITH_COLON_REGEX);
         if (keyValuePairs) {
@@ -109,7 +108,8 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
             keyValuePairs.forEach(pair => {
                 const [key, value] = pair.split(this.SPLIT_KEY_VALUE_PAIRS_WITH_COLON_REGEX);
                 const match = value.match(this.BETWEEN_QUOTES_REGEX);
-                quoteUsed = match[1];
+                if (!match) { return; }
+
                 const valueData = match[2];
                 switch (key) {
                     case 'group':
@@ -126,7 +126,8 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         } else {
             // extract data from dependency in String format
             const match = cleanLine.match(this.BETWEEN_QUOTES_REGEX);
-            quoteUsed = match[1];
+            if (!match) { return null; }
+
             depData = match[2];
             const depDataList = depData.split(':');
             myClassObj.group = depDataList[0];
@@ -151,14 +152,16 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         } else {
             // if version is not specified, generate placeholder template
             if (keyValuePairs) {
-                const quotedName = `${quoteUsed}${myClassObj.name}${quoteUsed}`;
+                const quotedName = `"${myClassObj.name}"`;
                 dep.context = {
-                    value: `name: ${quotedName}, version: ${quoteUsed}${VERSION_PLACEHOLDER}${quoteUsed}`, range: new Range(
+                    value: `name: ${quotedName}, version: "${VERSION_PLACEHOLDER}"`, range: new Range(
                         new Position(index, line.indexOf(`name: ${quotedName}`)),
                         new Position(index, line.indexOf(`name: ${quotedName}`) + `name: ${quotedName}`.length),
                     )
                 };
             } else {
+                // invariant: if keyValuePairs is null, then depData is set
+                depData = depData!;
                 dep.context = {
                     value: `${depData}:${VERSION_PLACEHOLDER}`, range: new Range(
                         new Position(index, line.indexOf(depData)),

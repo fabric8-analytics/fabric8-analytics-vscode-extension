@@ -34,11 +34,11 @@ function clearCodeActionsMap(uri: Uri) {
  * @param codeAction - The code action to be registered.
  */
 function registerCodeAction(uri: Uri, loc: string, codeAction: CodeAction) {
-  codeActionsMap.set(uri.toString(), codeActionsMap.get(uri.toString()) || new Map<string, CodeAction[]>());
-
-  const innerMap = codeActionsMap.get(uri.toString());
-  innerMap.set(loc, innerMap.get(loc) || []);
-  innerMap.get(loc).push(codeAction);
+  const innerMap = codeActionsMap.get(uri.toString()) || new Map<string, CodeAction[]>();
+  const actionsAtLocation = innerMap.get(loc) || [];
+  actionsAtLocation.push(codeAction);
+  innerMap.set(loc, actionsAtLocation);
+  codeActionsMap.set(uri.toString(), innerMap);
 }
 
 /**
@@ -101,7 +101,7 @@ function generateSwitchToRecommendedVersionAction(title: string, dependency: str
     edit: new WorkspaceEdit()
   };
 
-  codeAction.edit.insert(uri, diagnostic.range.start, versionReplacementString);
+  codeAction.edit!.insert(uri, diagnostic.range.start, versionReplacementString);
 
   codeAction.command = {
     title: 'Track recommendation acceptance',

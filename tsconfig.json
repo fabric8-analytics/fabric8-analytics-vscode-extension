@@ -7,7 +7,8 @@
     "outDir": "out",
     "sourceMap": true,
     "rootDir": ".",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true
   },
   "exclude": [
     "node_modules",

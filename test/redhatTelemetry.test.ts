@@ -8,7 +8,7 @@ const expect = chai.expect;
 chai.use(sinonChai);
 
 suite('RedhatTelemetry module', async () => {
-    let sandbox: sinon.SinonSandbox;
+    const sandbox: sinon.SinonSandbox = sinon.createSandbox();
 
     const compiledFilePath = 'out/src/redhatTelemetry';
     const redHatUUIDMock = 'Mock UUID';
@@ -31,10 +31,9 @@ suite('RedhatTelemetry module', async () => {
         getRedHatService: async () => getIdProviderMock
     };
 
-    let redhatTelemetryRewire;
+    let redhatTelemetryRewire: any;
 
     setup(async () => {
-        sandbox = sinon.createSandbox();
         redhatTelemetryRewire = await rewireModule(compiledFilePath);
         redhatTelemetryRewire.__Rewire__('vscode_redhat_telemetry_1', getRedHatServiceMock);
     });

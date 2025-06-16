@@ -7,11 +7,11 @@ import { applySettingNameMappings } from './utils';
  * Interface representing the data structure for a Component Analysis (CA) Notification.
  */
 interface CANotificationData {
-  errorMessage: string;
-  done: boolean;
-  uri: Uri;
-  diagCount: number;
-  vulnCount: Map<string, number>;
+  errorMessage: string | null;
+  done: boolean | null;
+  uri: Uri | null;
+  diagCount: number | null;
+  vulnCount: Map<string, number> | null;
 }
 
 /**
@@ -40,10 +40,10 @@ class CANotification {
   constructor(respData: CANotificationData) {
     this.errorMessage = applySettingNameMappings(respData.errorMessage || '');
     this.done = respData.done === true;
-    this.uri = respData.uri;
+    this.uri = respData.uri || Uri.file('');
     this.diagCount = respData.diagCount || 0;
     this.vulnCount = respData.vulnCount || new Map<string, number>();
-    this.totalVulnCount = Object.values(this.vulnCount).reduce((sum, cv) => sum + cv, 0);
+    this.totalVulnCount = Array.from(this.vulnCount.values()).reduce((sum, cv) => sum + cv, 0);
   }
 
   /**
@@ -139,7 +139,7 @@ class CANotification {
    * @returns The text content for the popup notification.
    */
   public popupText(): string {
-    const text: string = Object.entries(this.vulnCount)
+    const text: string = Array.from(this.vulnCount.entries())
       .map(([provider, vulnCount]) => `Found ${vulnCount} direct ${this.singularOrPlural(vulnCount)} for ${this.capitalizeEachWord(provider)} Provider.`)
       .join(' ');
     return text || this.warningText().replace(/\$\((.*?)\)/g, '');

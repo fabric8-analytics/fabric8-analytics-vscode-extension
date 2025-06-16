@@ -37,7 +37,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
      * @param ecosystem - The name of the ecosystem in which dependencies are being analyzed.
      */
     runDiagnostics(dependencies: Map<string, DependencyData[]>, ecosystem: string) {
-        Object.entries(dependencies).map(([ref, dependencyData]: [string, DependencyData[]]) => {
+        dependencies.forEach((dependencyData, ref) => {
             const dependencyRef = ecosystem === GRADLE ? ref : ref.split('@')[0];
             const dependency = this.dependencyMap.get(dependencyRef);
 
@@ -62,7 +62,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
 
                     const vulnProvider = dd.sourceId.split('(')[0];
                     const issuesCount = dd.issuesCount;
-                    this.vulnCount[vulnProvider] = (this.vulnCount[vulnProvider] || 0) + issuesCount;
+                    this.vulnCount.set(vulnProvider, (this.vulnCount.get(vulnProvider) || 0) + issuesCount);
                 });
             }
             DiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);
@@ -78,7 +78,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
      * @param vulnerabilityDiagnostic - Vulnerability diagnostic object.
      * @private
      */
-    private createCodeAction(loc: string, ref: string, context: IPositionedContext, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
+    private createCodeAction(loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
         const dependency = ref;
         const switchToVersion = dependency.split('@')[1];
         const versionReplacementString = context ? context.value.replace(VERSION_PLACEHOLDER, switchToVersion) : switchToVersion;
@@ -112,9 +112,9 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
 
         diagnosticsPipeline.reportDiagnostics();
     } catch (error) {
-        outputChannelDep.warn(`Component Analysis Error: ${buildErrorMessage(error)}\n${(error as Error).stack}`);
+        outputChannelDep.warn(`component analysis error: ${buildErrorMessage(error as Error)}\n${(error as Error).stack}`);
         notifications.emit('caError', {
-            errorMessage: error.message,
+            errorMessage: (error as Error).message,
             uri: diagnosticFilePath,
         });
     }

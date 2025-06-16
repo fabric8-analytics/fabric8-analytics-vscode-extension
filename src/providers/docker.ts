@@ -64,7 +64,7 @@ export class ImageProvider implements IImageProvider {
      * @returns An IImage object representing the parsed image or null if no image is found.
      * @private
      */
-    private parseLine(line: string, index: number): IImage | null {
+    private parseLine(line: string, index: number): IImage | undefined {
         const argMatch = line.match(this.ARG_REGEX);
         if (argMatch) {
             const argData = argMatch[1].trim().split('=');

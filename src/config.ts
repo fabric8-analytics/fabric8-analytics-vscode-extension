@@ -13,6 +13,7 @@ class Config {
   telemetryId: string;
   stackAnalysisCommand: string;
   trackRecommendationAcceptanceCommand: string;
+  recommendationsEnabled: boolean;
   utmSource: string;
   exhortProxyUrl: string;
   matchManifestVersions: string;
@@ -91,6 +92,7 @@ class Config {
 
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
+    this.recommendationsEnabled = rhdaConfig.recommendations.enabled;
     this.utmSource = GlobalState.UTM_SOURCE;
     this.exhortProxyUrl = this.getEffectiveHttpProxyUrl();
     /* istanbul ignore next */

@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 
-const dummyMomentoData = {};
+const dummyMomentoData: { [key: string]: any } = {};
 
 class DummyMemento implements vscode.Memento {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   get<T>(key: string): Promise<T | undefined> {
     return dummyMomentoData[key];
   }
@@ -13,7 +14,7 @@ class DummyMemento implements vscode.Memento {
   keys(): readonly string[] {
     return Object.keys(dummyMomentoData);
   }
-  public setKeysForSync(keys: string[]): void {
+  public setKeysForSync(): void {
     return;
   }
 }
@@ -22,22 +23,20 @@ export const context: vscode.ExtensionContext = {
   extensionPath: 'path',
   storagePath: 'string',
   logPath: 'string',
-  subscriptions: { dispose(): any { } }[0],
+  subscriptions: [],
   workspaceState: new DummyMemento(),
   globalState: new DummyMemento(),
   globalStoragePath: 'path',
-  asAbsolutePath(relativePath: string): string {
-    return '';
-  },
+  asAbsolutePath: () => '',
   extensionUri: vscode.Uri.file(''),
-  environmentVariableCollection: null,
+  environmentVariableCollection: null as any,
   extensionMode: vscode.ExtensionMode.Test,
   storageUri: undefined,
-  logUri: undefined,
-  globalStorageUri: undefined,
-  secrets: undefined,
-  extension: undefined,
-  languageModelAccessInformation: undefined
+  logUri: undefined as any,
+  globalStorageUri: undefined as any,
+  secrets: undefined as any,
+  extension: undefined as any,
+  languageModelAccessInformation: undefined as any
 };
 
 

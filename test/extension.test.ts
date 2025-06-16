@@ -10,7 +10,7 @@ suite('Extension module', () => {
 
   test('should activate', async () => {
     await vscode.extensions
-      .getExtension('redhat.fabric8-analytics')
+      .getExtension('redhat.fabric8-analytics')!
       .activate();
     assert.ok(true);
   }).timeout(1 * 60 * 1000);

@@ -29,18 +29,24 @@ export function buildErrorMessage(error: Error): string {
     return message;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+type Require<T, K extends readonly PropertyKey[]> = K extends readonly [infer H, ...infer R]
+    ? H extends keyof T
+    ? R extends readonly PropertyKey[]
+    ? R['length'] extends 0
+    ? T & Required<Pick<T, H>>
+    : T & { [P in H]-?: Require<NonNullable<T[P]>, R> }
+    : never
+    : never
+    : T;
+
 /**
  * Checks if the specified keys are defined within the provided object.
  * @param obj - The object to check for key definitions.
  * @param keys - The keys to check for within the object.
  * @returns A boolean indicating whether all specified keys are defined within the object.
  */
-export function isDefined(obj: any, ...keys: string[]): boolean {
-    for (const key of keys) {
-        if (!obj || !obj[key]) {
-            return false;
-        }
-        obj = obj[key];
-    }
-    return true;
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export function isDefined<T, K extends readonly PropertyKey[]>(obj: T, ...path: K): obj is Require<T, K> {
+    return path.reduce((o, k) => o?.[k], obj as any) !== undefined;
 }

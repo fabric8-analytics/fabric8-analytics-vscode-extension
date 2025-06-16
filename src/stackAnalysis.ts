@@ -64,7 +64,7 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
 
       updateCurrentWebviewPanel('error');
 
-      outputChannel.error(buildErrorMessage(err));
+      outputChannel.error(buildErrorMessage(err as Error));
 
       throw err;
     }

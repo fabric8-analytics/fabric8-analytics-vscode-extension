@@ -57,7 +57,7 @@ suite('CANotification module', () => {
 
     test('should create an instance with provided data when CA has completed successfully with one vulnerability from one vulnerability provider', async () => {
         const mockVulnCountMap = new Map<string, number>();
-        mockVulnCountMap['snyk'] = 1;
+        mockVulnCountMap.set('snyk', 1);
         const notification = new CANotification({
             errorMessage: null,
             done: true,
@@ -76,7 +76,7 @@ suite('CANotification module', () => {
 
     test('should create an instance with provided data when CA has completed successfully with many vulnerabilities from one vulnerability provider', async () => {
         const mockVulnCountMap = new Map<string, number>();
-        mockVulnCountMap['snyk'] = 3;
+        mockVulnCountMap.set('snyk', 3);
         const notification = new CANotification({
             errorMessage: null,
             done: true,
@@ -95,8 +95,8 @@ suite('CANotification module', () => {
 
     test('should create an instance with provided data when CA has completed successfully with vulnerabilities from multiple vulnerability providers', async () => {
         const mockVulnCountMap = new Map<string, number>();
-        mockVulnCountMap['snyk'] = 3;
-        mockVulnCountMap['oss-index'] = 1;
+        mockVulnCountMap.set('snyk', 3);
+        mockVulnCountMap.set('oss-index', 1);
         const notification = new CANotification({
             errorMessage: null,
             done: true,

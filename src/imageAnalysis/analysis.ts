@@ -29,7 +29,7 @@ interface IExhortAnalysisReport {
 interface IArtifact {
   id: string;
   summary: SourceSummary;
-  dependencies: DependencyReport[];
+  dependencies: DependencyReport[] | undefined;
 }
 
 class ImageData {
@@ -80,10 +80,16 @@ class AnalysisResponse implements IAnalysisResponse {
         });
 
         artifacts.forEach(artifact => {
-          const sd = new ImageData(artifact.id, this.getTotalIssues(artifact.summary), this.getRecommendation(artifact.dependencies), this.getHighestSeverity(artifact.summary));
+          const sd = new ImageData(
+            artifact.id,
+            this.getTotalIssues(artifact.summary),
+            this.getRecommendation(artifact.dependencies),
+            this.getHighestSeverity(artifact.summary),
+          );
 
-          this.images[imageRef] = this.images[imageRef] || [];
-          this.images[imageRef].push(sd);
+          const dataArray = this.images.get(imageRef) || [];
+          dataArray.push(sd);
+          this.images.set(imageRef, dataArray);
         });
       }
 
@@ -137,7 +143,7 @@ class AnalysisResponse implements IAnalysisResponse {
    * @returns The recommendation reference or an empty string.
    * @private
    */
-  private getRecommendation(dependencies: DependencyReport[]): string {
+  private getRecommendation(dependencies: DependencyReport[] | undefined): string {
     let recommendation = '';
     if (dependencies && dependencies.length > 0) {
       recommendation = isDefined(dependencies[0], 'recommendation') ? dependencies[0].recommendation.split(':')[1].split('@')[0] : '';
@@ -171,7 +177,7 @@ async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[]): 
 
   // Define configuration options for the component analysis request
   const options: IOptions = {
-    'RHDA_TOKEN': globalConfig.telemetryId,
+    'RHDA_TOKEN': globalConfig.telemetryId ?? '',
     'RHDA_SOURCE': globalConfig.utmSource,
     'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
     'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,

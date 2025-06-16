@@ -37,8 +37,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
             .filter(c => this.classes.includes(c.key.value))
             .flatMap(c => (c.value as jsonAst.ObjectNode).children)
             .map(c => {
-                const dep = new Dependency({ value: c.key.value, position: { line: c.key.loc.start.line, column: c.key.loc.start.column + 1 } });
-                dep.version = { value: (c.value as jsonAst.LiteralNode).value as string, position: { line: c.value.loc.start.line, column: c.value.loc.start.column + 1 } };
+                // TODO: why would c.key.loc be undefined?
+                const dep = new Dependency({ value: c.key.value, position: { line: c.key.loc!.start.line, column: c.key.loc!.start.column + 1 } });
+                dep.version = { value: (c.value as jsonAst.LiteralNode).value as string, position: { line: c.value.loc!.start.line, column: c.value.loc!.start.column + 1 } };
                 return dep;
             });
     }

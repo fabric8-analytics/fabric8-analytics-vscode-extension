@@ -55,7 +55,8 @@ export async function activate(context: vscode.ExtensionContext) {
     commands.STACK_ANALYSIS_COMMAND,
     // filePath must be string as this can be invoked from the editor
     async (filePath: string, isFromCA: boolean = false) => {
-      const fspath = filePath ? filePath : vscode.window.activeTextEditor.document.uri.fsPath;
+      // TODO: vscode.window.activeTextEditor may be null
+      const fspath = filePath ? filePath : vscode.window.activeTextEditor!.document.uri.fsPath;
       const fileName = path.basename(fspath);
       if (isFromCA) {
         record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
@@ -64,9 +65,9 @@ export async function activate(context: vscode.ExtensionContext) {
         await generateRHDAReport(context, fspath, outputChannelDep);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
-        const message = applySettingNameMappings(error.message);
+        const message = applySettingNameMappings((error as Error).message);
         vscode.window.showErrorMessage(message);
-        outputChannelDep.error(buildErrorMessage(error));
+        outputChannelDep.error(buildErrorMessage((error as Error)));
         record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
       }
     }
@@ -104,7 +105,6 @@ export async function activate(context: vscode.ExtensionContext) {
     const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
     if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
       record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
-      // TODO: Uri not string path
       vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath.fsPath);
     } else {
       record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
@@ -134,7 +134,7 @@ export async function activate(context: vscode.ExtensionContext) {
   try {
     await globalConfig.authorizeRHDA(context);
   } catch (err) {
-    vscode.window.showErrorMessage(`Failed to Authorize Red Hat Dependency Analytics extension: ${err.message}`);
+    vscode.window.showErrorMessage(`Failed to Authorize Red Hat Dependency Analytics extension: ${(err as Error).message}`);
     throw err;
   }
 
@@ -154,7 +154,7 @@ export async function activate(context: vscode.ExtensionContext) {
 /**
  * Deactivates the extension.
  */
-export function deactivate(): Thenable<void> { return; }
+export function deactivate(): Thenable<void> { return new Promise(resolve => resolve()); }
 
 /**
  * Shows an update notification if the extension has been updated to a new version.
@@ -162,8 +162,7 @@ export function deactivate(): Thenable<void> { return; }
  * @returns A Promise that resolves once the notification has been displayed if needed.
  */
 async function showUpdateNotification(context: vscode.ExtensionContext) {
-
-  const packageJSON = vscode.extensions.getExtension(EXTENSION_QUALIFIED_ID).packageJSON;
+  const packageJSON = vscode.extensions.getExtension(EXTENSION_QUALIFIED_ID)!.packageJSON;
   const version = packageJSON.version;
   const previousVersion = context.globalState.get<string>(GlobalState.VERSION);
 
@@ -218,15 +217,16 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
       await generateRHDAReport(context, filePath, outputChannelDep);
       record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
     } catch (error) {
-      const message = applySettingNameMappings(error.message);
+      const message = applySettingNameMappings((error as Error).message);
       vscode.window.showErrorMessage(message);
-      outputChannelDep.error(buildErrorMessage(error));
+      outputChannelDep.error(buildErrorMessage((error as Error)));
       record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
     }
   };
 
   const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
-    const fileUri = uri || vscode.window.activeTextEditor.document.uri;
+    // TODO: vscode.window.activeTextEditor may be null
+    const fileUri = uri || vscode.window.activeTextEditor!.document.uri;
     const filePath = fileUri.fsPath;
     record(context, origin, { manifest: path.basename(filePath), fileName: path.basename(filePath) });
     invokeFullStackReport(filePath);

@@ -8,6 +8,7 @@ import { DependencyProvider as GoMod } from './providers/go.mod';
 import { DependencyProvider as RequirementsTxt } from './providers/requirements.txt';
 import { DependencyProvider as BuildGradle } from './providers/build.gradle';
 import { ImageProvider as Docker } from './providers/docker';
+import { outputChannelDep } from './extension';
 
 export class AnalysisMatcher {
   matchers: Array<{ scheme: string, pattern: RegExp, callback: (path: Uri, contents: string) => void }> = [
@@ -46,7 +47,9 @@ export class AnalysisMatcher {
   handle(doc: TextDocument) {
     for (const matcher of this.matchers) {
       if (matcher.pattern.test(basename(doc.fileName))) {
+        outputChannelDep.info(`generating component analysis diagnostics for "${doc.fileName}"`);
         matcher.callback(doc.uri, doc.getText());
+        outputChannelDep.info(`done generating component analysis diagnostics for "${doc.fileName}"`);
       }
     }
   }

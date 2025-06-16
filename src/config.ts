@@ -10,39 +10,39 @@ import { getTelemetryId } from './redhatTelemetry';
  * Represents the configuration settings for the extension.
  */
 class Config {
-  telemetryId: string;
-  stackAnalysisCommand: string;
-  trackRecommendationAcceptanceCommand: string;
-  recommendationsEnabled: boolean;
-  utmSource: string;
-  exhortProxyUrl: string;
-  matchManifestVersions: string;
-  usePythonVirtualEnvironment: string;
-  useGoMVS: string;
-  enablePythonBestEffortsInstallation: string;
-  usePipDepTree: string;
-  vulnerabilityAlertSeverity: string;
-  exhortMvnPath: string;
-  exhortPreferMvnw: string;
-  exhortGradlePath: string;
-  exhortPreferGradlew: string;
-  exhortNpmPath: string;
-  exhortPnpmPath: string;
-  exhortYarnPath: string;
-  exhortGoPath: string;
-  exhortPython3Path: string;
-  exhortPip3Path: string;
-  exhortPythonPath: string;
-  exhortPipPath: string;
-  rhdaReportFilePath: string;
-  secrets: vscode.SecretStorage;
-  exhortSyftPath: string;
-  exhortSyftConfigPath: string;
-  exhortSkopeoPath: string;
-  exhortSkopeoConfigPath: string;
-  exhortDockerPath: string;
-  exhortPodmanPath: string;
-  exhortImagePlatform: string;
+  telemetryId: string | undefined;
+  stackAnalysisCommand!: string;
+  trackRecommendationAcceptanceCommand!: string;
+  recommendationsEnabled!: boolean;
+  utmSource!: string;
+  exhortProxyUrl!: string;
+  matchManifestVersions!: string;
+  usePythonVirtualEnvironment!: string;
+  useGoMVS!: string;
+  enablePythonBestEffortsInstallation!: string;
+  usePipDepTree!: string;
+  vulnerabilityAlertSeverity!: string;
+  exhortMvnPath!: string;
+  exhortPreferMvnw!: string;
+  exhortGradlePath!: string;
+  exhortPreferGradlew!: string;
+  exhortNpmPath!: string;
+  exhortPnpmPath!: string;
+  exhortYarnPath!: string;
+  exhortGoPath!: string;
+  exhortPython3Path!: string;
+  exhortPip3Path!: string;
+  exhortPythonPath!: string;
+  exhortPipPath!: string;
+  rhdaReportFilePath!: string;
+  secrets!: vscode.SecretStorage;
+  exhortSyftPath!: string;
+  exhortSyftConfigPath!: string;
+  exhortSkopeoPath!: string;
+  exhortSkopeoConfigPath!: string;
+  exhortDockerPath!: string;
+  exhortPodmanPath!: string;
+  exhortImagePlatform!: string;
 
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_GRADLE_EXECUTABLE = 'gradle';
@@ -208,7 +208,7 @@ class Config {
    * Links the secret storage to the configuration object.
    * @param context The extension context.
    */
-  linkToSecretStorage(context) {
+  linkToSecretStorage(context: { secrets: vscode.SecretStorage }) {
     this.secrets = context.secrets;
   }
 
@@ -224,7 +224,7 @@ class Config {
       await this.secrets.store(SNYK_TOKEN_KEY, token);
       vscode.window.showInformationMessage('Snyk token has been saved successfully');
     } catch (error) {
-      vscode.window.showErrorMessage(`Failed to save Snyk token to VSCode Secret Storage, Error: ${error.message}`);
+      vscode.window.showErrorMessage(`Failed to save Snyk token to VSCode Secret Storage, Error: ${(error as Error).message}`);
     }
   }
 
@@ -237,7 +237,7 @@ class Config {
       const token = await this.secrets.get(SNYK_TOKEN_KEY);
       return token || '';
     } catch (error) {
-      vscode.window.showErrorMessage(`Failed to get Snyk token from VSCode Secret Storage, Error: ${error.message}`);
+      vscode.window.showErrorMessage(`Failed to get Snyk token from VSCode Secret Storage, Error: ${(error as Error).message}`);
       await this.clearSnykToken(false);
       return '';
     }
@@ -254,7 +254,7 @@ class Config {
         vscode.window.showInformationMessage('Snyk token has been removed successfully');
       }
     } catch (error) {
-      const errorMsg = `Failed to delete Snyk token from VSCode Secret Storage, Error: ${error.message}`;
+      const errorMsg = `Failed to delete Snyk token from VSCode Secret Storage, Error: ${(error as Error).message}`;
       if (notify) {
         vscode.window.showErrorMessage(errorMsg);
       } else {

@@ -69,7 +69,7 @@ async function triggerWebviewPanel(context: vscode.ExtensionContext) {
  * Updates the webview panel with data.
  * @param data The data to update the panel with.
  */
-function updateCurrentWebviewPanel(data) {
+function updateCurrentWebviewPanel(data: any) {
   /* istanbul ignore else */
   if (DependencyReportPanel.currentPanel) {
     DependencyReportPanel.currentPanel.doUpdatePanel(data);

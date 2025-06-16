@@ -175,7 +175,7 @@ suite('Javascript NPM package.json parser tests', () => {
             throw new Error('Expected an error to be thrown');
         } catch (error) {
             expect(error).to.be.an.instanceOf(Error);
-            expect(error.message).to.equal('Mock error message');
+            expect((error as Error).message).to.equal('Mock error message');
         }
     });
 }).beforeEach(() => {

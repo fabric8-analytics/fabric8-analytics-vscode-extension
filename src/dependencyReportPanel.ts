@@ -17,7 +17,7 @@ export class DependencyReportPanel {
   public static currentPanel: DependencyReportPanel | undefined;
 
   public static readonly viewType = 'stackReport';
-  public static data;
+  public static data: any;
 
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
@@ -141,7 +141,7 @@ export class DependencyReportPanel {
    * @param column The column to reveal the panel in.
    * @private
    */
-  private _revealWebviewPanel(column: vscode.ViewColumn) {
+  private _revealWebviewPanel(column: vscode.ViewColumn | undefined) {
     this._panel.reveal(column);
   }
 

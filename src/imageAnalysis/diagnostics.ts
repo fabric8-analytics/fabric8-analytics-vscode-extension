@@ -34,7 +34,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
      * @param images - A map containing image data by reference string.
      */
     runDiagnostics(images: Map<string, ImageData[]>) {
-        Object.entries(images).map(([ref, imageData]: [string, ImageData[]]) => {
+        images.forEach((imageData, ref) => {
             const foundImageList = this.imageMap.get(ref);
 
             foundImageList.forEach(image => {
@@ -57,7 +57,8 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
 
                     const vulnProvider = id.sourceId.split('(')[0];
                     const issuesCount = id.issuesCount;
-                    this.vulnCount[vulnProvider] = (this.vulnCount[vulnProvider] || 0) + issuesCount;
+                    const vulnCountForProvider = this.vulnCount.get(vulnProvider) || 0;
+                    this.vulnCount.set(vulnProvider, vulnCountForProvider + issuesCount);
                 });
                 DiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);
             });
@@ -103,9 +104,9 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
         diagnosticsPipeline.reportDiagnostics();
 
     } catch (error) {
-        outputChannelDep.warn(`Component Analysis Error: ${buildErrorMessage(error)}`);
+        outputChannelDep.warn(`component analysis error: ${buildErrorMessage(error as Error)}`);
         notifications.emit('caError', {
-            errorMessage: error.message,
+            errorMessage: (error as Error).message,
             uri: diagnosticFilePath,
         });
     }

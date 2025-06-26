@@ -20,6 +20,7 @@ import { llmAnalysis } from './llmAnalysis';
 import { LLMAnalysisReportPanel, ReportData } from './llmAnalysisReportPanel';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import CliTable3 = require('cli-table3');
+import { Language, Parser, Query } from 'web-tree-sitter';
 
 export let outputChannelDep: DepOutputChannel;
 
@@ -65,7 +66,7 @@ export async function activate(context: vscode.ExtensionContext) {
     new class implements vscode.CodeActionProvider {
       // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-unused-vars
       provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
-        if (!(context.diagnostics[0].code?.toString() === 'rhdallm')) {
+        if (context.diagnostics.at(0)?.code?.toString() !== 'rhdallm') {
           return;
         }
 
@@ -85,31 +86,86 @@ export async function activate(context: vscode.ExtensionContext) {
     providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
   }));
 
-  const indexOfSubstrings = function* (str: string, searchValue: string) {
-    let i = 0;
-    while (true) {
-      const r = str.indexOf(searchValue, i);
-      if (r !== -1) {
-        yield r;
-        i = r + 1;
-      } else { return; }
-    }
-  };
+  await Parser.init({
+    locateFile() {
+      return path.resolve(context.extensionPath, 'node_modules', 'web-tree-sitter', 'tree-sitter.wasm');
+    },
+  });
+  const pypath = path.resolve(context.extensionPath, 'node_modules', 'tree-sitter-python', 'tree-sitter-python.wasm');
+  console.error(pypath);
+  const python = await Language.load(pypath);
 
   const doLLMAnalysis = async (doc: vscode.TextDocument) => {
-    const text = doc.getText();
+    if (doc.languageId !== 'python') {
+      return;
+    }
+
     const diagnostics: vscode.Diagnostic[] = [];
     const rangeToData = new Map<vscode.Range, ReportData>();
     llmAnalysisDataPerDoc.set(doc.uri, rangeToData);
 
-    const LLAMA_MODEL_NAME = 'meta-llama/Llama-3.1-8B-Instruct';
+    const parser = new Parser();
+    parser.setLanguage(python);
+    const tree = parser.parse(doc.getText());
 
-    for (const match of indexOfSubstrings(text, LLAMA_MODEL_NAME)) {
-      const warnings = await llmAnalysis(LLAMA_MODEL_NAME);
-      if (!warnings?.length) {
-        return;
+    const modelWithLoc: Map<string, vscode.Range[]> = new Map();
+
+    const query = new Query(python, `
+      (
+        expression_statement
+          (string (string_content) @comment) 
+          (#match? @comment "@rhda[ \\n\\t]+model=")
+      )
+      (
+        (comment) @rhdamarker 
+          (comment) @modelmarker
+          (#match? @rhdamarker "# @rhda") 
+          (#match? @modelmarker "# model=")
+      )`
+    );
+    const queryMatches = query.matches(tree!.rootNode);
+
+    for (const match of queryMatches) {
+      if (match.captures[0].name === 'rhdamarker') {
+        const commentStr = match.captures[1].node.text;
+        const modelNameIndex = commentStr.indexOf('model=') + 'model='.length;
+        const modelEndIndex = /\s/.exec(commentStr.substring(modelNameIndex))?.index ?? commentStr.length;
+        const model = commentStr.substring(modelNameIndex, modelEndIndex);
+
+        const startPos = doc.positionAt(match.captures[1].node.startIndex + modelNameIndex);
+        const endPos = new vscode.Position(startPos.line, modelNameIndex + modelEndIndex);
+        const range = new vscode.Range(startPos, endPos);
+
+        const ranges = modelWithLoc.get(model) ?? [];
+        ranges.push(range);
+        modelWithLoc.set(model, ranges);
+      } else {
+        const commentStr = match.captures[0].node.text;
+        const markerIndex = commentStr.indexOf('@rhda');
+
+        let currentModelOffset = 0;
+        // eslint-disable-next-line no-cond-assign
+        while ((currentModelOffset = commentStr.indexOf('model=', markerIndex + currentModelOffset + '@rhda\n'.length)) > 0) {
+          const modelStrIndex = /\s/.exec(commentStr.substring(currentModelOffset + 'model='.length))!.index;
+          const model = commentStr.substring(currentModelOffset + 'model='.length, currentModelOffset + 'model='.length + modelStrIndex).trim();
+
+          const startPos = doc.positionAt(match.captures[0].node.startIndex + currentModelOffset + 'model='.length);
+          const endPos = new vscode.Position(startPos.line, startPos.character + model.length);
+          const range = new vscode.Range(startPos, endPos);
+
+          const ranges = modelWithLoc.get(model) ?? [];
+          ranges.push(range);
+          modelWithLoc.set(model, ranges);
+        }
       }
+    }
 
+    const modelCardsInfo = await llmAnalysis(Array.from(modelWithLoc.keys()));
+    if (!modelCardsInfo) {
+      return;
+    }
+
+    for (const modelInfo of modelCardsInfo) {
       const table = new CliTable3({
         head: ['Safety Metric', 'Score', 'Assessment'],
         chars: {
@@ -125,23 +181,21 @@ export async function activate(context: vscode.ExtensionContext) {
         style: { compact: true, border: [], head: [] },
       });
 
-      for (const warning of warnings) {
+      for (const warning of modelInfo.metrics) {
         table.push([warning.task, warning.score.toFixed(3), warning.assessment]);
       }
 
-      const startPos = doc.positionAt(match);
-      const endPos: vscode.Position = new vscode.Position(startPos.line, startPos.character + LLAMA_MODEL_NAME.length);
-      const range = new vscode.Range(startPos, endPos);
+      for (const range of modelWithLoc.get(modelInfo.model_name)!) {
+        rangeToData.set(range, { model: modelInfo.model_name, tasks: modelInfo.metrics.map(w => w.task), scores: modelInfo.metrics.map(w => w.score) });
 
-      rangeToData.set(range, { model: LLAMA_MODEL_NAME, tasks: warnings.map(w => w.task), scores: warnings.map(w => w.score) });
-
-      diagnostics.push({
-        range: range,
-        message: table.toString() + `\n\nRecommendation: Based on TrustyAI LLM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.\n`,
-        severity: vscode.DiagnosticSeverity.Information,
-        source: 'Red Hat LLM Dependency Analytics',
-        code: `rhdallm`
-      });
+        diagnostics.push({
+          range: range,
+          message: table.toString() + `\n\nRecommendation: Based on TrustyAI LLM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.\n`,
+          severity: vscode.DiagnosticSeverity.Information,
+          source: 'Red Hat LLM Dependency Analytics',
+          code: `rhdallm`
+        });
+      }
     }
 
     llmAnalysisDiagnosticsCollection.set(doc.uri, diagnostics);
@@ -156,7 +210,7 @@ export async function activate(context: vscode.ExtensionContext) {
     async (model: string, uri: vscode.Uri, range: vscode.Range) => {
       LLMAnalysisReportPanel.createOrShowPanel();
       LLMAnalysisReportPanel.currentPanel?.updatePanel({
-        model, scores: llmAnalysisDataPerDoc.get(uri).get(range).scores, tasks: llmAnalysisDataPerDoc.get(uri).get(range).tasks
+        model, scores: llmAnalysisDataPerDoc.get(uri)!.get(range)!.scores, tasks: llmAnalysisDataPerDoc.get(uri)!.get(range)!.tasks
       });
     }
   );

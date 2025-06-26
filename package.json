@@ -438,6 +438,8 @@
     "fs": "^0.0.1-security",
     "json-to-ast": "^2.1.0",
     "minimatch": "^10.0.3",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "tree-sitter-python": "^0.23.6",
+    "web-tree-sitter": "^0.25.6"
   }
 }

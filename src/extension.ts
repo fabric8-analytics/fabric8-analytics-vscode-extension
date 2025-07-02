@@ -17,7 +17,7 @@ import { clearCodeActionsMap, getDiagnosticsCodeActions } from './codeActionHand
 import { AnalysisMatcher } from './fileHandler';
 import { EventEmitter } from 'node:events';
 import { llmAnalysis } from './llmAnalysis';
-import { LLMAnalysisReportPanel, ReportData } from './llmAnalysisReportPanel';
+import { LLMAnalysisReportPanel } from './llmAnalysisReportPanel';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import CliTable3 = require('cli-table3');
 import { Language, Parser, Query } from 'web-tree-sitter';
@@ -60,7 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const llmAnalysisDiagnosticsCollection = vscode.languages.createDiagnosticCollection('rhdaLLM');
   context.subscriptions.push(llmAnalysisDiagnosticsCollection);
-  const llmAnalysisDataPerDoc = new Map<vscode.Uri, Map<vscode.Range, ReportData>>();
+  const modelsInDocs = new Map<vscode.Uri, Map<vscode.Range, string>>();
 
   context.subscriptions.push(vscode.languages.registerCodeActionsProvider('*',
     new class implements vscode.CodeActionProvider {
@@ -101,8 +101,6 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     const diagnostics: vscode.Diagnostic[] = [];
-    const rangeToData = new Map<vscode.Range, ReportData>();
-    llmAnalysisDataPerDoc.set(doc.uri, rangeToData);
 
     const parser = new Parser();
     parser.setLanguage(python);
@@ -165,6 +163,15 @@ export async function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    const rangeToModel = new Map<vscode.Range, string>();
+    modelsInDocs.set(doc.uri, rangeToModel);
+    for (const [model, ranges] of modelWithLoc) {
+      for (const range of ranges) {
+        rangeToModel.set(range, model);
+      }
+    }
+
+    // TODO: handle model with no data from API
     for (const modelInfo of modelCardsInfo) {
       const table = new CliTable3({
         head: ['Safety Metric', 'Score', 'Assessment'],
@@ -186,8 +193,6 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       for (const range of modelWithLoc.get(modelInfo.model_name)!) {
-        rangeToData.set(range, { model: modelInfo.model_name, tasks: modelInfo.metrics.map(w => w.task), scores: modelInfo.metrics.map(w => w.score) });
-
         diagnostics.push({
           range: range,
           message: table.toString() + `\n\nRecommendation: Based on TrustyAI LLM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.\n`,
@@ -209,9 +214,7 @@ export async function activate(context: vscode.ExtensionContext) {
     commands.LLM_MODELS_ANALYSIS_REPORT,
     async (model: string, uri: vscode.Uri, range: vscode.Range) => {
       LLMAnalysisReportPanel.createOrShowPanel();
-      LLMAnalysisReportPanel.currentPanel?.updatePanel({
-        model, scores: llmAnalysisDataPerDoc.get(uri)!.get(range)!.scores, tasks: llmAnalysisDataPerDoc.get(uri)!.get(range)!.tasks
-      });
+      LLMAnalysisReportPanel.currentPanel?.updatePanel(modelsInDocs.get(uri)!.get(range)!);
     }
   );
 

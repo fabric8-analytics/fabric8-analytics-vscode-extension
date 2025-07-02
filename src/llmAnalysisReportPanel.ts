@@ -1,5 +1,9 @@
 import * as vscode from 'vscode';
 import { Titles } from './constants';
+import { llmAnalysisDetails } from './llmAnalysis';
+import { readFileSync } from 'fs';
+import * as path from 'path';
+import { render } from 'mustache';
 
 export interface ReportData {
   model: string,
@@ -47,20 +51,109 @@ export class LLMAnalysisReportPanel {
     LLMAnalysisReportPanel.currentPanel = new LLMAnalysisReportPanel(column);
   }
 
-  public updatePanel(data: ReportData) {
-    this._panel.webview.html = format(
-      PAGE_TEMPLATE,
-      data.model,
-      JSON.stringify(data.tasks),
-      JSON.stringify(data.scores),
-      JSON.stringify(data.tasks.map(task => {
-        if (task.includes('acc')) {
-          return 'green';
-        } else {
-          return 'red';
+  private getImpactLevel(metric: any): string {
+    if (!metric.thresholds || metric.thresholds.length === 0) {
+      return 'unknown';
+    }
+    
+    const score = metric.score;
+    for (const threshold of metric.thresholds) {
+      if (score >= threshold.lower && score <= threshold.upper) {
+        // Map threshold categories to impact levels
+        if (threshold.category <= 2) {
+          return 'low';
         }
-      })),
+        if (threshold.category <= 4) {
+          return 'moderate';
+        }
+        return 'high';
+      }
+    }
+    return 'unknown';
+  }
+
+  private getImpactColor(impactLevel: string): string {
+    switch (impactLevel) {
+      case 'low': return '#4CAF50';      // Green
+      case 'moderate': return '#FF9800';  // Orange
+      case 'high': return '#F44336';      // Red
+      default: return '#9E9E9E';          // Gray
+    }
+  }
+
+  private isRequiredMetric(taskName: string, metricName: string): boolean {
+    const requiredMetrics = [
+      'truthfulqa_mc1',
+      'toxigen',
+      'winogender',
+      'crows_pairs',
+      'bbq',
+      'sycophancy',
+      'mmlu_harmful',
+      'ethics',
+      'safety_prompts'
+    ];
+    
+    const taskMetric = `${taskName.toLowerCase()}_${metricName.toLowerCase()}`;
+    return requiredMetrics.some(required => 
+      taskMetric.includes(required) || taskName.toLowerCase().includes(required)
     );
+  }
+
+  public async updatePanel(model: string) {
+    const resp = await llmAnalysisDetails(model);
+    if (!resp) {
+      console.error('no detailed response?');
+      return;
+    }
+
+    const filter = (obj: { name: string }): boolean => {
+      return obj.name === 'acc' || obj.name.startsWith('pct_');
+    };
+
+    // Collect all metrics with their impact levels
+    const allMetrics = resp.tasks.flatMap(task => 
+      task.metrics.filter(filter).map(metric => ({
+        task,
+        metric,
+        label: `${task.name}: ${metric.name}`,
+        impactLevel: this.getImpactLevel(metric),
+        isRequired: this.isRequiredMetric(task.name, metric.name)
+      }))
+    );
+
+    // Sort by required metrics first, then by impact level
+    allMetrics.sort((a, b) => {
+      if (a.isRequired !== b.isRequired) {
+        return a.isRequired ? -1 : 1;
+      }
+      const impactOrder: { [key: string]: number } = { 'high': 0, 'moderate': 1, 'low': 2, 'unknown': 3 };
+      return impactOrder[a.impactLevel] - impactOrder[b.impactLevel];
+    });
+
+    const renderedHtml = render(readFileSync(path.resolve(__dirname, 'llmAnalysisReport.html')).toString(), {
+      modelName: resp.config.model_name,
+      modelRevision: resp.config.model_revision_sha,
+      lmEvalVersion: resp.config.lm_eval_version,
+      labels: JSON.stringify(allMetrics.map(m => m.label)),
+      data: JSON.stringify(allMetrics.map(m => m.metric.score)),
+      colors: JSON.stringify(allMetrics.map(m => this.getImpactColor(m.impactLevel))),
+      impactLevels: JSON.stringify(allMetrics.map(m => m.impactLevel)),
+      tasks: resp.tasks.map(task => ({ 
+        name: task.name, 
+        desc: task.description,
+        tags: task.tags?.join(', ') || ''
+      })),
+      contextData: {
+        modelSource: resp.config.model_source,
+        modelRevision: resp.config.model_revision,
+        dtype: resp.config.dtype,
+        batchSize: resp.config.batch_size,
+        transformersVersion: resp.config.transformers_version,
+        reportGenerated: new Date().toISOString().split('T')[0]
+      }
+    });
+    this._panel.webview.html = renderedHtml;
   }
 
   private dispose() {
@@ -70,134 +163,4 @@ export class LLMAnalysisReportPanel {
       this._disposables.pop()?.dispose();
     }
   }
-}
-
-const PAGE_TEMPLATE = `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/default.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
-    <style>
-      body {
-        font-size: 16px;
-        /*display: flex;
-        flex-direction: column;
-        justify-content: space-around; */
-      }
-
-      p {
-        color: black;
-      }
-
-      body {
-        background: #ffffff;
-      }
-
-      #chartcont {
-        width: 60%;
-      }
-
-      @media (max-width: 800px) {
-        #chartcont {
-          width: 90%;
-        }
-      }
-    </style>
-
-    <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
-    <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/languages/python.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
-  <body>
-    <h1 style="text-align: center">TrustyAI LLM Eval results for {0}</h1>
-    <div style="display: flex; justify-content: center;">
-      <div id="chartcont">
-        <canvas id="myChart"></canvas>
-      </div>
-    </div>
-
-    <script>
-      const ctx = document.getElementById('myChart');
-
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: {1},
-          datasets: [{
-            label: 'AI Safety Metrics Assessment',
-            data: {2},
-            backgroundColor: {3},
-            borderWidth: 1
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          plugins: {
-            legend: {
-              // align: 'end',
-              labels: {
-                generateLabels: function(chart) {
-                  return [{
-                    text: 'Higher is better',
-                    fillStyle: 'green',
-                  }, {
-                    text: 'Lower is better',
-                    fillStyle: 'red',
-                  }]
-                }
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-            x: {
-              min: 0,
-              max: 1
-            }
-          }
-        }
-      });
-    </script>
-
-    <div>
-      <p>Based on TrustyAI LM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.</p>
-      <p>For Llama stack, you can use Meta's Llama Guard 3, here is an example python code for reference:</p>
-    </div>
-
-    <script>hljs.highlightAll();</script>
-    <pre>
-      <code class="language-python"># Register a model
-model = client.models.register(
-    model_id="meta-llama/Llama-Guard-3-8B",
-    model_type="llm",
-    provider_id="ollama",
-    provider_model_id="llama-guard3:8b-q4_0",
-    metadata={"description": "llama-guard3:8b-q4_0 via ollama"}
-)
-
-# Register a safety shield
-shield_id = "content_safety"
-client.shields.register(shield_id=shield_id, provider_shield_id="Llama-Guard-3-8B")
-
-# Run content through shield
-response = client.safety.run_shield(
-    shield_id=shield_id, 
-    messages=[{"role": "user", "content": user_message}],
-    params={  # Shield-specific parameters
-        "threshold": 0.1,
-        "categories": ["hate", "violence", "profanity"]  
-    }    
-)</code>
-    </pre>
-  </body>
-</html>`;
-
-function format(str: string, ...values: any[]) {
-  return str.replace(/{(\d+)}/g, function (match, index) {
-    return typeof values[index] !== 'undefined' ? values[index] : match;
-  });
 }

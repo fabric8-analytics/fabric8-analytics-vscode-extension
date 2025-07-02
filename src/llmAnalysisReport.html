@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html data-theme="light">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/default.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+        <style>
+            body {
+                font-size: 16px;
+                background: #ffffff;
+            }
+
+            footer {
+                text-align: center;
+            }
+
+            p, table {
+                color: black;
+            }
+
+            .context-section {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .context-section h3 {
+                margin-top: 0;
+                color: #495057;
+            }
+
+            .context-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-top: 0.5rem;
+            }
+
+            .context-item {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .context-label {
+                font-weight: bold;
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+
+            .context-value {
+                color: #212529;
+                font-family: monospace;
+                font-size: 0.9rem;
+            }
+
+            .legend-section {
+                background: #e9ecef;
+                border-radius: 6px;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .legend-items {
+                display: flex;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .legend-color {
+                width: 16px;
+                height: 16px;
+                border-radius: 3px;
+            }
+
+            .required-metrics {
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                border-radius: 6px;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .required-metrics h4 {
+                margin-top: 0;
+                color: #856404;
+            }
+
+            .tasks-section {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .tasks-section h3 {
+                margin-top: 0;
+                color: #495057;
+                border-bottom: 2px solid #dee2e6;
+                padding-bottom: 0.5rem;
+            }
+
+            .tasks-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+                background: white;
+                border-radius: 6px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .tasks-table th {
+                background: #e9ecef;
+                color: #495057;
+                font-weight: 600;
+                text-align: left;
+                padding: 1rem;
+                border-bottom: 2px solid #dee2e6;
+            }
+
+            .tasks-table td {
+                padding: 1rem;
+                border-bottom: 1px solid #dee2e6;
+                vertical-align: top;
+            }
+
+            .tasks-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .tasks-table tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            .task-name {
+                font-weight: 600;
+                color: #212529;
+                font-size: 0.95rem;
+            }
+
+            .task-description {
+                color: #6c757d;
+                line-height: 1.4;
+            }
+
+            .task-tags {
+                color: #6c757d;
+                font-size: 0.85rem;
+                font-style: italic;
+            }
+        </style>
+
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/languages/python.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body>
+        <main class="container">
+            <h1>TrustyAI LLM Eval results for {{modelName}}</h1>
+            
+            <div class="context-section">
+                <h3>Report Context</h3>
+                <div class="context-grid">
+                    <div class="context-item">
+                        <span class="context-label">Model Source</span>
+                        <span class="context-value">{{contextData.modelSource}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Model Revision</span>
+                        <span class="context-value">{{contextData.modelRevision}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Data Type</span>
+                        <span class="context-value">{{contextData.dtype}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Batch Size</span>
+                        <span class="context-value">{{contextData.batchSize}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Transformers Version</span>
+                        <span class="context-value">{{contextData.transformersVersion}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Report Generated</span>
+                        <span class="context-value">{{contextData.reportGenerated}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="required-metrics">
+                <h4>Priority Safety Metrics</h4>
+                <p>This report prioritizes the following critical safety metrics: TruthfulQA (mc1), Toxigen (toxicity), Winogender (bias), CrowS-Pairs (stereotype), BBQ-Lite (bias agreement), Sycophancy Rate, MMLU-Harmful (harmful response), Ethics (consistency), and Safety Prompts (malicious compliance).</p>
+            </div>
+
+            <div class="legend-section">
+                <strong>Impact Level Legend:</strong>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #F44336;"></div>
+                        <span>High Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #FF9800;"></div>
+                        <span>Moderate Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4CAF50;"></div>
+                        <span>Low Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #9E9E9E;"></div>
+                        <span>Unknown Impact</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div id="chartcont">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+
+            <script>
+                const ctx = document.getElementById('myChart');
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{& labels}},
+                        datasets: [{
+                            label: 'AI Safety Metrics Assessment',
+                            data: {{& data}},
+                            backgroundColor: {{& colors}},
+                            borderWidth: 1,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.8,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const impactLevels = {{& impactLevels}};
+                                        const impactLevel = impactLevels[context.dataIndex];
+                                        return `Score: ${context.parsed.x.toFixed(3)} (Impact: ${impactLevel})`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    maxRotation: 0,
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            },
+                            x: {
+                                min: 0,
+                                max: 1,
+                                title: {
+                                    display: true,
+                                    text: 'Score (0.0 - 1.0)'
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+
+            <div class="tasks-section">
+                <h3>Evaluation Tasks Details</h3>
+                <table class="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Description</th>
+                            <th>Tags</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#tasks}}
+                        <tr>
+                            <td><span class="task-name">{{name}}</span></td>
+                            <td><span class="task-description">{{desc}}</span></td>
+                            <td><span class="task-tags">{{tags}}</span></td>
+                        </tr>
+                        {{/tasks}}
+                    </tbody>
+                </table>
+            </div>
+
+            <!---<div>
+            <p>Based on TrustyAI LM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.</p>
+            <p>For Llama stack, you can use Meta's Llama Guard 3, here is an example python code for reference:</p>
+            </div>
+
+            <script>hljs.highlightAll();</script>
+            <pre>
+            <code class="language-python"># Register a model
+        model = client.models.register(
+            model_id="meta-llama/Llama-Guard-3-8B",
+            model_type="llm",
+            provider_id="ollama",
+            provider_model_id="llama-guard3:8b-q4_0",
+            metadata={"description": "llama-guard3:8b-q4_0 via ollama"}
+        )
+
+        # Register a safety shield
+        shield_id = "content_safety"
+        client.shields.register(shield_id=shield_id, provider_shield_id="Llama-Guard-3-8B")
+
+        # Run content through shield
+        response = client.safety.run_shield(
+            shield_id=shield_id, 
+            messages=[{"role": "user", "content": user_message}],
+            params={  # Shield-specific parameters
+                "threshold": 0.1,
+                "categories": ["hate", "violence", "profanity"]  
+            }    
+        )</code>
+            </pre>-->
+        </main>
+    </body>
+    <footer class="container">
+        Results for {{modelName}} at commit {{modelRevision}} using lm-eval {{lmEvalVersion}}
+    </footer>
+</html>

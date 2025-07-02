@@ -4,6 +4,8 @@
 
 import * as webpack from 'webpack';
 import * as path from 'path';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = () => {
   const config: webpack.Configuration = {
@@ -41,6 +43,11 @@ module.exports = () => {
       new webpack.ProvidePlugin({
         fetch: ['node-fetch', 'default'],
       }),
+      new CopyPlugin({
+        patterns: [{
+          from: 'src/llmAnalysisReport.html'
+        }]
+      })
     ]
   };
   return config;

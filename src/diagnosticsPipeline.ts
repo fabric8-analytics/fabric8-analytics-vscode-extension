@@ -14,40 +14,40 @@ import { notifications } from './extension';
  * @typeparam T - The type of elements in the artifact data array.
  */
 export abstract class AbstractDiagnosticsPipeline<T> {
-    /**
-    * An array to hold diagnostic information.
-    */
-    protected diagnostics: Diagnostic[] = [];
-    /**
-     * A map to hold vulnerability count information.
-     */
-    protected vulnCount: Map<string, number> = new Map<string, number>();
+  /**
+  * An array to hold diagnostic information.
+  */
+  protected diagnostics: Diagnostic[] = [];
+  /**
+   * A map to hold vulnerability count information.
+   */
+  protected vulnCount: Map<string, number> = new Map<string, number>();
 
-    static diagnosticsCollection = vscode.languages.createDiagnosticCollection('rhda');
+  static diagnosticsCollection = vscode.languages.createDiagnosticCollection('rhda');
 
-    /**
-     * Creates an instance of AbstractDiagnosticsPipeline.
-     * @param diagnosticFilePath - The path to the manifest file to retrieve diagnostics from.
-     */
-    constructor(protected readonly diagnosticFilePath: Uri) { }
+  /**
+   * Creates an instance of AbstractDiagnosticsPipeline.
+   * @param diagnosticFilePath - The path to the manifest file to retrieve diagnostics from.
+   */
+  constructor(protected readonly diagnosticFilePath: Uri) { }
 
-    clearDiagnostics() {
-        AbstractDiagnosticsPipeline.diagnosticsCollection.delete(this.diagnosticFilePath);
+  clearDiagnostics() {
+    AbstractDiagnosticsPipeline.diagnosticsCollection.delete(this.diagnosticFilePath);
 
-        notifications.emit('caNotification', {
-            done: false,
-            uri: this.diagnosticFilePath,
-        });
-    }
+    notifications.emit('caNotification', {
+      done: false,
+      uri: this.diagnosticFilePath,
+    });
+  }
 
-    reportDiagnostics() {
-        notifications.emit('caNotification', {
-            done: true,
-            uri: this.diagnosticFilePath,
-            diagCount: this.diagnostics.length,
-            vulnCount: this.vulnCount,
-        });
-    }
+  reportDiagnostics() {
+    notifications.emit('caNotification', {
+      done: true,
+      uri: this.diagnosticFilePath,
+      diagCount: this.diagnostics.length,
+      vulnCount: this.vulnCount,
+    });
+  }
 
-    abstract runDiagnostics(artifact: Map<string, T[]>, ecosystem: string): void;
+  abstract runDiagnostics(artifact: Map<string, T[]>, ecosystem: string): void;
 }

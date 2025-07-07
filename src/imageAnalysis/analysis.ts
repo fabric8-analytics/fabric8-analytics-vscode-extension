@@ -15,6 +15,7 @@ import { Source } from '@trustification/exhort-api-spec/model/v4/Source';
 import { Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { imageAnalysisService } from '../exhortServices';
+import { IOptions } from '../imageAnalysis';
 
 /**
  * Represents the Red Hat Dependency Analytics (RHDA) analysis report, with images mapped by string keys.
@@ -150,21 +151,6 @@ class AnalysisResponse implements IAnalysisResponse {
     }
     return recommendation;
   }
-}
-
-/**
- * Represents the options for running image analysis.
- */
-interface IOptions {
-  RHDA_TOKEN: string;
-  RHDA_SOURCE: string;
-  EXHORT_SYFT_PATH: string;
-  EXHORT_SYFT_CONFIG_PATH: string;
-  EXHORT_SKOPEO_PATH: string;
-  EXHORT_SKOPEO_CONFIG_PATH: string;
-  EXHORT_DOCKER_PATH: string;
-  EXHORT_PODMAN_PATH: string;
-  EXHORT_IMAGE_PLATFORM: string;
 }
 
 /**

@@ -20,64 +20,64 @@ import { globalConfig } from '../config';
  */
 class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
 
-    /**
-     * Creates an instance of DiagnosticsPipeline.
-     * @param imageMap - The image map containing information about image derived from the image file.
-     * @param diagnosticFilePath - The path to the image file to retrieve diagnostics from.
-     */
-    constructor(private imageMap: ImageMap, diagnosticFilePath: Uri) {
-        super(diagnosticFilePath);
-    }
+  /**
+   * Creates an instance of DiagnosticsPipeline.
+   * @param imageMap - The image map containing information about image derived from the image file.
+   * @param diagnosticFilePath - The path to the image file to retrieve diagnostics from.
+   */
+  constructor(private imageMap: ImageMap, diagnosticFilePath: Uri) {
+    super(diagnosticFilePath);
+  }
 
-    /**
-     * Runs diagnostics on images.
-     * @param images - A map containing image data by reference string.
-     */
-    runDiagnostics(images: Map<string, ImageData[]>) {
-        images.forEach((imageData, ref) => {
-            const foundImageList = this.imageMap.get(ref);
+  /**
+   * Runs diagnostics on images.
+   * @param images - A map containing image data by reference string.
+   */
+  runDiagnostics(images: Map<string, ImageData[]>) {
+    images.forEach((imageData, ref) => {
+      const foundImageList = this.imageMap.get(ref);
 
-            foundImageList.forEach(image => {
+      foundImageList.forEach(image => {
 
-                const vulnerability = new Vulnerability(getRange(image), image.name.value, imageData);
+        const vulnerability = new Vulnerability(getRange(image), image.name.value, imageData);
 
-                const vulnerabilityDiagnostic = vulnerability.getDiagnostic();
-                if (vulnerabilityDiagnostic.severity === DiagnosticSeverity.Information && !globalConfig.recommendationsEnabled) {
-                    return;
-                }
+        const vulnerabilityDiagnostic = vulnerability.getDiagnostic();
+        if (vulnerabilityDiagnostic.severity === DiagnosticSeverity.Information && !globalConfig.recommendationsEnabled) {
+          return;
+        }
 
-                this.diagnostics.push(vulnerabilityDiagnostic);
+        this.diagnostics.push(vulnerabilityDiagnostic);
 
-                const loc = vulnerabilityDiagnostic.range.start.line + '|' + vulnerabilityDiagnostic.range.start.character;
+        const loc = vulnerabilityDiagnostic.range.start.line + '|' + vulnerabilityDiagnostic.range.start.character;
 
-                imageData.forEach(id => {
-                    if (id.recommendationRef && globalConfig.recommendationsEnabled) {
-                        this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic);
-                    }
+        imageData.forEach(id => {
+          if (id.recommendationRef && globalConfig.recommendationsEnabled) {
+            this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic);
+          }
 
-                    const vulnProvider = id.sourceId.split('(')[0];
-                    const issuesCount = id.issuesCount;
-                    const vulnCountForProvider = this.vulnCount.get(vulnProvider) || 0;
-                    this.vulnCount.set(vulnProvider, vulnCountForProvider + issuesCount);
-                });
-                DiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);
-            });
+          const vulnProvider = id.sourceId.split('(')[0];
+          const issuesCount = id.issuesCount;
+          const vulnCountForProvider = this.vulnCount.get(vulnProvider) || 0;
+          this.vulnCount.set(vulnProvider, vulnCountForProvider + issuesCount);
         });
-    }
+        DiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);
+      });
+    });
+  }
 
-    /**
-     * Creates a code action.
-     * @param loc - Location of code action effect.
-     * @param imageRef - The reference name of the image.
-     * @param sourceId - Source ID.
-     * @param vulnerabilityDiagnostic - Vulnerability diagnostic object.
-     * @private
-     */
-    private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
-        const title = `${sourceId}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
-        const codeAction = generateRedirectToRecommendedVersionAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath);
-        registerCodeAction(this.diagnosticFilePath, loc, codeAction);
-    }
+  /**
+   * Creates a code action.
+   * @param loc - Location of code action effect.
+   * @param imageRef - The reference name of the image.
+   * @param sourceId - Source ID.
+   * @param vulnerabilityDiagnostic - Vulnerability diagnostic object.
+   * @private
+   */
+  private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
+    const title = `${sourceId}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
+    const codeAction = generateRedirectToRecommendedVersionAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath);
+    registerCodeAction(this.diagnosticFilePath, loc, codeAction);
+  }
 }
 
 /**
@@ -88,28 +88,28 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
  * @returns A Promise that resolves when diagnostics are completed.
  */
 async function performDiagnostics(diagnosticFilePath: Uri, contents: string, provider: IImageProvider) {
-    try {
-        const images = provider.collect(contents);
-        const imageMap = new ImageMap(images);
+  try {
+    const images = provider.collect(contents);
+    const imageMap = new ImageMap(images);
 
-        const diagnosticsPipeline = new DiagnosticsPipeline(imageMap, diagnosticFilePath);
-        diagnosticsPipeline.clearDiagnostics();
+    const diagnosticsPipeline = new DiagnosticsPipeline(imageMap, diagnosticFilePath);
+    diagnosticsPipeline.clearDiagnostics();
 
-        const response = await executeImageAnalysis(diagnosticFilePath, images);
+    const response = await executeImageAnalysis(diagnosticFilePath, images);
 
-        clearCodeActionsMap(diagnosticFilePath);
+    clearCodeActionsMap(diagnosticFilePath);
 
-        diagnosticsPipeline.runDiagnostics(response.images);
+    diagnosticsPipeline.runDiagnostics(response.images);
 
-        diagnosticsPipeline.reportDiagnostics();
+    diagnosticsPipeline.reportDiagnostics();
 
-    } catch (error) {
-        outputChannelDep.warn(`component analysis error: ${buildErrorMessage(error as Error)}`);
-        notifications.emit('caError', {
-            errorMessage: (error as Error).message,
-            uri: diagnosticFilePath,
-        });
-    }
+  } catch (error) {
+    outputChannelDep.warn(`component analysis error: ${buildErrorMessage(error as Error)}`);
+    notifications.emit('caError', {
+      errorMessage: (error as Error).message,
+      uri: diagnosticFilePath,
+    });
+  }
 }
 
 export { performDiagnostics };

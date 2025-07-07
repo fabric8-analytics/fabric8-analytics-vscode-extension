@@ -55,7 +55,7 @@ export class LLMAnalysisReportPanel {
     if (!metric.thresholds || metric.thresholds.length === 0) {
       return 'unknown';
     }
-    
+
     const score = metric.score;
     for (const threshold of metric.thresholds) {
       if (score >= threshold.lower && score <= threshold.upper) {
@@ -93,9 +93,9 @@ export class LLMAnalysisReportPanel {
       'ethics',
       'safety_prompts'
     ];
-    
+
     const taskMetric = `${taskName.toLowerCase()}_${metricName.toLowerCase()}`;
-    return requiredMetrics.some(required => 
+    return requiredMetrics.some(required =>
       taskMetric.includes(required) || taskName.toLowerCase().includes(required)
     );
   }
@@ -112,7 +112,7 @@ export class LLMAnalysisReportPanel {
     };
 
     // Collect all metrics with their impact levels
-    const allMetrics = resp.tasks.flatMap(task => 
+    const allMetrics = resp.tasks.flatMap(task =>
       task.metrics.filter(filter).map(metric => ({
         task,
         metric,
@@ -133,25 +133,23 @@ export class LLMAnalysisReportPanel {
 
     const renderedHtml = render(readFileSync(path.resolve(__dirname, 'llmAnalysisReport.html')).toString(), {
       modelName: resp.config.model_name,
-      modelRevision: resp.config.model_revision_sha,
-      lmEvalVersion: resp.config.lm_eval_version,
       labels: JSON.stringify(allMetrics.map(m => m.label)),
       data: JSON.stringify(allMetrics.map(m => m.metric.score)),
       colors: JSON.stringify(allMetrics.map(m => this.getImpactColor(m.impactLevel))),
       impactLevels: JSON.stringify(allMetrics.map(m => m.impactLevel)),
-      tasks: resp.tasks.map(task => ({ 
-        name: task.name, 
+      tasks: resp.tasks.map(task => ({
+        name: task.name,
         desc: task.description,
         tags: task.tags?.join(', ') || ''
       })),
       contextData: {
         modelSource: resp.config.model_source,
-        modelRevision: resp.config.model_revision,
+        modelRevision: resp.config.model_revision_sha.replace('sha256:', '').substring(0, 8),
         dtype: resp.config.dtype,
         batchSize: resp.config.batch_size,
         transformersVersion: resp.config.transformers_version,
-        reportGenerated: new Date().toISOString().split('T')[0]
-      }
+        lmEvalVersion: resp.config.lm_eval_version,
+      },
     });
     this._panel.webview.html = renderedHtml;
   }

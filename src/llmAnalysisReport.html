@@ -12,10 +12,6 @@
                 background: #ffffff;
             }
 
-            footer {
-                text-align: center;
-            }
-
             p, table {
                 color: black;
             }
@@ -195,8 +191,8 @@
                         <span class="context-value">{{contextData.transformersVersion}}</span>
                     </div>
                     <div class="context-item">
-                        <span class="context-label">Report Generated</span>
-                        <span class="context-value">{{contextData.reportGenerated}}</span>
+                        <span class="context-label">LM-Eval Version</span>
+                        <span class="context-value">{{contextData.lmEvalVersion}}</span>
                     </div>
                 </div>
             </div>
@@ -344,7 +340,4 @@
             </pre>-->
         </main>
     </body>
-    <footer class="container">
-        Results for {{modelName}} at commit {{modelRevision}} using lm-eval {{lmEvalVersion}}
-    </footer>
 </html>

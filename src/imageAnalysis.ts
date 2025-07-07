@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import { globalConfig } from './config';
 import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
+import { Options } from '@trustification/exhort-javascript-api';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
@@ -13,7 +14,7 @@ import { DepOutputChannel } from './depOutputChannel';
 /**
  * Represents options for image analysis.
  */
-interface IOptions {
+interface IOptions extends Options {
     RHDA_TOKEN: string;
     RHDA_SOURCE: string;
     EXHORT_SYFT_PATH: string;

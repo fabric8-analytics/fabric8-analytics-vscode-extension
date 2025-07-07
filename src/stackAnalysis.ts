@@ -8,6 +8,7 @@ import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
+import { Options } from '@trustification/exhort-javascript-api';
 
 /**
  * Executes the RHDA stack analysis process.
@@ -19,7 +20,7 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
     p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
     // set up configuration options for the stack analysis request
-    const options = {
+    const options: Options = {
       'RHDA_TOKEN': globalConfig.telemetryId,
       'RHDA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,

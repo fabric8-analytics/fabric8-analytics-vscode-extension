@@ -10,35 +10,35 @@ import { settingNameMappings } from './constants';
  * @returns The modified message with setting name mappings applied.
  */
 export function applySettingNameMappings(message: string): string {
-    let modifiedMessage = message;
+  let modifiedMessage = message;
 
-    Object.keys(settingNameMappings).forEach(key => {
-        const regex = new RegExp(key, 'g');
-        modifiedMessage = modifiedMessage.replace(regex, settingNameMappings[key]);
-    });
+  Object.keys(settingNameMappings).forEach(key => {
+    const regex = new RegExp(key, 'g');
+    modifiedMessage = modifiedMessage.replace(regex, settingNameMappings[key]);
+  });
 
-    return modifiedMessage;
+  return modifiedMessage;
 }
 
 export function buildErrorMessage(error: Error): string {
-    let message = error.message;
-    while (error.cause) {
-        message = `${message}: ${(error.cause as Error).message}`;
-        error = error.cause as Error;
-    }
-    return message;
+  let message = error.message;
+  while (error.cause) {
+    message = `${message}: ${(error.cause as Error).message}`;
+    error = error.cause as Error;
+  }
+  return message;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type Require<T, K extends readonly PropertyKey[]> = K extends readonly [infer H, ...infer R]
-    ? H extends keyof T
-    ? R extends readonly PropertyKey[]
-    ? R['length'] extends 0
-    ? T & Required<Pick<T, H>>
-    : T & { [P in H]-?: Require<NonNullable<T[P]>, R> }
-    : never
-    : never
-    : T;
+  ? H extends keyof T
+  ? R extends readonly PropertyKey[]
+  ? R['length'] extends 0
+  ? T & Required<Pick<T, H>>
+  : T & { [P in H]-?: Require<NonNullable<T[P]>, R> }
+  : never
+  : never
+  : T;
 
 /**
  * Checks if the specified keys are defined within the provided object.
@@ -48,5 +48,5 @@ type Require<T, K extends readonly PropertyKey[]> = K extends readonly [infer H,
  */
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export function isDefined<T, K extends readonly PropertyKey[]>(obj: T, ...path: K): obj is Require<T, K> {
-    return path.reduce((o, k) => o?.[k], obj as any) !== undefined;
+  return path.reduce((o, k) => o?.[k], obj as any) !== undefined;
 }

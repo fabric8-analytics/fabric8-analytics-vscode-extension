@@ -25,9 +25,10 @@ class CAStatusBarProvider implements Disposable {
   public showSummary(text: string, uri: Uri): void {
     this.statusBarItem.text = text;
     this.statusBarItem.command = {
+      // Unused but required?
       title: PromptText.FULL_STACK_PROMPT_TEXT,
       command: commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND,
-      arguments: [uri]
+      arguments: [uri],
     };
     this.statusBarItem.tooltip = PromptText.FULL_STACK_PROMPT_TEXT;
     this.statusBarItem.show();
@@ -39,9 +40,11 @@ class CAStatusBarProvider implements Disposable {
   public setError(): void {
     this.statusBarItem.text = `$(error) RHDA analysis has failed`;
     this.statusBarItem.command = {
+      // Unused but required?
       title: PromptText.LSP_FAILURE_TEXT,
       command: commands.STACK_LOGS_COMMAND,
     };
+    this.statusBarItem.tooltip = PromptText.LSP_FAILURE_TEXT;
   }
 
   /**

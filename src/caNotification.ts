@@ -6,12 +6,12 @@ import { applySettingNameMappings } from './utils';
 /**
  * Interface representing the data structure for a Component Analysis (CA) Notification.
  */
-interface CANotificationData {
-  errorMessage: string | null;
-  done: boolean | null;
-  uri: Uri | null;
-  diagCount: number | null;
-  vulnCount: Map<string, number> | null;
+export interface CANotificationData {
+  uri: Uri;
+  errorMessage?: string | null;
+  done?: boolean | null;
+  diagCount?: number | null;
+  vulnCount?: Map<string, number> | null;
 }
 
 /**

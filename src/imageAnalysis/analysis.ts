@@ -112,7 +112,7 @@ class AnalysisResponse implements IAnalysisResponse {
    * @returns The total number of issues.
    * @private
    */
-  private getTotalIssues(summary: any): number {
+  private getTotalIssues(summary: SourceSummary): number {
     return isDefined(summary, 'total') ? summary.total : 0;
   }
 
@@ -122,7 +122,7 @@ class AnalysisResponse implements IAnalysisResponse {
    * @returns The highest severity level.
    * @private
    */
-  private getHighestSeverity(summary: any): string {
+  private getHighestSeverity(summary: SourceSummary): string {
     let highestSeverity = 'NONE';
 
     if (isDefined(summary, 'critical') && summary.critical > 0) {
@@ -160,7 +160,6 @@ class AnalysisResponse implements IAnalysisResponse {
  * @returns A Promise resolving to an AnalysisResponse object.
  */
 async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[]): Promise<AnalysisResponse> {
-
   // Define configuration options for the component analysis request
   const options: IOptions = {
     'RHDA_TOKEN': globalConfig.telemetryId ?? '',

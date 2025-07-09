@@ -72,7 +72,7 @@ class Config {
    * @returns The RHDA configuration settings.
    * @private
    */
-  private getRhdaConfig(): any {
+  private getRhdaConfig(): vscode.WorkspaceConfiguration {
     return vscode.workspace.getConfiguration('redHatDependencyAnalytics');
   }
 

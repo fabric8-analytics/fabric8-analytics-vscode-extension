@@ -12,13 +12,16 @@ import { isDefined } from '../utils';
 import { IDependencyProvider } from '../dependencyAnalysis/collector';
 import { Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
+import { Source } from '@trustification/exhort-api-spec/model/v4/Source';
+import { DependencyReport } from '@trustification/exhort-api-spec/model/v4/DependencyReport';
+import { Issue } from '@trustification/exhort-api-spec/model/v4/Issue';
 
 /**
  * Represents a source object with an ID and dependencies array.
  */
 interface ISource {
   id: string;
-  dependencies: any[];
+  dependencies: DependencyReport[];
 }
 
 /**
@@ -83,7 +86,7 @@ class AnalysisResponse implements IAnalysisResponse {
             const issuesCount: number = isDefined(d, 'issues') ? d.issues.length : 0;
 
             const dd = issuesCount
-              ? new DependencyData(source.id, issuesCount, '', this.getRemediation(d.issues[0]), this.getHighestSeverity(d))
+              ? new DependencyData(source.id, issuesCount, '', this.getRemediation(d.issues![0]), this.getHighestSeverity(d))
               : new DependencyData(source.id, issuesCount, this.getRecommendation(d), '', this.getHighestSeverity(d));
 
             const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
@@ -102,7 +105,7 @@ class AnalysisResponse implements IAnalysisResponse {
    * @returns An array of dependencies or empty array if none exists.
    * @private
    */
-  private getDependencies(sourceData: any): any[] {
+  private getDependencies(sourceData: Source): DependencyReport[] {
     return isDefined(sourceData, 'dependencies') ? sourceData.dependencies : [];
   }
 
@@ -112,7 +115,7 @@ class AnalysisResponse implements IAnalysisResponse {
    * @returns The highest severity level or NONE if none exists.
    * @private
    */
-  private getHighestSeverity(dependency: any): string {
+  private getHighestSeverity(dependency: DependencyReport): string {
     return isDefined(dependency, 'highestVulnerability', 'severity') ? dependency.highestVulnerability.severity : 'NONE';
   }
 
@@ -122,7 +125,7 @@ class AnalysisResponse implements IAnalysisResponse {
    * @returns The remediation reference or empty string if none exists.
    * @private
    */
-  private getRemediation(issue: any): string {
+  private getRemediation(issue: Issue): string {
     return isDefined(issue, 'remediation', 'trustedContent', 'ref') ? this.provider.resolveDependencyFromReference(issue.remediation.trustedContent.ref.split('?')[0]) : '';
   }
 
@@ -132,7 +135,7 @@ class AnalysisResponse implements IAnalysisResponse {
    * @returns The recommendation reference or empty string if none exists.
    * @private
    */
-  private getRecommendation(dependency: any): string {
+  private getRecommendation(dependency: DependencyReport): string {
     return isDefined(dependency, 'recommendation') ? this.provider.resolveDependencyFromReference(dependency.recommendation.split('?')[0]) : '';
   }
 }

@@ -9,7 +9,7 @@ import { generateRHDAReport } from './rhda';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
-import { CANotification } from './caNotification';
+import { CANotification, CANotificationData } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
 import { applySettingNameMappings, buildErrorMessage } from './utils';
@@ -27,6 +27,7 @@ export const notifications = new EventEmitter();
  */
 export async function activate(context: vscode.ExtensionContext) {
   outputChannelDep = new DepOutputChannel();
+  outputChannelDep.info(`starting RHDA extension ${context.extension.packageJSON['version']}`);
 
   globalConfig.linkToSecretStorage(context);
 
@@ -40,10 +41,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const fileHandler = new AnalysisMatcher();
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => fileHandler.handle(doc)));
+  // Anecdotaly, some extension(s) may cause did-open events for files that aren't actually open in the editor,
+  // so this will trigger CA for files not actually open.
   context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => fileHandler.handle(doc)));
   context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => clearCodeActionsMap(doc.uri)));
-  // iterate all open docs, as theres no "did open doc" event for these
-  // TODO: why is pom.xml not being picked up as background file
+  // Iterate all open docs, as there is (in general) no did-open event for these.
   for (const doc of vscode.workspace.textDocuments) {
     fileHandler.handle(doc);
   }
@@ -111,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   };
 
-  notifications.on('caNotification', respData => {
+  notifications.on('caNotification', (respData: CANotificationData) => {
     const notification = new CANotification(respData);
     caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
     if (notification.hasWarning()) {
@@ -120,12 +122,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  notifications.on('caError', errorData => {
+  notifications.on('caError', (errorData: CANotificationData) => {
     const notification = new CANotification(errorData);
     caStatusBarProvider.setError();
 
     // Since CA is an automated feature, only warning message will be shown on failure
-    vscode.window.showWarningMessage(notification.errorMsg());
+    vscode.window.showWarningMessage(`RHDA error while analyzing ${errorData.uri.fsPath}: ${notification.errorMsg()}`);
 
     // Record telemetry event
     record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin().fsPath), fileName: path.basename(notification.origin().fsPath), error: notification.errorMsg() });

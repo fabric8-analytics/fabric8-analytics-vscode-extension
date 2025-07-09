@@ -4,14 +4,18 @@ import * as vscode from 'vscode';
 import exhort, { ImageRef, Options, parseImageRef } from '@trustification/exhort-javascript-api';
 
 import { IImageRef, IOptions } from './imageAnalysis';
+import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
 
 /**
  * Executes RHDA image analysis using the provided images and options.
  * @param images - The images to analyze.
  * @param options - The options for running image analysis.
- * @returns A Promise resolving to the analysis response in HTML format.
+ * @returns A Promise resolving to the analysis response in HTML or object format.
  */
-async function imageAnalysisService(images: IImageRef[], html: boolean, options: IOptions): Promise<any> {
+async function imageAnalysisService(images: IImageRef[], html: false, options: IOptions): Promise<{ [key: string]: AnalysisReport }>;
+async function imageAnalysisService(images: IImageRef[], html: true, options: IOptions): Promise<string>;
+
+async function imageAnalysisService(images: IImageRef[], html: boolean, options: IOptions): Promise<string | { [key: string]: AnalysisReport }> {
   return await exhort.imageAnalysis(images.map(img => {
     if (img.platform) {
       return `${img.image}^^${img.platform}`;

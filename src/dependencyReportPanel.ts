@@ -113,7 +113,6 @@ export class DependencyReportPanel {
     DependencyReportPanel.data = null;
     while (this._disposables.length) {
       const x = this._disposables.pop();
-      /* istanbul ignore else */
       if (x) {
         x.dispose();
       }

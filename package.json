@@ -52,11 +52,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "rhda.llmModelsAnalysisReport",
-        "title": "LLM Analysis Report",
-        "category": "Red Hat Dependency Analytics"
-      },
-      {
         "command": "rhda.stackAnalysis",
         "title": "Red Hat Dependency Analytics Report...",
         "category": "Red Hat Dependency Analytics"

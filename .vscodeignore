@@ -23,3 +23,4 @@ coverage/**
 Jenkinsfile
 out
 docker-compose.yaml
+test-workspace

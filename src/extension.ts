@@ -86,13 +86,20 @@ export async function activate(context: vscode.ExtensionContext) {
     providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
   }));
 
+  let wasmPath: string;
+  if (context.extensionMode === vscode.ExtensionMode.Production) {
+    wasmPath = path.resolve(context.extensionPath, 'dist');
+  } else {
+    wasmPath = path.resolve(context.extensionPath, 'node_modules');
+  }
+
+  // TODO: some error handling here so that errors arent swallowed by the void
   await Parser.init({
     locateFile() {
-      return path.resolve(context.extensionPath, 'node_modules', 'web-tree-sitter', 'tree-sitter.wasm');
+      return path.resolve(wasmPath, 'web-tree-sitter', 'tree-sitter.wasm');
     },
   });
-  const pypath = path.resolve(context.extensionPath, 'node_modules', 'tree-sitter-python', 'tree-sitter-python.wasm');
-  console.error(pypath);
+  const pypath = path.resolve(wasmPath, 'tree-sitter-python', 'tree-sitter-python.wasm');
   const python = await Language.load(pypath);
 
   const doLLMAnalysis = async (doc: vscode.TextDocument) => {

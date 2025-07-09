@@ -156,6 +156,174 @@
                 font-size: 0.85rem;
                 font-style: italic;
             }
+
+            .guardrails-section {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .guardrails-section h3 {
+                margin-top: 0;
+                color: #495057;
+                border-bottom: 2px solid #dee2e6;
+                padding-bottom: 0.5rem;
+            }
+
+            .guardrail-card {
+                background: white;
+                border: 1px solid #dee2e6;
+                border-radius: 6px;
+                margin: 1rem 0;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .guardrail-details {
+                border: none;
+                margin: 0;
+            }
+
+            .guardrail-details summary {
+                background: #e9ecef;
+                padding: 1rem;
+                cursor: pointer;
+                list-style: none;
+                border-bottom: 1px solid #dee2e6;
+                transition: background-color 0.2s ease;
+                user-select: none;
+                outline: none;
+                display: block;
+            }
+
+            .guardrail-details summary:hover {
+                background: #dae0e5;
+            }
+
+            .guardrail-details summary::after {
+                content: initial;
+            }
+
+            .guardrail-summary-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .guardrail-expand-icon {
+                transition: transform 0.2s ease;
+                font-size: 1.2rem;
+                color: #6c757d;
+            }
+
+            .guardrail-details[open] .guardrail-expand-icon {
+                transform: rotate(90deg);
+            }
+
+            .guardrail-header-info {
+                flex: 1;
+            }
+
+            .guardrail-name {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #212529;
+                margin: 0 0 0.5rem 0;
+            }
+
+            .guardrail-type {
+                display: inline-block;
+                background: #007bff;
+                color: white;
+                padding: 0.25rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                margin-right: 0.5rem;
+            }
+
+            .guardrail-categories {
+                display: inline-block;
+                color: #6c757d;
+                font-size: 0.85rem;
+            }
+
+            .guardrail-body {
+                padding: 1rem;
+            }
+
+            .guardrail-description {
+                color: #495057;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+            }
+
+            .benefits-list {
+                background: #d4edda;
+                border: 1px solid #c3e6cb;
+                border-radius: 4px;
+                padding: 0.75rem;
+                margin: 1rem 0;
+            }
+
+            .benefits-list h5 {
+                margin: 0 0 0.5rem 0;
+                color: #155724;
+                font-size: 0.9rem;
+            }
+
+            .benefits-list ul {
+                margin: 0;
+                padding-left: 1rem;
+                color: #155724;
+                font-size: 0.85rem;
+            }
+
+            .code-section {
+                margin-top: 1rem;
+            }
+
+            .code-section h5 {
+                margin: 0 0 0.5rem 0;
+                color: #495057;
+                font-size: 0.9rem;
+            }
+
+            .code-example {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 4px;
+                overflow-x: auto;
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+
+            .code-example pre {
+                margin: 0;
+                padding: 1rem;
+                background: transparent;
+                border: none;
+                overflow-x: auto;
+            }
+
+            .code-example code {
+                font-family: 'Courier New', Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+                font-size: 0.8rem;
+                background: transparent;
+                padding: 0;
+            }
+
+            .no-guardrails {
+                text-align: center;
+                padding: 2rem;
+                color: #6c757d;
+                font-style: italic;
+                background: #e8f5e8;
+                border: 1px solid #c3e6cb;
+                border-radius: 6px;
+            }
         </style>
 
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
@@ -308,36 +476,55 @@
                 </table>
             </div>
 
-            <!---<div>
-            <p>Based on TrustyAI LM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.</p>
-            <p>For Llama stack, you can use Meta's Llama Guard 3, here is an example python code for reference:</p>
+            <div class="guardrails-section">
+                <h3>Recommended Safety Guardrails</h3>
+                {{#guardrails.length}}
+                <p>Based on the evaluation results, we recommend implementing the following guardrails to address identified safety concerns:</p>
+                {{#guardrails}}
+                <div class="guardrail-card">
+                    <details class="guardrail-details">
+                        <summary class="guardrail-summary">
+                            <div class="guardrail-summary-content">
+                                <div class="guardrail-header-info">
+                                    <h4 class="guardrail-name">{{name}}</h4>
+                                    <span class="guardrail-type">{{type}}</span>
+                                    <span class="guardrail-categories">Categories: {{categories}}</span>
+                                </div>
+                                <span class="guardrail-expand-icon">▶</span>
+                            </div>
+                        </summary>
+                        <div class="guardrail-body">
+                            <div class="guardrail-description">{{description}}</div>
+                            
+                            <div class="benefits-list">
+                                <h5>Key Benefits:</h5>
+                                <ul>
+                                    {{#benefits}}
+                                    <li>{{.}}</li>
+                                    {{/benefits}}
+                                </ul>
+                            </div>
+                            
+                            <div class="code-section">
+                                <h5>Python Implementation Example:</h5>
+                                <div class="code-example">
+                                    <pre><code class="language-python">{{codeExample}}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                {{/guardrails}}
+                {{/guardrails.length}}
+                {{^guardrails.length}}
+                <div class="no-guardrails">
+                    <p>🎉 Great news! Your LLM shows low safety risks across all evaluated categories.</p>
+                    <p>No additional guardrails are currently recommended based on the evaluation results.</p>
+                </div>
+                {{/guardrails.length}}
             </div>
 
             <script>hljs.highlightAll();</script>
-            <pre>
-            <code class="language-python"># Register a model
-        model = client.models.register(
-            model_id="meta-llama/Llama-Guard-3-8B",
-            model_type="llm",
-            provider_id="ollama",
-            provider_model_id="llama-guard3:8b-q4_0",
-            metadata={"description": "llama-guard3:8b-q4_0 via ollama"}
-        )
-
-        # Register a safety shield
-        shield_id = "content_safety"
-        client.shields.register(shield_id=shield_id, provider_shield_id="Llama-Guard-3-8B")
-
-        # Run content through shield
-        response = client.safety.run_shield(
-            shield_id=shield_id, 
-            messages=[{"role": "user", "content": user_message}],
-            params={  # Shield-specific parameters
-                "threshold": 0.1,
-                "categories": ["hate", "violence", "profanity"]  
-            }    
-        )</code>
-            </pre>-->
         </main>
     </body>
 </html>

@@ -46,6 +46,12 @@ module.exports = () => {
       new CopyPlugin({
         patterns: [{
           from: 'src/llmAnalysisReport.html'
+        }, {
+          from: 'node_modules/web-tree-sitter/tree-sitter.wasm',
+          to: 'web-tree-sitter/[name][ext]'
+        }, {
+          from: 'node_modules/tree-sitter-python/tree-sitter-python.wasm',
+          to: 'tree-sitter-python/[name][ext]'
         }]
       })
     ]

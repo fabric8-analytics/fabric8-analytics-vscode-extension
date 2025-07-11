@@ -140,7 +140,7 @@ class CANotification {
    */
   public popupText(): string {
     const text: string = Array.from(this.vulnCount.entries())
-      .map(([provider, vulnCount]) => `Found ${vulnCount} direct ${this.singularOrPlural(vulnCount)} for ${this.capitalizeEachWord(provider)} Provider.`)
+      .map(([provider, vulnCount]) => `Found ${vulnCount} direct ${this.singularOrPlural(vulnCount)} in ${this.uri.fsPath} for ${this.capitalizeEachWord(provider)} Provider.`)
       .join(' ');
     return text || this.warningText().replace(/\$\((.*?)\)/g, '');
   }

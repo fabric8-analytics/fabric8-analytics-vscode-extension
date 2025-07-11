@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { buildErrorMessage } from '../utils';
+import { buildLogErrorMessage, buildNotificationErrorMessage } from '../utils';
 import { IImageProvider, ImageMap, getRange } from '../imageAnalysis/collector';
 import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
 import { clearCodeActionsMap, registerCodeAction, generateRedirectToRecommendedVersionAction } from '../codeActionHandler';
@@ -104,9 +104,9 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
     diagnosticsPipeline.reportDiagnostics();
 
   } catch (error) {
-    outputChannelDep.warn(`component analysis error: ${buildErrorMessage(error as Error)}`);
+    outputChannelDep.warn(`component analysis error: ${buildLogErrorMessage(error as Error)}`);
     notifications.emit('caError', {
-      errorMessage: (error as Error).message,
+      errorMessage: buildNotificationErrorMessage(error as Error),
       uri: diagnosticFilePath,
     });
   }

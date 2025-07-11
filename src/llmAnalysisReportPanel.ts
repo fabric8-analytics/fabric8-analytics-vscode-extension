@@ -100,8 +100,8 @@ export class LLMAnalysisReportPanel {
     );
   }
 
-  public async updatePanel(model: string) {
-    const resp = await llmAnalysisDetails(model);
+  public async updatePanel(modelID: string) {
+    const resp = await llmAnalysisDetails(modelID);
     if (!resp) {
       console.error('no detailed response?');
       return;

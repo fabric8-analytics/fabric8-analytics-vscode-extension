@@ -24,6 +24,7 @@ class Config {
   vulnerabilityAlertSeverity!: string;
   exhortMvnPath!: string;
   exhortPreferMvnw!: string;
+  exhortMvnArgs!: string;
   exhortGradlePath!: string;
   exhortPreferGradlew!: string;
   exhortNpmPath!: string;
@@ -110,6 +111,7 @@ class Config {
     this.rhdaReportFilePath = rhdaConfig.reportFilePath || DEFAULT_RHDA_REPORT_FILE_PATH;
     this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortPreferMvnw = preferMavenWrapper.toString();
+    this.exhortMvnArgs = JSON.stringify(rhdaConfig.mvn.additionalArgs) || '[]';
     this.exhortGradlePath = rhdaConfig.gradle.executable.path || this.DEFAULT_GRADLE_EXECUTABLE;
     this.exhortPreferGradlew = preferGradleWrapper.toString();
     this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
@@ -172,6 +174,7 @@ class Config {
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
     process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
     process.env['VSCEXT_EXHORT_PREFER_MVNW'] = this.exhortPreferMvnw;
+    process.env['VSCEXT_EXHORT_MVN_ARGS'] = this.exhortMvnArgs;
     process.env['VSCEXT_EXHORT_GRADLE_PATH'] = this.exhortGradlePath;
     process.env['VSCEXT_EXHORT_PREFER_GRADLEW'] = this.exhortPreferGradlew;
     process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;

@@ -226,6 +226,13 @@
           "default": "fallback",
           "markdownDescription": "Specifies whether to use the local maven wrapper. The 'fallback' option will default to the value of `#maven.executable.preferMavenWrapper#` from the `Maven for Java` extension, else defaulting to 'true'."
         },
+        "redHatDependencyAnalytics.mvn.additionalArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "List of arguments to pass to maven invocations."
+        },
         "redHatDependencyAnalytics.gradle.executable.path": {
           "type": "string",
           "default": "",

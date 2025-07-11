@@ -16,7 +16,7 @@ import { applySettingNameMappings, buildLogErrorMessage } from './utils';
 import { clearCodeActionsMap, getDiagnosticsCodeActions } from './codeActionHandler';
 import { AnalysisMatcher } from './fileHandler';
 import { EventEmitter } from 'node:events';
-import { llmAnalysis } from './llmAnalysis';
+import { ListModelCardResponse, llmAnalysis } from './llmAnalysis';
 import { LLMAnalysisReportPanel } from './llmAnalysisReportPanel';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import CliTable3 = require('cli-table3');
@@ -60,7 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const llmAnalysisDiagnosticsCollection = vscode.languages.createDiagnosticCollection('rhdaLLM');
   context.subscriptions.push(llmAnalysisDiagnosticsCollection);
-  const modelsInDocs = new Map<vscode.Uri, Map<vscode.Range, string>>();
+  const modelsInDocs = new Map<vscode.Uri, Map<vscode.Range, ListModelCardResponse>>();
 
   context.subscriptions.push(vscode.languages.registerCodeActionsProvider('*',
     new class implements vscode.CodeActionProvider {
@@ -170,11 +170,16 @@ export async function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    const rangeToModel = new Map<vscode.Range, string>();
+    const rangeToModel = new Map<vscode.Range, ListModelCardResponse>();
     modelsInDocs.set(doc.uri, rangeToModel);
     for (const [model, ranges] of modelWithLoc) {
       for (const range of ranges) {
-        rangeToModel.set(range, model);
+        const modelInfo = modelCardsInfo.find(modelResponse => modelResponse.model_name === model);
+        if (!modelInfo) {
+          // log something here?
+          continue;
+        }
+        rangeToModel.set(range, modelInfo);
       }
     }
 
@@ -221,7 +226,8 @@ export async function activate(context: vscode.ExtensionContext) {
     commands.LLM_MODELS_ANALYSIS_REPORT,
     async (model: string, uri: vscode.Uri, range: vscode.Range) => {
       LLMAnalysisReportPanel.createOrShowPanel();
-      LLMAnalysisReportPanel.currentPanel?.updatePanel(modelsInDocs.get(uri)!.get(range)!);
+      // remove null check, better missing handling
+      LLMAnalysisReportPanel.currentPanel?.updatePanel(modelsInDocs.get(uri)!.get(range)!.id);
     }
   );
 

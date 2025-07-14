@@ -22,3 +22,5 @@ cico_build_deploy.sh
 coverage/**
 Jenkinsfile
 out
+docker-compose.yaml
+test-workspace

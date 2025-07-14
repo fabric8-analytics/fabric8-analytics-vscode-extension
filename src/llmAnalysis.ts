@@ -41,8 +41,18 @@ export interface ModelCardResponse {
                 upper: number,
                 lower: number,
             }[],
+            guardrails: number[]
         }[],
         tags: string[]
+    }[],
+    guardrails: {
+        id: number,
+        name: string,
+        description: string,
+        metadata_keys: string[],
+        scope: 'input' | 'output' | 'both',
+        external_refrences: string[],
+        instructions: string,
     }[]
 }
 
@@ -60,6 +70,9 @@ export async function llmAnalysis(models: string[]): Promise<ListModelCardRespon
         method: 'POST',
         body: reqBody,
     });
+    if (!resp.ok) {
+        return undefined;
+    }
 
     return resp.json() as Promise<ListModelCardResponse[]>;
 }

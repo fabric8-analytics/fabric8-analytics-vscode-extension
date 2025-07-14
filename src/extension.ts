@@ -12,7 +12,7 @@ import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification, CANotificationData } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
 import { record, startUp, TelemetryActions } from './redhatTelemetry';
-import { applySettingNameMappings, buildErrorMessage } from './utils';
+import { applySettingNameMappings, buildLogErrorMessage } from './utils';
 import { clearCodeActionsMap, getDiagnosticsCodeActions } from './codeActionHandler';
 import { AnalysisMatcher } from './fileHandler';
 import { EventEmitter } from 'node:events';
@@ -67,9 +67,10 @@ export async function activate(context: vscode.ExtensionContext) {
         await generateRHDAReport(context, fspath, outputChannelDep);
         record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
+        // TODO: dont show raw message
         const message = applySettingNameMappings((error as Error).message);
-        vscode.window.showErrorMessage(message);
-        outputChannelDep.error(buildErrorMessage((error as Error)));
+        vscode.window.showErrorMessage(`RHDA error while analyzing ${filePath}: ${message}`);
+        outputChannelDep.error(buildLogErrorMessage((error as Error)));
         record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
       }
     }
@@ -220,8 +221,8 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
       record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
     } catch (error) {
       const message = applySettingNameMappings((error as Error).message);
-      vscode.window.showErrorMessage(message);
-      outputChannelDep.error(buildErrorMessage((error as Error)));
+      vscode.window.showErrorMessage(`RHDA error while analyzing ${filePath}: ${message}`);
+      outputChannelDep.error(buildLogErrorMessage((error as Error)));
       record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
     }
   };

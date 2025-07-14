@@ -70,7 +70,7 @@ suite('CANotification module', () => {
         expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
-        expect(notification.popupText()).to.equal('Found 1 direct vulnerability for Snyk Provider.');
+        expect(notification.popupText()).to.equal('Found 1 direct vulnerability in /mock/path for Snyk Provider.');
         expect(notification.statusText()).to.equal('$(warning) 1 direct vulnerability found for all the providers combined');
     });
 
@@ -89,7 +89,7 @@ suite('CANotification module', () => {
         expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
-        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities for Snyk Provider.');
+        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities in /mock/path for Snyk Provider.');
         expect(notification.statusText()).to.equal('$(warning) 3 direct vulnerabilities found for all the providers combined');
     });
 
@@ -109,7 +109,7 @@ suite('CANotification module', () => {
         expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
-        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities for Snyk Provider. Found 1 direct vulnerability for Oss-Index Provider.');
+        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities in /mock/path for Snyk Provider. Found 1 direct vulnerability in /mock/path for Oss-Index Provider.');
         expect(notification.statusText()).to.equal('$(warning) 4 direct vulnerabilities found for all the providers combined');
     });
 

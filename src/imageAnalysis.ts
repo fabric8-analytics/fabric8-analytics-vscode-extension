@@ -8,7 +8,7 @@ import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
 import { Options } from '@trustification/exhort-javascript-api';
 import { updateCurrentWebviewPanel } from './rhda';
-import { buildErrorMessage } from './utils';
+import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
 
 /**
@@ -190,7 +190,7 @@ class DockerImageAnalysis {
 
         updateCurrentWebviewPanel('error');
 
-        this.outputChannel.error(buildErrorMessage(error as Error));
+        this.outputChannel.error(buildLogErrorMessage(error as Error));
 
         throw error;
       }

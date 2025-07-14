@@ -10,7 +10,7 @@ import { executeComponentAnalysis, DependencyData } from './analysis';
 import { Vulnerability } from '../vulnerability';
 import { VERSION_PLACEHOLDER, GRADLE } from '../constants';
 import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction } from '../codeActionHandler';
-import { buildErrorMessage } from '../utils';
+import { buildLogErrorMessage, buildNotificationErrorMessage } from '../utils';
 import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
@@ -112,9 +112,9 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
 
     diagnosticsPipeline.reportDiagnostics();
   } catch (error) {
-    outputChannelDep.warn(`component analysis error: ${buildErrorMessage(error as Error)}\n${(error as Error).stack}`);
+    outputChannelDep.warn(`component analysis error: ${buildLogErrorMessage(error as Error)}`);
     notifications.emit('caError', {
-      errorMessage: (error as Error).message,
+      errorMessage: buildNotificationErrorMessage(error as Error),
       uri: diagnosticFilePath,
     });
   }

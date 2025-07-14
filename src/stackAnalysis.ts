@@ -6,7 +6,7 @@ import { StatusMessages, Titles } from './constants';
 import { stackAnalysisService } from './exhortServices';
 import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
-import { buildErrorMessage } from './utils';
+import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
 import { Options } from '@trustification/exhort-javascript-api';
 
@@ -65,7 +65,7 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
 
       updateCurrentWebviewPanel('error');
 
-      outputChannel.error(buildErrorMessage(err as Error));
+      outputChannel.error(buildLogErrorMessage(err as Error));
 
       throw err;
     }

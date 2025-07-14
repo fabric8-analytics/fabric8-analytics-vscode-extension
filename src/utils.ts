@@ -20,11 +20,46 @@ export function applySettingNameMappings(message: string): string {
   return modifiedMessage;
 }
 
-export function buildErrorMessage(error: Error): string {
+/**
+ * Builds a message from an error to be displayed in a popup notification to a user.
+ * This should ideally be terse and direct users to the logs in the Output channel
+ * to get more in-depth information such as stdout/stderr.
+ * @param error the error to render
+ * @returns rendered notification message
+ */
+export function buildNotificationErrorMessage(error: Error): string {
   let message = error.message;
   while (error.cause) {
+    if (Object.hasOwn(error.cause, 'stdout')) {
+      message = `${message}, please check the Output panel for more details.`;
+    } else {
+      message = `${message}: ${(error.cause as Error).message}`;
+    }
+    error = error.cause as Error;
+  }
+  return message;
+}
+
+/**
+ * Builds a message from an error to be displayed in the Output tab channel
+ * (via DepOutputChannel). This should include more information than shown in 
+ * the popup notification.
+ * @param error the error to render
+ * @returns rendered log message
+ */
+export function buildLogErrorMessage(error: Error): string {
+  let message = error.message;
+  let execErr: (Error & { stderr: string, stdout: string }) | null = null;
+  while (error.cause) {
+    if (Object.hasOwn(error.cause, 'stdout')) {
+      execErr = error.cause as (Error & { stderr: string, stdout: string });
+    }
     message = `${message}: ${(error.cause as Error).message}`;
     error = error.cause as Error;
+  }
+
+  if (execErr) {
+    message += `\nSTDOUT:\n${execErr.stdout.trim() || '<none>'}\n\nSTDERR:\n${execErr.stderr.trim() || '<none>'}`;
   }
   return message;
 }

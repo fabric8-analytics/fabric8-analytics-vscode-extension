@@ -9,6 +9,7 @@ import { DependencyProvider as RequirementsTxt } from './providers/requirements.
 import { DependencyProvider as BuildGradle } from './providers/build.gradle';
 import { ImageProvider as Docker } from './providers/docker';
 import { outputChannelDep } from './extension';
+import { globalConfig } from './config';
 
 export class AnalysisMatcher {
   matchers: Array<{ scheme: string, pattern: RegExp, callback: (path: Uri, contents: string) => Promise<void> }> = [
@@ -45,6 +46,11 @@ export class AnalysisMatcher {
   ];
 
   async handle(doc: TextDocument) {
+    const excludeMatch = globalConfig.excludePatterns.find(pattern => pattern.match(doc.uri.fsPath));
+    if (excludeMatch) {
+      outputChannelDep.debug(`skipping "${doc.uri.fsPath}" due to matching ${excludeMatch.pattern}`);
+      return;
+    }
     for (const matcher of this.matchers) {
       if (matcher.pattern.test(basename(doc.fileName))) {
         outputChannelDep.info(`generating component analysis diagnostics for "${doc.fileName}"`);

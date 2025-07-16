@@ -8,8 +8,8 @@ import { DependencyProvider as GoMod } from './providers/go.mod';
 import { DependencyProvider as RequirementsTxt } from './providers/requirements.txt';
 import { DependencyProvider as BuildGradle } from './providers/build.gradle';
 import { ImageProvider as Docker } from './providers/docker';
-import { outputChannelDep } from './extension';
 import { globalConfig } from './config';
+import { DepOutputChannel } from './depOutputChannel';
 
 export class AnalysisMatcher {
   matchers: Array<{ scheme: string, pattern: RegExp, callback: (path: Uri, contents: string) => Promise<void> }> = [
@@ -45,17 +45,17 @@ export class AnalysisMatcher {
     }
   ];
 
-  async handle(doc: TextDocument) {
+  async handle(doc: TextDocument, outputChannel: DepOutputChannel) {
     const excludeMatch = globalConfig.excludePatterns.find(pattern => pattern.match(doc.uri.fsPath));
     if (excludeMatch) {
-      outputChannelDep.debug(`skipping "${doc.uri.fsPath}" due to matching ${excludeMatch.pattern}`);
+      outputChannel.debug(`skipping "${doc.uri.fsPath}" due to matching ${excludeMatch.pattern}`);
       return;
     }
     for (const matcher of this.matchers) {
       if (matcher.pattern.test(basename(doc.fileName))) {
-        outputChannelDep.info(`generating component analysis diagnostics for "${doc.fileName}"`);
+        outputChannel.info(`generating component analysis diagnostics for "${doc.fileName}"`);
         await matcher.callback(doc.uri, doc.getText());
-        outputChannelDep.info(`done generating component analysis diagnostics for "${doc.fileName}"`);
+        outputChannel.info(`done generating component analysis diagnostics for "${doc.fileName}"`);
       }
     }
   }

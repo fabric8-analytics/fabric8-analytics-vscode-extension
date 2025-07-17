@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
 import * as commands from '../src/commands';
+import * as chai from 'chai';
+import * as sinonChai from 'sinon-chai';
+
+const expect = chai.expect;
+chai.use(sinonChai);
 
 suite('Extension module', () => {
   test('Extension should be present', () => {
@@ -25,7 +31,6 @@ suite('Extension module', () => {
       commands.STACK_ANALYSIS_FROM_PIE_BTN_COMMAND,
       commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND
     ];
-    // @ts-expect-error
-    assert.ok((await vscode.commands.getCommands(true)).includes(...FABRIC8_COMMANDS));
+    expect((await vscode.commands.getCommands(true))).to.include.members(FABRIC8_COMMANDS);
   });
 });

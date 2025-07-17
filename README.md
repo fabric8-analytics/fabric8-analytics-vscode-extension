@@ -92,33 +92,34 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 
 ### Configurable parameters
 
-**Red Hat Dependency Analytics Report File Path** :
-<br >Specify the local path to create the Red Hat Dependency Analytics report file.
+#### Red Hat Dependency Analytics Report File Path:
+Specify the local path to create the Red Hat Dependency Analytics report file.
 The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
 
-<br >**IMPORTANT:** 
-<br >The `redHatDependencyAnalyticsReportFilePath` setting name has changed to `reportFilePath`.
+**IMPORTANT:**
 
-**Inline Vulnerability Severity Alerts** :
-<br >You can set the vulnerability severity alert level to `Error` or `Warning` for inline notifications of detected vulnerabilities.
+The `redHatDependencyAnalyticsReportFilePath` setting name has changed to `reportFilePath`.
 
-**Python** : 
+#### Inline Vulnerability Severity Alerts:
+You can set the vulnerability severity alert level to `Error` or `Warning` for inline notifications of detected vulnerabilities.
+
+#### Python: 
 * `usePythonVirtualEnvironment` : Automates the installation of missing packages in a Python virtual environment.
 * `enablePythonBestEffortsInstallation` : Installs Python packages for the Python version is use, disregarding declared versions.
   This configuration option requires the _Match Manifest Versions_ option set to `false`, and _Use Python Virtual Environment_ option set to `true`.
 * `usePipDepTree` : Use the `pipdeptree` command-line tool for building the Python dependency tree.
   This can enhance analysis time.
 
-**Golang** :
+#### Golang:
 * `useGoMVS` : Use the minimal version selection algorithm to select a set of module versions to use when building Go packages.
 
-**HTTP Proxy** :
+#### HTTP Proxy:
 * `httpProxy` : Configure HTTP proxy settings for the extension. There are three options available:
   - `on`: Always use the HTTP proxy regardless of VS Code's proxy settings
   - `off`: Never use the HTTP proxy regardless of VS Code's proxy settings
   - `fallback`: Use VS Code's proxy settings (default behavior)
 
-**Maven and Gradle Wrappers** :
+#### Maven and Gradle Wrappers:
 * `preferWrapper` : Configure whether to use Maven or Gradle wrappers. There are three options available:
   - `true`: Always use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
   - `false`: Never use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
@@ -130,10 +131,15 @@ The default path is `/tmp/redhatDependencyAnalyticsReport.html`.
         "preferWrapper": "true/false/fallback"
     },
     "gradle": {
-        preferWrapper": "true/false/fallback"
+        "preferWrapper": "true/false/fallback"
     }
 }
 ```
+
+#### Exclude manifests from analysis: 
+Specify glob patterns for manifests to be ignored for background analysis e.g. `**/test/**/package.json` will ignore all package.json files within `test/` or any subdirectories of it. 
+
+**NOTE:** Only forward slash (`/`) is supported as a path separator. Please use forward slash as the path separator even for Windows paths.
 
 ## Features
 

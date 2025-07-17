@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { GlobalState, DEFAULT_RHDA_REPORT_FILE_PATH, SNYK_TOKEN_KEY } from './constants';
 import * as commands from './commands';
 import { getTelemetryId } from './redhatTelemetry';
+import { Minimatch } from 'minimatch';
 
 /**
  * Represents the configuration settings for the extension.
@@ -44,6 +45,7 @@ class Config {
   exhortDockerPath!: string;
   exhortPodmanPath!: string;
   exhortImagePlatform!: string;
+  excludePatterns!: Minimatch[];
 
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_GRADLE_EXECUTABLE = 'gradle';
@@ -129,6 +131,7 @@ class Config {
     this.exhortDockerPath = rhdaConfig.docker.executable.path || this.DEFAULT_DOCKER_EXECUTABLE;
     this.exhortPodmanPath = rhdaConfig.podman.executable.path || this.DEFAULT_PODMAN_EXECUTABLE;
     this.exhortImagePlatform = rhdaConfig.imagePlatform;
+    this.excludePatterns = (rhdaConfig.exclude as string[]).map(pattern => new Minimatch(pattern));
   }
 
   private getEffectiveHttpProxyUrl(): string {

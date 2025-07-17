@@ -188,16 +188,6 @@
           "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
           "scope": "window"
         },
-        "redHatDependencyAnalyticsServer.trace.server": {
-          "type": "string",
-          "enum": [
-            "off",
-            "messages",
-            "verbose"
-          ],
-          "default": "off",
-          "description": "Traces the communication between VSCode and the Red Hat Dependency Analytics Language Server."
-        },
         "redHatDependencyAnalytics.matchManifestVersions": {
           "type": "boolean",
           "default": true,
@@ -376,7 +366,14 @@
         "redHatDependencyAnalytics.recommendations.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Toggles recommending Red Hat repositories"
+          "description": "Toggles recommending Red Hat repositories."
+        },
+        "redHatDependencyAnalytics.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of path globs for manifests to ignore for analysis. Only forward slash is support as a path separator."
         }
       }
     }
@@ -434,6 +431,7 @@
     "@xml-tools/parser": "^1.0.11",
     "fs": "^0.0.1-security",
     "json-to-ast": "^2.1.0",
+    "minimatch": "^10.0.3",
     "path": "^0.12.7"
   }
 }

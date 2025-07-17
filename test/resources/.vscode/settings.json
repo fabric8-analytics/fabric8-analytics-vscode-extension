@@ -1,0 +1,5 @@
+{
+    "redHatDependencyAnalytics.exclude": [
+        "**/requirements.txt"
+    ]
+}

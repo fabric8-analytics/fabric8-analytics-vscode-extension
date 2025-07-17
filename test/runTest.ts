@@ -26,7 +26,7 @@ async function main() {
       vscodeExecutablePath,
       extensionDevelopmentPath,
       extensionTestsPath,
-      launchArgs: ['--user-data-dir=/tmp/vscode-test']
+      launchArgs: ['--user-data-dir=/tmp/vscode-test', path.resolve(extensionDevelopmentPath, 'test/resources')]
     });
   } catch (err) {
     console.error(`Failed to run tests. ${err}`);

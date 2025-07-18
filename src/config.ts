@@ -207,6 +207,16 @@ class Config {
   }
 
   /**
+   * Adds a path to the workspace-local redHatDependencyAnalytics.exclude list.
+   * @param path The path to add 
+   */
+  async addFileToExcludeList(path: string) {
+    const original = vscode.workspace.getConfiguration('redHatDependencyAnalytics').inspect('exclude');
+    const newValues = [...((original?.workspaceValue as string[] | undefined) || []), path];
+    await vscode.workspace.getConfiguration('redHatDependencyAnalytics').update('exclude', newValues);
+  }
+
+  /**
    * Authorizes the RHDA (Red Hat Dependency Analytics) service.
    * @param context The extension context for authorization.
    */

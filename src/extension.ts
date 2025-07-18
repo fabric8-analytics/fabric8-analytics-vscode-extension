@@ -105,10 +105,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const showVulnerabilityFoundPrompt = async (msg: string, filePath: vscode.Uri) => {
     const fileName = path.basename(filePath.fsPath);
-    const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
+    const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT as string, PromptText.IGNORE_FILE);
     if (selection === PromptText.FULL_STACK_PROMPT_TEXT) {
       record(context, TelemetryActions.vulnerabilityReportPopupOpened, { manifest: fileName, fileName: fileName });
       vscode.commands.executeCommand(commands.STACK_ANALYSIS_COMMAND, filePath.fsPath);
+    } else if (selection === PromptText.IGNORE_FILE) {
+      outputChannelDep.info(`Added "${filePath.fsPath}" to workspace exclude list`);
+      await globalConfig.addFileToExcludeList(filePath.fsPath);
     } else {
       record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
     }
@@ -123,12 +126,16 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  notifications.on('caError', (errorData: CANotificationData) => {
+  notifications.on('caError', async (errorData: CANotificationData) => {
     const notification = new CANotification(errorData);
     caStatusBarProvider.setError();
 
     // Since CA is an automated feature, only warning message will be shown on failure
-    vscode.window.showWarningMessage(`RHDA error while analyzing ${errorData.uri.fsPath}: ${notification.errorMsg()}`);
+    const selection = await vscode.window.showWarningMessage(`RHDA error while analyzing ${errorData.uri.fsPath}: ${notification.errorMsg()}`, PromptText.IGNORE_FILE);
+    if (selection === PromptText.IGNORE_FILE) {
+      outputChannelDep.info(`Added "${errorData.uri.fsPath}" to workspace exclude list`);
+      await globalConfig.addFileToExcludeList(errorData.uri.fsPath);
+    }
 
     // Record telemetry event
     record(context, TelemetryActions.componentAnalysisFailed, { manifest: path.basename(notification.origin().fsPath), fileName: path.basename(notification.origin().fsPath), error: notification.errorMsg() });
@@ -151,6 +158,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   vscode.workspace.onDidChangeConfiguration(() => {
     globalConfig.loadData();
+    outputChannelDep.debug(`configuration updated`);
   });
 }
 
@@ -213,8 +221,11 @@ function showRHRepositoryRecommendationNotification() {
  * @param context - The extension context.
  */
 function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
-
-  const invokeFullStackReport = async (filePath: string) => {
+  const recordAndInvoke = async (origin: string, uri: vscode.Uri) => {
+    // TODO: vscode.window.activeTextEditor may be null
+    const fileUri = uri || vscode.window.activeTextEditor!.document.uri;
+    const filePath = fileUri.fsPath;
+    record(context, origin, { manifest: path.basename(filePath), fileName: path.basename(filePath) });
     const fileName = path.basename(filePath);
     try {
       await generateRHDAReport(context, filePath, outputChannelDep);
@@ -225,14 +236,6 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
       outputChannelDep.error(buildLogErrorMessage((error as Error)));
       record(context, TelemetryActions.vulnerabilityReportFailed, { manifest: fileName, fileName: fileName, error: message });
     }
-  };
-
-  const recordAndInvoke = (origin: string, uri: vscode.Uri) => {
-    // TODO: vscode.window.activeTextEditor may be null
-    const fileUri = uri || vscode.window.activeTextEditor!.document.uri;
-    const filePath = fileUri.fsPath;
-    record(context, origin, { manifest: path.basename(filePath), fileName: path.basename(filePath) });
-    invokeFullStackReport(filePath);
   };
 
   const registerCommand = (cmd: string, action: TelemetryActions) => {

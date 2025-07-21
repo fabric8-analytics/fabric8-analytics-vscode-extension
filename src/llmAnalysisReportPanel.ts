@@ -103,7 +103,7 @@ export class LLMAnalysisReportPanel {
   private getRecommendedGuardrails(allMetrics: any[], apiGuardrails: any[]): any[] {
     // Collect all guardrail IDs from metrics that have high or moderate impact
     const recommendedGuardrailIds = new Set<number>();
-    
+
     allMetrics.forEach(m => {
       if (m.impactLevel === 'high' || m.impactLevel === 'moderate') {
         if (m.metric.guardrails) {
@@ -113,7 +113,7 @@ export class LLMAnalysisReportPanel {
     });
 
     // Filter API guardrails to only include recommended ones
-    return apiGuardrails.filter(guardrail => 
+    return apiGuardrails.filter(guardrail =>
       recommendedGuardrailIds.has(guardrail.id)
     ).map(guardrail => ({
       id: guardrail.id,
@@ -170,10 +170,10 @@ export class LLMAnalysisReportPanel {
           metric.guardrails.forEach(id => guardrailIds.add(id));
         }
       });
-      
+
       const guardrailArray = Array.from(guardrailIds);
       taskToGuardrails.set(task.name, guardrailArray);
-      
+
       guardrailArray.forEach(id => {
         if (!guardrailToTasks.has(id)) {
           guardrailToTasks.set(id, []);
@@ -202,7 +202,7 @@ export class LLMAnalysisReportPanel {
         .filter(Boolean)
     }));
 
-    const renderedHtml = render(readFileSync(path.resolve(__dirname, 'llmAnalysisReport.html')).toString(), {
+    const renderedHtml = render(readFileSync(path.resolve(__dirname, 'llmAnalysisReport.hbs')).toString(), {
       modelName: resp.config.model_name,
       labels: JSON.stringify(allMetrics.map(m => m.label)),
       data: JSON.stringify(allMetrics.map(m => m.metric.score)),

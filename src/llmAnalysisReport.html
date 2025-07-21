@@ -315,6 +315,49 @@
                 padding: 0;
             }
 
+            .markdown-content {
+                line-height: 1.6;
+                font-size: 0.9rem;
+            }
+
+            .markdown-content h1,
+            .markdown-content h2,
+            .markdown-content h3,
+            .markdown-content h4,
+            .markdown-content h5,
+            .markdown-content h6 {
+                margin-top: 1.5rem;
+                margin-bottom: 0.5rem;
+                color: #495057;
+                font-size: 1rem;
+            }
+
+            .markdown-content p {
+                margin-bottom: 1rem;
+            }
+
+            .markdown-content pre {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 4px;
+                padding: 1rem;
+                margin: 1rem 0;
+                overflow-x: auto;
+            }
+
+            .markdown-content code {
+                background: #f8f9fa;
+                padding: 0.2rem 0.4rem;
+                border-radius: 3px;
+                font-family: 'Courier New', Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+                font-size: 0.8rem;
+            }
+
+            .markdown-content pre code {
+                background: transparent;
+                padding: 0;
+            }
+
             .no-guardrails {
                 text-align: center;
                 padding: 2rem;
@@ -324,11 +367,82 @@
                 border: 1px solid #c3e6cb;
                 border-radius: 6px;
             }
+
+            .task-guardrails {
+                margin-top: 0.5rem;
+            }
+
+            .task-guardrails h6 {
+                margin: 0 0 0.25rem 0;
+                color: #6c757d;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .guardrail-links {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .guardrail-link {
+                background: #e7f3ff;
+                color: #0066cc;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                text-decoration: none;
+                font-size: 0.8rem;
+                border: 1px solid #cce7ff;
+                transition: background-color 0.2s ease;
+            }
+
+            .guardrail-link:hover {
+                background: #d1e7ff;
+                text-decoration: none;
+            }
+
+            .improved-tasks {
+                margin-top: 0.5rem;
+                padding: 0.75rem;
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                border-radius: 4px;
+            }
+
+            .improved-tasks h6 {
+                margin: 0 0 0.25rem 0;
+                color: #856404;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .task-links {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .task-link {
+                background: #fff3cd;
+                color: #856404;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                text-decoration: none;
+                font-size: 0.8rem;
+                border: 1px solid #ffeaa7;
+                transition: background-color 0.2s ease;
+            }
+
+            .task-link:hover {
+                background: #ffecb3;
+                text-decoration: none;
+            }
         </style>
 
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/languages/python.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     </head>
 
     <body>
@@ -462,14 +576,27 @@
                             <th>Task Name</th>
                             <th>Description</th>
                             <th>Tags</th>
+                            <th>Recommended Guardrails</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#tasks}}
-                        <tr>
+                        <tr id="task-{{name}}">
                             <td><span class="task-name">{{name}}</span></td>
                             <td><span class="task-description">{{desc}}</span></td>
                             <td><span class="task-tags">{{tags}}</span></td>
+                            <td>
+                                {{#relatedGuardrails.length}}
+                                <div class="guardrail-links">
+                                    {{#relatedGuardrails}}
+                                    <a href="#guardrail-{{id}}" class="guardrail-link">{{name}}</a>
+                                    {{/relatedGuardrails}}
+                                </div>
+                                {{/relatedGuardrails.length}}
+                                {{^relatedGuardrails.length}}
+                                <span class="task-tags">No recommendations</span>
+                                {{/relatedGuardrails.length}}
+                            </td>
                         </tr>
                         {{/tasks}}
                     </tbody>
@@ -481,7 +608,7 @@
                 {{#guardrails.length}}
                 <p>Based on the evaluation results, we recommend implementing the following guardrails to address identified safety concerns:</p>
                 {{#guardrails}}
-                <div class="guardrail-card">
+                <div class="guardrail-card" id="guardrail-{{id}}">
                     <details class="guardrail-details">
                         <summary class="guardrail-summary">
                             <div class="guardrail-summary-content">
@@ -496,21 +623,34 @@
                         <div class="guardrail-body">
                             <div class="guardrail-description">{{description}}</div>
                             
-                            <div class="benefits-list">
-                                <h5>Key Benefits:</h5>
-                                <ul>
-                                    {{#benefits}}
-                                    <li>{{.}}</li>
-                                    {{/benefits}}
-                                </ul>
-                            </div>
-                            
-                            <div class="code-section">
-                                <h5>Python Implementation Example:</h5>
-                                <div class="code-example">
-                                    <pre><code class="language-python">{{codeExample}}</code></pre>
+                            {{#improvedTasks.length}}
+                            <div class="improved-tasks">
+                                <h6>Improves these evaluation tasks:</h6>
+                                <div class="task-links">
+                                    {{#improvedTasks}}
+                                    <a href="#task-{{.}}" class="task-link">{{.}}</a>
+                                    {{/improvedTasks}}
                                 </div>
                             </div>
+                            {{/improvedTasks.length}}
+                            
+                            {{#instructions}}
+                            <div class="code-section">
+                                <h5>Implementation Instructions:</h5>
+                                <div class="markdown-content" data-markdown="{{instructions}}"></div>
+                            </div>
+                            {{/instructions}}
+                            
+                            {{#externalReferences.length}}
+                            <div class="benefits-list">
+                                <h5>External References:</h5>
+                                <ul>
+                                    {{#externalReferences}}
+                                    <li><a href="{{.}}" target="_blank">{{.}}</a></li>
+                                    {{/externalReferences}}
+                                </ul>
+                            </div>
+                            {{/externalReferences.length}}
                         </div>
                     </details>
                 </div>
@@ -524,7 +664,29 @@
                 {{/guardrails.length}}
             </div>
 
-            <script>hljs.highlightAll();</script>
+            <script>
+                // Configure marked.js to use highlight.js for code blocks
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        if (lang && hljs.getLanguage(lang)) {
+                            return hljs.highlight(code, {language: lang}).value;
+                        }
+                        return hljs.highlightAuto(code).value;
+                    }
+                });
+
+                // Process markdown content
+                document.addEventListener('DOMContentLoaded', function() {
+                    const markdownElements = document.querySelectorAll('.markdown-content[data-markdown]');
+                    markdownElements.forEach(element => {
+                        const markdownText = element.getAttribute('data-markdown');
+                        element.innerHTML = marked.parse(markdownText);
+                    });
+                    
+                    // Highlight any remaining code blocks
+                    hljs.highlightAll();
+                });
+            </script>
         </main>
     </body>
 </html>

@@ -51,7 +51,7 @@ export interface ModelCardResponse {
         description: string,
         metadata_keys: string[],
         scope: 'input' | 'output' | 'both',
-        external_refrences: string[],
+        external_references: string[],
         instructions: string,
     }[]
 }

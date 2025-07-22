@@ -1,14 +1,20 @@
 import * as vscode from 'vscode';
 import { Titles } from './constants';
-import { llmAnalysisDetails } from './llmAnalysis';
+import { llmAnalysisDetails, ModelCardResponse } from './llmAnalysis';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 import { render } from 'mustache';
 
-export interface ReportData {
-  model: string,
-  tasks: string[],
-  scores: number[],
+
+interface EnrichedGuardrail {
+  id: number;
+  name: string;
+  type: string;
+  description: string;
+  instructions: string;
+  categories: string[];
+  externalReferences: string[];
+  improvedMetrics: Array<{ taskName: string, metricName: string }>;
 }
 
 export class LLMAnalysisReportPanel {
@@ -81,7 +87,7 @@ export class LLMAnalysisReportPanel {
     }
   }
 
-  private isRequiredMetric(taskName: string, metricName: string): boolean {
+  /* private isRequiredMetric(taskName: string, metricName: string): boolean {
     const requiredMetrics = [
       'truthfulqa_mc1',
       'toxigen',
@@ -98,31 +104,54 @@ export class LLMAnalysisReportPanel {
     return requiredMetrics.some(required =>
       taskMetric.includes(required) || taskName.toLowerCase().includes(required)
     );
-  }
+  } */
 
-  private getRecommendedGuardrails(allMetrics: any[], apiGuardrails: any[]): any[] {
+  private getRecommendedGuardrails(tasks: ModelCardResponse['tasks'], apiGuardrails: ModelCardResponse['guardrails']): EnrichedGuardrail[] {
     // Collect all guardrail IDs from metrics that have high or moderate impact
     const recommendedGuardrailIds = new Set<number>();
 
-    allMetrics.forEach(m => {
-      if (m.impactLevel === 'high' || m.impactLevel === 'moderate') {
-        if (m.metric.guardrails) {
-          m.metric.guardrails.forEach((id: number) => recommendedGuardrailIds.add(id));
+    tasks.forEach(task => {
+      task.metrics.forEach(metric => {
+        const impactLevel = this.getImpactLevel(metric);
+        if (impactLevel === 'high' || impactLevel === 'moderate') {
+          if (metric.guardrails) {
+            metric.guardrails.forEach((id: number) => recommendedGuardrailIds.add(id));
+          }
         }
-      }
+      });
+    });
+
+    // Create guardrail-to-metrics mapping for cross-references
+    const guardrailToMetrics = new Map<number, Array<{ taskName: string, metricName: string }>>();
+
+    tasks.forEach(task => {
+      task.metrics.forEach(metric => {
+        if (metric.guardrails) {
+          metric.guardrails.forEach(id => {
+            if (!guardrailToMetrics.has(id)) {
+              guardrailToMetrics.set(id, []);
+            }
+            guardrailToMetrics.get(id)!.push({
+              taskName: task.name,
+              metricName: metric.name
+            });
+          });
+        }
+      });
     });
 
     // Filter API guardrails to only include recommended ones
     return apiGuardrails.filter(guardrail =>
       recommendedGuardrailIds.has(guardrail.id)
-    ).map(guardrail => ({
+    ).map((guardrail): EnrichedGuardrail => ({
       id: guardrail.id,
       name: guardrail.name,
       type: guardrail.scope === 'both' ? 'input_output' : guardrail.scope,
       description: guardrail.description,
       instructions: guardrail.instructions,
       categories: guardrail.metadata_keys || [],
-      externalReferences: guardrail.external_refrences || []
+      externalReferences: guardrail.external_references || [],
+      improvedMetrics: guardrailToMetrics.get(guardrail.id) || []
     }));
   }
 
@@ -133,73 +162,81 @@ export class LLMAnalysisReportPanel {
       return;
     }
 
-    const filter = (obj: { name: string }): boolean => {
-      return obj.name === 'acc' || obj.name.startsWith('pct_');
-    };
-
     // Collect all metrics with their impact levels
     const allMetrics = resp.tasks.flatMap(task =>
-      task.metrics.filter(filter).map(metric => ({
+      task.metrics.map(metric => ({
         task,
         metric,
         label: `${task.name}: ${metric.name}`,
         impactLevel: this.getImpactLevel(metric),
-        isRequired: this.isRequiredMetric(task.name, metric.name)
+        // isRequired: this.isRequiredMetric(task.name, metric.name)
       }))
     );
 
     // Sort by required metrics first, then by impact level
     allMetrics.sort((a, b) => {
-      if (a.isRequired !== b.isRequired) {
-        return a.isRequired ? -1 : 1;
-      }
+      // if (a.isRequired !== b.isRequired) {
+      //   return a.isRequired ? -1 : 1;
+      // }
       const impactOrder: { [key: string]: number } = { 'high': 0, 'moderate': 1, 'low': 2, 'unknown': 3 };
       return impactOrder[a.impactLevel] - impactOrder[b.impactLevel];
     });
 
-    const recommendedGuardrails = this.getRecommendedGuardrails(allMetrics, resp.guardrails);
+    const recommendedGuardrails = this.getRecommendedGuardrails(resp.tasks, resp.guardrails);
 
-    // Create task-to-guardrail and guardrail-to-task mappings
-    const taskToGuardrails = new Map<string, number[]>();
-    const guardrailToTasks = new Map<number, string[]>();
+    // Create metric-to-guardrail and guardrail-to-metric mappings
+    const metricToGuardrails = new Map<string, number[]>();
+    const guardrailToMetrics = new Map<number, Array<{ taskName: string, metricName: string }>>();
 
     resp.tasks.forEach(task => {
-      const guardrailIds = new Set<number>();
       task.metrics.forEach(metric => {
+        const metricKey = `${task.name}:${metric.name}`;
         if (metric.guardrails) {
-          metric.guardrails.forEach(id => guardrailIds.add(id));
-        }
-      });
+          metricToGuardrails.set(metricKey, metric.guardrails);
 
-      const guardrailArray = Array.from(guardrailIds);
-      taskToGuardrails.set(task.name, guardrailArray);
-
-      guardrailArray.forEach(id => {
-        if (!guardrailToTasks.has(id)) {
-          guardrailToTasks.set(id, []);
+          metric.guardrails.forEach(id => {
+            if (!guardrailToMetrics.has(id)) {
+              guardrailToMetrics.set(id, []);
+            }
+            guardrailToMetrics.get(id)!.push({
+              taskName: task.name,
+              metricName: metric.name
+            });
+          });
         }
-        guardrailToTasks.get(id)!.push(task.name);
       });
     });
 
     // Add cross-references to guardrails
     const enrichedGuardrails = recommendedGuardrails.map(guardrail => ({
       ...guardrail,
-      improvedTasks: guardrailToTasks.get(guardrail.id) || []
+      improvedMetrics: guardrailToMetrics.get(guardrail.id) || []
     }));
 
-    // Add guardrail info to tasks
+    // Add guardrail info to tasks and metrics
     const enrichedTasks = resp.tasks.map(task => ({
       name: task.name,
       desc: task.description,
       tags: task.tags?.join(', ') || '',
-      relatedGuardrails: (taskToGuardrails.get(task.name) || [])
-        .filter(id => recommendedGuardrails.some(g => g.id === id))
-        .map(id => {
-          const guardrail = resp.guardrails.find(g => g.id === id);
-          return guardrail ? { id: guardrail.id, name: guardrail.name } : null;
-        })
-        .filter(Boolean)
+      metrics: task.metrics.map(metric => {
+        const metricKey = `${task.name}:${metric.name}`;
+        const relatedGuardrailIds = metricToGuardrails.get(metricKey) || [];
+
+        return {
+          name: metric.name,
+          score: metric.score,
+          categories: metric.categories,
+          higherIsBetter: metric.higher_is_better,
+          impactLevel: this.getImpactLevel(metric),
+          relatedGuardrails: relatedGuardrailIds
+            .filter(id => recommendedGuardrails.some(g => g.id === id))
+            .map(id => {
+              const guardrail = resp.guardrails.find(g => g.id === id);
+              return guardrail ? { id: guardrail.id, name: guardrail.name } : null;
+            })
+            .filter(Boolean)
+        };
+      })
     }));
 
     const renderedHtml = render(readFileSync(path.resolve(__dirname, 'llmAnalysisReport.hbs')).toString(), {

@@ -386,18 +386,21 @@
             }
 
             .guardrail-link {
-                background: #e7f3ff;
-                color: #0066cc;
-                padding: 0.2rem 0.5rem;
-                border-radius: 3px;
+                background: #f0f6ff;
+                color: #5a6c7d;
+                padding: 0.15rem 0.4rem;
+                border-radius: 2px;
                 text-decoration: none;
-                font-size: 0.8rem;
-                border: 1px solid #cce7ff;
-                transition: background-color 0.2s ease;
+                font-size: 0.75rem;
+                border: 1px solid #d6e8ff;
+                transition: all 0.2s ease;
+                font-weight: 500;
             }
 
             .guardrail-link:hover {
-                background: #d1e7ff;
+                background: #e3f0ff;
+                color: #4a5664;
+                border-color: #c2dfff;
                 text-decoration: none;
             }
 
@@ -436,6 +439,129 @@
             .task-link:hover {
                 background: #ffecb3;
                 text-decoration: none;
+            }
+
+            .expand-metrics-btn {
+                background: #ffffff;
+                border: 1px solid #dee2e6;
+                color: #495057;
+                cursor: pointer;
+                font-size: 0.75rem;
+                padding: 0.2rem 0.4rem;
+                border-radius: 3px;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                transition: all 0.2s ease;
+                font-weight: 500;
+            }
+
+            .expand-metrics-btn:hover {
+                background: #f8f9fa;
+                border-color: #adb5bd;
+                color: #212529;
+            }
+
+            .expand-icon {
+                transition: transform 0.2s ease;
+                display: inline-block;
+            }
+
+            .expand-icon.rotated {
+                transform: rotate(90deg);
+            }
+
+            .metrics-row {
+                background: #f8f9fa;
+            }
+
+            .metrics-container {
+                padding: 1rem;
+            }
+
+            .metrics-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 4px;
+                overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+
+            .metrics-table th {
+                background: #e9ecef;
+                padding: 0.75rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                text-align: left;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .metrics-table td {
+                padding: 0.75rem;
+                border-bottom: 1px solid #f1f3f4;
+                font-size: 0.85rem;
+            }
+
+            .metrics-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .metric-name {
+                font-weight: 500;
+                color: #495057;
+            }
+
+            .metric-score {
+                font-family: monospace;
+                font-weight: 600;
+            }
+
+            .impact-high {
+                background: #f8d7da;
+                color: #721c24;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-moderate {
+                background: #fff3cd;
+                color: #856404;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-low {
+                background: #d4edda;
+                color: #155724;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-unknown {
+                background: #e2e3e5;
+                color: #6c757d;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .metric-categories {
+                color: #6c757d;
+                font-size: 0.8rem;
+            }
+
+            .no-guardrails-text {
+                color: #6c757d;
+                font-style: italic;
+                font-size: 0.8rem;
             }
         </style>
 
@@ -576,26 +702,59 @@
                             <th>Task Name</th>
                             <th>Description</th>
                             <th>Tags</th>
-                            <th>Recommended Guardrails</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#tasks}}
-                        <tr id="task-{{name}}">
+                        <tr id="task-{{name}}" class="task-row">
                             <td><span class="task-name">{{name}}</span></td>
                             <td><span class="task-description">{{desc}}</span></td>
                             <td><span class="task-tags">{{tags}}</span></td>
                             <td>
-                                {{#relatedGuardrails.length}}
-                                <div class="guardrail-links">
-                                    {{#relatedGuardrails}}
-                                    <a href="#guardrail-{{id}}" class="guardrail-link">{{name}}</a>
-                                    {{/relatedGuardrails}}
+                                <button class="expand-metrics-btn" onclick="toggleMetrics('{{name}}')">
+                                    <span class="expand-icon">▶</span>
+                                    <span class="expand-text">Details</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr id="metrics-{{name}}" class="metrics-row" style="display: none;">
+                            <td colspan="4">
+                                <div class="metrics-container">
+                                    <table class="metrics-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Score</th>
+                                                <th>Impact</th>
+                                                <th>Categories</th>
+                                                <th>Guardrails</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#metrics}}
+                                            <tr id="metric-{{../name}}-{{name}}">
+                                                <td><span class="metric-name">{{name}}</span></td>
+                                                <td><span class="metric-score">{{score}}</span></td>
+                                                <td><span class="impact-{{impactLevel}}">{{impactLevel}}</span></td>
+                                                <td><span class="metric-categories">{{categories}}</span></td>
+                                                <td>
+                                                    {{#relatedGuardrails.length}}
+                                                    <div class="guardrail-links">
+                                                        {{#relatedGuardrails}}
+                                                        <a href="#guardrail-{{id}}" class="guardrail-link">{{name}}</a>
+                                                        {{/relatedGuardrails}}
+                                                    </div>
+                                                    {{/relatedGuardrails.length}}
+                                                    {{^relatedGuardrails.length}}
+                                                    <span class="no-guardrails-text">None</span>
+                                                    {{/relatedGuardrails.length}}
+                                                </td>
+                                            </tr>
+                                            {{/metrics}}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                {{/relatedGuardrails.length}}
-                                {{^relatedGuardrails.length}}
-                                <span class="task-tags">No recommendations</span>
-                                {{/relatedGuardrails.length}}
                             </td>
                         </tr>
                         {{/tasks}}
@@ -623,20 +782,19 @@
                         <div class="guardrail-body">
                             <div class="guardrail-description">{{description}}</div>
                             
-                            {{#improvedTasks.length}}
+                            {{#improvedMetrics.length}}
                             <div class="improved-tasks">
-                                <h6>Improves these evaluation tasks:</h6>
+                                <h6>Improves these metrics:</h6>
                                 <div class="task-links">
-                                    {{#improvedTasks}}
-                                    <a href="#task-{{.}}" class="task-link">{{.}}</a>
-                                    {{/improvedTasks}}
+                                    {{#improvedMetrics}}
+                                    <a href="#metric-{{taskName}}-{{metricName}}" class="task-link">{{taskName}}: {{metricName}}</a>
+                                    {{/improvedMetrics}}
                                 </div>
                             </div>
-                            {{/improvedTasks.length}}
+                            {{/improvedMetrics.length}}
                             
                             {{#instructions}}
                             <div class="code-section">
-                                <h5>Implementation Instructions:</h5>
                                 <div class="markdown-content" data-markdown="{{instructions}}"></div>
                             </div>
                             {{/instructions}}
@@ -674,6 +832,24 @@
                         return hljs.highlightAuto(code).value;
                     }
                 });
+
+                // Toggle metrics visibility
+                function toggleMetrics(taskName) {
+                    const metricsRow = document.getElementById('metrics-' + taskName);
+                    const button = document.querySelector('#task-' + taskName + ' .expand-metrics-btn');
+                    const icon = button.querySelector('.expand-icon');
+                    const text = button.querySelector('.expand-text');
+                    
+                    if (metricsRow.style.display === 'none') {
+                        metricsRow.style.display = 'table-row';
+                        icon.classList.add('rotated');
+                        text.textContent = 'Hide';
+                    } else {
+                        metricsRow.style.display = 'none';
+                        icon.classList.remove('rotated');
+                        text.textContent = 'Details';
+                    }
+                }
 
                 // Process markdown content
                 document.addEventListener('DOMContentLoaded', function() {

@@ -707,18 +707,18 @@
                     </thead>
                     <tbody>
                         {{#tasks}}
-                        <tr id="task-{{name}}" class="task-row">
-                            <td><span class="task-name">{{name}}</span></td>
+                        <tr id="task-{{taskName}}" class="task-row">
+                            <td><span class="task-name">{{taskName}}</span></td>
                             <td><span class="task-description">{{desc}}</span></td>
                             <td><span class="task-tags">{{tags}}</span></td>
                             <td>
-                                <button class="expand-metrics-btn" onclick="toggleMetrics('{{name}}')">
+                                <button class="expand-metrics-btn" onclick="toggleMetrics('{{taskName}}')">
                                     <span class="expand-icon">▶</span>
                                     <span class="expand-text">Details</span>
                                 </button>
                             </td>
                         </tr>
-                        <tr id="metrics-{{name}}" class="metrics-row" style="display: none;">
+                        <tr id="metrics-{{taskName}}" class="metrics-row" style="display: none;">
                             <td colspan="4">
                                 <div class="metrics-container">
                                     <table class="metrics-table">
@@ -733,7 +733,7 @@
                                         </thead>
                                         <tbody>
                                             {{#metrics}}
-                                            <tr id="metric-{{../name}}-{{name}}">
+                                            <tr id="metric-{{taskName}}-{{name}}">
                                                 <td><span class="metric-name">{{name}}</span></td>
                                                 <td><span class="metric-score">{{score}}</span></td>
                                                 <td><span class="impact-{{impactLevel}}">{{impactLevel}}</span></td>
@@ -851,6 +851,51 @@
                     }
                 }
 
+                // Expand task and scroll to metric when clicking metric links
+                function expandTaskForMetric(metricId) {
+                    // Extract task name from metric ID (format: metric-taskName-metricName)
+                    const parts = metricId.replace('metric-', '').split('-');
+                    if (parts.length >= 2) {
+                        const taskName = parts[0];
+                        const metricsRow = document.getElementById('metrics-' + taskName);
+                        
+                        // Expand the task if it's collapsed
+                        if (metricsRow && metricsRow.style.display === 'none') {
+                            toggleMetrics(taskName);
+                        }
+                        
+                        // Small delay to ensure the row is visible before scrolling
+                        setTimeout(() => {
+                            const metricElement = document.getElementById(metricId);
+                            if (metricElement) {
+                                metricElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                // Add a brief highlight to the metric row. Do we wanna keep this? 
+                                // Mightn't be visible with scroll speed
+                                metricElement.style.backgroundColor = '#fff3cd';
+                                setTimeout(() => {
+                                    metricElement.style.backgroundColor = '';
+                                }, 2000);
+                            }
+                        }, 100);
+                    }
+                }
+
+                // Handle anchor links to metrics
+                function handleMetricLinks() {
+                    // Check if URL has a metric anchor
+                    if (window.location.hash && window.location.hash.startsWith('#metric-')) {
+                        expandTaskForMetric(window.location.hash.substring(1));
+                    }
+                    
+                    // Listen for clicks on metric links
+                    document.addEventListener('click', function(e) {
+                        if (e.target.tagName === 'A' && e.target.getAttribute('href') && e.target.getAttribute('href').startsWith('#metric-')) {
+                            const metricId = e.target.getAttribute('href').substring(1);
+                            setTimeout(() => expandTaskForMetric(metricId), 50);
+                        }
+                    });
+                }
+
                 // Process markdown content
                 document.addEventListener('DOMContentLoaded', function() {
                     const markdownElements = document.querySelectorAll('.markdown-content[data-markdown]');
@@ -861,6 +906,9 @@
                     
                     // Highlight any remaining code blocks
                     hljs.highlightAll();
+                    
+                    // Initialize metric link handling
+                    handleMetricLinks();
                 });
             </script>
         </main>

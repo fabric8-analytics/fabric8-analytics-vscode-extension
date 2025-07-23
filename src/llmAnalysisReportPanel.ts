@@ -5,7 +5,6 @@ import { readFileSync } from 'fs';
 import * as path from 'path';
 import { render } from 'mustache';
 
-
 interface EnrichedGuardrail {
   id: number;
   name: string;
@@ -215,7 +214,8 @@ export class LLMAnalysisReportPanel {
 
     // Add guardrail info to tasks and metrics
     const enrichedTasks = resp.tasks.map(task => ({
-      name: task.name,
+      // key needs to be not `name` as mustache doesn't let us reference parent scope explicitly
+      taskName: task.name,
       desc: task.description,
       tags: task.tags?.join(', ') || '',
       metrics: task.metrics.map(metric => {

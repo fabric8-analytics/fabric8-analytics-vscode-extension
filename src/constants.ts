@@ -21,6 +21,7 @@ export enum StatusMessages {
 export enum PromptText {
   FULL_STACK_PROMPT_TEXT = `Open Red Hat Dependency Analytics Report`,
   LSP_FAILURE_TEXT = `Open the output window`,
+  IGNORE_FILE = 'Ignore this file',
 }
 
 export enum Titles {

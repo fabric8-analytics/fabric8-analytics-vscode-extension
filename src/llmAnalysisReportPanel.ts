@@ -86,25 +86,6 @@ export class LLMAnalysisReportPanel {
     }
   }
 
-  /* private isRequiredMetric(taskName: string, metricName: string): boolean {
-    const requiredMetrics = [
-      'truthfulqa_mc1',
-      'toxigen',
-      'winogender',
-      'crows_pairs',
-      'bbq',
-      'sycophancy',
-      'mmlu_harmful',
-      'ethics',
-      'safety_prompts'
-    ];
-
-    const taskMetric = `${taskName.toLowerCase()}_${metricName.toLowerCase()}`;
-    return requiredMetrics.some(required =>
-      taskMetric.includes(required) || taskName.toLowerCase().includes(required)
-    );
-  } */
-
   private getRecommendedGuardrails(tasks: ModelCardResponse['tasks'], apiGuardrails: ModelCardResponse['guardrails']): EnrichedGuardrail[] {
     // Collect all guardrail IDs from metrics that have high or moderate impact
     const recommendedGuardrailIds = new Set<number>();
@@ -168,15 +149,11 @@ export class LLMAnalysisReportPanel {
         metric,
         label: `${task.name}: ${metric.name}`,
         impactLevel: this.getImpactLevel(metric),
-        // isRequired: this.isRequiredMetric(task.name, metric.name)
       }))
     );
 
     // Sort by required metrics first, then by impact level
     allMetrics.sort((a, b) => {
-      // if (a.isRequired !== b.isRequired) {
-      //   return a.isRequired ? -1 : 1;
-      // }
       const impactOrder: { [key: string]: number } = { 'high': 0, 'moderate': 1, 'low': 2, 'unknown': 3 };
       return impactOrder[a.impactLevel] - impactOrder[b.impactLevel];
     });

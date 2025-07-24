@@ -331,6 +331,15 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	Closing the tab removes the temporary HTML file.
 	You can specify the file name by [modifying the _Red Hat Dependency Analytics: Red Hat Dependency Analytics Report File Path_ field](#configuration) in the extension settings.
 
+- **LLM Model safety analysis**
+	<br>Upon opening a Python file, LLM models referenced in special comment annotations within the file are scanned to surface safety metrics relating to the LLMs. For example, if you have the following comment in the file:
+
+	```python
+	# @rhda
+    # model=meta-llama/Llama-3.1-8B-Instruct
+	```
+	Llama-3.1-8B-Instruct safetry metrics will be shown on-hover as in-editor diagnostics. Code actions will also be provided at the location of the model name which opens up a more detailed HTML report, including instructions on how to integrate known guardrails to improve certain safety metrics.
+
 - **Python and Go package manager behavior**
     <br >When a user requests a Python or a Go package analysis, Red Hat Dependency Analytics performs the analysis by looking at the version tags from those environments, and not from the manifest files of those environments.
 	This can result in the user receiving information that does not match their intended request.

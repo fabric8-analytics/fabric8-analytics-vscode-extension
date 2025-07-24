@@ -93,17 +93,21 @@ export async function activate(context: vscode.ExtensionContext) {
     wasmPath = path.resolve(context.extensionPath, 'node_modules');
   }
 
-  // TODO: some error handling here so that errors arent swallowed by the void
-  await Parser.init({
-    locateFile() {
-      return path.resolve(wasmPath, 'web-tree-sitter', 'tree-sitter.wasm');
-    },
-  });
-  const pypath = path.resolve(wasmPath, 'tree-sitter-python', 'tree-sitter-python.wasm');
-  const python = await Language.load(pypath);
+  let python: Language;
+  try {
+    await Parser.init({
+      locateFile() {
+        return path.resolve(wasmPath, 'web-tree-sitter', 'tree-sitter.wasm');
+      },
+    });
+    const pypath = path.resolve(wasmPath, 'tree-sitter-python', 'tree-sitter-python.wasm');
+    python = await Language.load(pypath);
+  } catch (e) {
+    outputChannelDep.error(`Error when initializing tree-sitter: ${e}`);
+  }
 
   const doLLMAnalysis = async (doc: vscode.TextDocument) => {
-    if (doc.languageId !== 'python') {
+    if (doc.languageId !== 'python' || python == null) {
       return;
     }
 

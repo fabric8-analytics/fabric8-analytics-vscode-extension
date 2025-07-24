@@ -11,3 +11,4 @@ export const STACK_ANALYSIS_FROM_EDITOR_COMMAND = 'rhda.stackAnalysisFromEditor'
 export const STACK_LOGS_COMMAND = 'rhda.stackLogs';
 export const SET_SNYK_TOKEN_COMMAND = 'rhda.setSnykToken';
 export const TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND = 'rhda.trackRecommendationAcceptance';
+export const LLM_MODELS_ANALYSIS_REPORT = 'rhda.llmModelsAnalysisReport';

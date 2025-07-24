@@ -26,6 +26,7 @@ export enum PromptText {
 export enum Titles {
   EXT_TITLE = `Red Hat Dependency Analytics`,
   REPORT_TITLE = `Red Hat Dependency Analytics Report`,
+  LLM_REPORT_TITLE = `Red Hat LLM Analysis Report`
 }
 
 export const settingNameMappings: { [key: string]: string } = {

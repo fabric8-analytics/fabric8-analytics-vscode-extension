@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html data-theme="light">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/default.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/styles/atom-one-light.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+        <style>
+            body {
+                font-size: 16px;
+                background: #ffffff;
+            }
+
+            p, table {
+                color: black;
+            }
+
+            .context-section {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .context-section h3 {
+                margin-top: 0;
+                color: #495057;
+            }
+
+            .context-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-top: 0.5rem;
+            }
+
+            .context-item {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .context-label {
+                font-weight: bold;
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+
+            .context-value {
+                color: #212529;
+                font-family: monospace;
+                font-size: 0.9rem;
+            }
+
+            .legend-section {
+                background: #e9ecef;
+                border-radius: 6px;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .legend-items {
+                display: flex;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .legend-color {
+                width: 16px;
+                height: 16px;
+                border-radius: 3px;
+            }
+
+            .required-metrics {
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                border-radius: 6px;
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .required-metrics h4 {
+                margin-top: 0;
+                color: #856404;
+            }
+
+            .tasks-section {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .tasks-section h3 {
+                margin-top: 0;
+                color: #495057;
+                border-bottom: 2px solid #dee2e6;
+                padding-bottom: 0.5rem;
+            }
+
+            .tasks-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+                background: white;
+                border-radius: 6px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .tasks-table th {
+                background: #e9ecef;
+                color: #495057;
+                font-weight: 600;
+                text-align: left;
+                padding: 1rem;
+                border-bottom: 2px solid #dee2e6;
+            }
+
+            .tasks-table td {
+                padding: 1rem;
+                border-bottom: 1px solid #dee2e6;
+                vertical-align: top;
+            }
+
+            .tasks-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .tasks-table tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            .task-name {
+                font-weight: 600;
+                color: #212529;
+                font-size: 0.95rem;
+            }
+
+            .task-description {
+                color: #6c757d;
+                line-height: 1.4;
+            }
+
+            .task-tags {
+                color: #6c757d;
+                font-size: 0.85rem;
+                font-style: italic;
+            }
+
+            .guardrails-section {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .guardrails-section h3 {
+                margin-top: 0;
+                color: #495057;
+                border-bottom: 2px solid #dee2e6;
+                padding-bottom: 0.5rem;
+            }
+
+            .guardrail-card {
+                background: white;
+                border: 1px solid #dee2e6;
+                border-radius: 6px;
+                margin: 1rem 0;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .guardrail-details {
+                border: none;
+                margin: 0;
+            }
+
+            .guardrail-details summary {
+                background: #e9ecef;
+                padding: 1rem;
+                cursor: pointer;
+                list-style: none;
+                border-bottom: 1px solid #dee2e6;
+                transition: background-color 0.2s ease;
+                user-select: none;
+                outline: none;
+                display: block;
+            }
+
+            .guardrail-details summary:hover {
+                background: #dae0e5;
+            }
+
+            .guardrail-details summary::after {
+                content: initial;
+            }
+
+            .guardrail-summary-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .guardrail-expand-icon {
+                transition: transform 0.2s ease;
+                font-size: 1.2rem;
+                color: #6c757d;
+            }
+
+            .guardrail-details[open] .guardrail-expand-icon {
+                transform: rotate(90deg);
+            }
+
+            .guardrail-header-info {
+                flex: 1;
+            }
+
+            .guardrail-name {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #212529;
+                margin: 0 0 0.5rem 0;
+            }
+
+            .guardrail-type {
+                display: inline-block;
+                background: #007bff;
+                color: white;
+                padding: 0.25rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 500;
+                margin-right: 0.5rem;
+            }
+
+            .guardrail-categories {
+                display: inline-block;
+                color: #6c757d;
+                font-size: 0.85rem;
+            }
+
+            .guardrail-body {
+                padding: 1rem;
+            }
+
+            .guardrail-description {
+                color: #495057;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+            }
+
+            .benefits-list {
+                background: #d4edda;
+                border: 1px solid #c3e6cb;
+                border-radius: 4px;
+                padding: 0.75rem;
+                margin: 1rem 0;
+            }
+
+            .benefits-list h5 {
+                margin: 0 0 0.5rem 0;
+                color: #155724;
+                font-size: 0.9rem;
+            }
+
+            .benefits-list ul {
+                margin: 0;
+                padding-left: 1rem;
+                color: #155724;
+                font-size: 0.85rem;
+            }
+
+            .code-section {
+                margin-top: 1rem;
+            }
+
+            .code-section h5 {
+                margin: 0 0 0.5rem 0;
+                color: #495057;
+                font-size: 0.9rem;
+            }
+
+            .code-example {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 4px;
+                overflow-x: auto;
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+
+            .code-example pre {
+                margin: 0;
+                padding: 1rem;
+                background: transparent;
+                border: none;
+                overflow-x: auto;
+            }
+
+            .code-example code {
+                font-family: 'Courier New', Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+                font-size: 0.8rem;
+                background: transparent;
+                padding: 0;
+            }
+
+            .markdown-content {
+                line-height: 1.6;
+                font-size: 0.9rem;
+            }
+
+            .markdown-content h1,
+            .markdown-content h2,
+            .markdown-content h3,
+            .markdown-content h4,
+            .markdown-content h5,
+            .markdown-content h6 {
+                margin-top: 1.5rem;
+                margin-bottom: 0.5rem;
+                color: #495057;
+                font-size: 1rem;
+            }
+
+            .markdown-content p {
+                margin-bottom: 1rem;
+            }
+
+            .markdown-content pre {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 4px;
+                padding: 1rem;
+                margin: 1rem 0;
+                overflow-x: auto;
+            }
+
+            .markdown-content code {
+                background: #f8f9fa;
+                padding: 0.2rem 0.4rem;
+                border-radius: 3px;
+                font-family: 'Courier New', Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+                font-size: 0.8rem;
+            }
+
+            .markdown-content pre code {
+                background: transparent;
+                padding: 0;
+            }
+
+            .no-guardrails {
+                text-align: center;
+                padding: 2rem;
+                color: #6c757d;
+                font-style: italic;
+                background: #e8f5e8;
+                border: 1px solid #c3e6cb;
+                border-radius: 6px;
+            }
+
+            .task-guardrails {
+                margin-top: 0.5rem;
+            }
+
+            .task-guardrails h6 {
+                margin: 0 0 0.25rem 0;
+                color: #6c757d;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .guardrail-links {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .guardrail-link {
+                background: #f0f6ff;
+                color: #5a6c7d;
+                padding: 0.15rem 0.4rem;
+                border-radius: 2px;
+                text-decoration: none;
+                font-size: 0.75rem;
+                border: 1px solid #d6e8ff;
+                transition: all 0.2s ease;
+                font-weight: 500;
+            }
+
+            .guardrail-link:hover {
+                background: #e3f0ff;
+                color: #4a5664;
+                border-color: #c2dfff;
+                text-decoration: none;
+            }
+
+            .improved-tasks {
+                margin-top: 0.5rem;
+                padding: 0.75rem;
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                border-radius: 4px;
+            }
+
+            .improved-tasks h6 {
+                margin: 0 0 0.25rem 0;
+                color: #856404;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .task-links {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .task-link {
+                background: #fff3cd;
+                color: #856404;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                text-decoration: none;
+                font-size: 0.8rem;
+                border: 1px solid #ffeaa7;
+                transition: background-color 0.2s ease;
+            }
+
+            .task-link:hover {
+                background: #ffecb3;
+                text-decoration: none;
+            }
+
+            .expand-metrics-btn {
+                background: #ffffff;
+                border: 1px solid #dee2e6;
+                color: #495057;
+                cursor: pointer;
+                font-size: 0.75rem;
+                padding: 0.2rem 0.4rem;
+                border-radius: 3px;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                transition: all 0.2s ease;
+                font-weight: 500;
+            }
+
+            .expand-metrics-btn:hover {
+                background: #f8f9fa;
+                border-color: #adb5bd;
+                color: #212529;
+            }
+
+            .expand-icon {
+                transition: transform 0.2s ease;
+                display: inline-block;
+            }
+
+            .expand-icon.rotated {
+                transform: rotate(90deg);
+            }
+
+            .metrics-row {
+                background: #f8f9fa;
+            }
+
+            .metrics-container {
+                padding: 1rem;
+            }
+
+            .metrics-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 4px;
+                overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+
+            .metrics-table th {
+                background: #e9ecef;
+                padding: 0.75rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                text-align: left;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .metrics-table td {
+                padding: 0.75rem;
+                border-bottom: 1px solid #f1f3f4;
+                font-size: 0.85rem;
+            }
+
+            .metrics-table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .metric-name {
+                font-weight: 500;
+                color: #495057;
+            }
+
+            .metric-score {
+                font-family: monospace;
+                font-weight: 600;
+            }
+
+            .impact-high {
+                background: #f8d7da;
+                color: #721c24;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-moderate {
+                background: #fff3cd;
+                color: #856404;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-low {
+                background: #d4edda;
+                color: #155724;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-unknown {
+                background: #e2e3e5;
+                color: #6c757d;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .metric-categories {
+                color: #6c757d;
+                font-size: 0.8rem;
+            }
+
+            .no-guardrails-text {
+                color: #6c757d;
+                font-style: italic;
+                font-size: 0.8rem;
+            }
+        </style>
+
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.9.0/languages/python.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    </head>
+
+    <body>
+        <main class="container">
+            <h1>TrustyAI LLM Eval results for {{modelName}}</h1>
+            
+            <div class="context-section">
+                <h3>Report Context</h3>
+                <div class="context-grid">
+                    <div class="context-item">
+                        <span class="context-label">Model Source</span>
+                        <span class="context-value">{{contextData.modelSource}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Model Revision</span>
+                        <span class="context-value">{{contextData.modelRevision}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Data Type</span>
+                        <span class="context-value">{{contextData.dtype}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Batch Size</span>
+                        <span class="context-value">{{contextData.batchSize}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">Transformers Version</span>
+                        <span class="context-value">{{contextData.transformersVersion}}</span>
+                    </div>
+                    <div class="context-item">
+                        <span class="context-label">LM-Eval Version</span>
+                        <span class="context-value">{{contextData.lmEvalVersion}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="required-metrics">
+                <h4>Priority Safety Metrics</h4>
+                <p>This report prioritizes the following critical safety metrics: TruthfulQA (mc1), Toxigen (toxicity), Winogender (bias), CrowS-Pairs (stereotype), BBQ-Lite (bias agreement), Sycophancy Rate, MMLU-Harmful (harmful response), Ethics (consistency), and Safety Prompts (malicious compliance).</p>
+            </div>
+
+            <div class="legend-section">
+                <strong>Impact Level Legend:</strong>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #F44336;"></div>
+                        <span>High Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #FF9800;"></div>
+                        <span>Moderate Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4CAF50;"></div>
+                        <span>Low Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #9E9E9E;"></div>
+                        <span>Unknown Impact</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div id="chartcont">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+
+            <script>
+                const ctx = document.getElementById('myChart');
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{& labels}},
+                        datasets: [{
+                            label: 'AI Safety Metrics Assessment',
+                            data: {{& data}},
+                            backgroundColor: {{& colors}},
+                            borderWidth: 1,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.8,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const impactLevels = {{& impactLevels}};
+                                        const impactLevel = impactLevels[context.dataIndex];
+                                        return `Score: ${context.parsed.x.toFixed(3)} (Impact: ${impactLevel})`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    maxRotation: 0,
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            },
+                            x: {
+                                min: 0,
+                                max: 1,
+                                title: {
+                                    display: true,
+                                    text: 'Score (0.0 - 1.0)'
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+
+            <div class="tasks-section">
+                <h3>Evaluation Tasks Details</h3>
+                <table class="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Description</th>
+                            <th>Tags</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#tasks}}
+                        <tr id="task-{{taskName}}" class="task-row">
+                            <td><span class="task-name">{{taskName}}</span></td>
+                            <td><span class="task-description">{{desc}}</span></td>
+                            <td><span class="task-tags">{{tags}}</span></td>
+                            <td>
+                                <button class="expand-metrics-btn" onclick="toggleMetrics('{{taskName}}')">
+                                    <span class="expand-icon">▶</span>
+                                    <span class="expand-text">Details</span>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr id="metrics-{{taskName}}" class="metrics-row" style="display: none;">
+                            <td colspan="4">
+                                <div class="metrics-container">
+                                    <table class="metrics-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Score</th>
+                                                <th>Impact</th>
+                                                <th>Categories</th>
+                                                <th>Guardrails</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#metrics}}
+                                            <tr id="metric-{{taskName}}-{{name}}">
+                                                <td><span class="metric-name">{{name}}</span></td>
+                                                <td><span class="metric-score">{{score}}</span></td>
+                                                <td><span class="impact-{{impactLevel}}">{{impactLevel}}</span></td>
+                                                <td><span class="metric-categories">{{categories}}</span></td>
+                                                <td>
+                                                    {{#relatedGuardrails.length}}
+                                                    <div class="guardrail-links">
+                                                        {{#relatedGuardrails}}
+                                                        <a href="#guardrail-{{id}}" class="guardrail-link">{{name}}</a>
+                                                        {{/relatedGuardrails}}
+                                                    </div>
+                                                    {{/relatedGuardrails.length}}
+                                                    {{^relatedGuardrails.length}}
+                                                    <span class="no-guardrails-text">None</span>
+                                                    {{/relatedGuardrails.length}}
+                                                </td>
+                                            </tr>
+                                            {{/metrics}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/tasks}}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="guardrails-section">
+                <h3>Recommended Safety Guardrails</h3>
+                {{#guardrails.length}}
+                <p>Based on the evaluation results, we recommend implementing the following guardrails to address identified safety concerns:</p>
+                {{#guardrails}}
+                <div class="guardrail-card" id="guardrail-{{id}}">
+                    <details class="guardrail-details">
+                        <summary class="guardrail-summary">
+                            <div class="guardrail-summary-content">
+                                <div class="guardrail-header-info">
+                                    <h4 class="guardrail-name">{{name}}</h4>
+                                    <span class="guardrail-type">{{type}}</span>
+                                    <span class="guardrail-categories">Categories: {{categories}}</span>
+                                </div>
+                                <span class="guardrail-expand-icon">▶</span>
+                            </div>
+                        </summary>
+                        <div class="guardrail-body">
+                            <div class="guardrail-description">{{description}}</div>
+                            
+                            {{#improvedMetrics.length}}
+                            <div class="improved-tasks">
+                                <h6>Improves these metrics:</h6>
+                                <div class="task-links">
+                                    {{#improvedMetrics}}
+                                    <a href="#metric-{{taskName}}-{{metricName}}" class="task-link">{{taskName}}: {{metricName}}</a>
+                                    {{/improvedMetrics}}
+                                </div>
+                            </div>
+                            {{/improvedMetrics.length}}
+                            
+                            {{#instructions}}
+                            <div class="code-section">
+                                <div class="markdown-content" data-markdown="{{instructions}}"></div>
+                            </div>
+                            {{/instructions}}
+                            
+                            {{#externalReferences.length}}
+                            <div class="benefits-list">
+                                <h5>External References:</h5>
+                                <ul>
+                                    {{#externalReferences}}
+                                    <li><a href="{{.}}" target="_blank">{{.}}</a></li>
+                                    {{/externalReferences}}
+                                </ul>
+                            </div>
+                            {{/externalReferences.length}}
+                        </div>
+                    </details>
+                </div>
+                {{/guardrails}}
+                {{/guardrails.length}}
+                {{^guardrails.length}}
+                <div class="no-guardrails">
+                    <p>🎉 Great news! Your LLM shows low safety risks across all evaluated categories.</p>
+                    <p>No additional guardrails are currently recommended based on the evaluation results.</p>
+                </div>
+                {{/guardrails.length}}
+            </div>
+
+            <script>
+                // Configure marked.js to use highlight.js for code blocks
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        if (lang && hljs.getLanguage(lang)) {
+                            return hljs.highlight(code, {language: lang}).value;
+                        }
+                        return hljs.highlightAuto(code).value;
+                    }
+                });
+
+                // Toggle metrics visibility
+                function toggleMetrics(taskName) {
+                    const metricsRow = document.getElementById('metrics-' + taskName);
+                    const button = document.querySelector('#task-' + taskName + ' .expand-metrics-btn');
+                    const icon = button.querySelector('.expand-icon');
+                    const text = button.querySelector('.expand-text');
+                    
+                    if (metricsRow.style.display === 'none') {
+                        metricsRow.style.display = 'table-row';
+                        icon.classList.add('rotated');
+                        text.textContent = 'Hide';
+                    } else {
+                        metricsRow.style.display = 'none';
+                        icon.classList.remove('rotated');
+                        text.textContent = 'Details';
+                    }
+                }
+
+                // Expand task and scroll to metric when clicking metric links
+                function expandTaskForMetric(metricId) {
+                    // Extract task name from metric ID (format: metric-taskName-metricName)
+                    const parts = metricId.replace('metric-', '').split('-');
+                    if (parts.length >= 2) {
+                        const taskName = parts[0];
+                        const metricsRow = document.getElementById('metrics-' + taskName);
+                        
+                        // Expand the task if it's collapsed
+                        if (metricsRow && metricsRow.style.display === 'none') {
+                            toggleMetrics(taskName);
+                        }
+                        
+                        // Small delay to ensure the row is visible before scrolling
+                        setTimeout(() => {
+                            const metricElement = document.getElementById(metricId);
+                            if (metricElement) {
+                                metricElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                // Add a brief highlight to the metric row. Do we wanna keep this? 
+                                // Mightn't be visible with scroll speed
+                                metricElement.style.backgroundColor = '#fff3cd';
+                                setTimeout(() => {
+                                    metricElement.style.backgroundColor = '';
+                                }, 2000);
+                            }
+                        }, 100);
+                    }
+                }
+
+                // Handle anchor links to metrics
+                function handleMetricLinks() {
+                    // Check if URL has a metric anchor
+                    if (window.location.hash && window.location.hash.startsWith('#metric-')) {
+                        expandTaskForMetric(window.location.hash.substring(1));
+                    }
+                    
+                    // Listen for clicks on metric links
+                    document.addEventListener('click', function(e) {
+                        if (e.target.tagName === 'A' && e.target.getAttribute('href') && e.target.getAttribute('href').startsWith('#metric-')) {
+                            const metricId = e.target.getAttribute('href').substring(1);
+                            setTimeout(() => expandTaskForMetric(metricId), 50);
+                        }
+                    });
+                }
+
+                // Process markdown content
+                document.addEventListener('DOMContentLoaded', function() {
+                    const markdownElements = document.querySelectorAll('.markdown-content[data-markdown]');
+                    markdownElements.forEach(element => {
+                        const markdownText = element.getAttribute('data-markdown');
+                        element.innerHTML = marked.parse(markdownText);
+                    });
+                    
+                    // Highlight any remaining code blocks
+                    hljs.highlightAll();
+                    
+                    // Initialize metric link handling
+                    handleMetricLinks();
+                });
+            </script>
+        </main>
+    </body>
+</html>

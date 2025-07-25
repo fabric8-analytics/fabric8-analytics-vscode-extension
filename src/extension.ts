@@ -204,14 +204,14 @@ export async function activate(context: vscode.ExtensionContext) {
         style: { compact: true, border: [], head: [] },
       });
 
-      for (const warning of modelInfo.metrics) {
-        table.push([warning.task, warning.score.toFixed(3), warning.assessment]);
+      for (const warning of modelInfo.metrics.filter(metric => metric.metric.startsWith('pct_') || metric.metric === 'acc')) {
+        table.push([`${warning.task}: ${warning.metric}`, warning.score.toFixed(3), warning.assessment]);
       }
 
       for (const range of modelWithLoc.get(modelInfo.model_name)!) {
         diagnostics.push({
           range: range,
-          message: table.toString() + `\n\nRecommendation: Based on TrustyAI LLM-Eval, we detected moderate risks in bias, toxicity, and truthfulness. We recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.\n`,
+          message: table.toString() + `\n\nRecommendation: Based on TrustyAI LLM-Eval, we detected moderate risks in bias, toxicity, and truthfulness.\nWe recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.\n`,
           severity: vscode.DiagnosticSeverity.Information,
           source: 'Red Hat LLM Dependency Analytics',
           code: `rhdallm`

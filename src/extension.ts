@@ -16,6 +16,7 @@ import { applySettingNameMappings, buildLogErrorMessage } from './utils';
 import { clearCodeActionsMap, getDiagnosticsCodeActions } from './codeActionHandler';
 import { AnalysisMatcher } from './fileHandler';
 import { EventEmitter } from 'node:events';
+import { AbstractDiagnosticsPipeline } from './diagnosticsPipeline';
 
 export let outputChannelDep: DepOutputChannel;
 
@@ -112,6 +113,9 @@ export async function activate(context: vscode.ExtensionContext) {
     } else if (selection === PromptText.IGNORE_FILE) {
       outputChannelDep.info(`Added "${filePath.fsPath}" to workspace exclude list`);
       await globalConfig.addFileToExcludeList(filePath.fsPath);
+      AbstractDiagnosticsPipeline.diagnosticsCollection.delete(filePath);
+      clearCodeActionsMap(filePath);
+      // TODO: need to clear status bar
     } else {
       record(context, TelemetryActions.vulnerabilityReportPopupIgnored, { manifest: fileName, fileName: fileName });
     }
@@ -135,6 +139,9 @@ export async function activate(context: vscode.ExtensionContext) {
     if (selection === PromptText.IGNORE_FILE) {
       outputChannelDep.info(`Added "${errorData.uri.fsPath}" to workspace exclude list`);
       await globalConfig.addFileToExcludeList(errorData.uri.fsPath);
+      AbstractDiagnosticsPipeline.diagnosticsCollection.delete(errorData.uri);
+      clearCodeActionsMap(errorData.uri);
+      // TODO: need to clear status bar
     }
 
     // Record telemetry event

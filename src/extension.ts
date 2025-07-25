@@ -211,7 +211,7 @@ export async function activate(context: vscode.ExtensionContext) {
       for (const range of modelWithLoc.get(modelInfo.model_name)!) {
         diagnostics.push({
           range: range,
-          message: table.toString() + `\n\nRecommendation: Based on TrustyAI LLM-Eval, we detected moderate risks in bias, toxicity, and truthfulness.\nWe recommend you should use Input Shield for bias protection and Output Shield for toxicity and hallucination protection.\n`,
+          message: table.toString() + `\n\nOpen the detailed report via Code Actions for further details & recommended guardrails.\n`,
           severity: vscode.DiagnosticSeverity.Information,
           source: 'Red Hat LLM Dependency Analytics',
           code: `rhdallm`

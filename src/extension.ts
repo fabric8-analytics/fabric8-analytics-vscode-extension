@@ -48,7 +48,16 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => fileHandler.handle(doc, outputChannelDep)));
   // Anecdotaly, some extension(s) may cause did-open events for files that aren't actually open in the editor,
   // so this will trigger CA for files not actually open.
-  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => fileHandler.handle(doc, outputChannelDep)));
+  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => {
+    const isVisible = vscode.window.visibleTextEditors.some(editor =>
+      editor.document.uri.toString() === doc.uri.toString()
+    );
+    // The file was not opened by the user (e.g. extension used openTextDocument but not showTextDocument), ignore.
+    if (!isVisible) {
+      return;
+    }
+    fileHandler.handle(doc, outputChannelDep);
+  }));
   context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => clearCodeActionsMap(doc.uri)));
   // Iterate all open docs, as there is (in general) no did-open event for these.
   for (const doc of vscode.workspace.textDocuments) {

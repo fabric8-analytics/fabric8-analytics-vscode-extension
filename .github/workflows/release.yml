@@ -146,24 +146,6 @@ jobs:
         run: |
           git push origin release/${{ steps.bump.outputs.version }}
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "release: updated package to ${{ steps.bump.outputs.version }} [skip ci]"
-          title: "Release ${{ steps.bump.outputs.version }}"
-          body: |
-            This PR contains the changes for release ${{ steps.bump.outputs.version }}.
-            
-            Changes:
-            - Updated version in package.json
-            - Updated changelog
-          branch: release/${{ steps.bump.outputs.version }}
-          base: main
-          labels: |
-            release
-            ${{ steps.bump.outputs.version }}
-
       - name: Create a release
         id: new_release
         uses: actions/github-script@v7
@@ -201,3 +183,42 @@ jobs:
         if: ${{ github.event.inputs.publishToOVSX == 'true' }}
         run: |
           npx ovsx publish --pat ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix ${{ github.event.inputs.publishPreRelease == 'true' && '--pre-release' || '' }}
+
+      - name: Bump main to next development version
+        id: bump-dev
+        run: |
+          # Switch back to main branch
+          git checkout main
+
+          # Bump to next patch version for development
+          next_version=$(npm version patch --no-git-tag-version)
+          echo "Bumped main to next development version: $next_version"
+          echo "next_version=$next_version" >> "$GITHUB_OUTPUT"
+
+          # Create a new branch for the development version bump
+          git checkout -b bump-dev-version-$next_version
+
+          # Add and commit the changes
+          git add package.json package-lock.json
+          git commit -m "chore: bump to next development version $next_version [skip ci]"
+
+          # Push the development version branch
+          git push origin bump-dev-version-$next_version
+
+      - name: Create PR for development version bump
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "chore: bump to next development version"
+          body: |
+            This PR bumps the main branch to the next development version after release ${{ steps.bump.outputs.version }}.
+
+            Changes:
+            - Updated version in package.json to next development version
+          branch: bump-dev-version-${{ steps.bump-dev.outputs.next_version }}
+          base: main
+          labels: |
+            chore
+            version-bump
+          delete-branch: true
+          draft: false

@@ -17,6 +17,9 @@ enum TelemetryActions {
   vulnerabilityReportPopupIgnored = 'vulnerability_report_popup_ignored',
   componentAnalysisVulnerabilityReportQuickfixOption = 'component_analysis_vulnerability_report_quickfix_option',
   componentAnalysisRecommendationAccepted = 'component_analysis_recommendation_accepted',
+  llmAnalysisModelAnnotationsDiscovered = 'llm_analysis_model_annotations_discovered',
+  llmAnalysisDiagnosticsHovered = 'llm_analysis_diagnostics_hovered',
+  llmAnalysisReportDone = 'llm_analysis_report_done'
 }
 
 let telemetryServiceObj: TelemetryService | null = null;

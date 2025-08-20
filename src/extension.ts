@@ -73,20 +73,22 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.languages.registerCodeActionsProvider('*',
     new class implements vscode.CodeActionProvider {
-      // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-unused-vars
-      provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
-        if (context.diagnostics.at(0)?.code?.toString() !== 'rhdallm') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, actionContext: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
+        if (!actionContext.diagnostics.some(diagnostic => diagnostic.code?.toString() === 'rhdallm')) {
           return;
         }
 
-        // document.getText(context.diagnostics[0].range)
+        const llmModel = document.getText(actionContext.diagnostics[0].range);
+
+        record(context, TelemetryActions.llmAnalysisDiagnosticsHovered, { modelName: llmModel });
 
         return [{
           title: 'Open LLM Evaluation Report',
           command: {
             command: commands.LLM_MODELS_ANALYSIS_REPORT,
             title: 'Show LLM Analysis Report',
-            arguments: [document.getText(context.diagnostics[0].range), document.uri, context.diagnostics[0].range],
+            arguments: [llmModel, document.uri, actionContext.diagnostics[0].range],
           },
           kind: vscode.CodeActionKind.QuickFix
         }];
@@ -229,6 +231,18 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     llmAnalysisDiagnosticsCollection.set(doc.uri, diagnostics);
+
+    {
+      const compareArrays = (a: string[], b: string[]) => a.length === b.length && a.every((element, index) => element === b[index]);
+      const knownModels = modelCardsInfo.map(model => model.model_name).sort();
+      const previouslyReferencedModels = context.globalState.get(`rhda-llm-annotation-models:${doc.uri.fsPath}`, [] as string[]);
+      if (!compareArrays(previouslyReferencedModels, knownModels)) {
+        context.globalState.update(`rhda-llm-annotation-models:${doc.uri.fsPath}`, knownModels);
+        if (knownModels.length > 0) {
+          record(context, TelemetryActions.llmAnalysisModelAnnotationsDiscovered, { knownModelsReferenced: knownModels });
+        }
+      }
+    }
   };
 
   vscode.workspace.textDocuments.forEach(doLLMAnalysis);
@@ -240,7 +254,8 @@ export async function activate(context: vscode.ExtensionContext) {
     async (model: string, uri: vscode.Uri, range: vscode.Range) => {
       LLMAnalysisReportPanel.createOrShowPanel();
       // remove null check, better missing handling
-      LLMAnalysisReportPanel.currentPanel?.updatePanel(modelsInDocs.get(uri)!.get(range)!.id);
+      await LLMAnalysisReportPanel.currentPanel?.updatePanel(modelsInDocs.get(uri)!.get(range)!.id);
+      record(context, TelemetryActions.llmAnalysisReportDone, { modelName: model });
     }
   );
 

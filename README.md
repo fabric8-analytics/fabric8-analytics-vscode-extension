@@ -245,7 +245,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
     <br >If you want to ignore vulnerabilities for a dependency in a `build.gradle` file, you must add `// exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
 
-	     ```gradle
+	     ```groovy
 	     plugins {
 	     id 'java'
 	     }
@@ -315,7 +315,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 
 	For example, setting a dependency as test in the `build.gradle` file by placing it under one of the test configurations: `testImplementation`, `testCompileOnly`, `testRuntimeOnly`
 
-	```gradle
+	```groovy
 	dependencies {
 		implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.4'
     	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.7.4'

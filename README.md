@@ -188,13 +188,13 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	<br >If you want to ignore vulnerabilities for a dependency in a `pom.xml` file, you must add `<!--exhortignore-->` to the end of the line as a comment against the dependency, group id, artifact id, or version scopes of that particular dependency in the manifest file.
 	For example:
     
-	     ```xml
-	     <dependency> <!--exhortignore-->
-		     <groupId>...</groupId>
-		     <artifactId>...</artifactId>
-		     <version>...</version>
-	     </dependency>
-	    ```
+	```xml
+	<dependency> <!--exhortignore-->
+		<groupId>...</groupId>
+		<artifactId>...</artifactId>
+		<version>...</version>
+	</dependency>
+	```
 
 	- **Node**
 	<br >If you wish to ignore vulnerabilities for a dependency in a `package.json` file, you must add `exhortignore` as a attribute-value pair.
@@ -202,69 +202,69 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	This list of vulnerabilities are ignored during analysis.
 	For example:
 
-	     ```json
-	     {
-		     "name": "sample",
-		     "version": "1.0.0",
-		     "description": "",
-		     "main": "index.js",
-		     "keywords": [],
-		     "author": "",
-		     "license": "ISC",
-		     "dependencies": {
-			     "dotenv": "^8.2.0",
-			     "express": "^4.17.1",
-			     "jsonwebtoken": "^8.5.1",
-			     "mongoose": "^5.9.18"
-		     },
-		     "exhortignore": [
-			     "jsonwebtoken"
-		     ]
-	     }
-	     ```
+	```json
+	{
+		"name": "sample",
+		"version": "1.0.0",
+		"description": "",
+		"main": "index.js",
+		"keywords": [],
+		"author": "",
+		"license": "ISC",
+		"dependencies": {
+			"dotenv": "^8.2.0",
+			"express": "^4.17.1",
+			"jsonwebtoken": "^8.5.1",
+			"mongoose": "^5.9.18"
+		},
+		"exhortignore": [
+			"jsonwebtoken"
+		]
+	}
+	```
 
 	- **Go**
 	<br >If you want to ignore vulnerabilities for a dependency in a `go.mod` file, you must add `// exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
 
-	     ```go
-	     require (
-		     golang.org/x/sys v1.6.7 // exhortignore
-	     )
-	     ```
+	```go
+	require (
+		golang.org/x/sys v1.6.7 // exhortignore
+	)
+	```
 
 	- **Python**
 	<br >If you want to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `# exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
 
-	     ```python
-	     requests==2.28.1 # exhortignore
-	     ```
+	```python
+	requests==2.28.1 # exhortignore
+	```
 
 	- **Gradle**
     <br >If you want to ignore vulnerabilities for a dependency in a `build.gradle` file, you must add `// exhortignore` to the end of the line as a comment against the dependency in the manifest file.
 	For example:
 
-	     ```groovy
-	     plugins {
-	     id 'java'
-	     }
+	```groovy
+	plugins {
+		id 'java'
+	}
 
-	     group = 'groupName'
-	     version = 'version'
-     
-	     repositories {
-		     mavenCentral()
-	     }
-     
-	     dependencies {
-		     implementation "groupId:artifactId:version" // exhortignore
-	     }
-     
-	     test {
-		     useJUnitPlatform()
-	     }
-	     ```
+	group = 'groupName'
+	version = 'version'
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		implementation "groupId:artifactId:version" // exhortignore
+	}
+
+	test {
+		useJUnitPlatform()
+	}
+	```
 
 - **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
@@ -278,7 +278,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 		<version>...</version>
 		<scope>test</scope>
 	</dependency>
-	```	
+	```
 
 	For example, setting `devDependencies` attributte in the `package.json` file:
 	
@@ -318,7 +318,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	```groovy
 	dependencies {
 		implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.4'
-    	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.7.4'
+		testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.7.4'
 		testCompileOnly 'junit:junit:4.13.1'
 		testRuntimeOnly 'org.mockito:mockito-core:3.3.3'
 	}
@@ -336,7 +336,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 
 	```python
 	# @rhda
-    # model=meta-llama/Llama-3.1-8B-Instruct
+	# model=meta-llama/Llama-3.1-8B-Instruct
 	```
 	Llama-3.1-8B-Instruct safetry metrics will be shown on-hover as in-editor diagnostics. Code actions will also be provided at the location of the model name which opens up a more detailed HTML report, including instructions on how to integrate known guardrails to improve certain safety metrics.
 

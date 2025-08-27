@@ -121,9 +121,9 @@ You can set the vulnerability severity alert level to `Error` or `Warning` for i
 
 #### Maven and Gradle Wrappers:
 * `preferWrapper` : Configure whether to use Maven or Gradle wrappers. There are three options available:
-  - `true`: Always use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
-  - `false`: Never use the wrapper regardless of VS Code's `maven.preferMavenWrapper` setting
-  - `fallback`: Use VS Code's `maven.preferMavenWrapper` setting (default behavior)
+  - `true`: Always use the wrapper regardless of other extensions' wrapper settings
+  - `false`: Never use the wrapper regardless of other extensions' wrapper settings
+  - `fallback`: Use the wrapper settings from the 'Maven for Java' or 'Language Support for Java(TM) by Red Hat' extensions, for Maven or Gradle wrapper settings respectively (`"maven.executable.preferMavenWrapper"` and `"java.import.gradle.wrapper.enabled"`)
 
 ```json
 "redHatDependencyAnalytics": {

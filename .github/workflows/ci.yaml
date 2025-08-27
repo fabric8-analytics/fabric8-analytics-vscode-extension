@@ -51,6 +51,11 @@ jobs:
       - name: Lint code
         run: npm run lint
 
+      - uses: actions/cache@v4
+        with:
+          path: .vscode-test
+          key: ${{ hashFiles('test/runTest.ts') }}
+
       - name: Run headless test
         uses: coactions/setup-xvfb@v1
         with:

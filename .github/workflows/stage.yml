@@ -51,6 +51,10 @@ jobs:
           short_sha=$(git rev-parse --short HEAD)
           echo "version=$base_version-ea.$short_sha" >> "$GITHUB_OUTPUT"
 
+      - name: Update package with EA version
+        run: |
+          npm version ${{ steps.ea_version.outputs.version }} --no-git-tag-version --allow-same-version
+
       - name: Compile for test
         run: npm run test-compile
 

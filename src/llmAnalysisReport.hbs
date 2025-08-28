@@ -517,9 +517,27 @@
                 font-weight: 600;
             }
 
-            .impact-high {
-                background: #f8d7da;
-                color: #721c24;
+            .impact-no_measurable {
+                background: #c8e6c9;
+                color: #2e7d32;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-very_low {
+                background: #26a69a;
+                color: #ffffff;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-low {
+                background: #d1ecf1;
+                color: #0c5460;
                 padding: 0.2rem 0.5rem;
                 border-radius: 3px;
                 font-size: 0.8rem;
@@ -535,9 +553,18 @@
                 font-weight: 600;
             }
 
-            .impact-low {
-                background: #d4edda;
-                color: #155724;
+            .impact-high {
+                background: #ffeaa7;
+                color: #b7550a;
+                padding: 0.2rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .impact-severe {
+                background: #f8d7da;
+                color: #721c24;
                 padding: 0.2rem 0.5rem;
                 border-radius: 3px;
                 font-size: 0.8rem;
@@ -615,19 +642,31 @@
                 <div class="legend-items">
                     <div class="legend-item">
                         <div class="legend-color" style="background-color: #F44336;"></div>
-                        <span>High Impact</span>
+                        <span>Severe</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #FF5722;"></div>
+                        <span>High</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color" style="background-color: #FF9800;"></div>
-                        <span>Moderate Impact</span>
+                        <span>Moderate</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-color" style="background-color: #4CAF50;"></div>
-                        <span>Low Impact</span>
+                        <div class="legend-color" style="background-color: #8BC34A;"></div>
+                        <span>Low</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #26A69A;"></div>
+                        <span>Very Low</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #C8E6C9;"></div>
+                        <span>No Measurable Impact</span>
                     </div>
                     <div class="legend-item">
                         <div class="legend-color" style="background-color: #9E9E9E;"></div>
-                        <span>Unknown Impact</span>
+                        <span>Unknown</span>
                     </div>
                 </div>
             </div>
@@ -736,7 +775,7 @@
                                             <tr id="metric-{{taskName}}-{{name}}">
                                                 <td><span class="metric-name">{{name}}</span></td>
                                                 <td><span class="metric-score">{{score}}</span></td>
-                                                <td><span class="impact-{{impactLevel}}">{{impactLevel}}</span></td>
+                                                <td><span class="impact-{{impactLevel}}">{{impactDisplayName}}</span></td>
                                                 <td><span class="metric-categories">{{categories}}</span></td>
                                                 <td>
                                                     {{#relatedGuardrails.length}}

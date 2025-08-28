@@ -56,7 +56,7 @@ export class LLMAnalysisReportPanel {
     LLMAnalysisReportPanel.currentPanel = new LLMAnalysisReportPanel(column);
   }
 
-  private getImpactLevel(metric: any): string {
+  private getImpactLevel(metric: ModelCardResponse['tasks'][0]['metrics'][0]): string {
     if (!metric.thresholds || metric.thresholds.length === 0) {
       return 'unknown';
     }
@@ -64,14 +64,7 @@ export class LLMAnalysisReportPanel {
     const score = metric.score;
     for (const threshold of metric.thresholds) {
       if (score >= threshold.lower && score <= threshold.upper) {
-        // Map threshold categories to impact levels
-        if (threshold.category <= 2) {
-          return 'low';
-        }
-        if (threshold.category <= 4) {
-          return 'moderate';
-        }
-        return 'high';
+        return threshold.impact;
       }
     }
     return 'unknown';
@@ -79,10 +72,25 @@ export class LLMAnalysisReportPanel {
 
   private getImpactColor(impactLevel: string): string {
     switch (impactLevel) {
-      case 'low': return '#4CAF50';      // Green
-      case 'moderate': return '#FF9800';  // Orange
-      case 'high': return '#F44336';      // Red
-      default: return '#9E9E9E';          // Gray
+      case 'no_measurable': return '#C8E6C9';  // Visible light green
+      case 'very_low': return '#26A69A';       // Blue-green
+      case 'low': return '#8BC34A';            // Light green
+      case 'moderate': return '#FF9800';       // Orange
+      case 'high': return '#FF5722';           // Red-orange
+      case 'severe': return '#F44336';         // Red
+      default: return '#9E9E9E';               // Gray
+    }
+  }
+
+  private getImpactDisplayName(impactLevel: string): string {
+    switch (impactLevel) {
+      case 'no_measurable': return 'No Measurable Impact';
+      case 'very_low': return 'Very Low';
+      case 'low': return 'Low';
+      case 'moderate': return 'Moderate';
+      case 'high': return 'High';
+      case 'severe': return 'Severe';
+      default: return 'Unknown';
     }
   }
 
@@ -154,7 +162,17 @@ export class LLMAnalysisReportPanel {
 
     // Sort by required metrics first, then by impact level
     allMetrics.sort((a, b) => {
-      const impactOrder: { [key: string]: number } = { 'high': 0, 'moderate': 1, 'low': 2, 'unknown': 3 };
+      const impactOrder: { [key: string]: number } = {
+        'severe': 0,
+        'high': 1,
+        'moderate': 2,
+        'low': 3,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'very_low': 4,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'no_measurable': 5,
+        'unknown': 6,
+      };
       return impactOrder[a.impactLevel] - impactOrder[b.impactLevel];
     });
 
@@ -199,12 +217,14 @@ export class LLMAnalysisReportPanel {
         const metricKey = `${task.name}:${metric.name}`;
         const relatedGuardrailIds = metricToGuardrails.get(metricKey) || [];
 
+        const impactLevel = this.getImpactLevel(metric);
         return {
           name: metric.name,
           score: metric.score,
           categories: metric.categories,
           higherIsBetter: metric.higher_is_better,
-          impactLevel: this.getImpactLevel(metric),
+          impactLevel: impactLevel,
+          impactDisplayName: this.getImpactDisplayName(impactLevel),
           relatedGuardrails: relatedGuardrailIds
             .filter(id => recommendedGuardrails.some(g => g.id === id))
             .map(id => {
@@ -222,6 +242,7 @@ export class LLMAnalysisReportPanel {
       data: JSON.stringify(allMetrics.map(m => m.metric.score)),
       colors: JSON.stringify(allMetrics.map(m => this.getImpactColor(m.impactLevel))),
       impactLevels: JSON.stringify(allMetrics.map(m => m.impactLevel)),
+      impactDisplayNames: JSON.stringify(allMetrics.map(m => this.getImpactDisplayName(m.impactLevel))),
       tasks: enrichedTasks,
       contextData: {
         modelSource: resp.config.model_source,

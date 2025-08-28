@@ -35,7 +35,7 @@ export interface ModelCardResponse {
             higher_is_better: boolean,
             score: number,
             thresholds: {
-                name: string,
+                impact: 'no_measurable' | 'very_low' | 'low' | 'moderate' | 'high' | 'severe',
                 category: number,
                 interpretation: string,
                 upper: number,

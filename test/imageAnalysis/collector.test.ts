@@ -13,6 +13,8 @@ import { Image, ImageMap, getRange } from '../../src/imageAnalysis/collector';
 import { ImageRef } from '@trustification/exhort-javascript-api';
 import { PackageURL } from 'packageurl-js';
 import { Range } from 'vscode';
+import { globalConfig } from '../../src/config';
+import { type IOptions } from '../../src/imageAnalysis';
 
 const imageToPurl: { [key: string]: PackageURL } = {
     'alpine:3.21.3': new PackageURL(
@@ -48,9 +50,21 @@ suite('Image Analysis Collector tests', () => {
     ];
     reqImages.forEach(image => image.platform = 'linux/amd64');
 
+    const options: IOptions = {
+        'RHDA_TOKEN': globalConfig.telemetryId ?? '',
+        'RHDA_SOURCE': globalConfig.utmSource,
+        'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
+        'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
+        'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
+        'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
+        'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
+        'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
+        'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
+    };
+
     test('should create map of images', async () => {
 
-        const imageMap = new ImageMap(reqImages);
+        const imageMap = new ImageMap(reqImages, options);
 
         expect(Object.fromEntries(imageMap.mapper)).to.eql({
             'pkg:oci/alpine@sha256:1c4eef651f65e2f7daee7ee785882ac164b02b78fb74503052a26dc061c90474?arch=amd64&os=linux&tag=3.21.3': [reqImages[0]],
@@ -60,14 +74,14 @@ suite('Image Analysis Collector tests', () => {
 
     test('should create empty image map', async () => {
 
-        const imageMap = new ImageMap([]);
+        const imageMap = new ImageMap([], options);
 
         expect(Object.keys(imageMap.mapper).length).to.eql(0);
     });
 
     test('should get image from image map', async () => {
 
-        const imageMap = new ImageMap(reqImages);
+        const imageMap = new ImageMap(reqImages, options);
 
         expect(JSON.stringify(imageMap.get('pkg:oci/alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b?arch=amd64&os=linux'))).to.eq(JSON.stringify([reqImages[1]]));
     });

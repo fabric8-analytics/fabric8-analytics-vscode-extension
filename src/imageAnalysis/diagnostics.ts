@@ -13,6 +13,7 @@ import { Vulnerability } from '../vulnerability';
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { globalConfig } from '../config';
+import { type IOptions } from '../imageAnalysis';
 
 /**
  * Implementation of DiagnosticsPipeline interface.
@@ -89,13 +90,25 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
  */
 async function performDiagnostics(diagnosticFilePath: Uri, contents: string, provider: IImageProvider) {
   try {
+    const options: IOptions = {
+      'RHDA_TOKEN': globalConfig.telemetryId ?? '',
+      'RHDA_SOURCE': globalConfig.utmSource,
+      'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
+      'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
+      'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
+      'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
+      'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
+      'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
+      'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
+    };
+
     const images = provider.collect(contents);
-    const imageMap = new ImageMap(images);
+    const imageMap = new ImageMap(images, options);
 
     const diagnosticsPipeline = new DiagnosticsPipeline(imageMap, diagnosticFilePath);
     diagnosticsPipeline.clearDiagnostics();
 
-    const response = await executeImageAnalysis(diagnosticFilePath, images);
+    const response = await executeImageAnalysis(diagnosticFilePath, images, options);
 
     clearCodeActionsMap(diagnosticFilePath);
 

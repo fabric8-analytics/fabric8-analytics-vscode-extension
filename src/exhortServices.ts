@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import exhort, { ImageRef, Options, parseImageRef } from '@trustification/exhort-javascript-api';
 
-import { IImageRef, IOptions } from './imageAnalysis';
+import { IImageRef, type IOptions } from './imageAnalysis';
 import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
 
 /**
@@ -36,11 +36,11 @@ async function stackAnalysisService(pathToManifest: string, options: Options): P
 }
 
 // TODO: comment
-function parseImageReference(image: IImageRef): ImageRef {
+function parseImageReference(image: IImageRef, options: IOptions): ImageRef {
   if (image.platform) {
-    return parseImageRef(`${image.image}^^${image.platform}`);
+    return parseImageRef(`${image.image}^^${image.platform}`, options);
   } else {
-    return parseImageRef(image.image);
+    return parseImageRef(image.image, options);
   }
 }
 

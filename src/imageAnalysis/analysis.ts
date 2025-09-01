@@ -4,7 +4,6 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { globalConfig } from '../config';
 import { isDefined } from '../utils';
 import { IImage } from '../imageAnalysis/collector';
 import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
@@ -15,7 +14,7 @@ import { Source } from '@trustification/exhort-api-spec/model/v4/Source';
 import { Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { imageAnalysisService } from '../exhortServices';
-import { IOptions } from '../imageAnalysis';
+import { type IOptions } from '../imageAnalysis';
 
 /**
  * Represents the Red Hat Dependency Analytics (RHDA) analysis report, with images mapped by string keys.
@@ -159,20 +158,7 @@ class AnalysisResponse implements IAnalysisResponse {
  * @param images - The images to analyze.
  * @returns A Promise resolving to an AnalysisResponse object.
  */
-async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[]): Promise<AnalysisResponse> {
-  // Define configuration options for the component analysis request
-  const options: IOptions = {
-    'RHDA_TOKEN': globalConfig.telemetryId ?? '',
-    'RHDA_SOURCE': globalConfig.utmSource,
-    'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
-    'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
-    'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
-    'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
-    'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
-    'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
-    'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
-  };
-
+async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[], options: IOptions): Promise<AnalysisResponse> {
   const imageAnalysisJson = await imageAnalysisService(images.map((img) => ({
     image: img.name.value,
     platform: img.platform,

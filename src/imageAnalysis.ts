@@ -38,17 +38,6 @@ interface IImageRef {
  * Represents an analysis of Docker images.
  */
 class DockerImageAnalysis {
-  options: IOptions = {
-    'RHDA_TOKEN': globalConfig.telemetryId ?? '',
-    'RHDA_SOURCE': globalConfig.utmSource,
-    'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
-    'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
-    'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
-    'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
-    'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
-    'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
-    'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
-  };
   args: Map<string, string> = new Map<string, string>();
   images: IImageRef[] = [];
   imageAnalysisReportHtml: string = '';
@@ -173,8 +162,20 @@ class DockerImageAnalysis {
       try {
         this.outputChannel.info(`generating image analysis report for "${this.filePath}"`);
 
+        const options: IOptions = {
+          'RHDA_TOKEN': globalConfig.telemetryId ?? '',
+          'RHDA_SOURCE': globalConfig.utmSource,
+          'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
+          'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
+          'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
+          'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
+          'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
+          'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
+          'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
+        };
+
         // execute image analysis
-        const promise = imageAnalysisService(this.images, true, this.options);
+        const promise = imageAnalysisService(this.images, true, options);
         p.report({ message: StatusMessages.WIN_GENERATING_DEPENDENCIES });
 
         const resp = await promise;

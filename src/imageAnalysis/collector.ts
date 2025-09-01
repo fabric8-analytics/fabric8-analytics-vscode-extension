@@ -7,6 +7,7 @@
 import { IPositionedString, IPosition } from '../positionTypes';
 import { Position, Range } from 'vscode';
 import { parseImageReference } from '../exhortServices';
+import { type IOptions } from '../imageAnalysis';
 /**
  * Represents an image specification.
  */
@@ -51,7 +52,7 @@ export class ImageMap {
    * Creates an instance of ImageMap.
    * @param images - The array of images to initialize the map with.
    */
-  constructor(images: IImage[]) {
+  constructor(images: IImage[], options: IOptions) {
     // exhort API gives us the analysis results as a map of purl to data, so we need
     // to store the keys as purl's here too.
     this.mapper = new Map();
@@ -60,7 +61,7 @@ export class ImageMap {
       const parsedImageRef = parseImageReference({
         image: image.name.value,
         platform: image.platform,
-      });
+      }, options);
       if (this.mapper.has(parsedImageRef.getPackageURL().toString())) {
         this.mapper.get(parsedImageRef.getPackageURL().toString())!.push(image);
       } else {

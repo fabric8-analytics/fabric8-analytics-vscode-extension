@@ -45,7 +45,7 @@ jobs:
         id: ea_version
         run: |
           # Get the current version from package.json
-          next_base_version=$(node version patch --no-git-tag-version)
+          next_base_version=$(npm version patch --no-git-tag-version)
           
           # Get short commit SHA
           short_sha=$(git rev-parse --short HEAD)

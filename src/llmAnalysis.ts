@@ -56,6 +56,9 @@ export interface ModelCardResponse {
     }[]
 }
 
+export const exhortDevDefaultUrl = 'https://exhort.stage.devshift.net';
+export const exhortDefaultUrl = 'https://rhda.rhcloud.com';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function llmAnalysis(models: string[]): Promise<ListModelCardResponse[] | undefined> {
     const reqBody = JSON.stringify({
@@ -66,7 +69,7 @@ export async function llmAnalysis(models: string[]): Promise<ListModelCardRespon
         })
     });
 
-    const resp = await fetch(`https://exhort.stage.devshift.net/api/v4/model-cards/`, {
+    const resp = await fetch(`${selectExhortBackend()}/api/v4/model-cards/`, {
         method: 'POST',
         body: reqBody,
     });
@@ -78,9 +81,16 @@ export async function llmAnalysis(models: string[]): Promise<ListModelCardRespon
 }
 
 export async function llmAnalysisDetails(modelID: string): Promise<ModelCardResponse | undefined> {
-    const resp = await fetch(`https://exhort.stage.devshift.net/api/v4/model-cards/${modelID}`);
+    const resp = await fetch(`${selectExhortBackend()}/api/v4/model-cards/${modelID}`);
     if (!resp.ok) {
         return undefined;
     }
     return resp.json() as Promise<ModelCardResponse>;
+}
+
+function selectExhortBackend() {
+    if (process.env['EXHORT_DEV_MODE'] === 'true') {
+        return exhortDevDefaultUrl;
+    }
+    return exhortDefaultUrl;
 }

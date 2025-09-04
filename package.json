@@ -428,7 +428,7 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustification/exhort-api-spec": "^1.0.18",
-    "@trustification/exhort-javascript-api": "^0.2.4-ea.7",
+    "@trustification/exhort-javascript-api": "^0.2.4-ea.9",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/parser": "^1.0.11",
     "cli-table3": "^0.6.5",

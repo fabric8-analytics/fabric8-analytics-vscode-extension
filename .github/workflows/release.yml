@@ -147,22 +147,21 @@ jobs:
           git push origin release/${{ steps.bump.outputs.version }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "release: updated package to ${{ steps.bump.outputs.version }} [skip ci]"
-          title: "Release ${{ steps.bump.outputs.version }}"
-          body: |
+        run: >-
+          gh pr create 
+          --base main 
+          --title "Release ${{ steps.bump.outputs.version }}" 
+          --body "$PR_BODY" 
+          --head release/${{ steps.bump.outputs.version }}
+          --label release --label ${{ steps.bump.outputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BODY: |
             This PR contains the changes for release ${{ steps.bump.outputs.version }}.
             
             Changes:
             - Updated version in package.json
             - Updated changelog
-          branch: release/${{ steps.bump.outputs.version }}
-          base: main
-          labels: |
-            release
-            ${{ steps.bump.outputs.version }}
 
       - name: Create a release
         id: new_release

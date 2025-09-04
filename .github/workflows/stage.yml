@@ -45,11 +45,11 @@ jobs:
         id: ea_version
         run: |
           # Get the current version from package.json
-          base_version=$(node -p "require('./package.json').version")
+          next_base_version=$(node version patch --no-git-tag-version)
           
           # Get short commit SHA
           short_sha=$(git rev-parse --short HEAD)
-          echo "version=$base_version-ea.$short_sha" >> "$GITHUB_OUTPUT"
+          echo "version=$next_base_version-ea.$short_sha" >> "$GITHUB_OUTPUT"
 
       - name: Update package with EA version
         run: |

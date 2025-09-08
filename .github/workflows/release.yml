@@ -147,13 +147,14 @@ jobs:
           git push origin release/${{ steps.bump.outputs.version }}
 
       - name: Create Pull Request
-        run: >-
-          gh pr create 
-          --base main 
-          --title "Release ${{ steps.bump.outputs.version }}" 
-          --body "$PR_BODY" 
-          --head release/${{ steps.bump.outputs.version }}
-          --label release --label ${{ steps.bump.outputs.version }}
+        run: |
+          gh label create "${{ steps.bump.outputs.version }}" --force
+          gh pr create \
+            --base main \
+            --title "Release ${{ steps.bump.outputs.version }}" \
+            --body "$PR_BODY" \
+            --head release/${{ steps.bump.outputs.version }} \
+            --label "release" --label "${{ steps.bump.outputs.version }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BODY: |

@@ -146,7 +146,7 @@ jobs:
         run: |
           git push origin release/${{ steps.bump.outputs.version }}
 
-      - name: Create Pull Request
+      - name: Create & Merge Pull Request
         run: |
           gh label create "${{ steps.bump.outputs.version }}" --force
           gh pr create \
@@ -155,6 +155,7 @@ jobs:
             --body "$PR_BODY" \
             --head release/${{ steps.bump.outputs.version }} \
             --label "release" --label "${{ steps.bump.outputs.version }}"
+          gh pr merge release/${{ steps.bump.outputs.version }} --admin --squash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BODY: |

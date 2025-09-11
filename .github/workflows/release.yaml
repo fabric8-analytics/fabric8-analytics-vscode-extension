@@ -45,7 +45,7 @@ jobs:
         id: release_version
         run: |
           new_version=$(node -p "require('./package.json').version")
-          echo "version=$new_version" >> "$GITHUB_OUTPUT""
+          echo "version=$new_version" >> "$GITHUB_OUTPUT"
 
       - name: VSCE package
         run: vsce package --out fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix

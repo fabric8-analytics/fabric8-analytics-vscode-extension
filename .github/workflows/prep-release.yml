@@ -156,7 +156,6 @@ jobs:
             --body "$PR_BODY" \
             --head release/${{ steps.bump.outputs.version }} \
             --label "release" --label "${{ steps.bump.outputs.version }}"
-          gh pr merge release/${{ steps.bump.outputs.version }} --admin --squash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BODY: |

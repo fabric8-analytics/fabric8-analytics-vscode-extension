@@ -83,12 +83,10 @@ jobs:
           done
 
       - name: Publish to VSCode Marketplace
-        if: ${{ github.event.inputs.publishToMarketplace == 'true' }}
         run: |
-          vsce publish --pat ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix ${{ github.event.inputs.publishPreRelease == 'true' && '--pre-release' || '' }}
+          vsce publish --pat ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
 
       - name: Publish to Open VSX Registry
-        if: ${{ github.event.inputs.publishToOVSX == 'true' }}
         run: |
-          npx ovsx publish --pat ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix ${{ github.event.inputs.publishPreRelease == 'true' && '--pre-release' || '' }}
+          npx ovsx publish --pat ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
 

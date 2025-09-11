@@ -13,21 +13,6 @@ on:
           - patch
           - minor
           - major
-      publishToMarketplace:
-        description: 'Publish to VSCode Marketplace'
-        required: true
-        type: boolean
-        default: true
-      publishToOVSX:
-        description: 'Publish to Open VSX Registry'
-        required: true
-        type: boolean
-        default: true
-      publishPreRelease:
-        description: 'Publish as pre-release version'
-        required: true
-        type: boolean
-        default: false
 
 jobs:
   release:

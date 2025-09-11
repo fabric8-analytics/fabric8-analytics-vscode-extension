@@ -1,4 +1,26 @@
 # Change Log
+
+## 0.10.0 (September 8th 2025)
+
+### Enhancements
+
+- Introduced LM Model Cards functionality that detects the usage of Large Language Models (LLMs) within a project and provides concise safety and security insights (Developer Preview). See [PR#800](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/800) for details.
+- Added support for exclude patterns to ignore paths. See [PR#803](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/803) for details.
+- Added option for additional Maven CLI arguments. See [PR#802](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/802) for details.
+- Improved UX for error messages in logs & notifications. See [PR#801](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/801) and [PR#799](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/799) for details.
+- Added support for toggling of recommendations. See [PR#795](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/795) for details.
+
+### Fixes
+
+- Fixed component analysis status bar error tooltip not showing. See [PR#798](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/798) for details.
+
+### Chores
+
+- Bumped JavaScript API for various fixes. See [PR#825](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/825), [PR#824](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/824), [PR#823](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/823) for details.
+- Updated README to better explain Maven/Gradle wrapper settings. See [PR#818](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/818) for details.
+- Enabled 'strict' type-checking in tsconfig. See [PR#796](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/796) for details.
+- Removed LSP and integrated features directly. See [PR#794](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/794) for details.
+
 ## 0.9.6 (May 30th 2025)
 
 ### Fixes

@@ -1,5 +1,6 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 ---
-name: Release
+name: Prepare Release
 
 on:
   workflow_dispatch:
@@ -33,7 +34,7 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     if: github.repository_owner == 'fabric8-analytics'
-    name: Create a release
+    name: Prepare a release
     environment: production
 
     steps:
@@ -146,15 +147,16 @@ jobs:
         run: |
           git push origin release/${{ steps.bump.outputs.version }}
 
-      - name: Create Pull Request
+      - name: Create & Merge Pull Request
         run: |
           gh label create "${{ steps.bump.outputs.version }}" --force
           gh pr create \
             --base main \
-            --title "Release ${{ steps.bump.outputs.version }}" \
+            --title "[release] ${{ steps.bump.outputs.version }}" \
             --body "$PR_BODY" \
             --head release/${{ steps.bump.outputs.version }} \
             --label "release" --label "${{ steps.bump.outputs.version }}"
+          gh pr merge release/${{ steps.bump.outputs.version }} --admin --squash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BODY: |
@@ -164,40 +166,4 @@ jobs:
             - Updated version in package.json
             - Updated changelog
 
-      - name: Create a release
-        id: new_release
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const repo_name = context.payload.repository.full_name
-            const response = await github.request('POST /repos/' + repo_name + '/releases', {
-              tag_name: '${{ steps.bump.outputs.version }}',
-              name: '${{ steps.bump.outputs.version }}',
-              body: '${{ steps.release-notes.outputs.notes }}',
-              prerelease: false,
-              generate_release_notes: true
-            })
-            core.setOutput('upload_url', response.data.upload_url)
-
-      - name: Upload packages and checksums as release assets
-        run: |
-          for file in fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix*
-          do
-            asset_name=$(basename "$file")
-            upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
-            curl --data-binary @"$file" \
-              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Content-Type: application/octet-stream" \
-              "$upload_url"
-          done
-
-      - name: Publish to VSCode Marketplace
-        if: ${{ github.event.inputs.publishToMarketplace == 'true' }}
-        run: |
-          vsce publish --pat ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix ${{ github.event.inputs.publishPreRelease == 'true' && '--pre-release' || '' }}
-
-      - name: Publish to Open VSX Registry
-        if: ${{ github.event.inputs.publishToOVSX == 'true' }}
-        run: |
-          npx ovsx publish --pat ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix ${{ github.event.inputs.publishPreRelease == 'true' && '--pre-release' || '' }}
+      

@@ -141,7 +141,7 @@ jobs:
           git add CHANGELOG.md
           git add package.json
           git add package-lock.json
-          git commit -m "release: updated package to ${{ steps.bump.outputs.version }} [skip ci]"
+          git commit -m "[release] ${{ steps.bump.outputs.version }}"
 
       - name: Push changes
         run: |

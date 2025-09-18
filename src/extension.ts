@@ -171,6 +171,10 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     }
 
+    if (modelWithLoc.size === 0) {
+      return;
+    }
+
     const modelCardsInfo = await llmAnalysis(Array.from(modelWithLoc.keys()));
     if (!modelCardsInfo) {
       return;

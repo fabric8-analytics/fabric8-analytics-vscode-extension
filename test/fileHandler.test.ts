@@ -7,11 +7,12 @@ import * as sinonChai from 'sinon-chai';
 import { AnalysisMatcher } from '../src/fileHandler';
 import { DepOutputChannel } from '../src/depOutputChannel';
 import * as path from 'path';
+import { MockTokenProvider } from '../src/tokenProvider';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
-suite('File Handler', () => {
+suite('File Handler', async () => {
   let sandbox: sinon.SinonSandbox;
 
   setup(() => {
@@ -22,7 +23,7 @@ suite('File Handler', () => {
     sandbox.restore();
   });
   test('test file handler exclusion', async () => {
-    const fileHandler = new AnalysisMatcher();
+    const fileHandler = new AnalysisMatcher(new MockTokenProvider());
 
     vscode.workspace.getConfiguration('redHatDependencyAnalytics').update('exclude', ['**/requirements.txt']);
 

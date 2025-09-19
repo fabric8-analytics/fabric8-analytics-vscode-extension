@@ -5,16 +5,19 @@ import * as vscode from 'vscode';
 import { globalConfig } from './config';
 import { SNYK_URL } from './constants';
 import { tokenValidationService } from './exhortServices';
+import { Options } from '@trustification/exhort-javascript-api';
+import { TokenProvider } from './tokenProvider';
 
 /**
  * Validates the Snyk token using the Exhort token validation service.
  * @returns A Promise that resolves when token has been validated.
  */
-async function validateSnykToken(token: string): Promise<string | undefined> {
+async function validateSnykToken(tokenProvider: TokenProvider, token: string): Promise<string | undefined> {
   if (token !== '') {
     // set up configuration options for the token validation request
-    const options = {
-      'RHDA_TOKEN': globalConfig.telemetryId ?? '',
+    const options: Options = {
+      'RHDA_TOKEN': await tokenProvider.getToken() ?? '',
+      'RHDA_TELEMETRY_ID': globalConfig.telemetryId ?? '',
       'RHDA_SOURCE': globalConfig.utmSource,
       'EXHORT_SNYK_TOKEN': token
     };

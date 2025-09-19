@@ -8,11 +8,12 @@ import { globalConfig } from '../src/config';
 import { validateSnykToken } from '../src/tokenValidation';
 import * as exhortServices from '../src/exhortServices';
 import { SNYK_URL } from '../src/constants';
+import { MockTokenProvider } from '../src/tokenProvider';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
-suite('TokenValidation module', () => {
+suite('TokenValidation module', async () => {
     let sandbox: sinon.SinonSandbox;
 
     setup(() => {
@@ -26,16 +27,18 @@ suite('TokenValidation module', () => {
     test('should validate non-empty Snyk token', async () => {
         globalConfig.telemetryId = 'mockId';
         const options = {
-            'RHDA_TOKEN': 'mockId',
+            'RHDA_TOKEN': '',
+            'RHDA_TELEMETRY_ID': 'mockId',
             'RHDA_SOURCE': 'vscode',
             'EXHORT_SNYK_TOKEN': 'mockToken'
         };
 
         const exhortServicesStub = sandbox.stub(exhortServices, 'tokenValidationService');
 
-        await validateSnykToken('mockToken');
+        await validateSnykToken(new MockTokenProvider(), 'mockToken');
 
-        expect(exhortServicesStub.calledOnceWithExactly(options, 'Snyk')).to.be.true;
+        expect(exhortServicesStub.getCall(0).args[0]).to.eql(options);
+        expect(exhortServicesStub.getCall(0).args[1]).to.equal('Snyk');
     });
 
     test('should validate empty Snyk token', async () => {
@@ -43,7 +46,7 @@ suite('TokenValidation module', () => {
 
         const showInformationMessageStub = sandbox.stub(vscode.window, 'showInformationMessage');
 
-        await validateSnykToken('');
+        await validateSnykToken(new MockTokenProvider(), '');
 
         const showInformationMessageCall = showInformationMessageStub.getCall(0);
         const showInformationMessageMsg = showInformationMessageCall.args[0];

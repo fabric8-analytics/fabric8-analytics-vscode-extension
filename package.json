@@ -76,6 +76,11 @@
         "command": "rhda.stackLogs",
         "title": "Debug logs",
         "category": "Red Hat Dependency Analytics"
+      },
+      {
+        "command": "rhda.authenticate",
+        "title": "Authenticate",
+        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -380,6 +385,21 @@
             "type": "string"
           },
           "description": "List of path globs for manifests to ignore for analysis. Only forward slash is support as a path separator."
+        },
+        "redHatDependencyAnalytics.oidc.endpoint": {
+          "type": "string",
+          "default": "https://sso.redhat.com/auth/realms/redhat-external",
+          "description": "URL used for OIDC auth server metadata discovery."
+        },
+        "redHatDependencyAnalytics.oidc.clientId": {
+          "type": "string",
+          "default": "rhda-vscode",
+          "description": "Specifies the OIDC client ID."
+        },
+        "redHatDependencyAnalytics.oidc.allowInsecure": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enables specifying HTTP-only endpoints."
         }
       }
     }
@@ -443,6 +463,7 @@
     "minimatch": "^10.0.3",
     "mustache": "^4.2.0",
     "node-html-parser": "^7.0.1",
+    "openid-client": "^6.8.0",
     "path": "^0.12.7",
     "tree-sitter-python": "^0.23.6",
     "web-tree-sitter": "^0.25.6"

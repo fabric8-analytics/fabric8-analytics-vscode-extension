@@ -49,7 +49,7 @@ suite('RedhatTelemetry module', async () => {
     });
 
     test('should send statup telemetry event', async () => {
-        await redhatTelemetryRewire.startUp({});
+        await redhatTelemetryRewire.initTelemetry({});
         expect(sendEventMock.sendStartupEvent).to.have.been.calledOnce;
     });
 

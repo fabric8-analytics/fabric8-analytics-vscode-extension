@@ -59,7 +59,7 @@ async function record(context: vscode.ExtensionContext, eventName: string, prope
  * @param context The extension context.
  * @returns A promise that resolves once the even has been sent.
  */
-async function startUp(context: vscode.ExtensionContext) {
+async function initTelemetry(context: vscode.ExtensionContext) {
   telemetryServiceObj = await telemetryService(context);
   await telemetryServiceObj?.sendStartupEvent();
 }
@@ -76,4 +76,4 @@ async function getTelemetryId(context: vscode.ExtensionContext) {
   return telemetryId;
 }
 
-export { TelemetryActions, record, startUp, getTelemetryId };
+export { TelemetryActions, record, initTelemetry, getTelemetryId };

@@ -13,6 +13,7 @@ import { ResponseMetrics } from './dependencyAnalysis/analysis';
 import parse from 'node-html-parser';
 import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
 import { isDefined } from './utils';
+import { TokenProvider } from './tokenProvider';
 
 /**
  * Represents supported file types for analysis.
@@ -101,15 +102,15 @@ async function writeReportToFile(data: string) {
  * @param filePath The path of the file for analysis.
  * @returns A promise that resolves once the report generation is complete.
  */
-async function generateRHDAReport(context: vscode.ExtensionContext, filePath: string, outputChannel: DepOutputChannel): Promise<ResponseMetrics | undefined> {
+async function generateRHDAReport(context: vscode.ExtensionContext, tokenProvider: TokenProvider, filePath: string, outputChannel: DepOutputChannel): Promise<ResponseMetrics | undefined> {
   const fileType = getFileType(filePath);
   if (fileType) {
     await triggerWebviewPanel(context);
     let resp: string;
     if (fileType === 'docker') {
-      resp = await executeDockerImageAnalysis(filePath, outputChannel);
+      resp = await executeDockerImageAnalysis(tokenProvider, filePath, outputChannel);
     } else {
-      resp = await executeStackAnalysis(filePath, outputChannel);
+      resp = await executeStackAnalysis(tokenProvider, filePath, outputChannel);
     }
     /* istanbul ignore else */
     if (DependencyReportPanel.currentPanel) {

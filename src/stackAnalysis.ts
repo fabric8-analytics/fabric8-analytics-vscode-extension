@@ -9,19 +9,21 @@ import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
 import { Options } from '@trustification/exhort-javascript-api';
+import { TokenProvider } from './tokenProvider';
 
 /**
  * Executes the RHDA stack analysis process.
  * @param manifestFilePath The file path to the manifest file for analysis.
  * @returns The stack analysis response string.
  */
-export async function executeStackAnalysis(manifestFilePath: string, outputChannel: DepOutputChannel): Promise<string> {
+export async function executeStackAnalysis(tokenProvider: TokenProvider, manifestFilePath: string, outputChannel: DepOutputChannel): Promise<string> {
   return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
     p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
     // set up configuration options for the stack analysis request
     const options: Options = {
-      'RHDA_TOKEN': globalConfig.telemetryId,
+      'RHDA_TOKEN': await tokenProvider.getToken() ?? '',
+      'RHDA_TELEMETRY_ID': globalConfig.telemetryId,
       'RHDA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
       'EXHORT_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,

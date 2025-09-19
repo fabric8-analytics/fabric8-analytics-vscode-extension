@@ -10,37 +10,44 @@ import { DependencyProvider as BuildGradle } from './providers/build.gradle';
 import { ImageProvider as Docker } from './providers/docker';
 import { globalConfig } from './config';
 import { DepOutputChannel } from './depOutputChannel';
+import { TokenProvider } from './tokenProvider';
 
 export class AnalysisMatcher {
+  tokenProvider: TokenProvider;
+
+  constructor(tokenProvider: TokenProvider) {
+    this.tokenProvider = tokenProvider;
+  }
+
   matchers: Array<{ scheme: string, pattern: RegExp, callback: (path: Uri, contents: string) => Promise<void> }> = [
     {
       scheme: 'file', pattern: new RegExp('^package\\.json$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new PackageJson());
+        return dependencyDiagnostics.performDiagnostics(this.tokenProvider, path, contents, new PackageJson());
       }
     },
     {
       scheme: 'file', pattern: new RegExp('^pom\\.xml$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new PomXml());
+        return dependencyDiagnostics.performDiagnostics(this.tokenProvider, path, contents, new PomXml());
       }
     },
     {
       scheme: 'file', pattern: new RegExp('^go\\.mod$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new GoMod());
+        return dependencyDiagnostics.performDiagnostics(this.tokenProvider, path, contents, new GoMod());
       }
     },
     {
       scheme: 'file', pattern: new RegExp('^requirements\\.txt$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new RequirementsTxt());
+        return dependencyDiagnostics.performDiagnostics(this.tokenProvider, path, contents, new RequirementsTxt());
       }
     },
     {
       scheme: 'file', pattern: new RegExp('^build\\.gradle$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new BuildGradle());
+        return dependencyDiagnostics.performDiagnostics(this.tokenProvider, path, contents, new BuildGradle());
       }
     },
     {
       scheme: 'file', pattern: new RegExp('^(Dockerfile|Containerfile)$'), callback: (path: Uri, contents: string) => {
-        return imageDiagnostics.performDiagnostics(path, contents, new Docker());
+        return imageDiagnostics.performDiagnostics(this.tokenProvider, path, contents, new Docker());
       }
     }
   ];

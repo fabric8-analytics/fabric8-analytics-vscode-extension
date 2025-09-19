@@ -9,12 +9,13 @@ import { DependencyReportPanel } from '../src/dependencyReportPanel';
 import { executeStackAnalysis } from '../src/stackAnalysis';
 import * as templates from '../src/template';
 import { DepOutputChannel } from '../src/depOutputChannel';
+import { MockTokenProvider } from '../src/tokenProvider';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 const outputChannel = new DepOutputChannel('test');
 
-suite('StackAnalysis module', () => {
+suite('StackAnalysis module', async () => {
   let sandbox: sinon.SinonSandbox;
   const mockPath = '/mock/path/pom.xml';
   const mockReponse = '<html> mockResponse </html>';
@@ -41,7 +42,7 @@ suite('StackAnalysis module', () => {
   test('should generate RHDA report for supported file', async () => {
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').resolves(mockReponse);
 
-    await executeStackAnalysis(mockPath, outputChannel);
+    await executeStackAnalysis(new MockTokenProvider(), mockPath, outputChannel);
 
     expect(stackAnalysisServiceStub.calledOnce).to.be.true;
     expect(DependencyReportPanel.data).to.eq(mockReponse);
@@ -50,7 +51,7 @@ suite('StackAnalysis module', () => {
   test('should fail to generate RHDA report for supported file', async () => {
     const stackAnalysisServiceStub = sandbox.stub(exhortServices, 'stackAnalysisService').rejects(new Error('Mock Error'));
 
-    await executeStackAnalysis(mockPath, outputChannel)
+    await executeStackAnalysis(new MockTokenProvider(), mockPath, outputChannel)
       .then(() => {
         throw (new Error('should have thrown error'));
       })

@@ -23,6 +23,9 @@ class Config {
   enablePythonBestEffortsInstallation!: string;
   usePipDepTree!: string;
   vulnerabilityAlertSeverity!: string;
+  oidcRealmUrl!: string;
+  oidcClientId!: string;
+  oidcAllowInsecure!: boolean;
   exhortMvnPath!: string;
   exhortPreferMvnw!: string;
   exhortMvnArgs!: string;
@@ -132,6 +135,9 @@ class Config {
     this.exhortPodmanPath = rhdaConfig.podman.executable.path || this.DEFAULT_PODMAN_EXECUTABLE;
     this.exhortImagePlatform = rhdaConfig.imagePlatform;
     this.excludePatterns = (rhdaConfig.exclude as string[]).map(pattern => new Minimatch(pattern));
+    this.oidcRealmUrl = rhdaConfig.oidc.endpoint;
+    this.oidcClientId = rhdaConfig.oidc.clientId;
+    this.oidcAllowInsecure = rhdaConfig.oidc.allowInsecure;
   }
 
   private getEffectiveHttpProxyUrl(): string {

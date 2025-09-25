@@ -103,6 +103,10 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
     };
 
     const images = provider.collect(contents);
+    if (images.length === 0) {
+      outputChannelDep.warn(`no image references found in ${diagnosticFilePath}`);
+      return;
+    }
     const imageMap = new ImageMap(images, options);
 
     const diagnosticsPipeline = new DiagnosticsPipeline(imageMap, diagnosticFilePath);

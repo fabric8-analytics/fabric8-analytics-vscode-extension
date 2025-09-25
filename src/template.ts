@@ -285,3 +285,50 @@ export const ERROR_TEMPLATE = `<!DOCTYPE html>
     </div>
   </body>
   </html>`;
+
+export const NO_IMAGES_TEMPLATE = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      html,body {
+        width: 99%;
+        height: 99%;
+        font-size: 16px;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+
+      body {
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .message-container {
+        text-align: center;
+        max-width: 500px;
+      }
+
+      h2 {
+        color: #333;
+        margin-bottom: 16px;
+      }
+
+      p {
+        color: #666;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="message-container">
+        <h2>No Container Images Found</h2>
+        <p>This Dockerfile or Containerfile does not contain any image references to analyze.</p>
+        <p>Add <code>FROM</code> statements with base images to perform stack analysis.</p>
+    </div>
+  </body>
+  </html>`;

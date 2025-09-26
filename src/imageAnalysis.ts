@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import { globalConfig } from './config';
 import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
+import * as templates from './template';
 import { Options } from '@trustification/exhort-javascript-api';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
@@ -161,6 +162,15 @@ class DockerImageAnalysis {
 
       try {
         this.outputChannel.info(`generating image analysis report for "${this.filePath}"`);
+
+        // Check if no images were found
+        if (this.images.length === 0) {
+          this.outputChannel.info(`no images found in "${this.filePath}"`);
+          updateCurrentWebviewPanel(templates.NO_IMAGES_TEMPLATE);
+          p.report({ message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS });
+          this.imageAnalysisReportHtml = templates.NO_IMAGES_TEMPLATE;
+          return;
+        }
 
         const options: IOptions = {
           'RHDA_TOKEN': globalConfig.telemetryId ?? '',

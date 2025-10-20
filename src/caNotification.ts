@@ -2,6 +2,7 @@
 
 import { Uri } from 'vscode';
 import { applySettingNameMappings } from './utils';
+import { ResponseMetrics } from './dependencyAnalysis/analysis';
 
 /**
  * Interface representing the data structure for a Component Analysis (CA) Notification.
@@ -12,6 +13,7 @@ export interface CANotificationData {
   done?: boolean | null;
   diagCount?: number | null;
   vulnCount?: Map<string, number> | null;
+  metrics?: ResponseMetrics,
 }
 
 /**

@@ -9,6 +9,10 @@ import { DependencyReportPanel } from './dependencyReportPanel';
 import { globalConfig } from './config';
 import { executeDockerImageAnalysis } from './imageAnalysis';
 import { DepOutputChannel } from './depOutputChannel';
+import { ResponseMetrics } from './dependencyAnalysis/analysis';
+import parse from 'node-html-parser';
+import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
+import { isDefined } from './utils';
 
 /**
  * Represents supported file types for analysis.
@@ -97,7 +101,7 @@ async function writeReportToFile(data: string) {
  * @param filePath The path of the file for analysis.
  * @returns A promise that resolves once the report generation is complete.
  */
-async function generateRHDAReport(context: vscode.ExtensionContext, filePath: string, outputChannel: DepOutputChannel) {
+async function generateRHDAReport(context: vscode.ExtensionContext, filePath: string, outputChannel: DepOutputChannel): Promise<ResponseMetrics | undefined> {
   const fileType = getFileType(filePath);
   if (fileType) {
     await triggerWebviewPanel(context);
@@ -111,9 +115,61 @@ async function generateRHDAReport(context: vscode.ExtensionContext, filePath: st
     if (DependencyReportPanel.currentPanel) {
       await writeReportToFile(resp);
     }
+
+    return metricsFromReport(resp);
   } else {
     vscode.window.showInformationMessage(`File ${filePath} is not supported.`);
   }
+
+  return;
+}
+
+function metricsFromReport(report: string): ResponseMetrics | undefined {
+  const html = parse(report);
+  const merticsElement = html.querySelectorAll('head > script').find(element => element.innerText.trim().startsWith('window["appData"]='));
+  if (!merticsElement) {
+    return;
+  }
+
+  let metricsJS = merticsElement.innerText.trim().substring('window["appData"]='.length);
+  metricsJS = metricsJS.substring(0, metricsJS.length - 1);
+  const rawMetrics = JSON.parse(metricsJS)['report'] as AnalysisReport;
+
+  const scanned = rawMetrics.scanned || {};
+  const providers = rawMetrics.providers || {};
+
+  const mappedProviders: ResponseMetrics['providers'] = {};
+  for (const [providerName, providerData] of Object.entries(providers)) {
+    mappedProviders[providerName] = {};
+    if (isDefined(providerData, 'sources')) {
+      for (const [sourceName, sourceData] of Object.entries(providerData.sources)) {
+        if (isDefined(sourceData, 'summary')) {
+          const source = sourceData;
+          mappedProviders[providerName][sourceName] = {
+            total: source.summary.total ?? 0,
+            direct: source.summary.direct ?? 0,
+            transitive: source.summary.transitive ?? 0,
+            dependencies: source.summary.dependencies ?? 0,
+            critical: source.summary.critical ?? 0,
+            high: source.summary.high ?? 0,
+            medium: source.summary.medium ?? 0,
+            low: source.summary.low ?? 0,
+            remediations: source.summary.remediations ?? 0,
+            recommendations: source.summary.recommendations ?? 0,
+          };
+        }
+      }
+    }
+  }
+
+  return {
+    scanned: {
+      total: scanned.total ?? 0,
+      direct: scanned.direct ?? 0,
+      transitive: scanned.transitive ?? 0,
+    },
+    providers: mappedProviders,
+  };
 }
 
 export { generateRHDAReport, updateCurrentWebviewPanel };

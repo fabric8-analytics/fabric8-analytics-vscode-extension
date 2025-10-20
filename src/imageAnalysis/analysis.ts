@@ -41,17 +41,7 @@ class ImageData {
   ) { }
 }
 
-/**
- * Represents the parsed response of Red Hat Dependency Analytics (RHDA) analysis report, with images mapped by string keys.
- */
-interface IAnalysisResponse {
-  images: Map<string, ImageData[]>;
-}
-
-/**
- * Implementation of IAnalysisResponse interface.
- */
-class AnalysisResponse implements IAnalysisResponse {
+class AnalysisResponse {
   images: Map<string, ImageData[]> = new Map<string, ImageData[]>();
 
   constructor(resData: IExhortAnalysisReport, diagnosticFilePath: Uri) {

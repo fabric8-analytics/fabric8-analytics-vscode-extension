@@ -8,6 +8,7 @@
 import { Diagnostic, Uri } from 'vscode';
 import * as vscode from 'vscode';
 import { notifications } from './extension';
+import { ResponseMetrics } from './dependencyAnalysis/analysis';
 
 /**
  * Abstract class for implementing a diagnostics pipeline.
@@ -40,12 +41,13 @@ export abstract class AbstractDiagnosticsPipeline<T> {
     });
   }
 
-  reportDiagnostics() {
+  reportDiagnostics(metrics?: ResponseMetrics) {
     notifications.emit('caNotification', {
       done: true,
       uri: this.diagnosticFilePath,
       diagCount: this.diagnostics.length,
       vulnCount: this.vulnCount,
+      metrics,
     });
   }
 

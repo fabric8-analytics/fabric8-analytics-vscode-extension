@@ -11,39 +11,53 @@ import { ImageProvider as Docker } from './providers/docker';
 import { globalConfig } from './config';
 import { DepOutputChannel } from './depOutputChannel';
 
+interface MatcherConfig {
+  pattern: RegExp
+  callback(path: Uri, contents: string): Promise<void>
+  providerName: string
+}
+
 export class AnalysisMatcher {
-  matchers: Array<{ scheme: string, pattern: RegExp, callback: (path: Uri, contents: string) => Promise<void> }> = [
+  private static readonly matchers: ReadonlyArray<MatcherConfig> = [
     {
-      scheme: 'file', pattern: new RegExp('^package\\.json$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new PackageJson());
-      }
+      pattern: /^package\.json$/,
+      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new PackageJson()); },
+      providerName: 'npm'
     },
     {
-      scheme: 'file', pattern: new RegExp('^pom\\.xml$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new PomXml());
-      }
+      pattern: /^pom\.xml$/,
+      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new PomXml()); },
+      providerName: 'maven'
     },
     {
-      scheme: 'file', pattern: new RegExp('^go\\.mod$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new GoMod());
-      }
+      pattern: /^go\.mod$/,
+      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new GoMod()); },
+      providerName: 'go'
     },
     {
-      scheme: 'file', pattern: new RegExp('^requirements\\.txt$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new RequirementsTxt());
-      }
+      pattern: /^requirements\.txt$/,
+      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new RequirementsTxt()); },
+      providerName: 'requirements'
     },
     {
-      scheme: 'file', pattern: new RegExp('^build\\.gradle$'), callback: (path: Uri, contents: string) => {
-        return dependencyDiagnostics.performDiagnostics(path, contents, new BuildGradle());
-      }
+      pattern: /^build\.gradle$/,
+      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new BuildGradle()); },
+      providerName: 'gradle'
     },
     {
-      scheme: 'file', pattern: new RegExp('^(Dockerfile|Containerfile)$'), callback: (path: Uri, contents: string) => {
-        return imageDiagnostics.performDiagnostics(path, contents, new Docker());
-      }
+      pattern: /^(Dockerfile|Containerfile)/,
+      callback: (path, contents) => { return imageDiagnostics.performDiagnostics(path, contents, new Docker()); },
+      providerName: 'docker'
     }
   ];
+
+  public static pathToConfig(uri: Uri): MatcherConfig | undefined {
+    for (const matcher of AnalysisMatcher.matchers) {
+      if (matcher.pattern.test(basename(uri.fsPath))) {
+        return matcher;
+      }
+    }
+  }
 
   async handle(doc: TextDocument, outputChannel: DepOutputChannel) {
     const excludeMatch = globalConfig.excludePatterns.find(pattern => pattern.match(doc.uri.fsPath));
@@ -51,12 +65,11 @@ export class AnalysisMatcher {
       outputChannel.debug(`skipping "${doc.uri.fsPath}" due to matching ${excludeMatch.pattern}`);
       return;
     }
-    for (const matcher of this.matchers) {
-      if (matcher.pattern.test(basename(doc.fileName))) {
-        outputChannel.info(`generating component analysis diagnostics for "${doc.fileName}"`);
-        await matcher.callback(doc.uri, doc.getText());
-        outputChannel.info(`done generating component analysis diagnostics for "${doc.fileName}"`);
-      }
+    const matcher = AnalysisMatcher.pathToConfig(doc.uri);
+    if (matcher) {
+      outputChannel.info(`generating component analysis diagnostics for "${doc.fileName}"`);
+      await matcher.callback(doc.uri, doc.getText());
+      outputChannel.info(`done generating component analysis diagnostics for "${doc.fileName}"`);
     }
   }
 }

@@ -265,8 +265,13 @@ export async function activate(context: vscode.ExtensionContext) {
         record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
       }
       try {
-        await generateRHDAReport(context, fspath, outputChannelDep);
-        record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
+        const metrics = await generateRHDAReport(context, fspath, outputChannelDep);
+        record(context, TelemetryActions.vulnerabilityReportDone, {
+          manifest: fileName,
+          fileName: fileName,
+          provider: AnalysisMatcher.pathToConfig(vscode.Uri.file(fspath)),
+          ...metrics
+        });
       } catch (error) {
         // TODO: dont show raw message
         const message = applySettingNameMappings((error as Error).message);
@@ -320,7 +325,12 @@ export async function activate(context: vscode.ExtensionContext) {
     caStatusBarProvider.showSummary(notification.statusText(), notification.origin());
     if (notification.hasWarning()) {
       showVulnerabilityFoundPrompt(notification.popupText(), notification.origin());
-      record(context, TelemetryActions.componentAnalysisDone, { manifest: path.basename(notification.origin().fsPath), fileName: path.basename(notification.origin().fsPath) });
+      record(context, TelemetryActions.componentAnalysisDone, {
+        manifest: path.basename(notification.origin().fsPath),
+        fileName: path.basename(notification.origin().fsPath),
+        provider: AnalysisMatcher.pathToConfig(notification.origin()),
+        ...respData.metrics
+      });
     }
   });
 
@@ -419,8 +429,13 @@ function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
   const invokeFullStackReport = async (filePath: string) => {
     const fileName = path.basename(filePath);
     try {
-      await generateRHDAReport(context, filePath, outputChannelDep);
-      record(context, TelemetryActions.vulnerabilityReportDone, { manifest: fileName, fileName: fileName });
+      const metrics = await generateRHDAReport(context, filePath, outputChannelDep);
+      record(context, TelemetryActions.vulnerabilityReportDone, {
+        manifest: fileName,
+        fileName: fileName,
+        provider: AnalysisMatcher.pathToConfig(vscode.Uri.file(filePath)),
+        ...metrics
+      });
     } catch (error) {
       const message = applySettingNameMappings((error as Error).message);
       vscode.window.showErrorMessage(`RHDA error while analyzing ${filePath}: ${message}`);

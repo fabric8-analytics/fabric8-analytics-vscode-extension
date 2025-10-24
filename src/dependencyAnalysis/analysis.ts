@@ -4,7 +4,8 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import exhort from '@trustification/exhort-javascript-api';
+
+import exhort, { Options } from '@trustification/exhort-javascript-api';
 import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
 
 import { globalConfig } from '../config';
@@ -15,6 +16,7 @@ import { notifications, outputChannelDep } from '../extension';
 import { Source } from '@trustification/exhort-api-spec/model/v4/Source';
 import { DependencyReport } from '@trustification/exhort-api-spec/model/v4/DependencyReport';
 import { Issue } from '@trustification/exhort-api-spec/model/v4/Issue';
+import { TokenProvider } from '../tokenProvider';
 
 /**
  * Represents a source object with an ID and dependencies array.
@@ -146,11 +148,12 @@ class AnalysisResponse implements IAnalysisResponse {
  * @param provider - The dependency provider of the corresponding ecosystem.
  * @returns A Promise resolving to an AnalysisResponse object.
  */
-async function executeComponentAnalysis(diagnosticFilePath: Uri, provider: IDependencyProvider): Promise<AnalysisResponse> {
+async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnosticFilePath: Uri, provider: IDependencyProvider): Promise<AnalysisResponse> {
 
   // Define configuration options for the component analysis request
-  const options = {
-    'RHDA_TOKEN': globalConfig.telemetryId,
+  const options: Options = {
+    'RHDA_TOKEN': await tokenProvider.getToken() ?? '',
+    'RHDA_TELEMETRY_ID': globalConfig.telemetryId,
     'RHDA_SOURCE': globalConfig.utmSource,
     'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
     'EXHORT_PROXY_URL': globalConfig.exhortProxyUrl,

@@ -15,6 +15,7 @@ import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { globalConfig } from '../config';
+import { TokenProvider } from '../tokenProvider';
 
 /**
  * Implementation of DiagnosticsPipeline interface.
@@ -95,7 +96,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
  * @param provider - The dependency provider of the corresponding ecosystem.
  * @returns A Promise that resolves when diagnostics are completed.
  */
-async function performDiagnostics(diagnosticFilePath: Uri, contents: string, provider: IDependencyProvider) {
+async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePath: Uri, contents: string, provider: IDependencyProvider) {
   try {
     const dependencies = provider.collect(contents);
     const ecosystem = provider.getEcosystem();
@@ -104,7 +105,7 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
     const diagnosticsPipeline = new DiagnosticsPipeline(dependencyMap, diagnosticFilePath);
     diagnosticsPipeline.clearDiagnostics();
 
-    const response = await executeComponentAnalysis(diagnosticFilePath, provider);
+    const response = await executeComponentAnalysis(tokenProvider, diagnosticFilePath, provider);
 
     clearCodeActionsMap(diagnosticFilePath);
 

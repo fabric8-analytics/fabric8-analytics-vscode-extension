@@ -51,6 +51,7 @@ suite('Image Analysis Collector tests', () => {
     reqImages.forEach(image => image.platform = 'linux/amd64');
 
     const options: IOptions = {
+        'RHDA_TELEMETRY_ID': globalConfig.telemetryId ?? '',
         'RHDA_TOKEN': globalConfig.telemetryId ?? '',
         'RHDA_SOURCE': globalConfig.utmSource,
         'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,

@@ -11,12 +11,14 @@ import { Options } from '@trustification/exhort-javascript-api';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
+import { TokenProvider } from './tokenProvider';
 
 /**
  * Represents options for image analysis.
  */
 interface IOptions extends Options {
   RHDA_TOKEN: string;
+  RHDA_TELEMETRY_ID: string;
   RHDA_SOURCE: string;
   EXHORT_SYFT_PATH: string;
   EXHORT_SYFT_CONFIG_PATH: string;
@@ -156,7 +158,7 @@ class DockerImageAnalysis {
   /**
    * Runs the image analysis process.
    */
-  public async runImageAnalysis() {
+  public async runImageAnalysis(tokenProvider: TokenProvider) {
     return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
       p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
@@ -173,7 +175,8 @@ class DockerImageAnalysis {
         }
 
         const options: IOptions = {
-          'RHDA_TOKEN': globalConfig.telemetryId ?? '',
+          'RHDA_TOKEN': await tokenProvider.getToken() ?? '',
+          'RHDA_TELEMETRY_ID': globalConfig.telemetryId ?? '',
           'RHDA_SOURCE': globalConfig.utmSource,
           'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
           'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
@@ -214,9 +217,9 @@ class DockerImageAnalysis {
  * @param filePath - The path to the image file to analyze.
  * @returns A Promise resolving to an Analysis Report HTML.
  */
-async function executeDockerImageAnalysis(filePath: string, outputChannel: DepOutputChannel): Promise<string> {
+async function executeDockerImageAnalysis(tokenProvider: TokenProvider, filePath: string, outputChannel: DepOutputChannel): Promise<string> {
   const dockerImageAnalysis = new DockerImageAnalysis(filePath, outputChannel);
-  await dockerImageAnalysis.runImageAnalysis();
+  await dockerImageAnalysis.runImageAnalysis(tokenProvider);
   return dockerImageAnalysis.imageAnalysisReportHtml;
 }
 

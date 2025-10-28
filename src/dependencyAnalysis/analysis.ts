@@ -24,6 +24,30 @@ interface ISource {
   dependencies: DependencyReport[];
 }
 
+export interface ResponseMetrics {
+  scanned: {
+    total: number,
+    direct: number,
+    transitive: number
+  },
+  providers: {
+    [providers: string]: {
+      [sources: string]: {
+        total: number,
+        direct: number,
+        transitive: number,
+        dependencies: number,
+        critical: number,
+        high: number,
+        medium: number,
+        low: number,
+        remediations: number,
+        recommendations: number,
+      }
+    }
+  }
+}
+
 /**
  * Implementation of IDependencyData interface.
  */
@@ -37,32 +61,45 @@ class DependencyData {
   ) { }
 }
 
-/**
- * Represents the parsed response of Red Hat Dependency Analytics (RHDA) analysis, with dependencies mapped by reference string.
- */
-interface IAnalysisResponse {
-  dependencies: Map<string, DependencyData[]>;
-}
-
-/**
- * Implementation of IAnalysisResponse interface.
- */
-class AnalysisResponse implements IAnalysisResponse {
+class AnalysisResponse {
+  metrics: ResponseMetrics = {
+    scanned: {
+      total: 0,
+      direct: 0,
+      transitive: 0
+    },
+    providers: {}
+  };
   dependencies: Map<string, DependencyData[]> = new Map<string, DependencyData[]>();
   provider: IDependencyProvider;
 
   constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider) {
-
     this.provider = provider;
     const failedProviders: string[] = [];
     const sources: ISource[] = [];
 
     if (isDefined(resData, 'providers')) {
       Object.entries(resData.providers).map(([providerName, providerData]) => {
+        this.metrics.providers[providerName] = {};
         if (isDefined(providerData, 'status', 'ok') && providerData.status.ok) {
           if (isDefined(providerData, 'sources')) {
             Object.entries(providerData.sources).map(([sourceName, sourceData]) => {
               sources.push({ id: `${providerName}(${sourceName})`, dependencies: this.getDependencies(sourceData) });
+
+              if (isDefined(sourceData, 'summary')) {
+                this.metrics.providers[providerName][sourceName] = {
+                  dependencies: sourceData.summary.dependencies ?? 0,
+                  direct: sourceData.summary.direct ?? 0,
+                  transitive: sourceData.summary.transitive ?? 0,
+                  critical: sourceData.summary.critical ?? 0,
+                  high: sourceData.summary.high ?? 0,
+                  medium: sourceData.summary.dependencies ?? 0,
+                  low: sourceData.summary.low ?? 0,
+                  recommendations: sourceData.summary.recommendations ?? 0,
+                  remediations: sourceData.summary.remediations ?? 0,
+                  total: sourceData.summary.total ?? 0,
+                };
+              }
             });
           }
         } else {
@@ -96,6 +133,14 @@ class AnalysisResponse implements IAnalysisResponse {
           }
         });
       });
+    }
+
+    if (isDefined(resData, 'scanned')) {
+      this.metrics.scanned = {
+        direct: resData.scanned.direct ?? 0,
+        total: resData.scanned.total ?? 0,
+        transitive: resData.scanned.transitive ?? 0,
+      };
     }
   }
 

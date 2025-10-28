@@ -110,7 +110,7 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
 
     diagnosticsPipeline.runDiagnostics(response.dependencies, ecosystem);
 
-    diagnosticsPipeline.reportDiagnostics();
+    diagnosticsPipeline.reportDiagnostics(response.metrics);
   } catch (error) {
     outputChannelDep.warn(`component analysis error: ${buildLogErrorMessage(error as Error)}`);
     notifications.emit('caError', {

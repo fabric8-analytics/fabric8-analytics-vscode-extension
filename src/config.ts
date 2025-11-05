@@ -175,30 +175,30 @@ class Config {
     process.env['VSCEXT_ENABLE_PYTHON_BEST_EFFORTS_INSTALLATION'] = this.enablePythonBestEffortsInstallation;
     process.env['VSCEXT_USE_PIP_DEP_TREE'] = this.usePipDepTree;
     process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY'] = this.vulnerabilityAlertSeverity;
-    process.env['VSCEXT_EXHORT_MVN_PATH'] = this.exhortMvnPath;
-    process.env['VSCEXT_EXHORT_PREFER_MVNW'] = this.exhortPreferMvnw;
-    process.env['VSCEXT_EXHORT_MVN_ARGS'] = this.exhortMvnArgs;
-    process.env['VSCEXT_EXHORT_GRADLE_PATH'] = this.exhortGradlePath;
-    process.env['VSCEXT_EXHORT_PREFER_GRADLEW'] = this.exhortPreferGradlew;
-    process.env['VSCEXT_EXHORT_NPM_PATH'] = this.exhortNpmPath;
-    process.env['VSCEXT_EXHORT_YARN_PATH'] = this.exhortYarnPath;
-    process.env['VSCEXT_EXHORT_PNPM_PATH'] = this.exhortPnpmPath;
-    process.env['VSCEXT_EXHORT_GO_PATH'] = this.exhortGoPath;
-    process.env['VSCEXT_EXHORT_PYTHON3_PATH'] = this.exhortPython3Path;
-    process.env['VSCEXT_EXHORT_PIP3_PATH'] = this.exhortPip3Path;
-    process.env['VSCEXT_EXHORT_PYTHON_PATH'] = this.exhortPythonPath;
-    process.env['VSCEXT_EXHORT_PIP_PATH'] = this.exhortPipPath;
+    process.env['VSCEXT_TRUSTIFY_DA_MVN_PATH'] = this.exhortMvnPath;
+    process.env['VSCEXT_TRUSTIFY_DA_PREFER_MVNW'] = this.exhortPreferMvnw;
+    process.env['VSCEXT_TRUSTIFY_DA_MVN_ARGS'] = this.exhortMvnArgs;
+    process.env['VSCEXT_TRUSTIFY_DA_GRADLE_PATH'] = this.exhortGradlePath;
+    process.env['VSCEXT_TRUSTIFY_DA_PREFER_GRADLEW'] = this.exhortPreferGradlew;
+    process.env['VSCEXT_TRUSTIFY_DA_NPM_PATH'] = this.exhortNpmPath;
+    process.env['VSCEXT_TRUSTIFY_DA_YARN_PATH'] = this.exhortYarnPath;
+    process.env['VSCEXT_TRUSTIFY_DA_PNPM_PATH'] = this.exhortPnpmPath;
+    process.env['VSCEXT_TRUSTIFY_DA_GO_PATH'] = this.exhortGoPath;
+    process.env['VSCEXT_TRUSTIFY_DA_PYTHON3_PATH'] = this.exhortPython3Path;
+    process.env['VSCEXT_TRUSTIFY_DA_PIP3_PATH'] = this.exhortPip3Path;
+    process.env['VSCEXT_TRUSTIFY_DA_PYTHON_PATH'] = this.exhortPythonPath;
+    process.env['VSCEXT_TRUSTIFY_DA_PIP_PATH'] = this.exhortPipPath;
     process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
-    process.env['VSCEXT_EXHORT_SYFT_PATH'] = this.exhortSyftPath;
-    process.env['VSCEXT_EXHORT_SYFT_CONFIG_PATH'] = this.exhortSyftConfigPath;
-    process.env['VSCEXT_EXHORT_SKOPEO_PATH'] = this.exhortSkopeoPath;
-    process.env['VSCEXT_EXHORT_SKOPEO_CONFIG_PATH'] = this.exhortSkopeoConfigPath;
-    process.env['VSCEXT_EXHORT_DOCKER_PATH'] = this.exhortDockerPath;
-    process.env['VSCEXT_EXHORT_PODMAN_PATH'] = this.exhortPodmanPath;
-    process.env['VSCEXT_EXHORT_IMAGE_PLATFORM'] = this.exhortImagePlatform;
+    process.env['VSCEXT_TRUSTIFY_DA_SYFT_PATH'] = this.exhortSyftPath;
+    process.env['VSCEXT_TRUSTIFY_DA_SYFT_CONFIG_PATH'] = this.exhortSyftConfigPath;
+    process.env['VSCEXT_TRUSTIFY_DA_SKOPEO_PATH'] = this.exhortSkopeoPath;
+    process.env['VSCEXT_TRUSTIFY_DA_SKOPEO_CONFIG_PATH'] = this.exhortSkopeoConfigPath;
+    process.env['VSCEXT_TRUSTIFY_DA_DOCKER_PATH'] = this.exhortDockerPath;
+    process.env['VSCEXT_TRUSTIFY_DA_PODMAN_PATH'] = this.exhortPodmanPath;
+    process.env['VSCEXT_TRUSTIFY_DA_IMAGE_PLATFORM'] = this.exhortImagePlatform;
 
     // const token = await this.getSnykToken();
-    // process.env['VSCEXT_EXHORT_SNYK_TOKEN'] = token;
+    // process.env['VSCEXT_TRUSTIFY_DA_SNYK_TOKEN'] = token;
   }
 
   /**

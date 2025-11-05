@@ -89,7 +89,7 @@ export async function llmAnalysisDetails(modelID: string): Promise<ModelCardResp
 }
 
 function selectExhortBackend() {
-    if (process.env['EXHORT_DEV_MODE'] === 'true') {
+    if (process.env['TRUSTIFY_DA_DEV_MODE'] === 'true') {
         return exhortDevDefaultUrl;
     }
     return exhortDefaultUrl;

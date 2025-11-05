@@ -28,11 +28,11 @@
 - Fixed an issue with file diagnostics not triggering on `package.json` files when associated with the `jsonc` language ID. See [PR#759](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/759) for details.
 - Fixed a parsing issue that was causing version numbers to be considered floating
 point numbers. As a consequence version `1.80` was considered `1.8` and causing
-false positives. See [PR#221](https://github.com/trustification/exhort-javascript-api/pull/221) for details.
-- Fixed issue with ignoring Maven dependencies with version defined in properties. See [PR#219](https://github.com/trustification/exhort-javascript-api/pull/219) for details.
-- Do not generate package-lock file for non npm projects. See [PR#151](https://github.com/trustification/exhort-javascript-api/pull/151) for details.
-- Fix self-adding of npm workspace to package.json. See [PR#189](https://github.com/trustification/exhort-javascript-api/pull/189) for details.
-- Fix problem with Gradle projects including missing dependencies that were causing false positives. See [PR#225](https://github.com/trustification/exhort-javascript-api/pull/225) for details.
+false positives. See [PR#221](https://github.com/guacsec/trustify-da-javascript-client/pull/221) for details.
+- Fixed issue with ignoring Maven dependencies with version defined in properties. See [PR#219](https://github.com/guacsec/trustify-da-javascript-client/pull/219) for details.
+- Do not generate package-lock file for non npm projects. See [PR#151](https://github.com/guacsec/trustify-da-javascript-client/pull/151) for details.
+- Fix self-adding of npm workspace to package.json. See [PR#189](https://github.com/guacsec/trustify-da-javascript-client/pull/189) for details.
+- Fix problem with Gradle projects including missing dependencies that were causing false positives. See [PR#225](https://github.com/guacsec/trustify-da-javascript-client/pull/225) for details.
 
 ### Enhancements
 - Built-in Open Container Initiative (OCI) image analysis. Red Hat Dependency Analytics no longer uses the Exhort Java API. See [PR#772](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/772) for details.
@@ -41,8 +41,8 @@ false positives. See [PR#221](https://github.com/trustification/exhort-javascrip
 - Added support for the `pnpm` package manager. See [Issue#765](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues/765) for details.
 - Added debug logging output for Red Hat Dependency Analytics reports. See [PR#761](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/761) for details.
 - Added support for configuring Maven wrapper usage. See [PR#757](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/757) for details.
-- Improve error messages for package manager invocations. See [PR#159](https://github.com/trustification/exhort-javascript-api/pull/159), [PR#183](https://github.com/trustification/exhort-javascript-api/pull/183), [PR#185](https://github.com/trustification/exhort-javascript-api/pull/185) for details.
-- Support node version managers FNM and NVM. See [PR#206](https://github.com/trustification/exhort-javascript-api/pull/206) for details.
+- Improve error messages for package manager invocations. See [PR#159](https://github.com/guacsec/trustify-da-javascript-client/pull/159), [PR#183](https://github.com/guacsec/trustify-da-javascript-client/pull/183), [PR#185](https://github.com/guacsec/trustify-da-javascript-client/pull/185) for details.
+- Support node version managers FNM and NVM. See [PR#206](https://github.com/guacsec/trustify-da-javascript-client/pull/206) for details.
 
 ### Chores
 - `axios` updated from 1.7.2 to 1.9.0. See [PR#763](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/763) for details.
@@ -80,9 +80,9 @@ false positives. See [PR#221](https://github.com/trustification/exhort-javascrip
 - enhancement - Added a vulnerability severity alert level setting for the user to receive inline notifications for just errors or warnings. See [PR#674](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/674) for details.
 - fixes - Fixed an issue with the `codeActionsMap` call. When multiple manifest documents are open that have the same dependency, one of the document entries gets deleted. This gave a wrong result in the analysis. See [PR#236](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/236) for details.
 - fixes - Fixed an issue in the Exhort Javascript API. This fix enables and supports analysis of `pom.xml` manifests that include local modules, and a parent Project Object Model (POM). See the [PR#237](https://github.com/fabric8-analytics/fabric8-analytics-lsp-server/pull/237) for details.
-- fixes - Fixed an issue with the analysis report not displaying because of spaces in the manifest file path. See [PR#100](https://github.com/trustification/exhort-javascript-api/pull/100) for details.
+- fixes - Fixed an issue with the analysis report not displaying because of spaces in the manifest file path. See [PR#100](https://github.com/guacsec/trustify-da-javascript-client/pull/100) for details.
 ## 0.9.1 (Dec 24th 2023)
-- fixes - Resolved endpoint configuration issue by removing EXHORT_DEV_MODE environment configuration parameter. See [PR#672](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/672) for details.
+- fixes - Resolved endpoint configuration issue by removing TRUSTIFY_DA_DEV_MODE environment configuration parameter. See [PR#672](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/672) for details.
 ## 0.9.0 (Dec 21th 2023)
 - informational - Service Preview release of Red Hat Dependency Analytics (RHDA) extension.
 - informational - Configuration names for all supported executable paths in the extension settings have changed. These executable paths are only used for the analysis.

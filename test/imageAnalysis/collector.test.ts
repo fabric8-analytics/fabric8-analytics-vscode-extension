@@ -10,7 +10,7 @@ const expect = chai.expect;
 chai.use(sinonChai);
 
 import { Image, ImageMap, getRange } from '../../src/imageAnalysis/collector';
-import { ImageRef } from '@trustification/exhort-javascript-api';
+import { ImageRef } from '@trustify-da/trustify-da-javascript-client';
 import { PackageURL } from 'packageurl-js';
 import { Range } from 'vscode';
 import { globalConfig } from '../../src/config';
@@ -51,15 +51,15 @@ suite('Image Analysis Collector tests', () => {
     reqImages.forEach(image => image.platform = 'linux/amd64');
 
     const options: IOptions = {
-        'RHDA_TOKEN': globalConfig.telemetryId ?? '',
-        'RHDA_SOURCE': globalConfig.utmSource,
-        'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
-        'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
-        'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
-        'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
-        'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
-        'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
-        'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
+        'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
+        'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
+        'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,
+        'TRUSTIFY_DA_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
+        'TRUSTIFY_DA_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
+        'TRUSTIFY_DA_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
+        'TRUSTIFY_DA_DOCKER_PATH': globalConfig.exhortDockerPath,
+        'TRUSTIFY_DA_PODMAN_PATH': globalConfig.exhortPodmanPath,
+        'TRUSTIFY_DA_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
     };
 
     test('should create map of images', async () => {
@@ -93,5 +93,5 @@ suite('Image Analysis Collector tests', () => {
     });
 }).beforeAll(() => {
     // https://github.com/containers/skopeo/issues/1654
-    process.env['EXHORT_SKOPEO_CONFIG_PATH'] = './auth.json';
+    process.env['TRUSTIFY_DA_SKOPEO_CONFIG_PATH'] = './auth.json';
 });

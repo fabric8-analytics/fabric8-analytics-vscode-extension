@@ -1,10 +1,10 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import exhort, { ImageRef, Options, parseImageRef } from '@trustification/exhort-javascript-api';
+import exhort, { ImageRef, Options, parseImageRef } from '@trustify-da/trustify-da-javascript-client';
 
 import { IImageRef, type IOptions } from './imageAnalysis';
-import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
+import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
 
 /**
  * Executes RHDA image analysis using the provided images and options.

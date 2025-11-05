@@ -91,15 +91,15 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
 async function performDiagnostics(diagnosticFilePath: Uri, contents: string, provider: IImageProvider) {
   try {
     const options: IOptions = {
-      'RHDA_TOKEN': globalConfig.telemetryId ?? '',
-      'RHDA_SOURCE': globalConfig.utmSource,
-      'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
-      'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
-      'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
-      'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
-      'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
-      'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
-      'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
+      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
+      'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
+      'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,
+      'TRUSTIFY_DA_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
+      'TRUSTIFY_DA_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
+      'TRUSTIFY_DA_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
+      'TRUSTIFY_DA_DOCKER_PATH': globalConfig.exhortDockerPath,
+      'TRUSTIFY_DA_PODMAN_PATH': globalConfig.exhortPodmanPath,
+      'TRUSTIFY_DA_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
     };
 
     const images = provider.collect(contents);

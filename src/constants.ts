@@ -30,7 +30,7 @@ export enum Titles {
 }
 
 export const settingNameMappings: { [key: string]: string } = {
-  'EXHORT_PYTHON_VIRTUAL_ENV': 'Use Python Virtual Environment'
+  'TRUSTIFY_DA_PYTHON_VIRTUAL_ENV': 'Use Python Virtual Environment'
 };
 
 // Refer `name` from package.json

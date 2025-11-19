@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { IDependencyProvider, EcosystemDependencyResolver, IDependency, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
 import { parse, DocumentCstNode } from '@xml-tools/parser';
 import { buildAst, accept, XMLElement, XMLDocument } from '@xml-tools/ast';
 import { VERSION_PLACEHOLDER, MAVEN } from '../constants';
@@ -68,11 +68,11 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   }
 
   /**
-   * Maps XML dependencies to IDependency objects.
+   * Maps XML dependencies to Dependency objects.
    * @param deps - The XML dependencies to map.
-   * @returns An array of IDependency objects representing mapped dependencies.
+   * @returns An array of Dependency objects representing mapped dependencies.
    */
-  private mapDependencies(deps: XMLElement[]): IDependency[] {
+  private mapDependencies(deps: XMLElement[]): Dependency[] {
 
     /**
      * Define a class representing a dependency parsed from the pom.xml file
@@ -100,9 +100,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     }
 
     /**
-     * Converts a valid PomDependency into an IDependency object.
+     * Converts a valid PomDependency into an Dependency object.
      * @param d - A PomDependency instance.
-     * @returns An IDependency object derived from the PomDependency.
+     * @returns An Dependency object derived from the PomDependency.
      */
     function toDependency(d: PomDependency): Dependency {
       const dep: Dependency = new Dependency(
@@ -162,9 +162,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Collects dependencies from the provided manifest contents.
    * @param contents - The manifest content to collect dependencies from.
-   * @returns A Promise resolving to an array of IDependency objects representing collected dependencies.
+   * @returns A Promise resolving to an array of Dependency objects representing collected dependencies.
    */
-  collect(contents: string): IDependency[] {
+  collect(contents: string): Dependency[] {
     const xmlAst: XMLDocument = this.parseXml(contents);
     const deps = this.getXMLDependencies(xmlAst);
     return this.mapDependencies(deps);

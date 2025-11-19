@@ -5,7 +5,7 @@
 'use strict';
 
 import { PYPI } from '../constants';
-import { IDependencyProvider, EcosystemDependencyResolver, IDependency, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
 
 /**
  * Process entries found in the requirements.txt file.
@@ -28,9 +28,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
    * Parses a line from the file and extracts dependency information.
    * @param line - The line to parse for dependency information.
    * @param index - The index of the line in the file.
-   * @returns An IDependency object representing the parsed dependency or null if no dependency is found.
+   * @returns An Dependency object representing the parsed dependency or null if no dependency is found.
    */
-  private parseLine(line: string, index: number): IDependency | null {
+  private parseLine(line: string, index: number): Dependency | null {
     line = line.split('#')[0]; // Remove comments
     if (!line.trim()) { return null; } // Skip empty lines
 
@@ -48,10 +48,10 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Extracts dependencies from lines parsed from the file.
    * @param lines - An array of strings representing lines from the file.
-   * @returns An array of IDependency objects representing extracted dependencies.
+   * @returns An array of Dependency objects representing extracted dependencies.
    */
-  private extractDependenciesFromLines(lines: string[]): IDependency[] {
-    return lines.reduce((dependencies: IDependency[], line: string, index: number) => {
+  private extractDependenciesFromLines(lines: string[]): Dependency[] {
+    return lines.reduce((dependencies: Dependency[], line: string, index: number) => {
       const parsedDependency = this.parseLine(line, index);
       if (parsedDependency) {
         dependencies.push(parsedDependency);
@@ -63,9 +63,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Collects dependencies from the provided manifest contents.
    * @param contents - The manifest content to collect dependencies from.
-   * @returns A Promise resolving to an array of IDependency objects representing collected dependencies.
+   * @returns A Promise resolving to an array of Dependency objects representing collected dependencies.
    */
-  collect(contents: string): IDependency[] {
+  collect(contents: string): Dependency[] {
     const lines: string[] = this.parseTxtDoc(contents);
     return this.extractDependenciesFromLines(lines);
   }

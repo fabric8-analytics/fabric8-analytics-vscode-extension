@@ -26,7 +26,7 @@ suite('Dependency Analysis Collector tests', () => {
 
     test('should create map of dependecies', async () => {
 
-        const depMap = new DependencyMap(reqDeps, constants.MAVEN);
+        const depMap = new DependencyMap(reqDeps);
 
         expect(Object.fromEntries(depMap.mapper)).to.eql({
             'mockGroupId1/mockArtifact1': reqDeps[0],
@@ -36,14 +36,14 @@ suite('Dependency Analysis Collector tests', () => {
 
     test('should create empty dependency map', async () => {
 
-        const depMap = new DependencyMap([], constants.MAVEN);
+        const depMap = new DependencyMap([]);
 
         expect(Object.keys(depMap.mapper).length).to.eql(0);
     });
 
     test('should get dependency from dependency map', async () => {
 
-        const depMap = new DependencyMap(reqDeps, constants.MAVEN);
+        const depMap = new DependencyMap(reqDeps);
 
         expect(depMap.get(reqDeps[0].name.value)).to.eq(reqDeps[0]);
         expect(depMap.get(reqDeps[1].name.value)).to.eq(reqDeps[1]);
@@ -63,10 +63,10 @@ suite('Dependency Analysis Collector tests', () => {
 
     test('should create map of dependecies for Gradle', async () => {
 
-        const depMap = new DependencyMap(reqDeps, constants.GRADLE);
+        const depMap = new DependencyMap(reqDeps);
 
         expect(Object.fromEntries(depMap.mapper)).to.eql({
-            'mockGroupId1/mockArtifact1@mockVersion': reqDeps[0],
+            'mockGroupId1/mockArtifact1': reqDeps[0],
             'mockGroupId2/mockArtifact2': reqDeps[1]
         });
     });

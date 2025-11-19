@@ -8,13 +8,14 @@ import { DependencyMap, IDependencyProvider, getRange } from '../dependencyAnaly
 import { IPositionedContext } from '../positionTypes';
 import { executeComponentAnalysis, DependencyData } from './analysis';
 import { Vulnerability } from '../vulnerability';
-import { VERSION_PLACEHOLDER, GRADLE } from '../constants';
+import { VERSION_PLACEHOLDER } from '../constants';
 import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction } from '../codeActionHandler';
 import { buildLogErrorMessage, buildNotificationErrorMessage } from '../utils';
 import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { globalConfig } from '../config';
+import { Options } from '@trustification/exhort-javascript-api';
 
 /**
  * Implementation of DiagnosticsPipeline interface.
@@ -38,11 +39,11 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
    */
   runDiagnostics(dependencies: Map<string, DependencyData[]>, ecosystem: string) {
     dependencies.forEach((dependencyData, ref) => {
-      const dependencyRef = ecosystem === GRADLE ? ref : ref.split('@')[0];
+      const dependencyRef = ref.split('@')[0];
       const dependency = this.dependencyMap.get(dependencyRef);
 
       if (dependency) {
-        const vulnerability = new Vulnerability(getRange(dependency), ref, dependencyData);
+        const vulnerability = new Vulnerability(getRange(dependency, ecosystem), ref, dependencyData);
 
         const vulnerabilityDiagnostic = vulnerability.getDiagnostic();
         if (vulnerabilityDiagnostic.severity === DiagnosticSeverity.Information && !globalConfig.recommendationsEnabled) {
@@ -97,14 +98,38 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
  */
 async function performDiagnostics(diagnosticFilePath: Uri, contents: string, provider: IDependencyProvider) {
   try {
+    // Define configuration options for the component analysis request
+    const options: Options = {
+      'RHDA_TOKEN': globalConfig.telemetryId,
+      'RHDA_SOURCE': globalConfig.utmSource,
+      'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
+      'EXHORT_PROXY_URL': globalConfig.exhortProxyUrl,
+      'EXHORT_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
+      'EXHORT_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
+      'EXHORT_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
+      'EXHORT_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
+      'EXHORT_MVN_PATH': globalConfig.exhortMvnPath,
+      'EXHORT_PREFER_MVNW': globalConfig.exhortPreferMvnw,
+      'EXHORT_MVN_ARGS': globalConfig.exhortMvnArgs,
+      'EXHORT_GRADLE_PATH': globalConfig.exhortGradlePath,
+      'EXHORT_NPM_PATH': globalConfig.exhortNpmPath,
+      'EXHORT_YARN_PATH': globalConfig.exhortYarnPath,
+      'EXHORT_PNPM_PATH': globalConfig.exhortPnpmPath,
+      'EXHORT_GO_PATH': globalConfig.exhortGoPath,
+      'EXHORT_PYTHON3_PATH': globalConfig.exhortPython3Path,
+      'EXHORT_PIP3_PATH': globalConfig.exhortPip3Path,
+      'EXHORT_PYTHON_PATH': globalConfig.exhortPythonPath,
+      'EXHORT_PIP_PATH': globalConfig.exhortPipPath
+    };
+
     const dependencies = provider.collect(contents);
     const ecosystem = provider.getEcosystem();
-    const dependencyMap = new DependencyMap(dependencies, ecosystem);
+    const dependencyMap = new DependencyMap(dependencies);
 
     const diagnosticsPipeline = new DiagnosticsPipeline(dependencyMap, diagnosticFilePath);
     diagnosticsPipeline.clearDiagnostics();
 
-    const response = await executeComponentAnalysis(diagnosticFilePath, provider);
+    const response = await executeComponentAnalysis(diagnosticFilePath, provider, options);
 
     clearCodeActionsMap(diagnosticFilePath);
 

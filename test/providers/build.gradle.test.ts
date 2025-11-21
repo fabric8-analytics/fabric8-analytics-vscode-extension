@@ -33,11 +33,11 @@ dependencies {
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 11, column: 21 } },
                 version: { value: '1.2.3', position: { line: 11, column: 33 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 12, column: 21 } },
                 version: { value: '1.2.3', position: { line: 12, column: 33 } }
             }
         ]);
@@ -60,11 +60,11 @@ dependencies {
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 11, column: 28 } },
                 version: { value: '1.2.3', position: { line: 11, column: 61 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 12, column: 61 } },
                 version: { value: '1.2.3', position: { line: 12, column: 30 } }
             }
         ]);
@@ -88,7 +88,7 @@ dependencies { // a second comment
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 12, column: 83 } },
                 version: { value: '1.2.3', position: { line: 12, column: 30 } }
             }
         ]);
@@ -116,7 +116,7 @@ dependencies {
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 15, column: 21 } },
                 version: { value: '1.2.3', position: { line: 15, column: 33 } }
             }
         ]);
@@ -139,11 +139,11 @@ dependencies {
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 11, column: 31 } },
                 version: { value: '1.2.3', position: { line: 11, column: 43 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 12, column: 44 } },
                 version: { value: '1.2.3', position: { line: 12, column: 86 } }
             }
         ]);
@@ -185,11 +185,11 @@ dependencies {
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 30, column: 21 } },
                 version: { value: '1.2.3', position: { line: 30, column: 44 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 31, column: 28 } },
                 version: { value: '1.2.3', position: { line: 31, column: 66 } }
             }
         ]);
@@ -211,11 +211,11 @@ dependencies { implementation group: "log4j", name: "log4j", version: "1.2.3" }
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 10, column: 32 } },
                 version: { value: '1.2.3', position: { line: 10, column: 44 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 11, column: 39 } },
                 version: { value: '1.2.3', position: { line: 11, column: 72 } }
             }
         ]);
@@ -252,27 +252,27 @@ dependencies
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 10, column: 30 } },
                 version: { value: '1.2.3', position: { line: 10, column: 42 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 12, column: 32 } },
                 version: { value: '1.2.3', position: { line: 12, column: 44 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 15, column: 21 } },
                 version: { value: '1.2.3', position: { line: 15, column: 33 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 18, column: 28 } },
                 version: { value: '1.2.3', position: { line: 18, column: 61 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 22, column: 26 } },
                 version: { value: '1.2.3', position: { line: 22, column: 59 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 25, column: 28 } },
                 version: { value: '1.2.3', position: { line: 25, column: 61 } }
             }
         ]);
@@ -304,15 +304,15 @@ dependencies {
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'commons-codec/commons-codec', position: { line: 0, column: 0 } },
-                context: { value: 'commons-codec:commons-codec:__VERSION__', range: { start: { line: 10, character: 20 }, end: { line: 10, character: 47 } } }
+                name: { value: 'commons-codec/commons-codec', position: { line: 11, column: 21 } },
+                context: { value: 'commons-codec:commons-codec:__VERSION__', range: { start: { line: 11, character: 21 }, end: { line: 11, character: 48 } } }
             },
             {
-                name: { value: 'commons-beanutils/commons-beanutils', position: { line: 0, column: 0 } },
+                name: { value: 'commons-beanutils/commons-beanutils', position: { line: 16, column: 21 } },
                 version: { value: '1.9.4', position: { line: 16, column: 57 } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
+                name: { value: 'log4j/log4j', position: { line: 21, column: 21 } },
                 version: { value: '1.2.3', position: { line: 21, column: 33 } }
             }
         ]);
@@ -335,12 +335,12 @@ dependencies {
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
-                context: { value: 'log4j:log4j:__VERSION__', range: { start: { line: 10, character: 20 }, end: { line: 10, character: 31 } } }
+                name: { value: 'log4j/log4j', position: { line: 11, column: 21 } },
+                context: { value: 'log4j:log4j:__VERSION__', range: { start: { line: 11, character: 21 }, end: { line: 11, character: 32 } } }
             },
             {
-                name: { value: 'log4j/log4j', position: { line: 0, column: 0 } },
-                context: { value: 'name: "log4j", version: "__VERSION__"', range: { start: { line: 11, character: 35 }, end: { line: 11, character: 48 } } }
+                name: { value: 'log4j/log4j', position: { line: 12, column: 28 } },
+                context: { value: 'name: "log4j", version: "__VERSION__"', range: { start: { line: 12, character: 36 }, end: { line: 12, character: 49 } } }
             }
         ]);
     });

@@ -6,14 +6,13 @@
 
 import { Position, Range } from 'vscode';
 import { VERSION_PLACEHOLDER, GRADLE } from '../constants';
-import { IDependencyProvider, EcosystemDependencyResolver, IDependency, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
 
 /**
  * Process entries found in the build.gradle file.
  */
 export class DependencyProvider extends EcosystemDependencyResolver implements IDependencyProvider {
-
-  args: Map<string, string> = new Map<string, string>();
+  private args: Map<string, string> = new Map<string, string>();
 
   /**
    * Regular expression for matching inline comments.
@@ -96,9 +95,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
    * @param line - The line to parse for dependency information.
    * @param cleanLine - The line to parse for dependency information cleaned of comments.
    * @param index - The index of the line in the file.
-   * @returns An IDependency object representing the parsed dependency or null if no dependency is found.
+   * @returns An Dependency object representing the parsed dependency or null if no dependency is found.
    */
-  private parseLine(line: string, cleanLine: string, index: number): IDependency | null {
+  private parseLine(line: string, cleanLine: string, index: number): Dependency | null {
     const myClassObj = { group: '', name: '', version: '' };
     let depData: string;
 
@@ -143,7 +142,32 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     if (depName.includes('$')) {
       depName = this.replaceArgsInString(depName);
     }
-    const dep = new Dependency({ value: depName, position: { line: 0, column: 0 } });
+
+    // Calculate position for the dependency name (group:artifact)
+    // For Gradle, we place diagnostics on the dependency string in the file
+    let namePosition = { line: index + 1, column: 0 };
+    if (keyValuePairs) {
+      // For map format like: group: "log4j", name: "log4j"
+      // Find the start of the group value
+      const groupMatch = line.match(/group\s*:\s*(['"])(.*?)\1/);
+      if (groupMatch) {
+        const groupStr = groupMatch[0];
+        const groupValue = groupMatch[2];
+        const groupStart = line.indexOf(groupStr);
+        const valueStart = groupStr.indexOf(groupValue);
+        namePosition = { line: index + 1, column: groupStart + valueStart + 1 };
+      }
+    } else {
+      // For string format like: "log4j:log4j:1.2.3"
+      // Find the start of the group:artifact part inside the quotes
+      const match = line.match(this.BETWEEN_QUOTES_REGEX);
+      if (match) {
+        const fullMatch = match[0]; // e.g., '"log4j:log4j:1.2.3"'
+        const quotePos = line.indexOf(fullMatch);
+        namePosition = { line: index + 1, column: quotePos + 2 }; // +1 to skip the opening quote
+      }
+    }
+    const dep = new Dependency({ value: depName, position: namePosition });
 
     // determine dependency version
     const depVersion: string = myClassObj.version;
@@ -155,8 +179,8 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         const quotedName = `"${myClassObj.name}"`;
         dep.context = {
           value: `name: ${quotedName}, version: "${VERSION_PLACEHOLDER}"`, range: new Range(
-            new Position(index, line.indexOf(`name: ${quotedName}`)),
-            new Position(index, line.indexOf(`name: ${quotedName}`) + `name: ${quotedName}`.length),
+            new Position(index + 1, line.indexOf(`name: ${quotedName}`) + 1),
+            new Position(index + 1, line.indexOf(`name: ${quotedName}`) + `name: ${quotedName}`.length + 1),
           )
         };
       } else {
@@ -164,8 +188,8 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         depData = depData!;
         dep.context = {
           value: `${depData}:${VERSION_PLACEHOLDER}`, range: new Range(
-            new Position(index, line.indexOf(depData)),
-            new Position(index, line.indexOf(depData) + depData.length)
+            new Position(index + 1, line.indexOf(depData) + 1),
+            new Position(index + 1, line.indexOf(depData) + depData.length + 1)
           )
         };
       }
@@ -176,15 +200,15 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Extracts dependencies from lines parsed from the file.
    * @param lines - An array of strings representing lines from the file.
-   * @returns An array of IDependency objects representing extracted dependencies.
+   * @returns An array of Dependency objects representing extracted dependencies.
    */
-  private extractDependenciesFromLines(lines: string[]): IDependency[] {
+  private extractDependenciesFromLines(lines: string[]): Dependency[] {
     let isSingleDependency: boolean = false;
     let isDependencyBlock: boolean = false;
     let isSingleArgument: boolean = false;
     let isArgumentBlock: boolean = false;
     let innerDepScopeBracketsCount: number = 0;
-    return lines.reduce((dependencies: IDependency[], line: string, index: number) => {
+    return lines.reduce((dependencies: Dependency[], line: string, index: number) => {
 
       const cleanLine = line.split('//')[0].replace(this.COMMENT_REGEX, '').trim(); // Remove comments
       if (!cleanLine) { return dependencies; } // Skip empty lines
@@ -221,7 +245,6 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
       }
 
       if (isSingleDependency || isDependencyBlock) {
-
         if (innerDepScopeBracketsCount === 0) {
           isDependencyBlock = false;
         }
@@ -270,9 +293,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Collects dependencies from the provided manifest contents.
    * @param contents - The manifest content to collect dependencies from.
-   * @returns A Promise resolving to an array of IDependency objects representing collected dependencies.
+   * @returns A Promise resolving to an array of Dependency objects representing collected dependencies.
    */
-  collect(contents: string): IDependency[] {
+  collect(contents: string): Dependency[] {
     const lines: string[] = this.parseTxtDoc(contents);
     return this.extractDependenciesFromLines(lines);
   }

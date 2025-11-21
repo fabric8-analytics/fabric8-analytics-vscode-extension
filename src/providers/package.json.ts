@@ -5,7 +5,7 @@
 'use strict';
 
 import * as jsonAst from 'json-to-ast';
-import { IDependencyProvider, EcosystemDependencyResolver, IDependency, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
 import { NPM } from '../constants';
 
 /**
@@ -28,11 +28,11 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   }
 
   /**
-   * Maps dependencies from the parsed JSON AST to IDependency objects.
+   * Maps dependencies from the parsed JSON AST to Dependency objects.
    * @param jsonAst - The parsed JSON AST to map dependencies from.
-   * @returns An array of IDependency objects representing the dependencies.
+   * @returns An array of Dependency objects representing the dependencies.
    */
-  private mapDependencies(ast: jsonAst.ObjectNode): IDependency[] {
+  private mapDependencies(ast: jsonAst.ObjectNode): Dependency[] {
     return ast.children
       .filter(c => this.classes.includes(c.key.value))
       .flatMap(c => (c.value as jsonAst.ObjectNode).children)
@@ -47,9 +47,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Collects dependencies from the provided manifest contents.
    * @param contents - The manifest content to collect dependencies from.
-   * @returns A Promise resolving to an array of IDependency objects representing collected dependencies.
+   * @returns A Promise resolving to an array of Dependency objects representing collected dependencies.
    */
-  collect(contents: string): IDependency[] {
+  collect(contents: string): Dependency[] {
     let ast: jsonAst.ObjectNode;
 
     try {

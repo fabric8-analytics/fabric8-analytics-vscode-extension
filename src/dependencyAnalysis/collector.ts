@@ -9,19 +9,7 @@ import { isDefined } from '../utils';
 import { ecosystemNameMappings, GRADLE } from '../constants';
 import { Position, Range } from 'vscode';
 
-/**
- * Represents a dependency specification.
- */
-export interface IDependency {
-  name: IPositionedString;
-  version: IPositionedString | undefined;
-  context: IPositionedContext | undefined;
-}
-
-/**
- * Represents a dependency and implements the IDependency interface.
- */
-export class Dependency implements IDependency {
+export class Dependency {
   public version: IPositionedString | undefined;
   public context: IPositionedContext | undefined;
 
@@ -32,11 +20,10 @@ export class Dependency implements IDependency {
  * Represents a map of dependencies using dependency name as key for easy retrieval of associated details.
  */
 export class DependencyMap {
-  mapper: Map<string, IDependency>;
-  constructor(deps: IDependency[], ecosystem: string) {
+  mapper: Map<string, Dependency>;
+  constructor(deps: Dependency[]) {
     this.mapper = new Map(deps.map(d => {
-      const key = ecosystem === GRADLE && d.version ? `${d.name.value}@${d.version.value}` : d.name.value;
-      return [key, d];
+      return [d.name.value, d];
     }));
   }
 
@@ -45,7 +32,7 @@ export class DependencyMap {
    * @param key - The unique name key for the desired dependency.
    * @returns The dependency object linked to the specified unique name key.
    */
-  public get(key: string): IDependency | undefined {
+  public get(key: string): Dependency | undefined {
     return this.mapper.get(key);
   }
 }
@@ -54,13 +41,12 @@ export class DependencyMap {
  * Represents an interface for providing ecosystem-specific dependencies.
  */
 export interface IDependencyProvider {
-
   /**
    * Collects dependencies from the provided manifest contents.
    * @param contents - The manifest contents to collect dependencies from.
    * @returns A Promise resolving to an array of dependencies.
    */
-  collect(contents: string): IDependency[];
+  collect(contents: string): Dependency[];
 
   /**
    * Resolves a dependency reference to its actual name in the ecosystem.
@@ -107,9 +93,16 @@ export class EcosystemDependencyResolver {
 /**
  * Retrieves the range of a dependency version or context within a text document.
  * @param dep - The dependency object containing version and context information.
+ * @param ecosystem - The ecosystem of the dependency (optional).
  * @returns The range within the text document that represents the dependency.
  */
-export function getRange(dep: IDependency): Range {
+export function getRange(dep: Dependency, ecosystem?: string): Range {
+  if (ecosystem === GRADLE) {
+    // For Gradle, use the dependency name range instead of version
+    const pos: IPosition = dep.name.position;
+    const length = dep.name.value.length;
+    return new Range(new Position(pos.line - 1, pos.column - 1), new Position(pos.line - 1, pos.column + length - 1));
+  }
   if (isDefined(dep, 'version', 'position')) {
     const pos: IPosition = dep.version.position;
     const length = dep.version.value.length;

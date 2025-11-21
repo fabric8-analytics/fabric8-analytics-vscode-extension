@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { IDependencyProvider, EcosystemDependencyResolver, IDependency, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
 import { GOLANG } from '../constants';
 
 /* Please note :: There is an issue with the usage of semverRegex Node.js package in this code.
@@ -25,7 +25,7 @@ export function semVerRegExp(str: string): RegExpExecArray | null {
  * Process entries found in the go.mod file.
  */
 export class DependencyProvider extends EcosystemDependencyResolver implements IDependencyProvider {
-  replacementMap: Map<string, IDependency> = new Map<string, IDependency>();
+  replacementMap: Map<string, Dependency> = new Map<string, Dependency>();
 
   constructor() {
     super(GOLANG); // set ecosystem to 'golang'
@@ -91,9 +91,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
    * Parses a line from the file and extracts dependency information.
    * @param line - The line to parse for dependency information.
    * @param index - The index of the line in the file.
-   * @returns An IDependency object representing the parsed dependency or null if no dependency is found.
+   * @returns An Dependency object representing the parsed dependency or null if no dependency is found.
    */
-  private parseLine(line: string, index: number): IDependency | null {
+  private parseLine(line: string, index: number): Dependency | null {
     line = line.split('//')[0]; // Remove comments
     if (!DependencyProvider.clean(line)) { return null; } // Skip lines without dependencies
 
@@ -118,7 +118,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
    * @param dep - The dependency to be checked and replaced if necessary.
    * @returns The replaced dependency or the original one if no replacement is found.
    */
-  private applyReplaceMap(dep: IDependency): IDependency {
+  private applyReplaceMap(dep: Dependency): Dependency {
     // invariant: dep.version should be non-null if invariant in parseLine holds.
     // TODO: can we improve the typings around all this a la Required<T>
     return this.replacementMap.get(dep.name.value + '@' + dep.version!.value) || this.replacementMap.get(dep.name.value) || dep;
@@ -127,11 +127,11 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Extracts dependencies from lines parsed from the file.
    * @param lines - An array of strings representing lines from the file.
-   * @returns An array of IDependency objects representing extracted dependencies.
+   * @returns An array of Dependency objects representing extracted dependencies.
    */
-  private extractDependenciesFromLines(lines: string[]): IDependency[] {
+  private extractDependenciesFromLines(lines: string[]): Dependency[] {
     let isExcluded: boolean = false;
-    const goModDeps: IDependency[] = lines.reduce((dependencies: IDependency[], line: string, index: number) => {
+    const goModDeps: Dependency[] = lines.reduce((dependencies: Dependency[], line: string, index: number) => {
       // ignore excluded dependency lines and scopes
       if (line.includes('exclude')) {
         if (line.includes('(')) {
@@ -160,9 +160,9 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Collects dependencies from the provided manifest contents.
    * @param contents - The manifest content to collect dependencies from.
-   * @returns A Promise resolving to an array of IDependency objects representing collected dependencies.
+   * @returns A Promise resolving to an array of Dependency objects representing collected dependencies.
    */
-  collect(contents: string): IDependency[] {
+  collect(contents: string): Dependency[] {
     const lines: string[] = DependencyProvider.parseTxtDoc(contents);
     return this.extractDependenciesFromLines(lines);
   }

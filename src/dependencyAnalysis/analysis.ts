@@ -4,10 +4,9 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import exhort from '@trustification/exhort-javascript-api';
+import exhort, { Options } from '@trustification/exhort-javascript-api';
 import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
 
-import { globalConfig } from '../config';
 import { isDefined } from '../utils';
 import { IDependencyProvider } from '../dependencyAnalysis/collector';
 import { Uri } from 'vscode';
@@ -191,33 +190,7 @@ class AnalysisResponse {
  * @param provider - The dependency provider of the corresponding ecosystem.
  * @returns A Promise resolving to an AnalysisResponse object.
  */
-async function executeComponentAnalysis(diagnosticFilePath: Uri, provider: IDependencyProvider): Promise<AnalysisResponse> {
-
-  // Define configuration options for the component analysis request
-  const options = {
-    'RHDA_TOKEN': globalConfig.telemetryId,
-    'RHDA_SOURCE': globalConfig.utmSource,
-    'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
-    'EXHORT_PROXY_URL': globalConfig.exhortProxyUrl,
-    'EXHORT_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
-    'EXHORT_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
-    'EXHORT_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
-    'EXHORT_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
-    'EXHORT_MVN_PATH': globalConfig.exhortMvnPath,
-    'EXHORT_PREFER_MVNW': globalConfig.exhortPreferMvnw,
-    'EXHORT_MVN_ARGS': globalConfig.exhortMvnArgs,
-    'EXHORT_GRADLE_PATH': globalConfig.exhortGradlePath,
-    'EXHORT_NPM_PATH': globalConfig.exhortNpmPath,
-    'EXHORT_YARN_PATH': globalConfig.exhortYarnPath,
-    'EXHORT_PNPM_PATH': globalConfig.exhortPnpmPath,
-    'EXHORT_GO_PATH': globalConfig.exhortGoPath,
-    'EXHORT_PYTHON3_PATH': globalConfig.exhortPython3Path,
-    'EXHORT_PIP3_PATH': globalConfig.exhortPip3Path,
-    'EXHORT_PYTHON_PATH': globalConfig.exhortPythonPath,
-    'EXHORT_PIP_PATH': globalConfig.exhortPipPath
-  };
-
-  // Execute component analysis
+async function executeComponentAnalysis(diagnosticFilePath: Uri, provider: IDependencyProvider, options: Options): Promise<AnalysisResponse> {
   const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options);
 
   return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider);

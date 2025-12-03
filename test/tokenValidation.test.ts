@@ -26,9 +26,8 @@ suite('TokenValidation module', () => {
     test('should validate non-empty Snyk token', async () => {
         globalConfig.telemetryId = 'mockId';
         const options = {
-            'RHDA_TOKEN': 'mockId',
-            'RHDA_SOURCE': 'vscode',
-            'EXHORT_SNYK_TOKEN': 'mockToken'
+            'TRUSTIFY_DA_TOKEN': 'mockId',
+            'TRUSTIFY_DA_SOURCE': 'vscode',
         };
 
         const exhortServicesStub = sandbox.stub(exhortServices, 'tokenValidationService');

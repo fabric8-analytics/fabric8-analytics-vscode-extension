@@ -11,7 +11,7 @@ import { executeDockerImageAnalysis } from './imageAnalysis';
 import { DepOutputChannel } from './depOutputChannel';
 import { ResponseMetrics } from './dependencyAnalysis/analysis';
 import parse from 'node-html-parser';
-import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
+import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
 import { isDefined } from './utils';
 
 /**

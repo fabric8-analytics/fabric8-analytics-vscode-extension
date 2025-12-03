@@ -14,9 +14,8 @@ async function validateSnykToken(token: string): Promise<string | undefined> {
   if (token !== '') {
     // set up configuration options for the token validation request
     const options = {
-      'RHDA_TOKEN': globalConfig.telemetryId ?? '',
-      'RHDA_SOURCE': globalConfig.utmSource,
-      'EXHORT_SNYK_TOKEN': token
+      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
+      'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
     };
 
     // execute token validation

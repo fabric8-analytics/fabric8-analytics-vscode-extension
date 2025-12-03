@@ -6,11 +6,11 @@
 
 import { isDefined } from '../utils';
 import { IImage } from '../imageAnalysis/collector';
-import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
-import { DependencyReport } from '@trustification/exhort-api-spec/model/v4/DependencyReport';
-import { SourceSummary } from '@trustification/exhort-api-spec/model/v4/SourceSummary';
-import { ProviderReport } from '@trustification/exhort-api-spec/model/v4/ProviderReport';
-import { Source } from '@trustification/exhort-api-spec/model/v4/Source';
+import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
+import { DependencyReport } from '@trustify-da/trustify-da-api-model/model/v5/DependencyReport';
+import { SourceSummary } from '@trustify-da/trustify-da-api-model/model/v5/SourceSummary';
+import { ProviderReport } from '@trustify-da/trustify-da-api-model/model/v5/ProviderReport';
+import { Source } from '@trustify-da/trustify-da-api-model/model/v5/Source';
 import { Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { imageAnalysisService } from '../exhortServices';

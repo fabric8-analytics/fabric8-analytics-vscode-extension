@@ -350,7 +350,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	This setting applies to Python and Go environments.
 	
 	<br >An alternative workaround exists for Python environments only.
-	The user can start Visual Studio Code with the [`EXHORT_PYTHON_VIRTUAL_ENV`](https://github.com/RHEcosystemAppEng/exhort-javascript-api#:~:text=EXHORT_PYTHON_VIRTUAL_ENV) variable set to `true`.
+	The user can start Visual Studio Code with the [`TRUSTIFY_DA_PYTHON_VIRTUAL_ENV`](https://github.com/RHEcosystemAppEng/exhort-javascript-api#:~:text=TRUSTIFY_DA_PYTHON_VIRTUAL_ENV) variable set to `true`.
 	Doing this allows Red Hat Dependency Analytics to install Python packages into a virtual environment to perform the analysis.
 	The benefit is having a clean Python environment not influenced by earlier installations, but the downside is a significantly slower analysis process.
 

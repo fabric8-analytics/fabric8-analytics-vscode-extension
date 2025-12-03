@@ -4,16 +4,16 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import exhort, { Options } from '@trustification/exhort-javascript-api';
-import { AnalysisReport } from '@trustification/exhort-api-spec/model/v4/AnalysisReport';
+import exhort, { Options } from '@trustify-da/trustify-da-javascript-client';
 
 import { isDefined } from '../utils';
 import { IDependencyProvider } from '../dependencyAnalysis/collector';
 import { Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
-import { Source } from '@trustification/exhort-api-spec/model/v4/Source';
-import { DependencyReport } from '@trustification/exhort-api-spec/model/v4/DependencyReport';
-import { Issue } from '@trustification/exhort-api-spec/model/v4/Issue';
+import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
+import { Source } from '@trustify-da/trustify-da-api-model/model/v5/Source';
+import { DependencyReport } from '@trustify-da/trustify-da-api-model/model/v5/DependencyReport';
+import { Issue } from '@trustify-da/trustify-da-api-model/model/v5/Issue';
 
 /**
  * Represents a source object with an ID and dependencies array.

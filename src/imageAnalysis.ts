@@ -7,7 +7,7 @@ import { globalConfig } from './config';
 import { imageAnalysisService } from './exhortServices';
 import { StatusMessages, Titles } from './constants';
 import * as templates from './template';
-import { Options } from '@trustification/exhort-javascript-api';
+import { Options } from '@trustify-da/trustify-da-javascript-client';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
@@ -16,15 +16,15 @@ import { DepOutputChannel } from './depOutputChannel';
  * Represents options for image analysis.
  */
 interface IOptions extends Options {
-  RHDA_TOKEN: string;
-  RHDA_SOURCE: string;
-  EXHORT_SYFT_PATH: string;
-  EXHORT_SYFT_CONFIG_PATH: string;
-  EXHORT_SKOPEO_PATH: string;
-  EXHORT_SKOPEO_CONFIG_PATH: string;
-  EXHORT_DOCKER_PATH: string;
-  EXHORT_PODMAN_PATH: string;
-  EXHORT_IMAGE_PLATFORM: string;
+  TRUSTIFY_DA_TOKEN: string;
+  TRUSTIFY_DA_SOURCE: string;
+  TRUSTIFY_DA_SYFT_PATH: string;
+  TRUSTIFY_DA_SYFT_CONFIG_PATH: string;
+  TRUSTIFY_DA_SKOPEO_PATH: string;
+  TRUSTIFY_DA_SKOPEO_CONFIG_PATH: string;
+  TRUSTIFY_DA_DOCKER_PATH: string;
+  TRUSTIFY_DA_PODMAN_PATH: string;
+  TRUSTIFY_DA_IMAGE_PLATFORM: string;
 }
 
 /**
@@ -173,15 +173,15 @@ class DockerImageAnalysis {
         }
 
         const options: IOptions = {
-          'RHDA_TOKEN': globalConfig.telemetryId ?? '',
-          'RHDA_SOURCE': globalConfig.utmSource,
-          'EXHORT_SYFT_PATH': globalConfig.exhortSyftPath,
-          'EXHORT_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
-          'EXHORT_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
-          'EXHORT_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
-          'EXHORT_DOCKER_PATH': globalConfig.exhortDockerPath,
-          'EXHORT_PODMAN_PATH': globalConfig.exhortPodmanPath,
-          'EXHORT_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
+          'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
+          'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
+          'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,
+          'TRUSTIFY_DA_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,
+          'TRUSTIFY_DA_SKOPEO_PATH': globalConfig.exhortSkopeoPath,
+          'TRUSTIFY_DA_SKOPEO_CONFIG_PATH': globalConfig.exhortSkopeoConfigPath,
+          'TRUSTIFY_DA_DOCKER_PATH': globalConfig.exhortDockerPath,
+          'TRUSTIFY_DA_PODMAN_PATH': globalConfig.exhortPodmanPath,
+          'TRUSTIFY_DA_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
         };
 
         // execute image analysis

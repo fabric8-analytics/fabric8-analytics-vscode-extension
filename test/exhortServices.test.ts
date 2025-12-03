@@ -26,7 +26,7 @@ suite('ExhortServices module', async () => {
   setup(async () => {
     sandbox = sinon.createSandbox();
     exhortServicesRewire = await rewireModule(compiledFilePath);
-    exhortServicesRewire.__Rewire__('exhort_javascript_api_1', exhortMock);
+    exhortServicesRewire.__Rewire__('trustify_da_javascript_client_1', exhortMock);
   });
 
   teardown(() => {
@@ -65,7 +65,7 @@ suite('ExhortServices module', async () => {
       }
     };
 
-    exhortServicesRewire.__Rewire__('exhort_javascript_api_1', exhortMock);
+    exhortServicesRewire.__Rewire__('trustify_da_javascript_client_1', exhortMock);
 
     await exhortServicesRewire.stackAnalysisService('mock/path/to/manifest', {})
       .then(() => {
@@ -87,7 +87,7 @@ suite('ExhortServices module', async () => {
       }
     };
 
-    exhortServicesRewire.__Rewire__('exhort_javascript_api_1', exhortMock);
+    exhortServicesRewire.__Rewire__('trustify_da_javascript_client_1', exhortMock);
 
     expect(await exhortServicesRewire.tokenValidationService(500, 'provider')).to.equal('Failed to validate token, Error: Validation Error');
   });

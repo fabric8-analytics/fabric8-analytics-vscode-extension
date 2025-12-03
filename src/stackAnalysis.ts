@@ -8,7 +8,7 @@ import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
-import { Options } from '@trustification/exhort-javascript-api';
+import { Options } from '@trustify-da/trustify-da-javascript-client';
 
 /**
  * Executes the RHDA stack analysis process.
@@ -21,27 +21,27 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
 
     // set up configuration options for the stack analysis request
     const options: Options = {
-      'RHDA_TOKEN': globalConfig.telemetryId,
-      'RHDA_SOURCE': globalConfig.utmSource,
+      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
+      'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
-      'EXHORT_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
-      'EXHORT_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
-      'EXHORT_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
-      'EXHORT_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
-      'EXHORT_MVN_PATH': globalConfig.exhortMvnPath,
-      'EXHORT_PREFER_MVNW': globalConfig.exhortPreferMvnw,
-      'EXHORT_MVN_ARGS': globalConfig.exhortMvnArgs,
-      'EXHORT_GRADLE_PATH': globalConfig.exhortGradlePath,
-      'EXHORT_PREFER_GRADLEW': globalConfig.exhortPreferGradlew,
-      'EXHORT_NPM_PATH': globalConfig.exhortNpmPath,
-      'EXHORT_PNPM_PATH': globalConfig.exhortPnpmPath,
-      'EXHORT_YARN_PATH': globalConfig.exhortYarnPath,
-      'EXHORT_GO_PATH': globalConfig.exhortGoPath,
-      'EXHORT_PYTHON3_PATH': globalConfig.exhortPython3Path,
-      'EXHORT_PIP3_PATH': globalConfig.exhortPip3Path,
-      'EXHORT_PYTHON_PATH': globalConfig.exhortPythonPath,
-      'EXHORT_PIP_PATH': globalConfig.exhortPipPath,
-      'EXHORT_PROXY_URL': globalConfig.exhortProxyUrl
+      'TRUSTIFY_DA_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
+      'TRUSTIFY_DA_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
+      'TRUSTIFY_DA_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
+      'TRUSTIFY_DA_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
+      'TRUSTIFY_DA_MVN_PATH': globalConfig.exhortMvnPath,
+      'TRUSTIFY_DA_PREFER_MVNW': globalConfig.exhortPreferMvnw,
+      'TRUSTIFY_DA_MVN_ARGS': globalConfig.exhortMvnArgs,
+      'TRUSTIFY_DA_GRADLE_PATH': globalConfig.exhortGradlePath,
+      'TRUSTIFY_DA_PREFER_GRADLEW': globalConfig.exhortPreferGradlew,
+      'TRUSTIFY_DA_NPM_PATH': globalConfig.exhortNpmPath,
+      'TRUSTIFY_DA_PNPM_PATH': globalConfig.exhortPnpmPath,
+      'TRUSTIFY_DA_YARN_PATH': globalConfig.exhortYarnPath,
+      'TRUSTIFY_DA_GO_PATH': globalConfig.exhortGoPath,
+      'TRUSTIFY_DA_PYTHON3_PATH': globalConfig.exhortPython3Path,
+      'TRUSTIFY_DA_PIP3_PATH': globalConfig.exhortPip3Path,
+      'TRUSTIFY_DA_PYTHON_PATH': globalConfig.exhortPythonPath,
+      'TRUSTIFY_DA_PIP_PATH': globalConfig.exhortPipPath,
+      'TRUSTIFY_DA_PROXY_URL': globalConfig.exhortProxyUrl
     };
 
     // execute stack analysis

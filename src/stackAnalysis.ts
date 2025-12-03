@@ -21,6 +21,7 @@ export async function executeStackAnalysis(manifestFilePath: string, outputChann
 
     // set up configuration options for the stack analysis request
     const options: Options = {
+      'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
       'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
       'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,

@@ -100,6 +100,7 @@ async function performDiagnostics(diagnosticFilePath: Uri, contents: string, pro
   try {
     // Define configuration options for the component analysis request
     const options: Options = {
+      'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
       'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
       'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,

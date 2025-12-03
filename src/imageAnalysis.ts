@@ -16,6 +16,7 @@ import { DepOutputChannel } from './depOutputChannel';
  * Represents options for image analysis.
  */
 interface IOptions extends Options {
+  TRUSTIFY_DA_BACKEND_URL: string | undefined;
   TRUSTIFY_DA_TOKEN: string;
   TRUSTIFY_DA_SOURCE: string;
   TRUSTIFY_DA_SYFT_PATH: string;
@@ -174,6 +175,7 @@ class DockerImageAnalysis {
 
         const options: IOptions = {
           'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
+          'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
           'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
           'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,
           'TRUSTIFY_DA_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,

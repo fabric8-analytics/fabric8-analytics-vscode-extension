@@ -188,6 +188,12 @@
           "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
           "scope": "window"
         },
+        "redHatDependencyAnalytics.backendUrl": {
+          "type": "string",
+          "default": "https://rhda.rhcloud.com",
+          "markdownDescription": "Exhort backend URL to use for stack, component & image analysis.",
+          "scope": "window"
+        },
         "redHatDependencyAnalytics.matchManifestVersions": {
           "type": "boolean",
           "default": true,

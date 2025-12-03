@@ -37,12 +37,6 @@ export const settingNameMappings: { [key: string]: string } = {
 export const EXTENSION_ID = 'fabric8-analytics';
 // publisher.name from package.json
 export const EXTENSION_QUALIFIED_ID = `redhat.${EXTENSION_ID}`;
-// UTM
-export const REGISTRATION_URL = 'https://app.snyk.io/signup/?utm_medium=Partner&utm_source=RedHat&utm_campaign=Code-Ready-Analytics-2020&utm_content=Register';
-// Key for Snyk token secret
-export const SNYK_TOKEN_KEY = 'rhda.snykToken';
-// URL to Snyk webpage
-export const SNYK_URL = 'https://app.snyk.io/login?utm_campaign=Code-Ready-Analytics-2020&utm_source=code_ready&code_ready=FF1B53D9-57BE-4613-96D7-1D06066C38C9';
 // default Redhat Dependency Analytics report file path
 export const DEFAULT_RHDA_REPORT_FILE_PATH = '/tmp/redhatDependencyAnalyticsReport.html';
 // Red Hat GA Repository

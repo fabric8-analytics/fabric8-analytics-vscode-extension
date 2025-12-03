@@ -12,6 +12,7 @@ import { Minimatch } from 'minimatch';
  */
 class Config {
   telemetryId: string | undefined;
+  backendUrl: string | undefined;
   stackAnalysisCommand!: string;
   trackRecommendationAcceptanceCommand!: string;
   recommendationsEnabled!: boolean;
@@ -47,6 +48,7 @@ class Config {
   exhortImagePlatform!: string;
   excludePatterns!: Minimatch[];
 
+  private readonly DEFAULT_BACKEND_URL = 'https://rhda.rhcloud.com';
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_GRADLE_EXECUTABLE = 'gradle';
   private readonly DEFAULT_NPM_EXECUTABLE = 'npm';
@@ -97,6 +99,7 @@ class Config {
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.recommendationsEnabled = rhdaConfig.recommendations.enabled;
     this.utmSource = GlobalState.UTM_SOURCE;
+    this.backendUrl = rhdaConfig.backendUrl || this.DEFAULT_BACKEND_URL;
     this.exhortProxyUrl = this.getEffectiveHttpProxyUrl();
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
@@ -189,6 +192,7 @@ class Config {
     process.env['VSCEXT_TRUSTIFY_DA_PYTHON_PATH'] = this.exhortPythonPath;
     process.env['VSCEXT_TRUSTIFY_DA_PIP_PATH'] = this.exhortPipPath;
     process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
+    process.env['VSCEXT_TRUSTIFY_DA_BACKEND_URL'] = this.backendUrl;
     process.env['VSCEXT_TRUSTIFY_DA_SYFT_PATH'] = this.exhortSyftPath;
     process.env['VSCEXT_TRUSTIFY_DA_SYFT_CONFIG_PATH'] = this.exhortSyftConfigPath;
     process.env['VSCEXT_TRUSTIFY_DA_SKOPEO_PATH'] = this.exhortSkopeoPath;

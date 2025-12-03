@@ -417,7 +417,7 @@
     "copy-webpack-plugin": "^13.0.0",
     "decache": "^4.6.2",
     "eslint": "^8.51.0",
-    "glob": "^11.0.2",
+    "glob": "^11.1.0",
     "mocha": "^10.8.2",
     "nyc": "^17.0.0",
     "packageurl-js": "^2.0.1",

@@ -92,6 +92,10 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 
 ### Configurable parameters
 
+#### Exhort backend URL
+
+Specify the URL of the Exhort backend used to analyze project dependencies. The default URL is https://rhda.rhcloud.com.
+
 #### Red Hat Dependency Analytics Report File Path:
 Specify the local path to create the Red Hat Dependency Analytics report file.
 The default path is `/tmp/redhatDependencyAnalyticsReport.html`.

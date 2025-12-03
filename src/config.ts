@@ -63,6 +63,8 @@ class Config {
   private readonly DEFAULT_SKOPEO_EXECUTABLE = 'skopeo';
   private readonly DEFAULT_DOCKER_EXECUTABLE = 'docker';
   private readonly DEFAULT_PODMAN_EXECUTABLE = 'podman';
+  private readonly DEFAULT_EXHORT_DEV_URL = 'https://exhort.stage.devshift.net';
+  private readonly DEFAULT_EXHORT_PROD_URL = 'https://rhda.rhcloud.com';
 
   /**
    * Creates an instance of the Config class.
@@ -95,11 +97,13 @@ class Config {
     const redhatPreferGradleWrapper = vscode.workspace.getConfiguration('java.import.gradle.wrapper').get('enabled', true);
     const preferGradleWrapper = rhdaPreferGradleWrapper === 'fallback' ? redhatPreferGradleWrapper : rhdaPreferGradleWrapper === 'true';
 
+    const defaultBackendUrl = process.env['TRUSTIFY_DA_DEV_MODE'] === 'true' ? this.DEFAULT_EXHORT_DEV_URL : this.DEFAULT_EXHORT_PROD_URL;
+
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.recommendationsEnabled = rhdaConfig.recommendations.enabled;
     this.utmSource = GlobalState.UTM_SOURCE;
-    this.backendUrl = rhdaConfig.backendUrl || this.DEFAULT_BACKEND_URL;
+    this.backendUrl = rhdaConfig.backendUrl || defaultBackendUrl;
     this.exhortProxyUrl = this.getEffectiveHttpProxyUrl();
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';

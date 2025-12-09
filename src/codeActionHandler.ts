@@ -101,7 +101,7 @@ function generateSwitchToRecommendedVersionAction(title: string, dependency: str
     edit: new WorkspaceEdit()
   };
 
-  codeAction.edit!.insert(uri, diagnostic.range.start, versionReplacementString);
+  codeAction.edit!.replace(uri, diagnostic.range, versionReplacementString);
 
   codeAction.command = {
     title: 'Track recommendation acceptance',

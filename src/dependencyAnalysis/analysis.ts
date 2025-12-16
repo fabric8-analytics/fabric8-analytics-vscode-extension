@@ -53,7 +53,7 @@ export interface ResponseMetrics {
 class DependencyData {
   constructor(
     public sourceId: string,
-    public issuesCount: number,
+    public issues: Issue[],
     public recommendationRef: string,
     public remediationRef: string,
     public highestVulnerabilitySeverity: string
@@ -119,16 +119,15 @@ class AnalysisResponse {
         source.dependencies.forEach(d => {
           if (isDefined(d, 'ref')) {
 
-            const issuesCount: number = isDefined(d, 'issues') ? d.issues.length : 0;
+            const issues = isDefined(d, 'issues') ? d.issues : [];
 
-            const dd = issuesCount
-              ? new DependencyData(source.id, issuesCount, '', this.getRemediation(d.issues![0]), this.getHighestSeverity(d))
-              : new DependencyData(source.id, issuesCount, this.getRecommendation(d), '', this.getHighestSeverity(d));
+            const dd = issues.length
+              ? new DependencyData(source.id, issues, '', this.getRemediation(issues[0]), this.getHighestSeverity(d))
+              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d));
 
             const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
-            const something = (this.dependencies.get(resolvedRef) || []);
-            something.push(dd);
-            this.dependencies.set(resolvedRef, something);
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            this.dependencies.get(resolvedRef)?.push(dd) || this.dependencies.set(resolvedRef, [dd]);
           }
         });
       });

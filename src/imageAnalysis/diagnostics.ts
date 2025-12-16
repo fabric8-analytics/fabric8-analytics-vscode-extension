@@ -56,10 +56,11 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
             this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic);
           }
 
-          const vulnProvider = id.sourceId.split('(')[0];
-          const issuesCount = id.issuesCount;
-          const vulnCountForProvider = this.vulnCount.get(vulnProvider) || 0;
-          this.vulnCount.set(vulnProvider, vulnCountForProvider + issuesCount);
+          for (const vuln of id.issues) {
+            if (vuln.id) {
+              this.vulns.add(vuln.id!);
+            }
+          }
         });
         DiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);
       });

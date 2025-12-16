@@ -15,6 +15,7 @@ import { Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { imageAnalysisService } from '../exhortServices';
 import { type IOptions } from '../imageAnalysis';
+import { Issue } from '@trustify-da/trustify-da-api-model/model/v5/Issue';
 
 /**
  * Represents the Red Hat Dependency Analytics (RHDA) analysis report, with images mapped by string keys.
@@ -35,7 +36,7 @@ interface IArtifact {
 class ImageData {
   constructor(
     public sourceId: string,
-    public issuesCount: number,
+    public issues: Issue[],
     public recommendationRef: string,
     public highestVulnerabilitySeverity: string
   ) { }
@@ -72,7 +73,7 @@ class AnalysisResponse {
         artifacts.forEach(artifact => {
           const sd = new ImageData(
             artifact.id,
-            this.getTotalIssues(artifact.summary),
+            artifact.dependencies?.flatMap(dependency => dependency.issues || []) || [],
             this.getRecommendation(artifact.dependencies),
             this.getHighestSeverity(artifact.summary),
           );

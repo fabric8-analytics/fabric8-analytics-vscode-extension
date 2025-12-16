@@ -12,7 +12,7 @@ export interface CANotificationData {
   errorMessage?: string | null;
   done?: boolean | null;
   diagCount?: number | null;
-  vulnCount?: Map<string, number> | null;
+  vulns?: Set<string> | null;
   metrics?: ResponseMetrics,
 }
 
@@ -24,8 +24,7 @@ class CANotification {
   private readonly done: boolean;
   private readonly uri: Uri;
   private readonly diagCount: number;
-  private readonly vulnCount: Map<string, number>;
-  private readonly totalVulnCount: number;
+  private readonly vulns: Set<string>;
 
   private static readonly VULNERABILITY = 'vulnerability';
   private static readonly VULNERABILITIES = 'vulnerabilities';
@@ -44,8 +43,7 @@ class CANotification {
     this.done = respData.done === true;
     this.uri = respData.uri || Uri.file('');
     this.diagCount = respData.diagCount || 0;
-    this.vulnCount = respData.vulnCount || new Map<string, number>();
-    this.totalVulnCount = Array.from(this.vulnCount.values()).reduce((sum, cv) => sum + cv, 0);
+    this.vulns = respData.vulns || new Set<string>();
   }
 
   /**
@@ -74,7 +72,7 @@ class CANotification {
    * @private
    */
   private vulnCountText(): string {
-    return this.totalVulnCount > 0 ? `${this.totalVulnCount} direct ${this.singularOrPlural(this.totalVulnCount)}` : `no ${CANotification.VULNERABILITIES}`;
+    return this.vulns.size > 0 ? `${this.vulns.size} direct ${this.singularOrPlural(this.vulns.size)}` : `no ${CANotification.VULNERABILITIES}`;
   }
 
   /**
@@ -141,10 +139,8 @@ class CANotification {
    * @returns The text content for the popup notification.
    */
   public popupText(): string {
-    const text: string = Array.from(this.vulnCount.entries())
-      .map(([provider, vulnCount]) => `Found ${vulnCount} direct ${this.singularOrPlural(vulnCount)} in ${this.uri.fsPath} for ${this.capitalizeEachWord(provider)} Provider.`)
-      .join(' ');
-    return text || this.warningText().replace(/\$\((.*?)\)/g, '');
+    const text: string = `Found ${this.vulns.size} direct ${this.singularOrPlural(this.vulns.size)} in ${this.uri.fsPath}.`;
+    return this.vulns.size > 0 ? text : this.warningText().replace(/\$\((.*?)\)/g, '');
   }
 
   /**

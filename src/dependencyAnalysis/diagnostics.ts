@@ -61,9 +61,11 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
             this.createCodeAction(loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic);
           }
 
-          const vulnProvider = dd.sourceId.split('(')[0];
-          const issuesCount = dd.issuesCount;
-          this.vulnCount.set(vulnProvider, (this.vulnCount.get(vulnProvider) || 0) + issuesCount);
+          for (const vuln of dd.issues) {
+            if (vuln.id) {
+              this.vulns.add(vuln.id!);
+            }
+          }
         });
       }
       DiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);

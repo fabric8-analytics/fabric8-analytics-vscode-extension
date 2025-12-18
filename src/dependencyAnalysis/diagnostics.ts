@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { DependencyMap, IDependencyProvider, getRange } from '../dependencyAnalysis/collector';
+import { Dependency, DependencyMap, IDependencyProvider, getRange } from '../dependencyAnalysis/collector';
 import { IPositionedContext } from '../positionTypes';
 import { executeComponentAnalysis, DependencyData } from './analysis';
 import { Vulnerability } from '../vulnerability';
@@ -58,7 +58,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
           // TODO: we never use DiagnosticSeverity.Hint aka 3, so this always selects dd.remediationRef
           const actionRef = vulnerabilityDiagnostic.severity < 3 ? dd.remediationRef : dd.recommendationRef;
           if (actionRef) {
-            this.createCodeAction(loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic);
+            this.createCodeAction(dependency, loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic);
           }
 
           for (const vuln of dd.issues) {
@@ -81,12 +81,11 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
    * @param vulnerabilityDiagnostic - Vulnerability diagnostic object.
    * @private
    */
-  private createCodeAction(loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
-    const dependency = ref;
-    const switchToVersion = dependency.split('@')[1];
+  private createCodeAction(dependency: Dependency, loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
+    const switchToVersion = ref.split('@')[1];
     const versionReplacementString = context ? context.value.replace(VERSION_PLACEHOLDER, switchToVersion) : switchToVersion;
     const title = `Switch to version ${switchToVersion} for ${sourceId}`;
-    const codeAction = generateSwitchToRecommendedVersionAction(title, dependency, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath);
+    const codeAction = generateSwitchToRecommendedVersionAction(title, ref, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath, dependency.version);
     registerCodeAction(this.diagnosticFilePath, loc, codeAction);
   }
 }

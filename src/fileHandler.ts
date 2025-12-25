@@ -10,10 +10,11 @@ import { DependencyProvider as BuildGradle } from './providers/build.gradle';
 import { ImageProvider as Docker } from './providers/docker';
 import { globalConfig } from './config';
 import { DepOutputChannel } from './depOutputChannel';
+import { TokenProvider } from './tokenProvider';
 
 interface MatcherConfig {
   pattern: RegExp
-  callback(path: Uri, contents: string): Promise<void>
+  callback(tokenProvider: TokenProvider, path: Uri, contents: string): Promise<void>
   providerName: string
 }
 
@@ -21,32 +22,32 @@ export class AnalysisMatcher {
   private static readonly matchers: ReadonlyArray<MatcherConfig> = [
     {
       pattern: /^package\.json$/,
-      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new PackageJson()); },
+      callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new PackageJson()); },
       providerName: 'npm'
     },
     {
       pattern: /^pom\.xml$/,
-      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new PomXml()); },
+      callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new PomXml()); },
       providerName: 'maven'
     },
     {
       pattern: /^go\.mod$/,
-      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new GoMod()); },
+      callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new GoMod()); },
       providerName: 'go'
     },
     {
       pattern: /^requirements\.txt$/,
-      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new RequirementsTxt()); },
+      callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new RequirementsTxt()); },
       providerName: 'requirements'
     },
     {
       pattern: /^build\.gradle$/,
-      callback: (path, contents) => { return dependencyDiagnostics.performDiagnostics(path, contents, new BuildGradle()); },
+      callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new BuildGradle()); },
       providerName: 'gradle'
     },
     {
       pattern: /^(Dockerfile|Containerfile)/,
-      callback: (path, contents) => { return imageDiagnostics.performDiagnostics(path, contents, new Docker()); },
+      callback: (tokenProvider, path, contents) => { return imageDiagnostics.performDiagnostics(tokenProvider, path, contents, new Docker()); },
       providerName: 'docker'
     }
   ];
@@ -59,7 +60,7 @@ export class AnalysisMatcher {
     }
   }
 
-  async handle(doc: TextDocument, outputChannel: DepOutputChannel) {
+  async handle(tokenProvider: TokenProvider, doc: TextDocument, outputChannel: DepOutputChannel) {
     const excludeMatch = globalConfig.excludePatterns.find(pattern => pattern.match(doc.uri.fsPath));
     if (excludeMatch) {
       outputChannel.debug(`skipping "${doc.uri.fsPath}" due to matching ${excludeMatch.pattern}`);
@@ -68,7 +69,7 @@ export class AnalysisMatcher {
     const matcher = AnalysisMatcher.pathToConfig(doc.uri);
     if (matcher) {
       outputChannel.info(`generating component analysis diagnostics for "${doc.fileName}"`);
-      await matcher.callback(doc.uri, doc.getText());
+      await matcher.callback(tokenProvider, doc.uri, doc.getText());
       outputChannel.info(`done generating component analysis diagnostics for "${doc.fileName}"`);
     }
   }

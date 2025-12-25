@@ -14,6 +14,7 @@ import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/Anal
 import { Source } from '@trustify-da/trustify-da-api-model/model/v5/Source';
 import { DependencyReport } from '@trustify-da/trustify-da-api-model/model/v5/DependencyReport';
 import { Issue } from '@trustify-da/trustify-da-api-model/model/v5/Issue';
+import { TokenProvider } from '../tokenProvider';
 
 /**
  * Represents a source object with an ID and dependencies array.
@@ -189,7 +190,7 @@ class AnalysisResponse {
  * @param provider - The dependency provider of the corresponding ecosystem.
  * @returns A Promise resolving to an AnalysisResponse object.
  */
-async function executeComponentAnalysis(diagnosticFilePath: Uri, provider: IDependencyProvider, options: Options): Promise<AnalysisResponse> {
+async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnosticFilePath: Uri, provider: IDependencyProvider, options: Options): Promise<AnalysisResponse> {
   const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options);
 
   return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider);

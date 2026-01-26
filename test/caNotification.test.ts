@@ -26,7 +26,7 @@ suite('CANotification module', () => {
             done: null,
             uri: Uri.parse('', false),
             diagCount: null,
-            vulnCount: null,
+            vulns: null,
         });
 
         expect(notification.errorMsg()).to.equal('');
@@ -44,7 +44,7 @@ suite('CANotification module', () => {
             done: false,
             uri: Uri.parse('file:///mock/path'),
             diagCount: null,
-            vulnCount: null,
+            vulns: null,
         });
 
         expect(notification.errorMsg()).to.equal('');
@@ -56,71 +56,67 @@ suite('CANotification module', () => {
     });
 
     test('should create an instance with provided data when CA has completed successfully with one vulnerability from one vulnerability provider', async () => {
-        const mockVulnCountMap = new Map<string, number>();
-        mockVulnCountMap.set('snyk', 1);
+        const mockVulnCountMap = new Set<string>(['CVE-0001']);
         const notification = new CANotification({
             errorMessage: null,
             done: true,
             uri: Uri.parse('file:///mock/path'),
             diagCount: 1,
-            vulnCount: mockVulnCountMap,
+            vulns: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
         expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
-        expect(notification.popupText()).to.equal('Found 1 direct vulnerability in /mock/path for Snyk Provider.');
+        expect(notification.popupText()).to.equal('Found 1 direct vulnerability in /mock/path.');
         expect(notification.statusText()).to.equal('$(warning) 1 direct vulnerability found for all the providers combined');
     });
 
     test('should create an instance with provided data when CA has completed successfully with many vulnerabilities from one vulnerability provider', async () => {
-        const mockVulnCountMap = new Map<string, number>();
-        mockVulnCountMap.set('snyk', 3);
+        const mockVulnCountMap = new Set<string>(['CVE-0001', 'CVE-0002', 'CVE-0003']);
         const notification = new CANotification({
             errorMessage: null,
             done: true,
             uri: Uri.parse('file:///mock/path'),
             diagCount: 2,
-            vulnCount: mockVulnCountMap,
+            vulns: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
         expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
-        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities in /mock/path for Snyk Provider.');
+        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities in /mock/path.');
         expect(notification.statusText()).to.equal('$(warning) 3 direct vulnerabilities found for all the providers combined');
     });
 
     test('should create an instance with provided data when CA has completed successfully with vulnerabilities from multiple vulnerability providers', async () => {
-        const mockVulnCountMap = new Map<string, number>();
-        mockVulnCountMap.set('snyk', 3);
-        mockVulnCountMap.set('oss-index', 1);
+        const mockVulnCountMap = new Set<string>(['CVE-0001', 'CVE-0002', 'CVE-0003']);
         const notification = new CANotification({
             errorMessage: null,
             done: true,
             uri: Uri.parse('file:///mock/path'),
             diagCount: 2,
-            vulnCount: mockVulnCountMap,
+            vulns: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
         expect(notification.origin().toString()).to.equal('file:///mock/path');
         expect(notification.isDone()).to.be.true;
         expect(notification.hasWarning()).to.be.true;
-        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities in /mock/path for Snyk Provider. Found 1 direct vulnerability in /mock/path for Oss-Index Provider.');
-        expect(notification.statusText()).to.equal('$(warning) 4 direct vulnerabilities found for all the providers combined');
+        expect(notification.popupText()).to.equal('Found 3 direct vulnerabilities in /mock/path.');
+        expect(notification.statusText()).to.equal('$(warning) 3 direct vulnerabilities found for all the providers combined');
     });
 
     test('should create an instance with provided data when CA has completed successfully with no vulnerabilities', async () => {
-        const mockVulnCountMap = new Map<string, number>();
+        const mockVulnCountMap = new Set<string>();
         const notification = new CANotification({
             errorMessage: null,
             done: true,
             uri: Uri.parse('file:///mock/path'),
             diagCount: 0,
-            vulnCount: mockVulnCountMap,
+            vulns: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
@@ -132,13 +128,13 @@ suite('CANotification module', () => {
     });
 
     test('should create an instance with provided data when CA has completed successfully with diagnostic but no vulnerabilities', async () => {
-        const mockVulnCountMap = new Map<string, number>();
+        const mockVulnCountMap = new Set<string>();
         const notification = new CANotification({
             errorMessage: null,
             done: true,
             uri: Uri.parse('file:///mock/path'),
             diagCount: 1,
-            vulnCount: mockVulnCountMap,
+            vulns: mockVulnCountMap,
         });
 
         expect(notification.errorMsg()).to.equal('');
@@ -155,7 +151,7 @@ suite('CANotification module', () => {
             done: null,
             uri: Uri.parse('file:///mock/path'),
             diagCount: null,
-            vulnCount: null,
+            vulns: null,
         });
 
         expect(notification.errorMsg()).to.equal('Mock error message');

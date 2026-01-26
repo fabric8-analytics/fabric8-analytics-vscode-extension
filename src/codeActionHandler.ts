@@ -8,7 +8,8 @@ import * as path from 'path';
 
 import { globalConfig } from './config';
 import { RHDA_DIAGNOSTIC_SOURCE } from './constants';
-import { CodeAction, CodeActionKind, Diagnostic, Uri, WorkspaceEdit } from 'vscode';
+import { CodeAction, CodeActionKind, Diagnostic, Position, Range, Uri, WorkspaceEdit } from 'vscode';
+import { IPositionedString } from './positionTypes';
 
 const codeActionsMap: Map<string, Map<string, CodeAction[]>> = new Map<string, Map<string, CodeAction[]>>();
 
@@ -91,9 +92,10 @@ function generateFullStackAnalysisAction(): CodeAction {
  * @param versionReplacementString - The version replacement string.
  * @param diagnostic - The diagnostic information.
  * @param uri - The URI of the file.
+ * @param replacementRange - Optional range to use for the replacement instead of diagnostic range to be used rather than deriving from the diagnostic
  * @returns A CodeAction object for switching to the recommended version.
  */
-function generateSwitchToRecommendedVersionAction(title: string, dependency: string, versionReplacementString: string, diagnostic: Diagnostic, uri: Uri): CodeAction {
+function generateSwitchToRecommendedVersionAction(title: string, dependency: string, versionReplacementString: string, diagnostic: Diagnostic, uri: Uri, replacementRange?: IPositionedString): CodeAction {
   const codeAction: CodeAction = {
     title: title,
     diagnostics: [diagnostic],
@@ -101,7 +103,10 @@ function generateSwitchToRecommendedVersionAction(title: string, dependency: str
     edit: new WorkspaceEdit()
   };
 
-  codeAction.edit!.insert(uri, diagnostic.range.start, versionReplacementString);
+  codeAction.edit!.replace(uri, replacementRange ? new Range(
+    new Position(replacementRange.position.line - 1, replacementRange.position.column - 1),
+    new Position(replacementRange.position.line - 1, replacementRange.position.column - 1 + replacementRange.value.length)
+  ) : diagnostic.range, versionReplacementString);
 
   codeAction.command = {
     title: 'Track recommendation acceptance',

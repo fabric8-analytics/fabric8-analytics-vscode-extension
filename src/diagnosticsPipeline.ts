@@ -20,9 +20,9 @@ export abstract class AbstractDiagnosticsPipeline<T> {
   */
   protected diagnostics: Diagnostic[] = [];
   /**
-   * A map to hold vulnerability count information.
+   * A set to hold all found vulnerability IDs.
    */
-  protected vulnCount: Map<string, number> = new Map<string, number>();
+  protected vulns: Set<string> = new Set<string>();
 
   static diagnosticsCollection = vscode.languages.createDiagnosticCollection('rhda');
 
@@ -46,7 +46,7 @@ export abstract class AbstractDiagnosticsPipeline<T> {
       done: true,
       uri: this.diagnosticFilePath,
       diagCount: this.diagnostics.length,
-      vulnCount: this.vulnCount,
+      vulns: this.vulns,
       metrics,
     });
   }

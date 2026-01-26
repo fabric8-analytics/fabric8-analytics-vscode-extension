@@ -193,7 +193,7 @@ suite('Code Action Handler tests', () => {
 
         const edit = new WorkspaceEdit();
         const uri = Uri.file('mock/path/pom.xml');
-        edit.insert(uri, mockDiagnostic1[0].range.start, 'mockVersionReplacementString');
+        edit.replace(uri, mockDiagnostic1[0].range, 'mockVersionReplacementString');
         const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage@mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri);
         expect(codeAction).to.deep.equal(
             {

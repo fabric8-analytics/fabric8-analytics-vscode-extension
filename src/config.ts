@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 
-import { GlobalState, DEFAULT_RHDA_REPORT_FILE_PATH, SNYK_TOKEN_KEY } from './constants';
+import { GlobalState, DEFAULT_RHDA_REPORT_FILE_PATH } from './constants';
 import * as commands from './commands';
 import { getTelemetryId } from './redhatTelemetry';
 import { Minimatch } from 'minimatch';
@@ -63,6 +63,8 @@ class Config {
   private readonly DEFAULT_SKOPEO_EXECUTABLE = 'skopeo';
   private readonly DEFAULT_DOCKER_EXECUTABLE = 'docker';
   private readonly DEFAULT_PODMAN_EXECUTABLE = 'podman';
+  private readonly DEFAULT_EXHORT_DEV_URL = 'https://exhort.stage.devshift.net';
+  private readonly DEFAULT_EXHORT_PROD_URL = 'https://rhda.rhcloud.com';
 
   /**
    * Creates an instance of the Config class.
@@ -95,11 +97,13 @@ class Config {
     const redhatPreferGradleWrapper = vscode.workspace.getConfiguration('java.import.gradle.wrapper').get('enabled', true);
     const preferGradleWrapper = rhdaPreferGradleWrapper === 'fallback' ? redhatPreferGradleWrapper : rhdaPreferGradleWrapper === 'true';
 
+    const defaultBackendUrl = process.env['TRUSTIFY_DA_DEV_MODE'] === 'true' ? this.DEFAULT_EXHORT_DEV_URL : this.DEFAULT_EXHORT_PROD_URL;
+
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
     this.recommendationsEnabled = rhdaConfig.recommendations.enabled;
     this.utmSource = GlobalState.UTM_SOURCE;
-    this.backendUrl = rhdaConfig.backendUrl || this.DEFAULT_BACKEND_URL;
+    this.backendUrl = rhdaConfig.backendUrl || defaultBackendUrl;
     this.exhortProxyUrl = this.getEffectiveHttpProxyUrl();
     /* istanbul ignore next */
     this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
@@ -200,9 +204,6 @@ class Config {
     process.env['VSCEXT_TRUSTIFY_DA_DOCKER_PATH'] = this.exhortDockerPath;
     process.env['VSCEXT_TRUSTIFY_DA_PODMAN_PATH'] = this.exhortPodmanPath;
     process.env['VSCEXT_TRUSTIFY_DA_IMAGE_PLATFORM'] = this.exhortImagePlatform;
-
-    // const token = await this.getSnykToken();
-    // process.env['VSCEXT_TRUSTIFY_DA_SNYK_TOKEN'] = token;
   }
 
   /**
@@ -220,57 +221,6 @@ class Config {
    */
   linkToSecretStorage(context: { secrets: vscode.SecretStorage }) {
     this.secrets = context.secrets;
-  }
-
-  /**
-   * Sets the Snyk token.
-   * @param token The Snyk token.
-   * @returns A Promise that resolves when the token is set.
-   */
-  async setSnykToken(token: string | undefined): Promise<void> {
-    if (!token) { return; }
-
-    try {
-      await this.secrets.store(SNYK_TOKEN_KEY, token);
-      vscode.window.showInformationMessage('Snyk token has been saved successfully');
-    } catch (error) {
-      vscode.window.showErrorMessage(`Failed to save Snyk token to VSCode Secret Storage, Error: ${(error as Error).message}`);
-    }
-  }
-
-  /**
-   * Gets the Snyk token.
-   * @returns A Promise that resolves with the Snyk token.
-   */
-  async getSnykToken(): Promise<string> {
-    try {
-      const token = await this.secrets.get(SNYK_TOKEN_KEY);
-      return token || '';
-    } catch (error) {
-      vscode.window.showErrorMessage(`Failed to get Snyk token from VSCode Secret Storage, Error: ${(error as Error).message}`);
-      await this.clearSnykToken(false);
-      return '';
-    }
-  }
-
-  /**
-   * Clears the Snyk token.
-   * @returns A Promise that resolves when the token is cleared.
-   */
-  async clearSnykToken(notify: boolean): Promise<void> {
-    try {
-      await this.secrets.delete(SNYK_TOKEN_KEY);
-      if (notify) {
-        vscode.window.showInformationMessage('Snyk token has been removed successfully');
-      }
-    } catch (error) {
-      const errorMsg = `Failed to delete Snyk token from VSCode Secret Storage, Error: ${(error as Error).message}`;
-      if (notify) {
-        vscode.window.showErrorMessage(errorMsg);
-      } else {
-        console.error(errorMsg);
-      }
-    }
   }
 }
 

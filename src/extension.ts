@@ -357,7 +357,6 @@ export async function activate(context: vscode.ExtensionContext) {
     disposableStackAnalysisCommand,
     disposableStackLogsCommand,
     disposableTrackRecommendationAcceptance,
-    // disposableSetSnykToken,
     caStatusBarProvider,
   );
 

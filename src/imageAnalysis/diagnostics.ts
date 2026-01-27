@@ -14,6 +14,7 @@ import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { globalConfig } from '../config';
 import { type IOptions } from '../imageAnalysis';
+import { TokenProvider } from '../tokenProvider';
 
 /**
  * Implementation of DiagnosticsPipeline interface.
@@ -89,10 +90,11 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
  * @param provider - The image provider of the corresponding ecosystem.
  * @returns A Promise that resolves when diagnostics are completed.
  */
-async function performDiagnostics(diagnosticFilePath: Uri, contents: string, provider: IImageProvider) {
+async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePath: Uri, contents: string, provider: IImageProvider) {
   try {
     const options: IOptions = {
       'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
+      'TRUSTIFY_TELEMETRY_ID': globalConfig.telemetryId ?? '',
       'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
       'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,

@@ -50,7 +50,7 @@ function parseImageReference(image: IImageRef, options: IOptions): ImageRef {
  * @param source The source for which the token is being validated.
  * @returns A promise resolving after validating the token.
  */
-async function tokenValidationService(options: { [key: string]: string }, source: string): Promise<string | undefined> {
+async function tokenValidationService(options: Options, source: string): Promise<string | undefined> {
   try {
     // Get token validation status code
     const response = await exhort.validateToken(options);

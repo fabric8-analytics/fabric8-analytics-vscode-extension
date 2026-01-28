@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.10.2 (December 19th 2025)
+
+### Enhancements
+
+- Added UI configuration option for user-configured Exhort backend URL location. See [PR#852](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/852) for details.
+
+### Fixes
+
+- Fixed code actions prepending rather than replacing version recommendations. See [PR#856](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/856) for details.
+- Improved correctness of status bar display by deduplicating vulnerabilities across providers. See [PR#858](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/858) for details.
+- Fixed error displayed when Dockerfile/Containerfile contained no base image references. See [PR#845](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/845) for details.
+
 ## 0.10.0 (September 8th 2025)
 
 ### Enhancements

@@ -77,53 +77,14 @@ jobs:
         run: |
           version="${{ steps.bump.outputs.version }}"
           version=${version#v}
-          notes=$(echo -e "## Changelog\n$(sed -n "/## $version/,/^##/p" ./CHANGELOG.md | grep -v '##')")
-          if [ -z "$notes" ]; then
+          changelog_header=$(grep "## $version" ./CHANGELOG.md || true)
+          if [ -z "$changelog_header" ]; then
             echo "Release notes are missing for version $version."
             exit 1
-          else
-            echo "version=$version" >> "$GITHUB_OUTPUT"
-
-            notes="${notes//$'\''/%27}"
-            notes="${notes//$'\n'/'%0A'}"
-            notes="${notes//$'\r'/'%0D'}"
-            delimiter="$(openssl rand -hex 8)"
-            echo "notes<<${delimiter}" >> "$GITHUB_OUTPUT"
-            echo "$notes" >> "$GITHUB_OUTPUT"
-            echo "${delimiter}" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Update current version date in changelog
-        run: |
-          day_suffix=$(date +"%e" | sed 's/^[[:space:]]*//')   
-
-          if [ "$day_suffix" = "1" ] || [ "$day_suffix" = "21" ] || [ "$day_suffix" = "31" ]; then
-            suffix="st"
-          elif [ "$day_suffix" = "2" ] || [ "$day_suffix" = "22" ]; then
-            suffix="nd"
-          elif [ "$day_suffix" = "3" ] || [ "$day_suffix" = "23" ]; then
-            suffix="rd"
-          else
-            suffix="th"
-          fi
-
-          today="$(date +"%b %-d")$suffix $(date +"%Y")"
-          version="${{ steps.bump.outputs.version }}"
-
-          if grep -qE "## $version \([^)]*\)" ./CHANGELOG.md; then
-            current_date=$(grep -oP "(?<=## $version \()[^\)]*" ./CHANGELOG.md)
-
-            if [ "$current_date" != "$today" ]; then
-              sed -E -i "s/## $version \([^)]*\)/## $version ($today)/" CHANGELOG.md
-            fi
-
-          else
-            sed -E -i "s/## $version/## $version ($today)/" CHANGELOG.md
           fi
 
       - name: Commit changes
         run: |
-          git add CHANGELOG.md
           git add package.json
           git add package-lock.json
           git commit -m "[release] ${{ steps.bump.outputs.version }}"
@@ -148,6 +109,5 @@ jobs:
             
             Changes:
             - Updated version in package.json
-            - Updated changelog
 
       

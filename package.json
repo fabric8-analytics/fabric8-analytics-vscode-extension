@@ -76,11 +76,6 @@
         "command": "rhda.stackLogs",
         "title": "Debug logs",
         "category": "Red Hat Dependency Analytics"
-      },
-      {
-        "command": "rhda.authenticate",
-        "title": "Authenticate",
-        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {

@@ -395,7 +395,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<vscode
     caStatusBarProvider.showAuthenticated();
   } else {
     outputChannelDep.info('User not authenticated (authentication is optional)');
-    caStatusBarProvider.showAuthRequired();
+    // TODO: When enabling OIDC auth, be sure to add the rhda.authenticate command to package.json
+    //  {"command": "rhda.authenticate", "title": "Authenticate", "category": "Red Hat Dependency Analytics"}
+
+    /* caStatusBarProvider.showAuthRequired();
 
     const neverShowAuthPrompt = context.globalState.get<boolean>('rhda-dont-show-auth-prompt', false);
     if (!neverShowAuthPrompt) {
@@ -414,7 +417,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<vscode
           outputChannelDep.info('User chose to never show authentication prompt again');
         }
       });
-    }
+    } */
   }
 
   await enableExtensionFeatures(context, tokenProvider);

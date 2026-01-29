@@ -64,7 +64,6 @@ jobs:
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
               tag_name: '${{ steps.release_version.outputs.version }}',
               name: '${{ steps.release_version.outputs.version }}',
-              body: '${{ steps.release-notes.outputs.notes }}',
               prerelease: false,
               generate_release_notes: true
             })

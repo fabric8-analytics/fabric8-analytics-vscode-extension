@@ -52,6 +52,7 @@ suite('Image Analysis Collector tests', () => {
 
     const options: IOptions = {
         'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
+        'TRUSTIFY_TELEMETRY_ID': globalConfig.telemetryId ?? '',
         'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
         'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
         'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,

@@ -48,6 +48,49 @@ class CAStatusBarProvider implements Disposable {
   }
 
   /**
+   * Shows authentication required status in the status bar.
+   */
+  public showAuthRequired(): void {
+    this.statusBarItem.text = `$(account) RHDA: Not Signed In`;
+    this.statusBarItem.command = {
+      title: 'Authenticate with RHDA',
+      command: 'rhda.authenticate',
+    };
+    this.statusBarItem.tooltip = 'Click to sign in for enhanced RHDA features (optional)';
+    this.statusBarItem.show();
+  }
+
+  /**
+   * Shows authenticated status in the status bar.
+   */
+  public showAuthenticated(): void {
+    this.statusBarItem.text = `$(verified) RHDA: Authenticated`;
+    this.statusBarItem.command = undefined; // No command needed when authenticated
+    this.statusBarItem.tooltip = 'RHDA is authenticated and ready for dependency analysis';
+    this.statusBarItem.show();
+  }
+
+  /**
+   * Shows session expired status in the status bar.
+   */
+  public showSessionExpired(): void {
+    this.statusBarItem.text = `$(warning) RHDA: Session Expired`;
+    this.statusBarItem.command = {
+      title: 'Re-authenticate with RHDA',
+      command: 'rhda.authenticate',
+    };
+    this.statusBarItem.tooltip = 'Your RHDA session has expired. Click to re-authenticate and restore functionality.';
+    this.statusBarItem.show();
+  }
+
+  /**
+   * Hides the status bar item.
+   */
+  public hide(): void {
+    this.statusBarItem.hide();
+  }
+
+  /**
    * Disposes of the status bar item.
    */
   public dispose(): void {

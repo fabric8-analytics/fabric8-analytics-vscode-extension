@@ -11,12 +11,14 @@ import { Options } from '@trustify-da/trustify-da-javascript-client';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
+import { TokenProvider } from './tokenProvider';
 
 /**
  * Represents options for image analysis.
  */
 interface IOptions extends Options {
   TRUSTIFY_DA_BACKEND_URL: string | undefined;
+  TRUSTIFY_TELEMETRY_ID: string;
   TRUSTIFY_DA_TOKEN: string;
   TRUSTIFY_DA_SOURCE: string;
   TRUSTIFY_DA_SYFT_PATH: string;
@@ -157,7 +159,7 @@ class DockerImageAnalysis {
   /**
    * Runs the image analysis process.
    */
-  public async runImageAnalysis() {
+  public async runImageAnalysis(tokenProvider: TokenProvider) {
     return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
       p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
@@ -174,7 +176,8 @@ class DockerImageAnalysis {
         }
 
         const options: IOptions = {
-          'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
+          'TRUSTIFY_DA_TOKEN': await tokenProvider.getToken() ?? '',
+          'TRUSTIFY_TELEMETRY_ID': globalConfig.telemetryId ?? '',
           'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
           'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
           'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,
@@ -216,9 +219,9 @@ class DockerImageAnalysis {
  * @param filePath - The path to the image file to analyze.
  * @returns A Promise resolving to an Analysis Report HTML.
  */
-async function executeDockerImageAnalysis(filePath: string, outputChannel: DepOutputChannel): Promise<string> {
+async function executeDockerImageAnalysis(tokenProvider: TokenProvider, filePath: string, outputChannel: DepOutputChannel): Promise<string> {
   const dockerImageAnalysis = new DockerImageAnalysis(filePath, outputChannel);
-  await dockerImageAnalysis.runImageAnalysis();
+  await dockerImageAnalysis.runImageAnalysis(tokenProvider);
   return dockerImageAnalysis.imageAnalysisReportHtml;
 }
 

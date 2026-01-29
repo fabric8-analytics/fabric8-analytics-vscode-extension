@@ -9,12 +9,13 @@ import { globalConfig } from '../src/config';
 import { executeDockerImageAnalysis } from '../src/imageAnalysis';
 import * as rhda from '../src/rhda';
 import { DepOutputChannel } from '../src/depOutputChannel';
+import { MockTokenProvider } from '../src/tokenProvider';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 const outputChannel = new DepOutputChannel('test');
 
-suite('ImageAnalysis module', () => {
+suite('ImageAnalysis module', async () => {
     let sandbox: sinon.SinonSandbox;
     const mockPath = '/mock/path/to/file';
     const mockReponse = '<html> mockResponse </html>';
@@ -49,7 +50,7 @@ FROM scratch
         sandbox.stub(fs, 'readFileSync').returns(encodedMockFileContent);
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
 
-        const response = await executeDockerImageAnalysis(mockPath, outputChannel);
+        const response = await executeDockerImageAnalysis(new MockTokenProvider(), mockPath, outputChannel);
 
         expect(imageAnalysisServiceStub.calledOnce).to.be.true;
         expect(response).to.eq(mockReponse);
@@ -61,7 +62,7 @@ FROM scratch
         sandbox.stub(fs, 'readFileSync').returns(encodedMockFileContent);
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
 
-        await executeDockerImageAnalysis(mockPath, outputChannel)
+        await executeDockerImageAnalysis(new MockTokenProvider(), mockPath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'));
             })
@@ -76,7 +77,7 @@ FROM scratch
         sandbox.stub(fs, 'readFileSync').throws(new Error('Mock Error'));
         const updateCurrentWebviewPanelSpy = sandbox.spy(rhda, 'updateCurrentWebviewPanel');
 
-        await executeDockerImageAnalysis(mockPath, outputChannel)
+        await executeDockerImageAnalysis(new MockTokenProvider(), mockPath, outputChannel)
             .then(() => {
                 throw (new Error('should have thrown error'));
             })

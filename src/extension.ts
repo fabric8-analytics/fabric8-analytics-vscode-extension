@@ -11,8 +11,8 @@ import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
 import { CANotification, CANotificationData } from './caNotification';
 import { DepOutputChannel } from './depOutputChannel';
-import { record, startUp, TelemetryActions } from './redhatTelemetry';
-import { applySettingNameMappings, buildLogErrorMessage } from './utils';
+import { record, initTelemetry, TelemetryActions } from './redhatTelemetry';
+import { applySettingNameMappings, buildLogErrorMessage, buildNotificationErrorMessage } from './utils';
 import { clearCodeActionsMap, getDiagnosticsCodeActions } from './codeActionHandler';
 import { AnalysisMatcher } from './fileHandler';
 import { EventEmitter } from 'node:events';
@@ -21,22 +21,15 @@ import { LLMAnalysisReportPanel } from './llmAnalysisReportPanel';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import CliTable3 = require('cli-table3');
 import { Language, Parser, Query } from 'web-tree-sitter';
+import { getValidAccessToken, performOIDCAuthorizationFlow } from './oidcAuthentication';
+import { TokenProvider, VSCodeTokenProvider } from './tokenProvider';
 
 export let outputChannelDep: DepOutputChannel;
 
 export const notifications = new EventEmitter();
 
-/**
- * Activates the extension upon launch.
- * @param context - The extension context.
- */
-export async function activate(context: vscode.ExtensionContext) {
-  outputChannelDep = new DepOutputChannel();
-  outputChannelDep.info(`starting RHDA extension ${context.extension.packageJSON['version']}`);
-
-  globalConfig.linkToSecretStorage(context);
-
-  startUp(context);
+async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenProvider: TokenProvider): Promise<void> {
+  outputChannelDep.info('Initializing RHDA analysis features');
 
   context.subscriptions.push(vscode.languages.registerCodeActionsProvider('*', new class implements vscode.CodeActionProvider {
     provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, ctx: vscode.CodeActionContext): vscode.ProviderResult<vscode.CodeAction[]> {
@@ -45,14 +38,14 @@ export async function activate(context: vscode.ExtensionContext) {
   }()));
 
   const fileHandler = new AnalysisMatcher();
-  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => fileHandler.handle(doc, outputChannelDep)));
+  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => fileHandler.handle(tokenProvider, doc, outputChannelDep)));
   // Anecdotaly, some extension(s) may cause did-open events for files that aren't actually open in the editor,
   // so this will trigger CA for files not actually open.
-  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => fileHandler.handle(doc, outputChannelDep)));
+  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => fileHandler.handle(tokenProvider, doc, outputChannelDep)));
   context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => clearCodeActionsMap(doc.uri)));
   // Iterate all open docs, as there is (in general) no did-open event for these.
   for (const doc of vscode.workspace.textDocuments) {
-    fileHandler.handle(doc, outputChannelDep);
+    fileHandler.handle(tokenProvider, doc, outputChannelDep);
   }
 
   // show welcome message after first install or upgrade
@@ -265,7 +258,7 @@ export async function activate(context: vscode.ExtensionContext) {
         record(context, TelemetryActions.componentAnalysisVulnerabilityReportQuickfixOption, { manifest: fileName, fileName: fileName });
       }
       try {
-        const metrics = await generateRHDAReport(context, fspath, outputChannelDep);
+        const metrics = await generateRHDAReport(context, tokenProvider, fspath, outputChannelDep);
         record(context, TelemetryActions.vulnerabilityReportDone, {
           manifest: fileName,
           fileName: fileName,
@@ -307,7 +300,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  registerStackAnalysisCommands(context);
+  registerStackAnalysisCommands(context, tokenProvider);
 
   const showVulnerabilityFoundPrompt = async (msg: string, filePath: vscode.Uri) => {
     const fileName = path.basename(filePath.fsPath);
@@ -363,6 +356,73 @@ export async function activate(context: vscode.ExtensionContext) {
   vscode.workspace.onDidChangeConfiguration(() => {
     globalConfig.loadData();
   });
+}
+
+export async function activate(context: vscode.ExtensionContext): Promise<vscode.ExtensionContext> {
+  outputChannelDep = new DepOutputChannel();
+  outputChannelDep.info(`starting RHDA extension ${context.extension.packageJSON['version']}`);
+
+  globalConfig.linkToSecretStorage(context);
+
+  initTelemetry(context);
+
+  const tokenProvider = new VSCodeTokenProvider(context);
+
+  // Register authentication command (always available)
+  const authenticateCommand = vscode.commands.registerCommand('rhda.authenticate', async () => {
+    const existingToken = await getValidAccessToken(context);
+    if (existingToken) {
+      vscode.window.showInformationMessage('RHDA: Already authenticated!');
+      caStatusBarProvider.showAuthenticated();
+      return;
+    }
+
+    try {
+      outputChannelDep.info('🔄 Starting authentication flow...');
+      await performOIDCAuthorizationFlow(context);
+    } catch (error) {
+      outputChannelDep.error(`Authentication failed: ${buildLogErrorMessage(error as Error)}`);
+      vscode.window.showErrorMessage(`RHDA: Authentication failed. ${buildNotificationErrorMessage(error as Error)}`);
+      caStatusBarProvider.showAuthRequired(); // Keep showing auth required if failed
+    }
+  });
+  context.subscriptions.push(authenticateCommand);
+
+  // Check if user is already authenticated (optional)
+  const existingToken = await getValidAccessToken(context);
+  if (existingToken) {
+    outputChannelDep.info('User authenticated');
+    caStatusBarProvider.showAuthenticated();
+  } else {
+    outputChannelDep.info('User not authenticated (authentication is optional)');
+    // TODO: When enabling OIDC auth, be sure to add the rhda.authenticate command to package.json
+    //  {"command": "rhda.authenticate", "title": "Authenticate", "category": "Red Hat Dependency Analytics"}
+
+    /* caStatusBarProvider.showAuthRequired();
+
+    const neverShowAuthPrompt = context.globalState.get<boolean>('rhda-dont-show-auth-prompt', false);
+    if (!neverShowAuthPrompt) {
+      vscode.window.showInformationMessage(
+        'RHDA: You can optionally authenticate for enhanced features.',
+        'Authenticate',
+        'Do not show again'
+      ).then(selection => {
+        if (selection === 'Authenticate') {
+          performOIDCAuthorizationFlow(context).catch(error => {
+            outputChannelDep.error(`Authentication failed: ${buildLogErrorMessage(error)}`);
+            vscode.window.showErrorMessage(`RHDA: Authentication failed. ${buildNotificationErrorMessage(error as Error)}`);
+          });
+        } else if (selection === 'Do not show again') {
+          context.globalState.update('rhda-dont-show-auth-prompt', true);
+          outputChannelDep.info('User chose to never show authentication prompt again');
+        }
+      });
+    } */
+  }
+
+  await enableExtensionFeatures(context, tokenProvider);
+
+  return context;
 }
 
 /**
@@ -423,12 +483,12 @@ function showRHRepositoryRecommendationNotification() {
  * Registers stack analysis commands to track RHDA report generations.
  * @param context - The extension context.
  */
-function registerStackAnalysisCommands(context: vscode.ExtensionContext) {
+function registerStackAnalysisCommands(context: vscode.ExtensionContext, tokenProvider: TokenProvider) {
 
   const invokeFullStackReport = async (filePath: string) => {
     const fileName = path.basename(filePath);
     try {
-      const metrics = await generateRHDAReport(context, filePath, outputChannelDep);
+      const metrics = await generateRHDAReport(context, tokenProvider, filePath, outputChannelDep);
       record(context, TelemetryActions.vulnerabilityReportDone, {
         manifest: fileName,
         fileName: fileName,

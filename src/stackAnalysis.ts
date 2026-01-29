@@ -9,19 +9,21 @@ import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
 import { Options } from '@trustify-da/trustify-da-javascript-client';
+import { TokenProvider } from './tokenProvider';
 
 /**
  * Executes the RHDA stack analysis process.
  * @param manifestFilePath The file path to the manifest file for analysis.
  * @returns The stack analysis response string.
  */
-export async function executeStackAnalysis(manifestFilePath: string, outputChannel: DepOutputChannel): Promise<string> {
+export async function executeStackAnalysis(tokenProvider: TokenProvider, manifestFilePath: string, outputChannel: DepOutputChannel): Promise<string> {
   return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
     p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
     // set up configuration options for the stack analysis request
     const options: Options = {
       'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
+      'TRUSTIFY_DA_TELEMETRY_ID': globalConfig.telemetryId,
       'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
       'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,

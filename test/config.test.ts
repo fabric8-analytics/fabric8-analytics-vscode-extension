@@ -2,7 +2,6 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as vscode from 'vscode';
 
 import { globalConfig } from '../src/config';
 import { GlobalState } from '../src/constants';
@@ -33,7 +32,7 @@ suite('Config module', () => {
     expect(globalConfig.exhortProxyUrl).to.eq('');
     expect(globalConfig.matchManifestVersions).to.eq('true');
     expect(globalConfig.usePythonVirtualEnvironment).to.eq('false');
-    expect(globalConfig.useGoMVS).to.eq('false');
+    expect(globalConfig.useGoMVS).to.eq('true');
     expect(globalConfig.enablePythonBestEffortsInstallation).to.eq('false');
     expect(globalConfig.usePipDepTree).to.eq('false');
     expect(globalConfig.vulnerabilityAlertSeverity).to.eq('Error');
@@ -77,7 +76,7 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_PROXY_URL']).to.eq('');
     expect(process.env['VSCEXT_MATCH_MANIFEST_VERSIONS']).to.eq('true');
     expect(process.env['VSCEXT_USE_PYTHON_VIRTUAL_ENVIRONMENT']).to.eq('false');
-    expect(process.env['VSCEXT_USE_GO_MVS']).to.eq('false');
+    expect(process.env['VSCEXT_USE_GO_MVS']).to.eq('true');
     expect(process.env['VSCEXT_ENABLE_PYTHON_BEST_EFFORTS_INSTALLATION']).to.eq('false');
     expect(process.env['VSCEXT_USE_PIP_DEP_TREE']).to.eq('false');
     expect(process.env['VSCEXT_VULNERABILITY_ALERT_SEVERITY']).to.eq('Error');

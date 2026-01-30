@@ -93,9 +93,9 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
 async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePath: Uri, contents: string, provider: IImageProvider) {
   try {
     const options: IOptions = {
-      'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
+      'TRUSTIFY_DA_TOKEN': await tokenProvider.getToken() ?? '',
       'TRUSTIFY_TELEMETRY_ID': globalConfig.telemetryId ?? '',
-      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId ?? '',
+      'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
       'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'TRUSTIFY_DA_SYFT_PATH': globalConfig.exhortSyftPath,
       'TRUSTIFY_DA_SYFT_CONFIG_PATH': globalConfig.exhortSyftConfigPath,

@@ -311,7 +311,7 @@
         },
         "redHatDependencyAnalytics.useGoMVS": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Use the Minimal Version Selection (MVS) algorithm to select a set of module versions to use when building Go packages.",
           "scope": "window"
         },

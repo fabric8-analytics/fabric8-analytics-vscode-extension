@@ -102,8 +102,9 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
   try {
     // Define configuration options for the component analysis request
     const options: Options = {
+      'TRUSTIFY_DA_TOKEN': await tokenProvider.getToken() ?? '',
+      'TRUSTIFY_TELEMETRY_ID': globalConfig.telemetryId ?? '',
       'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
-      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
       'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
       'TRUSTIFY_DA_PROXY_URL': globalConfig.exhortProxyUrl,

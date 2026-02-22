@@ -455,7 +455,7 @@
     "cli-table3": "^0.6.5",
     "fs": "^0.0.1-security",
     "json-to-ast": "^2.1.0",
-    "minimatch": "^10.0.3",
+    "minimatch": "^10.2.1",
     "mustache": "^4.2.0",
     "node-html-parser": "^7.0.1",
     "openid-client": "^6.8.0",

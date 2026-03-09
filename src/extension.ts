@@ -39,9 +39,21 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
 
   const fileHandler = new AnalysisMatcher();
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => fileHandler.handle(tokenProvider, doc, outputChannelDep)));
-  // Anecdotaly, some extension(s) may cause did-open events for files that aren't actually open in the editor,
-  // so this will trigger CA for files not actually open.
-  context.subscriptions.push(vscode.workspace.onDidOpenTextDocument((doc) => fileHandler.handle(tokenProvider, doc, outputChannelDep)));
+  // Anecdotally, some extension(s) may cause did-open events for files that aren't actually open in the editor,
+  // so instead of onDidOpenTextDocument, we track visible editors to detect newly opened documents.
+  let visibleEditors = new Set(vscode.window.visibleTextEditors.map((editor) => editor.document.uri.toString()));
+  context.subscriptions.push(vscode.window.onDidChangeVisibleTextEditors((editors) => {
+    const newVisible = new Set(editors.filter(editor => editor.document.uri.scheme === 'file').map((editor) => editor.document.uri.toString()));
+    for (const uri of newVisible) {
+      if (!visibleEditors.has(uri)) {
+        const editor = editors.find((e) => e.document.uri.toString() === uri);
+        if (editor) {
+          fileHandler.handle(tokenProvider, editor.document, outputChannelDep);
+        }
+      }
+    }
+    visibleEditors = newVisible;
+  }));
   context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => clearCodeActionsMap(doc.uri)));
   // Iterate all open docs, as there is (in general) no did-open event for these.
   for (const doc of vscode.workspace.textDocuments) {

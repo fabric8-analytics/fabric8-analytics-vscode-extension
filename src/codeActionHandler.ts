@@ -141,4 +141,28 @@ function generateRedirectToRecommendedVersionAction(title: string, imageRef: str
   return codeAction;
 }
 
-export { getCodeActionsMap, clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateRedirectToRecommendedVersionAction, getDiagnosticsCodeActions };
+/**
+ * Generates a code action to update the manifest license from the LICENSE file.
+ * @param fileLicense - The license identifier from the LICENSE file.
+ * @param diagnostic - The diagnostic information.
+ * @param uri - The URI of the manifest file.
+ * @returns A CodeAction object for updating the manifest license.
+ */
+function generateUpdateManifestLicenseAction(fileLicense: string, diagnostic: Diagnostic, uri: Uri): CodeAction {
+  const codeAction: CodeAction = {
+    title: `Update manifest license to "${fileLicense}" (from LICENSE file)`,
+    diagnostics: [diagnostic],
+    kind: CodeActionKind.QuickFix,
+    edit: new WorkspaceEdit()
+  };
+
+  // Replace the license value in the manifest
+  // Add quotes only for JSON files (package.json), not for XML (pom.xml)
+  const fileName = path.basename(uri.fsPath);
+  const replacementText = fileName.endsWith('.json') ? `"${fileLicense}"` : fileLicense;
+  codeAction.edit!.replace(uri, diagnostic.range, replacementText);
+
+  return codeAction;
+}
+
+export { getCodeActionsMap, clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateRedirectToRecommendedVersionAction, getDiagnosticsCodeActions, generateUpdateManifestLicenseAction };

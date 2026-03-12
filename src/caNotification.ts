@@ -14,6 +14,7 @@ export interface CANotificationData {
   diagCount?: number | null;
   vulns?: Set<string> | null;
   metrics?: ResponseMetrics,
+  incompatibleLicenseCount?: number | null;
 }
 
 /**
@@ -25,9 +26,12 @@ class CANotification {
   private readonly uri: Uri;
   private readonly diagCount: number;
   private readonly vulns: Set<string>;
+  private readonly incompatibleLicenseCount: number;
 
   private static readonly VULNERABILITY = 'vulnerability';
   private static readonly VULNERABILITIES = 'vulnerabilities';
+  private static readonly LICENSE = 'license';
+  private static readonly LICENSES = 'licenses';
 
   private static readonly SYNC_SPIN = 'sync~spin';
   private static readonly WARNING = 'warning';
@@ -44,6 +48,7 @@ class CANotification {
     this.uri = respData.uri || Uri.file('');
     this.diagCount = respData.diagCount || 0;
     this.vulns = respData.vulns || new Set<string>();
+    this.incompatibleLicenseCount = respData.incompatibleLicenseCount || 0;
   }
 
   /**
@@ -54,6 +59,16 @@ class CANotification {
    */
   private singularOrPlural(num: number): string {
     return num === 1 ? CANotification.VULNERABILITY : CANotification.VULNERABILITIES;
+  }
+
+  /**
+   * Determines if a singular or plural form of the word 'license' should be used.
+   * @param num The number of licenses to evaluate.
+   * @returns The appropriate string representing either 'license' or 'licenses'.
+   * @private
+   */
+  private singularOrPluralLicense(num: number): string {
+    return num === 1 ? CANotification.LICENSE : CANotification.LICENSES;
   }
 
   /**
@@ -76,6 +91,17 @@ class CANotification {
   }
 
   /**
+   * Generates text for the incompatible license count.
+   * @returns Text representing the number of incompatible licenses.
+   * @private
+   */
+  private licenseCountText(): string {
+    return this.incompatibleLicenseCount > 0
+      ? `${this.incompatibleLicenseCount} incompatible ${this.singularOrPluralLicense(this.incompatibleLicenseCount)}`
+      : '';
+  }
+
+  /**
    * Generates the text for the in-progress status.
    * @returns Text representing the in-progress status.
    * @private
@@ -85,12 +111,21 @@ class CANotification {
   }
 
   /**
-   * Generates the text for the warning status for amount of vulnerabilities found.
-   * @returns Text representing the amount of vulnerabilities found.
+   * Generates the text for the warning status for amount of vulnerabilities and incompatible licenses found.
+   * @returns Text representing the amount of vulnerabilities and incompatible licenses found.
    * @private
    */
   private warningText(): string {
-    return `$(${CANotification.WARNING}) ${this.vulnCountText()} found for all the providers combined`;
+    const vulnText = this.vulnCountText();
+    const licenseText = this.licenseCountText();
+
+    if (this.vulns.size > 0 && this.incompatibleLicenseCount > 0) {
+      return `$(${CANotification.WARNING}) ${vulnText}, ${licenseText} found for all the providers combined`;
+    } else if (this.incompatibleLicenseCount > 0) {
+      return `$(${CANotification.WARNING}) ${licenseText} found for all the providers combined`;
+    } else {
+      return `$(${CANotification.WARNING}) ${vulnText} found for all the providers combined`;
+    }
   }
 
   /**
@@ -139,8 +174,21 @@ class CANotification {
    * @returns The text content for the popup notification.
    */
   public popupText(): string {
-    const text: string = `Found ${this.vulns.size} direct ${this.singularOrPlural(this.vulns.size)} in ${this.uri.fsPath}.`;
-    return this.vulns.size > 0 ? text : this.warningText().replace(/\$\((.*?)\)/g, '');
+    const parts: string[] = [];
+
+    if (this.vulns.size > 0) {
+      parts.push(`${this.vulns.size} direct ${this.singularOrPlural(this.vulns.size)}`);
+    }
+
+    if (this.incompatibleLicenseCount > 0) {
+      parts.push(`${this.incompatibleLicenseCount} incompatible ${this.singularOrPluralLicense(this.incompatibleLicenseCount)}`);
+    }
+
+    if (parts.length > 0) {
+      return `Found ${parts.join(' and ')} in ${this.uri.fsPath}.`;
+    }
+
+    return this.warningText().replace(/\$\((.*?)\)/g, '');
   }
 
   /**

@@ -9,7 +9,7 @@ import { IPositionedContext } from '../positionTypes';
 import { executeComponentAnalysis, DependencyData } from './analysis';
 import { Vulnerability } from '../vulnerability';
 import { VERSION_PLACEHOLDER } from '../constants';
-import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction } from '../codeActionHandler';
+import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateUpdateManifestLicenseAction } from '../codeActionHandler';
 import { buildLogErrorMessage, buildNotificationErrorMessage } from '../utils';
 import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
@@ -17,6 +17,7 @@ import { notifications, outputChannelDep } from '../extension';
 import { globalConfig } from '../config';
 import { Options } from '@trustify-da/trustify-da-javascript-client';
 import { TokenProvider } from '../tokenProvider';
+import { LicenseDiagnosticsPipeline } from './licenseDiagnostics';
 
 /**
  * Implementation of DiagnosticsPipeline interface.
@@ -31,6 +32,14 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
    */
   constructor(private dependencyMap: DependencyMap, diagnosticFilePath: Uri) {
     super(diagnosticFilePath);
+  }
+
+  /**
+   * Adds a license diagnostic to the diagnostics array.
+   * @param diagnostic - The diagnostic to add.
+   */
+  addLicenseDiagnostic(diagnostic: Diagnostic) {
+    this.diagnostics.push(diagnostic);
   }
 
   /**
@@ -69,7 +78,6 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
           }
         });
       }
-      DiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);
     });
   }
 
@@ -139,7 +147,58 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
 
     diagnosticsPipeline.runDiagnostics(response.dependencies, ecosystem);
 
-    diagnosticsPipeline.reportDiagnostics(response.metrics);
+    // Handle license checking if enabled
+    let incompatibleLicenseCount = 0;
+    if (globalConfig.licenseCheckEnabled && response.licenseSummary) {
+      // Extract incompatible license count for notifications
+      if (response.licenseSummary.incompatibleDependencies) {
+        incompatibleLicenseCount = response.licenseSummary.incompatibleDependencies.length;
+      }
+
+      // Check for license mismatch (only for ecosystems with license field support)
+      const projectLicense = response.licenseSummary.projectLicense;
+      if (projectLicense?.manifest && projectLicense.mismatch) {
+        // Extract license field position from manifest for diagnostic underlining
+        const licenseFieldPosition = provider.extractLicensePosition?.(contents);
+
+        if (licenseFieldPosition) {
+          const licenseDiagnosticsPipeline = new LicenseDiagnosticsPipeline();
+
+          // Create diagnostic at license field position
+          const licenseDiagnostic = licenseDiagnosticsPipeline.checkLicenseMismatch(
+            response.licenseSummary,
+            licenseFieldPosition
+          );
+
+          if (licenseDiagnostic) {
+            // Add diagnostic to the diagnostics array
+            diagnosticsPipeline.addLicenseDiagnostic(licenseDiagnostic);
+
+            // Register code actions for the license mismatch
+            const loc = `${licenseFieldPosition.position.line - 1}|${licenseFieldPosition.position.column - 1}`;
+
+            // Quick fix: Update manifest with license from LICENSE file
+            if (projectLicense.file) {
+              const fileLicense = projectLicense.file.expression ||
+                projectLicense.file.name ||
+                (projectLicense.file.identifiers && projectLicense.file.identifiers.length > 0
+                  ? projectLicense.file.identifiers[0].id
+                  : undefined) ||
+                'unknown';
+
+              const updateManifestAction = generateUpdateManifestLicenseAction(
+                fileLicense,
+                licenseDiagnostic,
+                diagnosticFilePath
+              );
+              registerCodeAction(diagnosticFilePath, loc, updateManifestAction);
+            }
+          }
+        }
+      }
+    }
+
+    diagnosticsPipeline.reportDiagnostics(response.metrics, incompatibleLicenseCount);
   } catch (error) {
     outputChannelDep.warn(`component analysis error: ${buildLogErrorMessage(error as Error)}`);
     notifications.emit('caError', {

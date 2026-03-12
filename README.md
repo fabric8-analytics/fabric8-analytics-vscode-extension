@@ -140,8 +140,16 @@ You can set the vulnerability severity alert level to `Error` or `Warning` for i
 }
 ```
 
-#### Exclude manifests from analysis: 
-Specify glob patterns for manifests to be ignored for background analysis e.g. `**/test/**/package.json` will ignore all package.json files within `test/` or any subdirectories of it. 
+#### License Checking:
+* `licenseCheckEnabled` : Enable license compatibility checking and notifications for incompatible dependencies. When enabled, the extension will:
+  - Detect license mismatches between manifest files and LICENSE files
+  - Identify dependencies with licenses incompatible with your project's license
+  - Display inline diagnostics and provide quick fixes for license issues
+
+  Default: `true`
+
+#### Exclude manifests from analysis:
+Specify glob patterns for manifests to be ignored for background analysis e.g. `**/test/**/package.json` will ignore all package.json files within `test/` or any subdirectories of it.
 
 **NOTE:** Only forward slash (`/`) is supported as a path separator. Please use forward slash as the path separator even for Windows paths.
 
@@ -157,7 +165,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 
 	![ Animated screenshot showing the inline reporting feature of Red Hat Dependency Analytics ](images/screencasts/component-analysis.gif)
 
-- **Recommendations and remediation** 
+- **Recommendations and remediation**
     <br >After running a detailed analysis report on a specific component version, you can view recommendations and remediation by using the _Quick Fix..._ menu.
 	If there is a Red Hat recommended package version available, you can replace your version with Red Hat's version.
 
@@ -166,6 +174,15 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	<br >**IMPORTANT:** For Maven projects only, when analyzing a `pom.xml` file.
 	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediation.
 	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
+
+- **License compatibility checking**
+	<br >Red Hat Dependency Analytics automatically checks for license compatibility issues in your project:
+
+	- **License mismatch detection**: For projects with license fields in their manifest files (`package.json`, `pom.xml`, `build.gradle`), the extension detects mismatches between the license declared in the manifest and the LICENSE file. A red underline appears on the license field with a quick fix to update the manifest with the LICENSE file's value.
+
+	- **Incompatible dependency licenses**: The extension identifies dependencies whose licenses are more restrictive than your project's license. A notification displays the count of incompatible dependencies, helping you maintain license compliance.
+
+	<br >You can disable license checking by setting `redHatDependencyAnalytics.licenseCheckEnabled` to `false` in the extension settings.
 
 - **Docker scanning**
     <br >Upon opening a Dockerfile, a vulnerability scan starts analyzing the images within the Dockerfile.

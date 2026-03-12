@@ -5,7 +5,7 @@
 'use strict';
 
 import * as jsonAst from 'json-to-ast';
-import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency, LicenseFieldPosition } from '../dependencyAnalysis/collector';
 import { NPM } from '../constants';
 
 /**
@@ -62,5 +62,39 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     }
 
     return this.mapDependencies(ast);
+  }
+
+  /**
+   * Extracts license field POSITION from package.json for diagnostic underlining.
+   * NOTE: License detection/comparison is handled by exhort-javascript-api.
+   * @param contents - The package.json content to parse.
+   * @returns The license field position, or undefined if not found.
+   */
+  extractLicensePosition(contents: string): LicenseFieldPosition | undefined {
+    let ast: jsonAst.ObjectNode;
+
+    try {
+      ast = this.parseJson(contents);
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        return undefined;
+      }
+      throw err;
+    }
+
+    // Find the "license" field in the root object
+    const licenseNode = ast.children.find(c => c.key.value === 'license');
+
+    if (licenseNode && licenseNode.value.type === 'Literal') {
+      return {
+        value: licenseNode.value.value as string,
+        position: {
+          line: licenseNode.value.loc!.start.line,
+          column: licenseNode.value.loc!.start.column + 1
+        }
+      };
+    }
+
+    return undefined;
   }
 }

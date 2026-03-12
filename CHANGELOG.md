@@ -1,5 +1,11 @@
 # Change Log
 
+## Unreleased
+
+### Enhancements
+
+- Added license compatibility checking feature that detects license mismatches between manifest files and LICENSE files, and identifies dependencies with incompatible licenses. See configuration option `redHatDependencyAnalytics.licenseCheckEnabled` for details.
+
 ## 0.10.2 (December 19th 2025)
 
 ### Enhancements

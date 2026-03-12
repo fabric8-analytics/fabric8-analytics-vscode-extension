@@ -6,7 +6,7 @@
 
 import { Position, Range } from 'vscode';
 import { VERSION_PLACEHOLDER, GRADLE } from '../constants';
-import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency, LicenseFieldPosition } from '../dependencyAnalysis/collector';
 
 /**
  * Process entries found in the build.gradle file.
@@ -298,5 +298,24 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   collect(contents: string): Dependency[] {
     const lines: string[] = this.parseTxtDoc(contents);
     return this.extractDependenciesFromLines(lines);
+  }
+
+  /**
+   * Extracts license field POSITION from build.gradle for diagnostic underlining.
+   * NOTE: License detection/comparison is handled by exhort-javascript-api.
+   * Gradle license configuration is not standardized, so this returns undefined.
+   * License information is typically inferred from the LICENSE file instead.
+   * @returns undefined (Gradle doesn't have a standard license field location).
+   */
+  extractLicensePosition(): LicenseFieldPosition | undefined {
+    // Gradle build files don't have a standardized license field location.
+    // License information can appear in various places:
+    // - publishing.publications.maven.pom.licenses.license.name
+    // - license { name = '...' }
+    // - custom plugin configurations
+    // Since there's no standard location and the exhort-javascript-api handles
+    // license detection from the LICENSE file, we return undefined here.
+    // For Gradle projects, license mismatch detection will rely on the LICENSE file.
+    return undefined;
   }
 }

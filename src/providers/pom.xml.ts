@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency, LicenseFieldPosition } from '../dependencyAnalysis/collector';
 import { parse, DocumentCstNode } from '@xml-tools/parser';
 import { buildAst, accept, XMLElement, XMLDocument } from '@xml-tools/ast';
 import { VERSION_PLACEHOLDER, MAVEN } from '../constants';
@@ -168,6 +168,56 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     const xmlAst: XMLDocument = this.parseXml(contents);
     const deps = this.getXMLDependencies(xmlAst);
     return this.mapDependencies(deps);
+  }
+
+  /**
+   * Extracts license field POSITION from pom.xml for diagnostic underlining.
+   * Finds <licenses><license><name> element position.
+   * NOTE: License detection/comparison is handled by exhort-javascript-api.
+   * @param contents - The pom.xml content to parse.
+   * @returns The license field position, or undefined if not found.
+   */
+  extractLicensePosition(contents: string): LicenseFieldPosition | undefined {
+    try {
+      const xmlAst: XMLDocument = this.parseXml(contents);
+
+      // Find <licenses> element at project root
+      const licensesElements = this.findRootNodes(xmlAst, 'licenses');
+
+      if (licensesElements.length === 0) {
+        return undefined;
+      }
+
+      // Get the first <licenses> element
+      const licensesElement = licensesElements[0];
+
+      // Find first <license> sub-element
+      const licenseElement = licensesElement.subElements.find(e => e.name === 'license');
+
+      if (!licenseElement) {
+        return undefined;
+      }
+
+      // Find <name> element within <license>
+      const nameElement = licenseElement.subElements.find(e => e.name === 'name');
+
+      if (!nameElement || !nameElement.textContents[0]) {
+        return undefined;
+      }
+
+      const nameText = nameElement.textContents[0];
+
+      return {
+        value: nameText.text ?? '',
+        position: {
+          line: nameText.position.startLine,
+          column: nameText.position.startColumn
+        }
+      };
+    } catch (err) {
+      // If XML parsing fails, return undefined
+      return undefined;
+    }
   }
 
 }

@@ -198,12 +198,13 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
       }
 
       // Check for incompatible dependency licenses
-      if (response.licenseSummary.incompatibleDependencies?.length > 0) {
+      const incompatibleDeps = response.licenseSummary.incompatibleDependencies;
+      if (incompatibleDeps && incompatibleDeps.length > 0) {
         const projectLicenseName = response.licenseSummary.projectLicense?.manifest?.name ||
           response.licenseSummary.projectLicense?.file?.name ||
           'unknown';
 
-        response.licenseSummary.incompatibleDependencies.forEach(incompatible => {
+        incompatibleDeps.forEach(incompatible => {
           // Extract package name from PURL (e.g., pkg:maven/org.example/mylib@1.0 -> org.example:mylib)
           const purlMatch = incompatible.purl.match(/pkg:[^/]+\/([^@]+)/);
           if (!purlMatch) {

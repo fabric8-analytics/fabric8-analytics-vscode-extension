@@ -66,7 +66,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
 
   /**
    * Extracts license field POSITION from package.json for diagnostic underlining.
-   * NOTE: License detection/comparison is handled by exhort-javascript-api.
+   * NOTE: License detection/comparison is handled by trustify-da-javascript-client.
    * @param contents - The package.json content to parse.
    * @returns The license field position, or undefined if not found.
    */

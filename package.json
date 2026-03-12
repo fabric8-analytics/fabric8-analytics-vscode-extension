@@ -191,7 +191,7 @@
         "redHatDependencyAnalytics.backendUrl": {
           "type": "string",
           "default": "https://rhda.rhcloud.com",
-          "markdownDescription": "Exhort backend URL to use for stack, component & image analysis.",
+          "markdownDescription": "Red Hat Dependency Analytics backend URL to use for stack, component & image analysis.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.matchManifestVersions": {

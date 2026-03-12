@@ -173,7 +173,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   /**
    * Extracts license field POSITION from pom.xml for diagnostic underlining.
    * Finds <licenses><license><name> element position.
-   * NOTE: License detection/comparison is handled by exhort-javascript-api.
+   * NOTE: License detection/comparison is handled by trustify-da-javascript-client.
    * @param contents - The pom.xml content to parse.
    * @returns The license field position, or undefined if not found.
    */

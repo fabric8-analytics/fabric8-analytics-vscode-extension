@@ -8,7 +8,7 @@ import { Dependency, DependencyMap, IDependencyProvider, getRange } from '../dep
 import { IPositionedContext } from '../positionTypes';
 import { executeComponentAnalysis, DependencyData } from './analysis';
 import { Vulnerability } from '../vulnerability';
-import { VERSION_PLACEHOLDER } from '../constants';
+import { VERSION_PLACEHOLDER, RHDA_DIAGNOSTIC_SOURCE } from '../constants';
 import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateUpdateManifestLicenseAction } from '../codeActionHandler';
 import { buildLogErrorMessage, buildNotificationErrorMessage } from '../utils';
 import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
@@ -195,6 +195,46 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
             }
           }
         }
+      }
+
+      // Check for incompatible dependency licenses
+      if (response.licenseSummary.incompatibleDependencies && response.licenseSummary.incompatibleDependencies.length > 0) {
+        const projectLicenseName = response.licenseSummary.projectLicense?.manifest?.name ||
+          response.licenseSummary.projectLicense?.file?.name ||
+          'unknown';
+
+        response.licenseSummary.incompatibleDependencies.forEach(incompatible => {
+          // Extract package name from PURL (e.g., pkg:maven/org.example/mylib@1.0 -> org.example:mylib)
+          const purlMatch = incompatible.purl.match(/pkg:[^/]+\/([^@]+)/);
+          if (!purlMatch) {
+            return;
+          }
+
+          const packageRef = purlMatch[1];
+          const dependency = dependencyMap.get(packageRef);
+
+          if (dependency) {
+            const licenseNames = (incompatible.licenses as any)
+              ?.map((license: any) => license.name || license.id)
+              .join(', ') || 'unknown';
+            const message = `⚠️ License compatibility warning\n\n` +
+              `Dependency license: ${licenseNames}\n` +
+              `Project license: ${projectLicenseName}\n\n` +
+              `${incompatible.reason || 'This dependency may require relicensing if distributed.'}`;
+
+            const range = getRange(dependency, ecosystem);
+            const licenseDiagnostic: Diagnostic = {
+              severity: DiagnosticSeverity.Warning,
+              range: range,
+              message: message,
+              source: RHDA_DIAGNOSTIC_SOURCE,
+              code: 'incompatible-license'
+            };
+
+            diagnosticsPipeline.addLicenseDiagnostic(licenseDiagnostic);
+            outputChannelDep.info(`[LICENSE DEBUG] Created incompatible license diagnostic for ${packageRef}`);
+          }
+        });
       }
     }
 

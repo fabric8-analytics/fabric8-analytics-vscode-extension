@@ -158,7 +158,7 @@ class AnalysisResponse {
       };
     }
 
-    // Extract license summary (added by exhort-javascript-api)
+    // Extract license summary (added by trustify-da-javascript-client)
     if (isDefined(resData, 'licenseSummary')) {
       this.licenseSummary = (resData as any).licenseSummary;
     }

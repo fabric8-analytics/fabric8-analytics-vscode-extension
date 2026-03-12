@@ -92,9 +92,9 @@ The Red Hat Dependency Analytics extension has some configurable parameters that
 
 ### Configurable parameters
 
-#### Exhort backend URL
+#### Red Hat Dependency Analytics backend URL
 
-Specify the URL of the Exhort backend used to analyze project dependencies. The default URL is https://rhda.rhcloud.com.
+Specify the URL of the Red Hat Dependency Analytics backend used to analyze project dependencies. The default URL is https://rhda.rhcloud.com.
 
 #### Red Hat Dependency Analytics Report File Path:
 Specify the local path to create the Red Hat Dependency Analytics report file.
@@ -371,7 +371,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	This setting applies to Python and Go environments.
 	
 	<br >An alternative workaround exists for Python environments only.
-	The user can start Visual Studio Code with the [`TRUSTIFY_DA_PYTHON_VIRTUAL_ENV`](https://github.com/RHEcosystemAppEng/exhort-javascript-api#:~:text=TRUSTIFY_DA_PYTHON_VIRTUAL_ENV) variable set to `true`.
+	The user can start Visual Studio Code with the [`TRUSTIFY_DA_PYTHON_VIRTUAL_ENV`](https://github.com/guacsec/trustify-da-javascript-client#:~:text=TRUSTIFY_DA_PYTHON_VIRTUAL_ENV) variable set to `true`.
 	Doing this allows Red Hat Dependency Analytics to install Python packages into a virtual environment to perform the analysis.
 	The benefit is having a clean Python environment not influenced by earlier installations, but the downside is a significantly slower analysis process.
 

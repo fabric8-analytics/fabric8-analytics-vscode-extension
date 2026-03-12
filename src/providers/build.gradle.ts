@@ -302,7 +302,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
 
   /**
    * Extracts license field POSITION from build.gradle for diagnostic underlining.
-   * NOTE: License detection/comparison is handled by exhort-javascript-api.
+   * NOTE: License detection/comparison is handled by trustify-da-javascript-client.
    * Gradle license configuration is not standardized, so this returns undefined.
    * License information is typically inferred from the LICENSE file instead.
    * @returns undefined (Gradle doesn't have a standard license field location).
@@ -313,7 +313,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     // - publishing.publications.maven.pom.licenses.license.name
     // - license { name = '...' }
     // - custom plugin configurations
-    // Since there's no standard location and the exhort-javascript-api handles
+    // Since there's no standard location and the trustify-da-javascript-client handles
     // license detection from the LICENSE file, we return undefined here.
     // For Gradle projects, license mismatch detection will rely on the LICENSE file.
     return undefined;

@@ -40,7 +40,7 @@ export class DependencyMap {
 /**
  * Interface for license field position in manifest.
  * Used to extract the position of the license field for diagnostic underlining.
- * License detection and comparison is handled by exhort-javascript-api.
+ * License detection and comparison is handled by trustify-da-javascript-client.
  */
 export interface LicenseFieldPosition {
   value: string;      // License string from manifest (for reference)
@@ -73,7 +73,7 @@ export interface IDependencyProvider {
 
   /**
    * Optional: Extracts license field POSITION from manifest for diagnostic underlining.
-   * NOTE: This only extracts the position. License detection/comparison is handled by exhort-javascript-api.
+   * NOTE: This only extracts the position. License detection/comparison is handled by trustify-da-javascript-client.
    * Only needed for ecosystems that support license fields (NPM, Maven, Gradle).
    * @param contents - The manifest contents to parse.
    * @returns The license field position, or undefined if not found or not supported.

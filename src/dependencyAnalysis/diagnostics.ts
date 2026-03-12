@@ -198,7 +198,7 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
       }
 
       // Check for incompatible dependency licenses
-      if (response.licenseSummary.incompatibleDependencies && response.licenseSummary.incompatibleDependencies.length > 0) {
+      if (response.licenseSummary.incompatibleDependencies?.length > 0) {
         const projectLicenseName = response.licenseSummary.projectLicense?.manifest?.name ||
           response.licenseSummary.projectLicense?.file?.name ||
           'unknown';

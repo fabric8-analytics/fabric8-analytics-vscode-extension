@@ -47,7 +47,7 @@ module.exports = () => {
         patterns: [{
           from: 'src/llmAnalysisReport.hbs'
         }, {
-          from: 'node_modules/web-tree-sitter/tree-sitter.wasm',
+          from: 'node_modules/web-tree-sitter/web-tree-sitter.wasm',
           to: 'web-tree-sitter/[name][ext]'
         }, {
           from: 'node_modules/tree-sitter-python/tree-sitter-python.wasm',

@@ -49,7 +49,7 @@ export function buildNotificationErrorMessage(error: Error): string {
  */
 export function buildLogErrorMessage(error: Error): string {
   let message = error.message;
-  let execErr: (Error & { stderr: string, stdout: string }) | null = null;
+  let execErr: (Error & { stderr?: string, stdout?: string }) | null = null;
   while (error.cause) {
     if (Object.hasOwn(error.cause, 'stdout')) {
       execErr = error.cause as (Error & { stderr: string, stdout: string });
@@ -59,7 +59,7 @@ export function buildLogErrorMessage(error: Error): string {
   }
 
   if (execErr) {
-    message += `\nSTDOUT:\n${execErr.stdout.trim() || '<none>'}\n\nSTDERR:\n${execErr.stderr.trim() || '<none>'}`;
+    message += `\nSTDOUT:\n${execErr.stdout?.trim() || '<none>'}\n\nSTDERR:\n${execErr.stderr?.trim() || '<none>'}`;
   }
   return message;
 }

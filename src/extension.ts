@@ -104,7 +104,7 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
   try {
     await Parser.init({
       locateFile() {
-        return path.resolve(wasmPath, 'web-tree-sitter', 'tree-sitter.wasm');
+        return path.resolve(wasmPath, 'web-tree-sitter', 'web-tree-sitter.wasm');
       },
     });
     const pypath = path.resolve(wasmPath, 'tree-sitter-python', 'tree-sitter-python.wasm');

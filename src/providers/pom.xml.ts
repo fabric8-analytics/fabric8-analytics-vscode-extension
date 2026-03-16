@@ -201,17 +201,21 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
       // Find <name> element within <license>
       const nameElement = licenseElement.subElements.find(e => e.name === 'name');
 
-      if (!nameElement || !nameElement.textContents[0]) {
+      if (!nameElement || nameElement.textContents.length === 0) {
         return undefined;
       }
 
-      const nameText = nameElement.textContents[0];
+      // Concatenate all text contents (XML parser may split on whitespace)
+      const fullText = nameElement.textContents.map(tc => tc.text ?? '').join('');
+
+      // Use the first text node for position (even if it's whitespace)
+      const firstText = nameElement.textContents[0];
 
       return {
-        value: nameText.text ?? '',
+        value: fullText,
         position: {
-          line: nameText.position.startLine,
-          column: nameText.position.startColumn
+          line: firstText.position.startLine,
+          column: firstText.position.startColumn
         }
       };
     } catch (err) {

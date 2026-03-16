@@ -90,7 +90,7 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
         value: licenseNode.value.value as string,
         position: {
           line: licenseNode.value.loc!.start.line,
-          column: licenseNode.value.loc!.start.column + 1
+          column: licenseNode.value.loc!.start.column
         }
       };
     }

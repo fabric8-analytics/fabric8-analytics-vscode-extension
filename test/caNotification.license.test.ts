@@ -36,7 +36,7 @@ suite('CA Notification License Support tests', () => {
         const notification = new CANotification(data);
         const statusText = notification.statusText();
 
-        expect(statusText).to.include('2 vulnerabilities');
+        expect(statusText).to.include('2 direct vulnerabilities');
         expect(statusText).to.include('2 incompatible licenses');
     });
 
@@ -52,7 +52,7 @@ suite('CA Notification License Support tests', () => {
         const notification = new CANotification(data);
         const statusText = notification.statusText();
 
-        expect(statusText).to.include('1 vulnerability');
+        expect(statusText).to.include('1 direct vulnerability');
         expect(statusText).to.include('1 incompatible license');
     });
 
@@ -84,7 +84,7 @@ suite('CA Notification License Support tests', () => {
         const notification = new CANotification(data);
         const statusText = notification.statusText();
 
-        expect(statusText).to.include('2 vulnerabilities');
+        expect(statusText).to.include('2 direct vulnerabilities');
         expect(statusText).to.not.include('licenses');
     });
 
@@ -100,7 +100,7 @@ suite('CA Notification License Support tests', () => {
         const notification = new CANotification(data);
         const statusText = notification.statusText();
 
-        expect(statusText).to.include('1 vulnerability');
+        expect(statusText).to.include('1 direct vulnerability');
         expect(statusText).to.not.include('licenses');
     });
 
@@ -115,7 +115,7 @@ suite('CA Notification License Support tests', () => {
         const notification = new CANotification(data);
         const statusText = notification.statusText();
 
-        expect(statusText).to.include('1 vulnerability');
+        expect(statusText).to.include('1 direct vulnerability');
         expect(statusText).to.not.include('licenses');
     });
 

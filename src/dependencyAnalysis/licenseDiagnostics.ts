@@ -78,6 +78,11 @@ export class LicenseDiagnosticsPipeline {
     const manifestLicenseInfo = licenseSummary.projectLicense.manifest;
     const fileLicenseInfo = licenseSummary.projectLicense.file;
 
+    // Cannot create diagnostic without manifest license info
+    if (!manifestLicenseInfo) {
+      return undefined;
+    }
+
     // Prefer expression, fall back to name, then identifiers, then 'unknown'
     const manifestLicense = manifestLicenseInfo?.expression ||
       manifestLicenseInfo?.name ||

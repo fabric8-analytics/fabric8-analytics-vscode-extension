@@ -157,10 +157,8 @@ function generateUpdateManifestLicenseAction(fileLicense: string, diagnostic: Di
   };
 
   // Replace the license value in the manifest
-  // Add quotes only for JSON files (package.json), not for XML (pom.xml)
-  const fileName = path.basename(uri.fsPath);
-  const replacementText = fileName.endsWith('.json') ? `"${fileLicense}"` : fileLicense;
-  codeAction.edit!.replace(uri, diagnostic.range, replacementText);
+  // The diagnostic range covers only the value text, not the surrounding quotes or XML tags
+  codeAction.edit!.replace(uri, diagnostic.range, fileLicense);
 
   return codeAction;
 }

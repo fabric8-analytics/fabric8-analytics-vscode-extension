@@ -131,7 +131,8 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
       'TRUSTIFY_DA_PYTHON3_PATH': globalConfig.exhortPython3Path,
       'TRUSTIFY_DA_PIP3_PATH': globalConfig.exhortPip3Path,
       'TRUSTIFY_DA_PYTHON_PATH': globalConfig.exhortPythonPath,
-      'TRUSTIFY_DA_PIP_PATH': globalConfig.exhortPipPath
+      'TRUSTIFY_DA_PIP_PATH': globalConfig.exhortPipPath,
+      'TRUSTIFY_DA_LICENSE_CHECK': globalConfig.licenseCheckEnabled.toString()
     };
 
     const dependencies = provider.collect(contents);
@@ -148,96 +149,14 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
     diagnosticsPipeline.runDiagnostics(response.dependencies, ecosystem);
 
     // Handle license checking if enabled
-    let incompatibleLicenseCount = 0;
-    if (globalConfig.licenseCheckEnabled && response.licenseSummary) {
-      // Extract incompatible license count for notifications
-      if (response.licenseSummary.incompatibleDependencies) {
-        incompatibleLicenseCount = response.licenseSummary.incompatibleDependencies.length;
-      }
-
-      // Check for license mismatch (only for ecosystems with license field support)
-      const projectLicense = response.licenseSummary.projectLicense;
-      if (projectLicense?.manifest && projectLicense.mismatch) {
-        // Extract license field position from manifest for diagnostic underlining
-        const licenseFieldPosition = provider.extractLicensePosition?.(contents);
-
-        if (licenseFieldPosition) {
-          const licenseDiagnosticsPipeline = new LicenseDiagnosticsPipeline();
-
-          // Create diagnostic at license field position
-          const licenseDiagnostic = licenseDiagnosticsPipeline.checkLicenseMismatch(
-            response.licenseSummary,
-            licenseFieldPosition
-          );
-
-          if (licenseDiagnostic) {
-            // Add diagnostic to the diagnostics array
-            diagnosticsPipeline.addLicenseDiagnostic(licenseDiagnostic);
-
-            // Register code actions for the license mismatch
-            const loc = `${licenseFieldPosition.position.line - 1}|${licenseFieldPosition.position.column - 1}`;
-
-            // Quick fix: Update manifest with license from LICENSE file
-            if (projectLicense.file) {
-              const fileLicense = projectLicense.file.expression ||
-                projectLicense.file.name ||
-                (projectLicense.file.identifiers && projectLicense.file.identifiers.length > 0
-                  ? projectLicense.file.identifiers[0].id
-                  : undefined) ||
-                'unknown';
-
-              const updateManifestAction = generateUpdateManifestLicenseAction(
-                fileLicense,
-                licenseDiagnostic,
-                diagnosticFilePath
-              );
-              registerCodeAction(diagnosticFilePath, loc, updateManifestAction);
-            }
-          }
-        }
-      }
-
-      // Check for incompatible dependency licenses
-      const incompatibleDeps = response.licenseSummary.incompatibleDependencies;
-      if (incompatibleDeps && incompatibleDeps.length > 0) {
-        const projectLicenseName = response.licenseSummary.projectLicense?.manifest?.name ||
-          response.licenseSummary.projectLicense?.file?.name ||
-          'unknown';
-
-        incompatibleDeps.forEach(incompatible => {
-          // Extract package name from PURL (e.g., pkg:maven/org.example/mylib@1.0 -> org.example:mylib)
-          const purlMatch = incompatible.purl.match(/pkg:[^/]+\/([^@]+)/);
-          if (!purlMatch) {
-            return;
-          }
-
-          const packageRef = purlMatch[1];
-          const dependency = dependencyMap.get(packageRef);
-
-          if (dependency) {
-            const licenseNames = (incompatible.licenses as any)
-              ?.map((license: any) => license.name || license.id)
-              .join(', ') || 'unknown';
-            const message = `⚠️ License compatibility warning\n\n` +
-              `Dependency license: ${licenseNames}\n` +
-              `Project license: ${projectLicenseName}\n\n` +
-              `${incompatible.reason || 'This dependency may require relicensing if distributed.'}`;
-
-            const range = getRange(dependency, ecosystem);
-            const licenseDiagnostic: Diagnostic = {
-              severity: DiagnosticSeverity.Warning,
-              range: range,
-              message: message,
-              source: RHDA_DIAGNOSTIC_SOURCE,
-              code: 'incompatible-license'
-            };
-
-            diagnosticsPipeline.addLicenseDiagnostic(licenseDiagnostic);
-            outputChannelDep.info(`[LICENSE DEBUG] Created incompatible license diagnostic for ${packageRef}`);
-          }
-        });
-      }
-    }
+    const incompatibleLicenseCount = processLicenseDiagnostics(
+      response.licenseSummary,
+      provider,
+      contents,
+      diagnosticFilePath,
+      dependencyMap,
+      diagnosticsPipeline
+    );
 
     diagnosticsPipeline.reportDiagnostics(response.metrics, incompatibleLicenseCount);
   } catch (error) {
@@ -247,6 +166,164 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
       uri: diagnosticFilePath,
     });
   }
+}
+
+/**
+ * Processes license-related diagnostics for the analysis response.
+ */
+function processLicenseDiagnostics(
+  licenseSummary: any,
+  provider: IDependencyProvider,
+  contents: string,
+  diagnosticFilePath: Uri,
+  dependencyMap: DependencyMap,
+  diagnosticsPipeline: DiagnosticsPipeline
+): number {
+  if (!globalConfig.licenseCheckEnabled || !licenseSummary) {
+    return 0;
+  }
+
+  const incompatibleLicenseCount = licenseSummary.incompatibleDependencies?.length || 0;
+
+  processLicenseMismatch(
+    licenseSummary,
+    provider,
+    contents,
+    diagnosticFilePath,
+    diagnosticsPipeline
+  );
+
+  processIncompatibleDependencies(
+    licenseSummary,
+    dependencyMap,
+    provider.getEcosystem(),
+    diagnosticsPipeline
+  );
+
+  return incompatibleLicenseCount;
+}
+
+/**
+ * Processes license mismatch diagnostics between manifest and LICENSE file.
+ */
+function processLicenseMismatch(
+  licenseSummary: any,
+  provider: IDependencyProvider,
+  contents: string,
+  diagnosticFilePath: Uri,
+  diagnosticsPipeline: DiagnosticsPipeline
+): void {
+  const projectLicense = licenseSummary.projectLicense;
+  if (!projectLicense?.manifest || !projectLicense.mismatch) {
+    return;
+  }
+
+  const licenseFieldPosition = provider.extractLicensePosition?.(contents);
+  if (!licenseFieldPosition) {
+    return;
+  }
+
+  const licenseDiagnosticsPipeline = new LicenseDiagnosticsPipeline();
+
+  const licenseDiagnostic = licenseDiagnosticsPipeline.checkLicenseMismatch(
+    licenseSummary,
+    licenseFieldPosition
+  );
+
+  if (!licenseDiagnostic) {
+    return;
+  }
+
+  diagnosticsPipeline.addLicenseDiagnostic(licenseDiagnostic);
+
+  registerLicenseMismatchCodeAction(
+    projectLicense,
+    licenseDiagnostic,
+    licenseFieldPosition,
+    diagnosticFilePath
+  );
+}
+
+/**
+ * Registers a code action to update the manifest license from the LICENSE file.
+ */
+function registerLicenseMismatchCodeAction(
+  projectLicense: any,
+  diagnostic: Diagnostic,
+  licenseFieldPosition: any,
+  diagnosticFilePath: Uri
+): void {
+  if (!projectLicense.file) {
+    return;
+  }
+
+  const fileLicense = projectLicense.file.expression ||
+    projectLicense.file.name ||
+    (projectLicense.file.identifiers && projectLicense.file.identifiers.length > 0
+      ? projectLicense.file.identifiers[0].id
+      : undefined) ||
+    'unknown';
+
+  const updateManifestAction = generateUpdateManifestLicenseAction(
+    fileLicense,
+    diagnostic,
+    diagnosticFilePath
+  );
+
+  const loc = `${licenseFieldPosition.position.line - 1}|${licenseFieldPosition.position.column - 1}`;
+  registerCodeAction(diagnosticFilePath, loc, updateManifestAction);
+}
+
+/**
+ * Processes diagnostics for dependencies with incompatible licenses.
+ */
+function processIncompatibleDependencies(
+  licenseSummary: any,
+  dependencyMap: DependencyMap,
+  ecosystem: string,
+  diagnosticsPipeline: DiagnosticsPipeline
+): void {
+  const incompatibleDeps = licenseSummary.incompatibleDependencies;
+  if (!incompatibleDeps || incompatibleDeps.length === 0) {
+    return;
+  }
+
+  const projectLicenseName = licenseSummary.projectLicense?.manifest?.name ||
+    licenseSummary.projectLicense?.file?.name ||
+    'unknown';
+
+  incompatibleDeps.forEach((incompatible: any) => {
+    // Extract package name from PURL (e.g., pkg:maven/org.example/mylib@1.0 -> org.example:mylib)
+    const purlMatch = incompatible.purl.match(/pkg:[^/]+\/([^@]+)/);
+    if (!purlMatch) {
+      return;
+    }
+
+    const packageRef = purlMatch[1];
+    const dependency = dependencyMap.get(packageRef);
+
+    if (dependency) {
+      const licenseNames = (incompatible.licenses as any)
+        ?.map((license: any) => license.name || license.id)
+        .join(', ') || 'unknown';
+      const message = `⚠️ License compatibility warning\n\n` +
+        `Dependency license: ${licenseNames}\n` +
+        `Project license: ${projectLicenseName}\n\n` +
+        `${incompatible.reason || 'This dependency may require relicensing if distributed.'}`;
+
+      const range = getRange(dependency, ecosystem);
+      const licenseDiagnostic: Diagnostic = {
+        severity: DiagnosticSeverity.Warning,
+        range: range,
+        message: message,
+        source: RHDA_DIAGNOSTIC_SOURCE,
+        code: 'incompatible-license'
+      };
+
+      diagnosticsPipeline.addLicenseDiagnostic(licenseDiagnostic);
+      outputChannelDep.info(`[LICENSE DEBUG] Created incompatible license diagnostic for ${packageRef}`);
+    }
+  });
 }
 
 export { performDiagnostics };

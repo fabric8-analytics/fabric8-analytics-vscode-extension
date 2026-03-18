@@ -41,13 +41,17 @@ export abstract class AbstractDiagnosticsPipeline<T> {
     });
   }
 
-  reportDiagnostics(metrics?: ResponseMetrics) {
+  reportDiagnostics(metrics?: ResponseMetrics, incompatibleLicenseCount?: number) {
+    // Update VSCode diagnostic collection with all diagnostics (vulnerabilities + licenses)
+    AbstractDiagnosticsPipeline.diagnosticsCollection.set(this.diagnosticFilePath, this.diagnostics);
+
     notifications.emit('caNotification', {
       done: true,
       uri: this.diagnosticFilePath,
       diagCount: this.diagnostics.length,
       vulns: this.vulns,
       metrics,
+      incompatibleLicenseCount,
     });
   }
 

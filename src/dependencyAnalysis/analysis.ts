@@ -14,6 +14,8 @@ import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/Anal
 import { Source } from '@trustify-da/trustify-da-api-model/model/v5/Source';
 import { DependencyReport } from '@trustify-da/trustify-da-api-model/model/v5/DependencyReport';
 import { Issue } from '@trustify-da/trustify-da-api-model/model/v5/Issue';
+import { LicenseInfo } from '@trustify-da/trustify-da-api-model/model/v5/LicenseInfo';
+import { LicenseProviderResult } from '@trustify-da/trustify-da-api-model/model/v5/LicenseProviderResult';
 import { TokenProvider } from '../tokenProvider';
 
 /**
@@ -72,6 +74,20 @@ class AnalysisResponse {
   };
   dependencies: Map<string, DependencyData[]> = new Map<string, DependencyData[]>();
   provider: IDependencyProvider;
+  licenseSummary?: {
+    projectLicense?: {
+      manifest?: LicenseInfo;
+      file?: LicenseInfo;
+      mismatch: boolean;
+    };
+    incompatibleDependencies?: Array<{
+      purl: string;
+      licenses: string[];
+      category: string;
+      reason: string;
+    }>;
+  };
+  licenses?: Array<LicenseProviderResult>;
 
   constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider) {
     this.provider = provider;
@@ -140,6 +156,16 @@ class AnalysisResponse {
         total: resData.scanned.total ?? 0,
         transitive: resData.scanned.transitive ?? 0,
       };
+    }
+
+    // Extract license summary (added by trustify-da-javascript-client)
+    if (isDefined(resData, 'licenseSummary')) {
+      this.licenseSummary = (resData as any).licenseSummary;
+    }
+
+    // Extract full license data from backend
+    if (isDefined(resData, 'licenses')) {
+      this.licenses = resData.licenses;
     }
   }
 

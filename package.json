@@ -1,7 +1,7 @@
 {
   "name": "fabric8-analytics",
   "displayName": "Red Hat Dependency Analytics",
-  "description": "Provides insights on security vulnerabilities in your application dependencies.",
+  "description": "Provides insights on security vulnerabilities and license compatibility in your application dependencies.",
   "version": "0.10.2",
   "author": "Red Hat",
   "publisher": "redhat",
@@ -191,7 +191,7 @@
         "redHatDependencyAnalytics.backendUrl": {
           "type": "string",
           "default": "https://rhda.rhcloud.com",
-          "markdownDescription": "Exhort backend URL to use for stack, component & image analysis.",
+          "markdownDescription": "Red Hat Dependency Analytics backend URL to use for stack, component & image analysis.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.matchManifestVersions": {
@@ -395,6 +395,12 @@
           "type": "boolean",
           "default": false,
           "description": "Enables specifying HTTP-only endpoints."
+        },
+        "redHatDependencyAnalytics.licenseCheckEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables license compatibility checking and notifications for incompatible dependencies.",
+          "scope": "window"
         }
       }
     }
@@ -448,7 +454,7 @@
   },
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
-    "@trustify-da/trustify-da-api-model": "^2.0.1",
+    "@trustify-da/trustify-da-api-model": "^2.0.7",
     "@trustify-da/trustify-da-javascript-client": "^0.3.0-ea.29f6867",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/parser": "^1.0.11",

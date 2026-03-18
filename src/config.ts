@@ -50,8 +50,8 @@ class Config {
   exhortPodmanPath!: string;
   exhortImagePlatform!: string;
   excludePatterns!: Minimatch[];
+  licenseCheckEnabled!: boolean;
 
-  private readonly DEFAULT_BACKEND_URL = 'https://rhda.rhcloud.com';
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_GRADLE_EXECUTABLE = 'gradle';
   private readonly DEFAULT_NPM_EXECUTABLE = 'npm';
@@ -104,47 +104,48 @@ class Config {
 
     this.stackAnalysisCommand = commands.STACK_ANALYSIS_COMMAND;
     this.trackRecommendationAcceptanceCommand = commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND;
-    this.recommendationsEnabled = rhdaConfig.recommendations.enabled;
+    this.recommendationsEnabled = rhdaConfig.get('recommendations.enabled', true);
     this.utmSource = GlobalState.UTM_SOURCE;
-    this.backendUrl = rhdaConfig.backendUrl || defaultBackendUrl;
+    this.backendUrl = rhdaConfig.get('backendUrl') || defaultBackendUrl;
     this.exhortProxyUrl = this.getEffectiveHttpProxyUrl();
     /* istanbul ignore next */
-    this.matchManifestVersions = rhdaConfig.matchManifestVersions ? 'true' : 'false';
+    this.matchManifestVersions = rhdaConfig.get('matchManifestVersions', true) ? 'true' : 'false';
     /* istanbul ignore next */
-    this.usePythonVirtualEnvironment = rhdaConfig.usePythonVirtualEnvironment ? 'true' : 'false';
+    this.usePythonVirtualEnvironment = rhdaConfig.get('usePythonVirtualEnvironment', false) ? 'true' : 'false';
     /* istanbul ignore next */
-    this.useGoMVS = rhdaConfig.useGoMVS ? 'true' : 'false';
+    this.useGoMVS = rhdaConfig.get('useGoMVS', true) ? 'true' : 'false';
     /* istanbul ignore next */
-    this.enablePythonBestEffortsInstallation = rhdaConfig.enablePythonBestEffortsInstallation ? 'true' : 'false';
+    this.enablePythonBestEffortsInstallation = rhdaConfig.get('enablePythonBestEffortsInstallation', false) ? 'true' : 'false';
     /* istanbul ignore next */
-    this.usePipDepTree = rhdaConfig.usePipDepTree ? 'true' : 'false';
-    this.vulnerabilityAlertSeverity = rhdaConfig.vulnerabilityAlertSeverity;
+    this.usePipDepTree = rhdaConfig.get('usePipDepTree', false) ? 'true' : 'false';
+    this.vulnerabilityAlertSeverity = rhdaConfig.get('vulnerabilityAlertSeverity', 'Error');
     /* istanbul ignore next */
-    this.rhdaReportFilePath = rhdaConfig.reportFilePath || DEFAULT_RHDA_REPORT_FILE_PATH;
-    this.exhortMvnPath = rhdaConfig.mvn.executable.path || this.DEFAULT_MVN_EXECUTABLE;
+    this.rhdaReportFilePath = rhdaConfig.get('reportFilePath') || DEFAULT_RHDA_REPORT_FILE_PATH;
+    this.exhortMvnPath = rhdaConfig.get('mvn.executable.path') || this.DEFAULT_MVN_EXECUTABLE;
     this.exhortPreferMvnw = preferMavenWrapper.toString();
-    this.exhortMvnArgs = JSON.stringify(rhdaConfig.mvn.additionalArgs) || '[]';
-    this.exhortGradlePath = rhdaConfig.gradle.executable.path || this.DEFAULT_GRADLE_EXECUTABLE;
+    this.exhortMvnArgs = JSON.stringify(rhdaConfig.get('mvn.additionalArgs', [])) || '[]';
+    this.exhortGradlePath = rhdaConfig.get('gradle.executable.path') || this.DEFAULT_GRADLE_EXECUTABLE;
     this.exhortPreferGradlew = preferGradleWrapper.toString();
-    this.exhortNpmPath = rhdaConfig.npm.executable.path || this.DEFAULT_NPM_EXECUTABLE;
-    this.exhortPnpmPath = rhdaConfig.pnpm.executable.path || this.DEFAULT_PNPM_EXECUTABLE;
-    this.exhortYarnPath = rhdaConfig.yarn.executable.path || this.DEFAULT_YARN_EXECUTABLE;
-    this.exhortGoPath = rhdaConfig.go.executable.path || this.DEFAULT_GO_EXECUTABLE;
-    this.exhortPython3Path = rhdaConfig.python3.executable.path || this.DEFAULT_PYTHON3_EXECUTABLE;
-    this.exhortPip3Path = rhdaConfig.pip3.executable.path || this.DEFAULT_PIP3_EXECUTABLE;
-    this.exhortPythonPath = rhdaConfig.python.executable.path || this.DEFAULT_PYTHON_EXECUTABLE;
-    this.exhortPipPath = rhdaConfig.pip.executable.path || this.DEFAULT_PIP_EXECUTABLE;
-    this.exhortSyftPath = rhdaConfig.syft.executable.path || this.DEFAULT_SYFT_EXECUTABLE;
-    this.exhortSyftConfigPath = rhdaConfig.syft.config.path;
-    this.exhortSkopeoPath = rhdaConfig.skopeo.executable.path || this.DEFAULT_SKOPEO_EXECUTABLE;
-    this.exhortSkopeoConfigPath = rhdaConfig.skopeo.config.path;
-    this.exhortDockerPath = rhdaConfig.docker.executable.path || this.DEFAULT_DOCKER_EXECUTABLE;
-    this.exhortPodmanPath = rhdaConfig.podman.executable.path || this.DEFAULT_PODMAN_EXECUTABLE;
-    this.exhortImagePlatform = rhdaConfig.imagePlatform;
-    this.excludePatterns = (rhdaConfig.exclude as string[]).map(pattern => new Minimatch(pattern));
-    this.oidcRealmUrl = rhdaConfig.oidc.endpoint;
-    this.oidcClientId = rhdaConfig.oidc.clientId;
-    this.oidcAllowInsecure = rhdaConfig.oidc.allowInsecure;
+    this.exhortNpmPath = rhdaConfig.get('npm.executable.path') || this.DEFAULT_NPM_EXECUTABLE;
+    this.exhortPnpmPath = rhdaConfig.get('pnpm.executable.path') || this.DEFAULT_PNPM_EXECUTABLE;
+    this.exhortYarnPath = rhdaConfig.get('yarn.executable.path') || this.DEFAULT_YARN_EXECUTABLE;
+    this.exhortGoPath = rhdaConfig.get('go.executable.path') || this.DEFAULT_GO_EXECUTABLE;
+    this.exhortPython3Path = rhdaConfig.get('python3.executable.path') || this.DEFAULT_PYTHON3_EXECUTABLE;
+    this.exhortPip3Path = rhdaConfig.get('pip3.executable.path') || this.DEFAULT_PIP3_EXECUTABLE;
+    this.exhortPythonPath = rhdaConfig.get('python.executable.path') || this.DEFAULT_PYTHON_EXECUTABLE;
+    this.exhortPipPath = rhdaConfig.get('pip.executable.path') || this.DEFAULT_PIP_EXECUTABLE;
+    this.exhortSyftPath = rhdaConfig.get('syft.executable.path') || this.DEFAULT_SYFT_EXECUTABLE;
+    this.exhortSyftConfigPath = rhdaConfig.get('syft.config.path', '');
+    this.exhortSkopeoPath = rhdaConfig.get('skopeo.executable.path') || this.DEFAULT_SKOPEO_EXECUTABLE;
+    this.exhortSkopeoConfigPath = rhdaConfig.get('skopeo.config.path', '');
+    this.exhortDockerPath = rhdaConfig.get('docker.executable.path') || this.DEFAULT_DOCKER_EXECUTABLE;
+    this.exhortPodmanPath = rhdaConfig.get('podman.executable.path') || this.DEFAULT_PODMAN_EXECUTABLE;
+    this.exhortImagePlatform = rhdaConfig.get('imagePlatform', '');
+    this.excludePatterns = (rhdaConfig.get('exclude', []) as string[]).map(pattern => new Minimatch(pattern));
+    this.oidcRealmUrl = rhdaConfig.get('oidc.endpoint', 'https://sso.redhat.com/auth/realms/redhat-external');
+    this.oidcClientId = rhdaConfig.get('oidc.clientId', 'rhda-vscode');
+    this.oidcAllowInsecure = rhdaConfig.get('oidc.allowInsecure', false);
+    this.licenseCheckEnabled = rhdaConfig.get('licenseCheckEnabled', true);
   }
 
   private getEffectiveHttpProxyUrl(): string {

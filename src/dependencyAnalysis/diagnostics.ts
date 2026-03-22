@@ -132,6 +132,7 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
       'TRUSTIFY_DA_PIP3_PATH': globalConfig.exhortPip3Path,
       'TRUSTIFY_DA_PYTHON_PATH': globalConfig.exhortPythonPath,
       'TRUSTIFY_DA_PIP_PATH': globalConfig.exhortPipPath,
+      'TRUSTIFY_DA_CARGO_PATH': globalConfig.exhortCargoPath,
       'TRUSTIFY_DA_LICENSE_CHECK': globalConfig.licenseCheckEnabled.toString()
     };
 

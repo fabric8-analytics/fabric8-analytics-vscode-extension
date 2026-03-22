@@ -381,11 +381,11 @@ winreg = { version = "0.10", features = ["transactions"] }
         expect(deps).is.containSubset([
             {
                 name: { value: 'winapi', position: { line: 0, column: 0 } },
-                version: { value: '0.3', position: { line: 2, column: 10 } }
+                version: { value: '0.3', position: { line: 2, column: 11 } }
             },
             {
                 name: { value: 'winreg', position: { line: 0, column: 0 } },
-                version: { value: '0.10', position: { line: 3, column: 22 } }
+                version: { value: '0.10', position: { line: 3, column: 23 } }
             }
         ]);
     });

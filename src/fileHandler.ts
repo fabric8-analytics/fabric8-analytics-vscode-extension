@@ -7,6 +7,7 @@ import { DependencyProvider as PomXml } from './providers/pom.xml';
 import { DependencyProvider as GoMod } from './providers/go.mod';
 import { DependencyProvider as RequirementsTxt } from './providers/requirements.txt';
 import { DependencyProvider as BuildGradle } from './providers/build.gradle';
+import { DependencyProvider as CargoToml } from './providers/Cargo.toml';
 import { ImageProvider as Docker } from './providers/docker';
 import { globalConfig } from './config';
 import { DepOutputChannel } from './depOutputChannel';
@@ -44,6 +45,11 @@ export class AnalysisMatcher {
       pattern: /^build\.gradle$/,
       callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new BuildGradle()); },
       providerName: 'gradle'
+    },
+    {
+      pattern: /^Cargo\.toml$/,
+      callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new CargoToml()); },
+      providerName: 'cargo'
     },
     {
       pattern: /^(Dockerfile|Containerfile)/,

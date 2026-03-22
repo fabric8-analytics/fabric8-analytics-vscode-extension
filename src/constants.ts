@@ -57,6 +57,7 @@ export const MAVEN = 'maven';
 export const GOLANG = 'golang';
 export const NPM = 'npm';
 export const PYPI = 'pypi';
+export const CARGO = 'cargo';
 // An object mapping ecosystem names to their true ecosystems.
 export const ecosystemNameMappings: { [key: string]: string } = {
   [GRADLE]: MAVEN,
@@ -64,4 +65,5 @@ export const ecosystemNameMappings: { [key: string]: string } = {
   [GOLANG]: GOLANG,
   [NPM]: NPM,
   [PYPI]: PYPI,
+  [CARGO]: CARGO,
 };

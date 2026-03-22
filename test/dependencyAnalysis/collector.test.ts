@@ -13,6 +13,7 @@ import { DependencyProvider as PomXml } from '../../src/providers/pom.xml';
 import { DependencyProvider as GoMod } from '../../src/providers/go.mod';
 import { DependencyProvider as RequirementsTxt } from '../../src/providers/requirements.txt';
 import { DependencyProvider as BuildGradle } from '../../src/providers/build.gradle';
+import { DependencyProvider as CargoToml } from '../../src/providers/Cargo.toml';
 import * as constants from '../../src/constants';
 import { Position, Range } from 'vscode';
 
@@ -94,6 +95,7 @@ suite('Dependency Analysis Collector tests', () => {
         const golangDependencyProvider = new GoMod();
         const pythonDependencyProvider = new RequirementsTxt();
         const gradleDependencyProvider = new BuildGradle();
+        const cargoDependencyProvider = new CargoToml();
 
         let ecosystem = npmDependencyProvider.getEcosystem();
         expect(ecosystem).to.eq(constants.NPM);
@@ -109,5 +111,16 @@ suite('Dependency Analysis Collector tests', () => {
 
         ecosystem = gradleDependencyProvider.getEcosystem();
         expect(ecosystem).to.eq(constants.GRADLE);
+
+        ecosystem = cargoDependencyProvider.getEcosystem();
+        expect(ecosystem).to.eq(constants.CARGO);
+    });
+
+    test('should resolves a dependency reference in cargo ecosystem to its name and version string', async () => {
+        const cargoDependencyProvider = new CargoToml();
+
+        const resolvedRef = cargoDependencyProvider.resolveDependencyFromReference('pkg:cargo/serde@1.0.104');
+
+        expect(resolvedRef).to.eq('serde@1.0.104');
     });
 });

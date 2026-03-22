@@ -40,6 +40,7 @@ class Config {
   exhortPip3Path!: string;
   exhortPythonPath!: string;
   exhortPipPath!: string;
+  exhortCargoPath!: string;
   rhdaReportFilePath!: string;
   secrets!: vscode.SecretStorage;
   exhortSyftPath!: string;
@@ -62,6 +63,7 @@ class Config {
   private readonly DEFAULT_PIP3_EXECUTABLE = 'pip3';
   private readonly DEFAULT_PYTHON_EXECUTABLE = 'python';
   private readonly DEFAULT_PIP_EXECUTABLE = 'pip';
+  private readonly DEFAULT_CARGO_EXECUTABLE = 'cargo';
   private readonly DEFAULT_SYFT_EXECUTABLE = 'syft';
   private readonly DEFAULT_SKOPEO_EXECUTABLE = 'skopeo';
   private readonly DEFAULT_DOCKER_EXECUTABLE = 'docker';
@@ -134,6 +136,7 @@ class Config {
     this.exhortPip3Path = rhdaConfig.get('pip3.executable.path') || this.DEFAULT_PIP3_EXECUTABLE;
     this.exhortPythonPath = rhdaConfig.get('python.executable.path') || this.DEFAULT_PYTHON_EXECUTABLE;
     this.exhortPipPath = rhdaConfig.get('pip.executable.path') || this.DEFAULT_PIP_EXECUTABLE;
+    this.exhortCargoPath = rhdaConfig.get('cargo.executable.path') || this.DEFAULT_CARGO_EXECUTABLE;
     this.exhortSyftPath = rhdaConfig.get('syft.executable.path') || this.DEFAULT_SYFT_EXECUTABLE;
     this.exhortSyftConfigPath = rhdaConfig.get('syft.config.path', '');
     this.exhortSkopeoPath = rhdaConfig.get('skopeo.executable.path') || this.DEFAULT_SKOPEO_EXECUTABLE;
@@ -202,6 +205,7 @@ class Config {
     process.env['VSCEXT_TRUSTIFY_DA_PIP3_PATH'] = this.exhortPip3Path;
     process.env['VSCEXT_TRUSTIFY_DA_PYTHON_PATH'] = this.exhortPythonPath;
     process.env['VSCEXT_TRUSTIFY_DA_PIP_PATH'] = this.exhortPipPath;
+    process.env['VSCEXT_TRUSTIFY_DA_CARGO_PATH'] = this.exhortCargoPath;
     process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
     process.env['VSCEXT_TRUSTIFY_DA_BACKEND_URL'] = this.backendUrl;
     process.env['VSCEXT_TRUSTIFY_DA_SYFT_PATH'] = this.exhortSyftPath;

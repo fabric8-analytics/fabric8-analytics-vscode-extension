@@ -14,9 +14,12 @@ suite('ExhortServices module', async () => {
   const compiledFilePath = 'out/src/exhortServices';
   const stackAnalysisReportHtmlMock = '<html>RHDA Report Mock</html>';
 
+  const batchAnalysisReportHtmlMock = '<html>RHDA Batch Report Mock</html>';
+
   const exhortMock = {
     default: {
       stackAnalysis: async () => stackAnalysisReportHtmlMock,
+      stackAnalysisBatch: async () => batchAnalysisReportHtmlMock,
       validateToken: async (statusCode: any) => ({ status: statusCode }),
     }
   };
@@ -73,6 +76,35 @@ suite('ExhortServices module', async () => {
       })
       .catch((error: Error) => {
         expect(error.message).to.equal('Analysis Error');
+      });
+  });
+
+  test('should generate RHDA report HTML from Exhort Batch Stack Analysis service', async () => {
+    await exhortServicesRewire.batchStackAnalysisService('mock/workspace/root', {})
+      .then((result: string) => {
+        expect(result).to.equal(batchAnalysisReportHtmlMock);
+      });
+  });
+
+  test('should fail to generate RHDA batch report and reject with error', async () => {
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const exhortMock = {
+      default: {
+        stackAnalysisBatch: async () => {
+          throw new Error('Batch Analysis Error');
+        },
+      }
+    };
+
+    exhortServicesRewire.__Rewire__('trustify_da_javascript_client_1', exhortMock);
+
+    await exhortServicesRewire.batchStackAnalysisService('mock/workspace/root', {})
+      .then(() => {
+        throw new Error('should have thrown Batch Analysis Error');
+      })
+      .catch((error: Error) => {
+        expect(error.message).to.equal('Batch Analysis Error');
       });
   });
 

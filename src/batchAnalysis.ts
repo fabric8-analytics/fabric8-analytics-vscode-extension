@@ -1,0 +1,80 @@
+'use strict';
+
+import * as vscode from 'vscode';
+
+import { StatusMessages, Titles } from './constants';
+import { batchStackAnalysisService, BatchOptions } from './exhortServices';
+import { globalConfig } from './config';
+import { updateCurrentWebviewPanel } from './rhda';
+import { buildLogErrorMessage } from './utils';
+import { DepOutputChannel } from './depOutputChannel';
+
+/**
+ * Executes the RHDA batch stack analysis process for a workspace.
+ * @param workspaceRoot The file path to the workspace root directory.
+ * @param outputChannel The output channel for logging.
+ * @returns The batch stack analysis response string.
+ */
+export async function executeBatchStackAnalysis(workspaceRoot: string, outputChannel: DepOutputChannel): Promise<string> {
+  return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
+    p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
+
+    const excludePatterns = globalConfig.excludePatterns.map(m => m.pattern);
+
+    const options: BatchOptions = {
+      'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
+      'TRUSTIFY_DA_TELEMETRY_ID': globalConfig.telemetryId,
+      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
+      'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
+      'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
+      'TRUSTIFY_DA_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
+      'TRUSTIFY_DA_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
+      'TRUSTIFY_DA_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
+      'TRUSTIFY_DA_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
+      'TRUSTIFY_DA_MVN_PATH': globalConfig.exhortMvnPath,
+      'TRUSTIFY_DA_PREFER_MVNW': globalConfig.exhortPreferMvnw,
+      'TRUSTIFY_DA_MVN_ARGS': globalConfig.exhortMvnArgs,
+      'TRUSTIFY_DA_GRADLE_PATH': globalConfig.exhortGradlePath,
+      'TRUSTIFY_DA_PREFER_GRADLEW': globalConfig.exhortPreferGradlew,
+      'TRUSTIFY_DA_NPM_PATH': globalConfig.exhortNpmPath,
+      'TRUSTIFY_DA_PNPM_PATH': globalConfig.exhortPnpmPath,
+      'TRUSTIFY_DA_YARN_PATH': globalConfig.exhortYarnPath,
+      'TRUSTIFY_DA_GO_PATH': globalConfig.exhortGoPath,
+      'TRUSTIFY_DA_PYTHON3_PATH': globalConfig.exhortPython3Path,
+      'TRUSTIFY_DA_PIP3_PATH': globalConfig.exhortPip3Path,
+      'TRUSTIFY_DA_PYTHON_PATH': globalConfig.exhortPythonPath,
+      'TRUSTIFY_DA_PIP_PATH': globalConfig.exhortPipPath,
+      'TRUSTIFY_DA_PROXY_URL': globalConfig.exhortProxyUrl,
+      'batchConcurrency': globalConfig.batchConcurrency,
+      'continueOnError': globalConfig.continueOnError,
+      'batchMetadata': globalConfig.batchMetadata,
+      'workspaceDiscoveryIgnore': excludePatterns,
+    };
+
+    try {
+      outputChannel.info(`generating batch stack analysis report for workspace "${workspaceRoot}"`);
+
+      const promise = batchStackAnalysisService(workspaceRoot, options);
+
+      p.report({ message: StatusMessages.WIN_GENERATING_DEPENDENCIES });
+
+      const resp = await promise;
+
+      updateCurrentWebviewPanel(resp);
+
+      outputChannel.info(`done generating batch stack analysis report for workspace "${workspaceRoot}"`);
+
+      p.report({ message: StatusMessages.WIN_SUCCESS_DEPENDENCY_ANALYSIS });
+
+      return resp;
+    } catch (err) {
+      p.report({ message: StatusMessages.WIN_FAILURE_DEPENDENCY_ANALYSIS });
+
+      updateCurrentWebviewPanel('error');
+
+      outputChannel.error(buildLogErrorMessage(err as Error));
+
+      throw err;
+    }
+  });
+}

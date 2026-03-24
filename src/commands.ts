@@ -11,3 +11,4 @@ export const STACK_ANALYSIS_FROM_EDITOR_COMMAND = 'rhda.stackAnalysisFromEditor'
 export const STACK_LOGS_COMMAND = 'rhda.stackLogs';
 export const TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND = 'rhda.trackRecommendationAcceptance';
 export const LLM_MODELS_ANALYSIS_REPORT = 'rhda.llmModelsAnalysisReport';
+export const STACK_ANALYSIS_BATCH_COMMAND = 'rhda.stackAnalysisBatch';

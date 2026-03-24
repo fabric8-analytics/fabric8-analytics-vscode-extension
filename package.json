@@ -77,6 +77,11 @@
         "command": "rhda.stackLogs",
         "title": "Debug logs",
         "category": "Red Hat Dependency Analytics"
+      },
+      {
+        "command": "rhda.stackAnalysisBatch",
+        "title": "Red Hat Dependency Analytics Batch Report (Workspace)...",
+        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -401,6 +406,24 @@
           },
           "description": "List of path globs for manifests to ignore for analysis. Only forward slash is support as a path separator."
         },
+        "redHatDependencyAnalytics.batchConcurrency": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum number of parallel SBOM generations during batch workspace analysis.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.continueOnError": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, batch analysis skips failing packages and continues. When false, stops on the first error.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.batchMetadata": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, batch analysis includes metadata with per-package error details in the response.",
+          "scope": "window"
+        },
         "redHatDependencyAnalytics.oidc.endpoint": {
           "type": "string",
           "default": "https://sso.redhat.com/auth/realms/redhat-external",
@@ -475,7 +498,7 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustify-da/trustify-da-api-model": "^2.0.7",
-    "@trustify-da/trustify-da-javascript-client": "0.3.0-ea.608d6fa",
+    "@trustify-da/trustify-da-javascript-client": "^0.3.0",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/parser": "^1.0.11",
     "cli-table3": "^0.6.5",

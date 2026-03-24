@@ -7,6 +7,19 @@ import { IImageRef, type IOptions } from './imageAnalysis';
 import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
 
 /**
+ * Options for batch analysis.
+ * The upstream Options type only allows string values, but the JS client's
+ * stackAnalysisBatch() also accepts number, boolean, and string[] fields.
+ */
+export interface BatchOptions {
+  [key: string]: string | number | boolean | string[] | undefined;
+  batchConcurrency?: number;
+  continueOnError?: boolean;
+  batchMetadata?: boolean;
+  workspaceDiscoveryIgnore?: string[];
+}
+
+/**
  * Executes RHDA image analysis using the provided images and options.
  * @param images - The images to analyze.
  * @param options - The options for running image analysis.
@@ -76,4 +89,16 @@ async function tokenValidationService(options: Options, source: string): Promise
   }
 }
 
-export { imageAnalysisService, stackAnalysisService, tokenValidationService, parseImageReference };
+/**
+ * Performs RHDA batch stack analysis for all workspace packages.
+ * @param workspaceRoot The path to the workspace root directory.
+ * @param options Additional options for the analysis including batch-specific settings.
+ * @returns A promise resolving to the batch stack analysis report in HTML format.
+ */
+async function batchStackAnalysisService(workspaceRoot: string, options: BatchOptions): Promise<string> {
+  // Cast exhort to access stackAnalysisBatch which exists at runtime but
+  // is not yet in the published type definitions
+  return await (exhort as any).stackAnalysisBatch(workspaceRoot, true, options);
+}
+
+export { imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference };

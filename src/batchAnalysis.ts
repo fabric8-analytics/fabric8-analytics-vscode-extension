@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 
 import { StatusMessages, Titles } from './constants';
-import { batchStackAnalysisService, BatchOptions } from './exhortServices';
+import { buildBaseOptions, batchStackAnalysisService, BatchOptions } from './exhortServices';
 import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
@@ -22,36 +22,13 @@ export async function executeBatchStackAnalysis(tokenProvider: TokenProvider, wo
   return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
     p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
-    const excludePatterns = globalConfig.excludePatterns.map(m => m.pattern);
-
     const options: BatchOptions = {
-      'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
-      'TRUSTIFY_DA_TELEMETRY_ID': globalConfig.telemetryId,
+      ...buildBaseOptions(),
       'TRUSTIFY_DA_TOKEN': await tokenProvider.getToken() ?? '',
-      'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
-      'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
-      'TRUSTIFY_DA_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
-      'TRUSTIFY_DA_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
-      'TRUSTIFY_DA_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
-      'TRUSTIFY_DA_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
-      'TRUSTIFY_DA_MVN_PATH': globalConfig.exhortMvnPath,
-      'TRUSTIFY_DA_PREFER_MVNW': globalConfig.exhortPreferMvnw,
-      'TRUSTIFY_DA_MVN_ARGS': globalConfig.exhortMvnArgs,
-      'TRUSTIFY_DA_GRADLE_PATH': globalConfig.exhortGradlePath,
-      'TRUSTIFY_DA_PREFER_GRADLEW': globalConfig.exhortPreferGradlew,
-      'TRUSTIFY_DA_NPM_PATH': globalConfig.exhortNpmPath,
-      'TRUSTIFY_DA_PNPM_PATH': globalConfig.exhortPnpmPath,
-      'TRUSTIFY_DA_YARN_PATH': globalConfig.exhortYarnPath,
-      'TRUSTIFY_DA_GO_PATH': globalConfig.exhortGoPath,
-      'TRUSTIFY_DA_PYTHON3_PATH': globalConfig.exhortPython3Path,
-      'TRUSTIFY_DA_PIP3_PATH': globalConfig.exhortPip3Path,
-      'TRUSTIFY_DA_PYTHON_PATH': globalConfig.exhortPythonPath,
-      'TRUSTIFY_DA_PIP_PATH': globalConfig.exhortPipPath,
-      'TRUSTIFY_DA_PROXY_URL': globalConfig.exhortProxyUrl,
       'batchConcurrency': globalConfig.batchConcurrency,
       'continueOnError': globalConfig.continueOnError,
       'batchMetadata': globalConfig.batchMetadata,
-      'workspaceDiscoveryIgnore': excludePatterns,
+      'workspaceDiscoveryIgnore': globalConfig.excludePatterns.map(m => m.pattern),
     };
 
     try {

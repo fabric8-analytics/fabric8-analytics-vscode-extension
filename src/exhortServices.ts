@@ -5,6 +5,7 @@ import exhort, { ImageRef, Options, parseImageRef } from '@trustify-da/trustify-
 
 import { IImageRef, type IOptions } from './imageAnalysis';
 import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
+import { globalConfig } from './config';
 
 /**
  * Options for batch analysis.
@@ -17,6 +18,38 @@ export interface BatchOptions {
   continueOnError?: boolean;
   batchMetadata?: boolean;
   workspaceDiscoveryIgnore?: string[];
+}
+
+/**
+ * Builds the common options object from globalConfig, shared across
+ * stack analysis, batch analysis, and token validation calls.
+ */
+function buildBaseOptions(): Options {
+  return {
+    'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
+    'TRUSTIFY_DA_TELEMETRY_ID': globalConfig.telemetryId,
+    'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
+    'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
+    'TRUSTIFY_DA_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
+    'TRUSTIFY_DA_GO_MVS_LOGIC_ENABLED': globalConfig.useGoMVS,
+    'TRUSTIFY_DA_PYTHON_INSTALL_BEST_EFFORTS': globalConfig.enablePythonBestEffortsInstallation,
+    'TRUSTIFY_DA_PIP_USE_DEP_TREE': globalConfig.usePipDepTree,
+    'TRUSTIFY_DA_MVN_PATH': globalConfig.exhortMvnPath,
+    'TRUSTIFY_DA_PREFER_MVNW': globalConfig.exhortPreferMvnw,
+    'TRUSTIFY_DA_MVN_ARGS': globalConfig.exhortMvnArgs,
+    'TRUSTIFY_DA_GRADLE_PATH': globalConfig.exhortGradlePath,
+    'TRUSTIFY_DA_PREFER_GRADLEW': globalConfig.exhortPreferGradlew,
+    'TRUSTIFY_DA_NPM_PATH': globalConfig.exhortNpmPath,
+    'TRUSTIFY_DA_PNPM_PATH': globalConfig.exhortPnpmPath,
+    'TRUSTIFY_DA_YARN_PATH': globalConfig.exhortYarnPath,
+    'TRUSTIFY_DA_GO_PATH': globalConfig.exhortGoPath,
+    'TRUSTIFY_DA_PYTHON3_PATH': globalConfig.exhortPython3Path,
+    'TRUSTIFY_DA_PIP3_PATH': globalConfig.exhortPip3Path,
+    'TRUSTIFY_DA_PYTHON_PATH': globalConfig.exhortPythonPath,
+    'TRUSTIFY_DA_PIP_PATH': globalConfig.exhortPipPath,
+    'TRUSTIFY_DA_CARGO_PATH': globalConfig.exhortCargoPath,
+    'TRUSTIFY_DA_PROXY_URL': globalConfig.exhortProxyUrl,
+  };
 }
 
 /**
@@ -101,4 +134,4 @@ async function batchStackAnalysisService(workspaceRoot: string, options: BatchOp
   return await (exhort as any).stackAnalysisBatch(workspaceRoot, true, options);
 }
 
-export { imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference };
+export { buildBaseOptions, imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference };

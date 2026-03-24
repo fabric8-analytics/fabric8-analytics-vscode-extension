@@ -499,7 +499,7 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustify-da/trustify-da-api-model": "^2.0.7",
-    "@trustify-da/trustify-da-javascript-client": "^0.3.0",
+    "@trustify-da/trustify-da-javascript-client": "0.3.0-ea.7144952",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/parser": "^1.0.11",
     "cli-table3": "^0.6.5",

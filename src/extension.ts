@@ -325,7 +325,7 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
       }
       const workspaceRoot = workspaceFolders[0].uri.fsPath;
       try {
-        await executeBatchStackAnalysis(workspaceRoot, outputChannelDep);
+        await executeBatchStackAnalysis(tokenProvider, workspaceRoot, outputChannelDep);
         record(context, TelemetryActions.batchAnalysisDone, { workspace: workspaceRoot });
       } catch (error) {
         const message = applySettingNameMappings((error as Error).message);

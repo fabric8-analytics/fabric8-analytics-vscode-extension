@@ -47,7 +47,8 @@
     "workspaceContains:**/build.gradle",
     "workspaceContains:**/Cargo.toml",
     "workspaceContains:**/Dockerfile",
-    "workspaceContains:**/Containerfile"
+    "workspaceContains:**/Containerfile",
+    "onCommand:rhda.stackAnalysisBatch"
   ],
   "main": "./dist/extension",
   "contributes": {

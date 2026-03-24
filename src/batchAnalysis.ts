@@ -8,14 +8,17 @@ import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
+import { DependencyReportPanel } from './dependencyReportPanel';
+import { TokenProvider } from './tokenProvider';
 
 /**
  * Executes the RHDA batch stack analysis process for a workspace.
+ * @param tokenProvider The token provider for authentication.
  * @param workspaceRoot The file path to the workspace root directory.
  * @param outputChannel The output channel for logging.
  * @returns The batch stack analysis response string.
  */
-export async function executeBatchStackAnalysis(workspaceRoot: string, outputChannel: DepOutputChannel): Promise<string> {
+export async function executeBatchStackAnalysis(tokenProvider: TokenProvider, workspaceRoot: string, outputChannel: DepOutputChannel): Promise<string> {
   return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
     p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
@@ -24,7 +27,7 @@ export async function executeBatchStackAnalysis(workspaceRoot: string, outputCha
     const options: BatchOptions = {
       'TRUSTIFY_DA_BACKEND_URL': globalConfig.backendUrl,
       'TRUSTIFY_DA_TELEMETRY_ID': globalConfig.telemetryId,
-      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
+      'TRUSTIFY_DA_TOKEN': await tokenProvider.getToken() ?? '',
       'TRUSTIFY_DA_SOURCE': globalConfig.utmSource,
       'MATCH_MANIFEST_VERSIONS': globalConfig.matchManifestVersions,
       'TRUSTIFY_DA_PYTHON_VIRTUAL_ENV': globalConfig.usePythonVirtualEnvironment,
@@ -53,6 +56,8 @@ export async function executeBatchStackAnalysis(workspaceRoot: string, outputCha
 
     try {
       outputChannel.info(`generating batch stack analysis report for workspace "${workspaceRoot}"`);
+
+      DependencyReportPanel.createOrShowWebviewPanel();
 
       const promise = batchStackAnalysisService(workspaceRoot, options);
 

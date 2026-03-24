@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 
 import { StatusMessages, Titles } from './constants';
 import { buildBaseOptions, stackAnalysisService } from './exhortServices';
-import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
 import { DepOutputChannel } from './depOutputChannel';
@@ -21,7 +20,7 @@ export async function executeStackAnalysis(tokenProvider: TokenProvider, manifes
 
     const options = {
       ...buildBaseOptions(),
-      'TRUSTIFY_DA_TOKEN': globalConfig.telemetryId,
+      'TRUSTIFY_DA_TOKEN': await tokenProvider.getToken() ?? '',
     };
 
     try {

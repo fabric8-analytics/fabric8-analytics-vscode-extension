@@ -15,6 +15,7 @@ The Red Hat Dependency Analytics extension uses vulnerability data sources for t
 - Golang
 - Python
 - Gradle (Kotlin / Groovy DSL)
+- Rust (Cargo)
 
 <br >**NOTE:**
 The Red Hat Dependency Analytics extension is an online service hosted and maintained by Red Hat.
@@ -55,6 +56,7 @@ When a specific path is configured in the settings, it takes precedence over the
 | Golang | `go` | `go.mod` |
 | Python | `python3/pip3` or `python/pip` | `requirements.txt` |
 | Gradle | `gradle` | `build.gradle` |
+| Rust | `cargo` | `Cargo.toml` |
 
 **Note:** For NPM, PNPM, and Yarn projects, you can use [fnm](https://github.com/Schniz/fnm) or [nvm](https://github.com/nvm-sh/nvm) for Node.js version management. The extension will automatically detect and use the binary path from the `FNM_DIR` or `NVM_DIR` environment variables.
 
@@ -117,6 +119,9 @@ You can set the vulnerability severity alert level to `Error` or `Warning` for i
 #### Golang:
 * `useGoMVS` : Use the minimal version selection algorithm to select a set of module versions to use when building Go packages.
 
+#### Rust (Cargo):
+* `cargo.executable.path` : Specify the absolute path to the `cargo` executable. If not set, the extension uses `cargo` from your system `PATH`.
+
 #### HTTP Proxy:
 * `httpProxy` : Configure HTTP proxy settings for the extension. There are three options available:
   - `on`: Always use the HTTP proxy regardless of VS Code's proxy settings
@@ -156,7 +161,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 ## Features
 
 - **Component analysis**
-	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod` or `requirements.txt` file, a vulnerability scan starts the analysis process.
+	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod`, `requirements.txt`, or `Cargo.toml` file, a vulnerability scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's, and container's dependencies.
 	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from the available data sources.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
@@ -178,7 +183,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 - **License compatibility checking**
 	<br >Red Hat Dependency Analytics automatically checks for license compatibility issues in your project:
 
-	- **License mismatch detection**: For projects with license fields in their manifest files (`package.json`, `pom.xml`, `build.gradle`), the extension detects mismatches between the license declared in the manifest and the LICENSE file. A red underline appears on the license field with a quick fix to update the manifest with the LICENSE file's value.
+	- **License mismatch detection**: For projects with license fields in their manifest files (`package.json`, `pom.xml`, `build.gradle`, `Cargo.toml`), the extension detects mismatches between the license declared in the manifest and the LICENSE file. A red underline appears on the license field with a quick fix to update the manifest with the LICENSE file's value.
 
 	- **Incompatible dependency licenses**: The extension identifies dependencies whose licenses are more restrictive than your project's license. A notification displays the count of incompatible dependencies, helping you maintain license compliance.
 
@@ -287,6 +292,24 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	}
 	```
 
+	- **Rust (Cargo)**
+	<br >If you want to ignore vulnerabilities for a dependency in a `Cargo.toml` file, you must add `# exhortignore` to the end of the line as a comment against the dependency in the manifest file.
+	For inline dependencies:
+
+	```toml
+	[dependencies]
+	serde = "1.0" # exhortignore
+	tokio = { version = "1.0", features = ["full"] } # exhortignore
+	```
+
+	For table-style dependencies, add the comment on the section header:
+
+	```toml
+	[dependencies.reqwest] # exhortignore
+	version = "0.11"
+	features = ["json"]
+	```
+
 - **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
 	
@@ -346,6 +369,26 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	```
 
 	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there instead.
+
+	For example, placing dependencies under `[dev-dependencies]` or `[build-dependencies]` in a `Cargo.toml` file. Red Hat Dependency Analytics excludes these from analysis and only reports on `[dependencies]`, `[workspace.dependencies]`, and platform-specific sections such as `[target.'cfg(windows)'.dependencies]`.
+
+	```toml
+	[package]
+	name = "my-crate"
+	version = "0.1.0"
+
+	[dependencies]
+	serde = "1.0"
+
+	[dev-dependencies]
+	# Excluded from analysis
+	mockall = "0.11"
+
+	[build-dependencies]
+	# Excluded from analysis
+	cc = "1.0"
+	```
+
 	
 - **Red Hat Dependency Analytics report** 
 	<br >The Red Hat Dependency Analytics report is a temporary HTML file that exist if the **Red Hat Dependency Analytics Report** tab remains open.

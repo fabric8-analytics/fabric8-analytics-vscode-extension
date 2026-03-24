@@ -13,7 +13,7 @@ import { DependencyProvider as PomXml } from '../../src/providers/pom.xml';
 import { DependencyProvider as GoMod } from '../../src/providers/go.mod';
 import { DependencyProvider as RequirementsTxt } from '../../src/providers/requirements.txt';
 import { DependencyProvider as BuildGradle } from '../../src/providers/build.gradle';
-import { DependencyProvider as CargoToml } from '../../src/providers/Cargo.toml';
+import { DependencyProvider as CargoToml } from '../../src/providers/cargo-toml';
 import * as constants from '../../src/constants';
 import { Position, Range } from 'vscode';
 

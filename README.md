@@ -292,6 +292,24 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	}
 	```
 
+	- **Rust (Cargo)**
+	<br >If you want to ignore vulnerabilities for a dependency in a `Cargo.toml` file, you must add `# exhortignore` to the end of the line as a comment against the dependency in the manifest file.
+	For inline dependencies:
+
+	```toml
+	[dependencies]
+	serde = "1.0" # exhortignore
+	tokio = { version = "1.0", features = ["full"] } # exhortignore
+	```
+
+	For table-style dependencies, add the comment on the section header:
+
+	```toml
+	[dependencies.reqwest] # exhortignore
+	version = "0.11"
+	features = ["json"]
+	```
+
 - **Excluding developmental or test dependencies**
 	<br >Red Hat Dependency Analytics does not analyze dependencies marked as `dev` or `test`, these dependencies are ignored.
 	

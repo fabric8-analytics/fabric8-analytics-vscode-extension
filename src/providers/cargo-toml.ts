@@ -111,6 +111,20 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     return null;
   }
 
+  /**
+   * Resolves the real crate name for a dependency. Cargo allows local renaming
+   * via the `package` key (e.g. `my_serde = { version = "1.0", package = "serde" }`).
+   * When present, `package` holds the real crate name on crates.io; otherwise the
+   * local key name is the real name.
+   */
+  private resolvePackageName(localName: string, kvs: AST.TOMLKeyValue[]): string {
+    const pkgKv = kvs.find(kv => keyName(kv.key.keys[0]) === 'package');
+    if (pkgKv && pkgKv.value.type === 'TOMLValue' && pkgKv.value.kind === 'string') {
+      return String(pkgKv.value.value);
+    }
+    return localName;
+  }
+
   collect(contents: string): Dependency[] {
     let ast: AST.TOMLProgram;
     try {
@@ -126,19 +140,22 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
       if (node.type === 'TOMLTable') {
         if (this.isFlatDepsTable(node.resolvedKey)) {
           for (const kv of node.body) {
-            const depName = keyName(kv.key.keys[0]);
+            const localName = keyName(kv.key.keys[0]);
             const version = this.extractVersion(kv);
             if (!version) { continue; }
 
+            const inlineKvs = kv.value.type === 'TOMLInlineTable' ? kv.value.body : [];
+            const depName = this.resolvePackageName(localName, inlineKvs);
             const dep = new Dependency({ value: depName, position: { line: 0, column: 0 } });
             dep.version = { value: version.value, position: this.toVersionPosition(version.loc) };
             dependencies.push(dep);
           }
         } else {
-          const depName = this.dottedDepName(node.resolvedKey);
-          if (depName) {
+          const localName = this.dottedDepName(node.resolvedKey);
+          if (localName) {
             const versionKv = node.body.find(kv => keyName(kv.key.keys[0]) === 'version');
             if (versionKv && versionKv.value.type === 'TOMLValue' && versionKv.value.kind === 'string') {
+              const depName = this.resolvePackageName(localName, node.body);
               const dep = new Dependency({ value: depName, position: { line: 0, column: 0 } });
               dep.version = {
                 value: String(versionKv.value.value),

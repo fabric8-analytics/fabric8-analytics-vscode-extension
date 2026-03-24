@@ -7,7 +7,7 @@ import { DependencyProvider as PomXml } from './providers/pom.xml';
 import { DependencyProvider as GoMod } from './providers/go.mod';
 import { DependencyProvider as RequirementsTxt } from './providers/requirements.txt';
 import { DependencyProvider as BuildGradle } from './providers/build.gradle';
-import { DependencyProvider as CargoToml } from './providers/Cargo.toml';
+import { DependencyProvider as CargoToml } from './providers/cargo-toml';
 import { ImageProvider as Docker } from './providers/docker';
 import { globalConfig } from './config';
 import { DepOutputChannel } from './depOutputChannel';

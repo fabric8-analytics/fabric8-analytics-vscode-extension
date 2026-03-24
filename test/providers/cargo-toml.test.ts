@@ -8,7 +8,7 @@ const expect = chai.expect;
 chai.use(sinonChai);
 chai.use(chaiSubset);
 
-import { DependencyProvider } from '../../src/providers/Cargo.toml';
+import { DependencyProvider } from '../../src/providers/cargo-toml';
 
 let dependencyProvider: DependencyProvider;
 suite('Rust Cargo Cargo.toml parser tests', () => {
@@ -463,6 +463,51 @@ winapi = "0.3"
             { name: { value: 'serde' }, version: { value: '1.0' } },
             { name: { value: 'log' }, version: { value: '0.4' } },
             { name: { value: 'winapi' }, version: { value: '0.3' } }
+        ]);
+    });
+
+    test('tests inline table with package rename uses real crate name', async () => {
+        const deps = dependencyProvider.collect(`[dependencies]
+serde_lib = { version = "1.0", package = "serde" }
+tokio = "1.28.0"
+`);
+        expect(deps.length).to.eql(2);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'serde', position: { line: 0, column: 0 } },
+                version: { value: '1.0', position: { line: 2, column: 26 } }
+            },
+            {
+                name: { value: 'tokio', position: { line: 0, column: 0 } },
+                version: { value: '1.28.0' }
+            }
+        ]);
+    });
+
+    test('tests dotted table with package rename uses real crate name', async () => {
+        const deps = dependencyProvider.collect(`[dependencies.my_openssl]
+version = "0.10"
+package = "openssl"
+`);
+        expect(deps.length).to.eql(1);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'openssl', position: { line: 0, column: 0 } },
+                version: { value: '0.10', position: { line: 2, column: 12 } }
+            }
+        ]);
+    });
+
+    test('tests simple string version has no package rename effect', async () => {
+        const deps = dependencyProvider.collect(`[dependencies]
+serde = "1.0"
+`);
+        expect(deps.length).to.eql(1);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'serde', position: { line: 0, column: 0 } },
+                version: { value: '1.0' }
+            }
         ]);
     });
 

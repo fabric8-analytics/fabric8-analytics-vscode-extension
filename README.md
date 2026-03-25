@@ -154,9 +154,14 @@ You can set the vulnerability severity alert level to `Error` or `Warning` for i
   Default: `true`
 
 #### Exclude manifests from analysis:
-Specify glob patterns for manifests to be ignored for background analysis e.g. `**/test/**/package.json` will ignore all package.json files within `test/` or any subdirectories of it.
+Specify glob patterns for manifests to be ignored for background analysis e.g. `**/test/**/package.json` will ignore all package.json files within `test/` or any subdirectories of it. These patterns are also propagated to the batch workspace analysis command as discovery ignore patterns.
 
 **NOTE:** Only forward slash (`/`) is supported as a path separator. Please use forward slash as the path separator even for Windows paths.
+
+#### Batch Workspace Analysis:
+* `batchConcurrency` : Maximum number of parallel SBOM generations during batch workspace analysis. Default is `10`.
+* `continueOnError` : When `true`, batch analysis skips failing packages and continues. When `false`, stops on the first error. Default is `true`.
+* `batchMetadata` : When `true`, batch analysis includes metadata with per-package error details in the response. Default is `true`.
 
 ## Features
 
@@ -206,6 +211,11 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	* `podman.executable.path`: Specify the absolute path of `podman` executable
 	* `image.platform`: Specify the platform used for multi-arch images
   
+- **Batch workspace analysis**
+	<br >Analyze all packages in a JavaScript/TypeScript monorepo or Cargo workspace at once using the _Red Hat Dependency Analytics Batch Report (Workspace)..._ command from the Command Palette.
+	The command detects the workspace root, discovers all sub-packages (via `pnpm-workspace.yaml`, `package.json` workspaces, or `cargo metadata`), generates SBOMs in parallel, and produces a combined analysis report.
+	Existing exclude patterns from `redHatDependencyAnalytics.exclude` are automatically applied to workspace package discovery.
+
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
 	How you exclude a package varies based on the your project's language:

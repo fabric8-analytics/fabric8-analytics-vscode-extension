@@ -52,6 +52,9 @@ suite('Config module', () => {
     expect(globalConfig.exhortDockerPath).to.eq('docker');
     expect(globalConfig.exhortPodmanPath).to.eq('podman');
     expect(globalConfig.exhortImagePlatform).to.eq('');
+    expect(globalConfig.batchConcurrency).to.eq(10);
+    expect(globalConfig.continueOnError).to.eq(true);
+    expect(globalConfig.batchMetadata).to.eq(true);
   });
 
   test('should retrieve telemetry parameters from getTelemetryId and set process environment variables', async () => {

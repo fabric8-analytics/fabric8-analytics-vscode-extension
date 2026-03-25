@@ -23,6 +23,7 @@ import CliTable3 = require('cli-table3');
 import { Language, Parser, Query } from 'web-tree-sitter';
 import { getValidAccessToken, performOIDCAuthorizationFlow } from './oidcAuthentication';
 import { TokenProvider, VSCodeTokenProvider } from './tokenProvider';
+import { executeBatchStackAnalysis } from './batchAnalysis';
 
 export let outputChannelDep: DepOutputChannel;
 
@@ -314,6 +315,27 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
 
   registerStackAnalysisCommands(context, tokenProvider);
 
+  const disposableBatchAnalysisCommand = vscode.commands.registerCommand(
+    commands.STACK_ANALYSIS_BATCH_COMMAND,
+    async () => {
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      if (!workspaceFolders || workspaceFolders.length === 0) {
+        vscode.window.showErrorMessage('No workspace folder is open. Open a workspace to run batch analysis.');
+        return;
+      }
+      const workspaceRoot = workspaceFolders[0].uri.fsPath;
+      try {
+        await executeBatchStackAnalysis(tokenProvider, workspaceRoot, outputChannelDep);
+        record(context, TelemetryActions.batchAnalysisDone, { workspace: workspaceRoot });
+      } catch (error) {
+        const message = applySettingNameMappings((error as Error).message);
+        vscode.window.showErrorMessage(`RHDA batch analysis error: ${message}`);
+        outputChannelDep.error(buildLogErrorMessage((error as Error)));
+        record(context, TelemetryActions.batchAnalysisFailed, { workspace: workspaceRoot, error: message });
+      }
+    }
+  );
+
   const showVulnerabilityFoundPrompt = async (msg: string, filePath: vscode.Uri) => {
     const fileName = path.basename(filePath.fsPath);
     const selection = await vscode.window.showWarningMessage(`${msg}`, PromptText.FULL_STACK_PROMPT_TEXT);
@@ -360,6 +382,7 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
   context.subscriptions.push(
     disposableLLMAnalysisReportCommand,
     disposableStackAnalysisCommand,
+    disposableBatchAnalysisCommand,
     disposableStackLogsCommand,
     disposableTrackRecommendationAcceptance,
     caStatusBarProvider,

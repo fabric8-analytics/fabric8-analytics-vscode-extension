@@ -131,7 +131,13 @@ async function tokenValidationService(options: Options, source: string): Promise
 async function batchStackAnalysisService(workspaceRoot: string, options: BatchOptions): Promise<string> {
   // Cast exhort to access stackAnalysisBatch which exists at runtime but
   // is not yet in the published type definitions
-  return await (exhort as any).stackAnalysisBatch(workspaceRoot, true, options);
+  const result = await (exhort as any).stackAnalysisBatch(workspaceRoot, true, options);
+  // When batchMetadata is enabled, the result is { analysis, metadata };
+  // otherwise it's the raw HTML string
+  if (result && typeof result === 'object' && 'analysis' in result) {
+    return result.analysis;
+  }
+  return result;
 }
 
 export { buildBaseOptions, imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference };

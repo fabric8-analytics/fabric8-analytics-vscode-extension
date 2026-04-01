@@ -52,6 +52,9 @@ class Config {
   exhortImagePlatform!: string;
   excludePatterns!: Minimatch[];
   licenseCheckEnabled!: boolean;
+  batchConcurrency!: number;
+  continueOnError!: boolean;
+  batchMetadata!: boolean;
 
   private readonly DEFAULT_MVN_EXECUTABLE = 'mvn';
   private readonly DEFAULT_GRADLE_EXECUTABLE = 'gradle';
@@ -149,6 +152,9 @@ class Config {
     this.oidcClientId = rhdaConfig.get('oidc.clientId', 'rhda-vscode');
     this.oidcAllowInsecure = rhdaConfig.get('oidc.allowInsecure', false);
     this.licenseCheckEnabled = rhdaConfig.get('licenseCheckEnabled', true);
+    this.batchConcurrency = rhdaConfig.get('batchConcurrency', 10);
+    this.continueOnError = rhdaConfig.get('continueOnError', true);
+    this.batchMetadata = rhdaConfig.get('batchMetadata', true);
   }
 
   private getEffectiveHttpProxyUrl(): string {

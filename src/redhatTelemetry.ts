@@ -19,7 +19,9 @@ enum TelemetryActions {
   componentAnalysisRecommendationAccepted = 'component_analysis_recommendation_accepted',
   llmAnalysisModelAnnotationsDiscovered = 'llm_analysis_model_annotations_discovered',
   llmAnalysisDiagnosticsHovered = 'llm_analysis_diagnostics_hovered',
-  llmAnalysisReportDone = 'llm_analysis_report_done'
+  llmAnalysisReportDone = 'llm_analysis_report_done',
+  batchAnalysisDone = 'batch_analysis_done',
+  batchAnalysisFailed = 'batch_analysis_failed'
 }
 
 let telemetryServiceObj: TelemetryService | null = null;

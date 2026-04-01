@@ -11,6 +11,11 @@ import { globalConfig } from './config';
  * Options for batch analysis.
  * The upstream Options type only allows string values, but the JS client's
  * stackAnalysisBatch() also accepts number, boolean, and string[] fields.
+ *
+ * Batch-specific fields below use camelCase property names as read by the
+ * client's resolve helpers (e.g. opts.batchConcurrency first). The
+ * TRUSTIFY_DA_* env var names are fallbacks via process.env, not the opts
+ * keys for those settings—do not rename batch fields to match env names.
  */
 export interface BatchOptions {
   [key: string]: string | number | boolean | string[] | undefined;

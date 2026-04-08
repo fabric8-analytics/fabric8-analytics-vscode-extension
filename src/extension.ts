@@ -56,6 +56,10 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
     visibleEditors = newVisible;
   }));
   context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => clearCodeActionsMap(doc.uri)));
+  // Refresh config now that VS Code's configuration is fully initialized.
+  // The globalConfig singleton was instantiated at module load time, before
+  // workspace settings (e.g. http.proxy) were available.
+  globalConfig.loadData();
   // Iterate all open docs, as there is (in general) no did-open event for these.
   for (const doc of vscode.workspace.textDocuments) {
     fileHandler.handle(tokenProvider, doc, outputChannelDep);

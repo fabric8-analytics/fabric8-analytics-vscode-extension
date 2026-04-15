@@ -3,12 +3,13 @@
     "target": "esnext",
     "lib": ["es2022"],
     "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "node10",
     "outDir": "out",
     "sourceMap": true,
     "rootDir": ".",
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "types": ["node", "mocha"]
   },
   "exclude": [
     "node_modules",

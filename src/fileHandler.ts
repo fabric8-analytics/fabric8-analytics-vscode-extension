@@ -6,6 +6,7 @@ import { DependencyProvider as PackageJson } from './providers/package.json';
 import { DependencyProvider as PomXml } from './providers/pom.xml';
 import { DependencyProvider as GoMod } from './providers/go.mod';
 import { DependencyProvider as RequirementsTxt } from './providers/requirements.txt';
+import { DependencyProvider as PyprojectToml } from './providers/pyproject.toml';
 import { DependencyProvider as BuildGradle } from './providers/build.gradle';
 import { DependencyProvider as CargoToml } from './providers/cargo-toml';
 import { ImageProvider as Docker } from './providers/docker';
@@ -40,6 +41,11 @@ export class AnalysisMatcher {
       pattern: /^requirements\.txt$/,
       callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new RequirementsTxt()); },
       providerName: 'requirements'
+    },
+    {
+      pattern: /^pyproject\.toml$/,
+      callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new PyprojectToml()); },
+      providerName: 'pyproject'
     },
     {
       pattern: /^build\.gradle$/,

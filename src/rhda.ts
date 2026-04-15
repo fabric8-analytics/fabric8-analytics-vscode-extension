@@ -27,6 +27,7 @@ const GO_MOD = 'go.mod';
 const POM_XML = 'pom.xml';
 const PACKAGE_JSON = 'package.json';
 const REQUIREMENTS_TXT = 'requirements.txt';
+const PYPROJECT_TOML = 'pyproject.toml';
 const BUILD_GRADLE = 'build.gradle';
 const CARGO_TOML = 'Cargo.toml';
 const DOCKERFILE = 'Dockerfile';
@@ -48,7 +49,7 @@ function getFileType(filePath: string): supportedFileTypes | undefined {
   else if (basename === PACKAGE_JSON) {
     return 'npm';
   }
-  else if (basename === REQUIREMENTS_TXT) {
+  else if (basename === REQUIREMENTS_TXT || basename === PYPROJECT_TOML) {
     return 'python';
   }
   else if (basename === BUILD_GRADLE) {

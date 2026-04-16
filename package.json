@@ -44,6 +44,7 @@
     "workspaceContains:**/pom.xml",
     "workspaceContains:**/go.mod",
     "workspaceContains:**/requirements.txt",
+    "workspaceContains:**/pyproject.toml",
     "workspaceContains:**/build.gradle",
     "workspaceContains:**/Cargo.toml",
     "workspaceContains:**/Dockerfile",
@@ -109,6 +110,11 @@
         },
         {
           "command": "rhda.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == pyproject.toml",
+          "group": "navigation"
+        },
+        {
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == build.gradle",
           "group": "navigation"
         },
@@ -142,6 +148,10 @@
         },
         {
           "command": "rhda.stackAnalysisFromExplorer",
+          "when": "resourceFilename == pyproject.toml"
+        },
+        {
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == build.gradle"
         },
         {
@@ -169,6 +179,10 @@
         {
           "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.stackAnalysisFromEditor",
+          "when": "resourceFilename == pyproject.toml"
         },
         {
           "command": "rhda.stackAnalysisFromEditor",
@@ -293,6 +307,18 @@
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of cargo executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.uv.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of uv executable.",
+          "scope": "window"
+        },
+        "redHatDependencyAnalytics.poetry.executable.path": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies absolute path of poetry executable.",
           "scope": "window"
         },
         "redHatDependencyAnalytics.python3.executable.path": {
@@ -499,7 +525,7 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustify-da/trustify-da-api-model": "^2.0.7",
-    "@trustify-da/trustify-da-javascript-client": "0.3.0-ea.b8af0f8",
+    "@trustify-da/trustify-da-javascript-client": "^0.3.0-ea.dcb2120",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/parser": "^1.0.11",
     "cli-table3": "^0.6.5",

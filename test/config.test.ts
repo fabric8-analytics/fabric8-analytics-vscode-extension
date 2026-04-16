@@ -45,6 +45,8 @@ suite('Config module', () => {
     expect(globalConfig.exhortPip3Path).to.eq('pip3');
     expect(globalConfig.exhortPythonPath).to.eq('python');
     expect(globalConfig.exhortPipPath).to.eq('pip');
+    expect(globalConfig.exhortUvPath).to.eq('uv');
+    expect(globalConfig.exhortPoetryPath).to.eq('poetry');
     expect(globalConfig.exhortSyftPath).to.eq('syft');
     expect(globalConfig.exhortSyftConfigPath).to.eq('');
     expect(globalConfig.exhortSkopeoPath).to.eq('skopeo');
@@ -91,6 +93,8 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_TRUSTIFY_DA_PIP3_PATH']).to.eq('pip3');
     expect(process.env['VSCEXT_TRUSTIFY_DA_PYTHON_PATH']).to.eq('python');
     expect(process.env['VSCEXT_TRUSTIFY_DA_PIP_PATH']).to.eq('pip');
+    expect(process.env['VSCEXT_TRUSTIFY_DA_UV_PATH']).to.eq('uv');
+    expect(process.env['VSCEXT_TRUSTIFY_DA_POETRY_PATH']).to.eq('poetry');
     expect(process.env['VSCEXT_TELEMETRY_ID']).to.equal(mockId);
     expect(process.env['VSCEXT_TRUSTIFY_DA_SYFT_PATH']).to.equal('syft');
     expect(process.env['VSCEXT_TRUSTIFY_DA_SYFT_CONFIG_PATH']).to.equal('');

@@ -41,6 +41,8 @@ class Config {
   exhortPythonPath!: string;
   exhortPipPath!: string;
   exhortCargoPath!: string;
+  exhortUvPath!: string;
+  exhortPoetryPath!: string;
   rhdaReportFilePath!: string;
   secrets!: vscode.SecretStorage;
   exhortSyftPath!: string;
@@ -67,6 +69,8 @@ class Config {
   private readonly DEFAULT_PYTHON_EXECUTABLE = 'python';
   private readonly DEFAULT_PIP_EXECUTABLE = 'pip';
   private readonly DEFAULT_CARGO_EXECUTABLE = 'cargo';
+  private readonly DEFAULT_UV_EXECUTABLE = 'uv';
+  private readonly DEFAULT_POETRY_EXECUTABLE = 'poetry';
   private readonly DEFAULT_SYFT_EXECUTABLE = 'syft';
   private readonly DEFAULT_SKOPEO_EXECUTABLE = 'skopeo';
   private readonly DEFAULT_DOCKER_EXECUTABLE = 'docker';
@@ -140,6 +144,8 @@ class Config {
     this.exhortPythonPath = rhdaConfig.get('python.executable.path') || this.DEFAULT_PYTHON_EXECUTABLE;
     this.exhortPipPath = rhdaConfig.get('pip.executable.path') || this.DEFAULT_PIP_EXECUTABLE;
     this.exhortCargoPath = rhdaConfig.get('cargo.executable.path') || this.DEFAULT_CARGO_EXECUTABLE;
+    this.exhortUvPath = rhdaConfig.get('uv.executable.path') || this.DEFAULT_UV_EXECUTABLE;
+    this.exhortPoetryPath = rhdaConfig.get('poetry.executable.path') || this.DEFAULT_POETRY_EXECUTABLE;
     this.exhortSyftPath = rhdaConfig.get('syft.executable.path') || this.DEFAULT_SYFT_EXECUTABLE;
     this.exhortSyftConfigPath = rhdaConfig.get('syft.config.path', '');
     this.exhortSkopeoPath = rhdaConfig.get('skopeo.executable.path') || this.DEFAULT_SKOPEO_EXECUTABLE;
@@ -211,6 +217,8 @@ class Config {
     process.env['VSCEXT_TRUSTIFY_DA_PIP3_PATH'] = this.exhortPip3Path;
     process.env['VSCEXT_TRUSTIFY_DA_PYTHON_PATH'] = this.exhortPythonPath;
     process.env['VSCEXT_TRUSTIFY_DA_PIP_PATH'] = this.exhortPipPath;
+    process.env['VSCEXT_TRUSTIFY_DA_UV_PATH'] = this.exhortUvPath;
+    process.env['VSCEXT_TRUSTIFY_DA_POETRY_PATH'] = this.exhortPoetryPath;
     process.env['VSCEXT_TRUSTIFY_DA_CARGO_PATH'] = this.exhortCargoPath;
     process.env['VSCEXT_TELEMETRY_ID'] = this.telemetryId;
     process.env['VSCEXT_TRUSTIFY_DA_BACKEND_URL'] = this.backendUrl;

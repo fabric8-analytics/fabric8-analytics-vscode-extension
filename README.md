@@ -54,7 +54,9 @@ When a specific path is configured in the settings, it takes precedence over the
 | PNPM | `pnpm` | `package.json` |
 | Yarn | `yarn` | `package.json` |
 | Golang | `go` | `go.mod` |
-| Python | `python3/pip3` or `python/pip` | `requirements.txt` |
+| Pip | `python3/pip3` or `python/pip` | `requirements.txt` |
+| Poetry | `poetry` | `pyproject.toml` & `poetry.lock` |
+| UV | `uv` | `pyproject.toml` & `uv.lock` |
 | Gradle | `gradle` | `build.gradle` |
 | Rust | `cargo` | `Cargo.toml` |
 
@@ -166,7 +168,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 ## Features
 
 - **Component analysis**
-	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod`, `requirements.txt`, or `Cargo.toml` file, a vulnerability scan starts the analysis process.
+	<br >Upon opening a manifest file, such as a `pom.xml`, `package.json`, `go.mod`, `requirements.txt`, `pyproject.toml`, or `Cargo.toml` file, a vulnerability scan starts the analysis process.
 	The scan provides immediate inline feedback on detected security vulnerabilities for your application's, and container's dependencies.
 	Such dependencies are appropriately underlined in red, and hovering over it gives you a short summary of the security concern from the available data sources.
 	The summary has the full package name, version number, the amount of known security vulnerabilities, and the highest severity status of said vulnerabilities.
@@ -270,8 +272,8 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	```
 
 	- **Python**
-	<br >If you want to ignore vulnerabilities for a dependency in a `requirements.txt` file, you must add `# exhortignore` to the end of the line as a comment against the dependency in the manifest file.
-	For example:
+	<br >If you want to ignore vulnerabilities for a dependency in a `requirements.txt` or `pyproject.toml` file, you must add `# exhortignore` to the end of the line as a comment against the dependency in the manifest file.
+	For example, in `requirements.txt`:
 
 	```python
 	requests==2.28.1 # exhortignore
@@ -378,7 +380,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	}
 	```
 
-	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there instead.
+	For example, creating an alternative file to `requirements.txt`, like `requirements-dev.txt` or `requirements-test.txt` and adding the dev or test dependencies there instead. For `pyproject.toml` projects, dev dependencies in `[tool.poetry.group.dev.dependencies]` and `[project.optional-dependencies]` groups are included in the analysis — to exclude them, use `exhortignore` comments.
 
 	For example, placing dependencies under `[dev-dependencies]` or `[build-dependencies]` in a `Cargo.toml` file. Red Hat Dependency Analytics excludes these from analysis and only reports on `[dependencies]`, `[workspace.dependencies]`, and platform-specific sections such as `[target.'cfg(windows)'.dependencies]`.
 

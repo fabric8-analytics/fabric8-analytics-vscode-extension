@@ -2,6 +2,7 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import * as vscode from 'vscode';
 
 import { globalConfig } from '../src/config';
 import { GlobalState } from '../src/constants';
@@ -57,6 +58,50 @@ suite('Config module', () => {
     expect(globalConfig.batchConcurrency).to.eq(10);
     expect(globalConfig.continueOnError).to.eq(true);
     expect(globalConfig.batchMetadata).to.eq(true);
+  });
+
+  test('should pick up http.proxy setting after loadData()', async () => {
+    // Given a configured http.proxy setting
+    const httpConfig = vscode.workspace.getConfiguration('http');
+    await httpConfig.update('proxy', 'http://proxy.example.com:8080', vscode.ConfigurationTarget.Global);
+
+    // When loadData() is called
+    globalConfig.loadData();
+
+    // Then the proxy URL should be populated
+    expect(globalConfig.exhortProxyUrl).to.eq('http://proxy.example.com:8080');
+
+    // Cleanup
+    await httpConfig.update('proxy', undefined, vscode.ConfigurationTarget.Global);
+  });
+
+  test('should return empty proxy URL when no proxy is configured', async () => {
+    // Given no proxy is configured
+    const httpConfig = vscode.workspace.getConfiguration('http');
+    await httpConfig.update('proxy', undefined, vscode.ConfigurationTarget.Global);
+
+    // When loadData() is called
+    globalConfig.loadData();
+
+    // Then the proxy URL should be empty
+    expect(globalConfig.exhortProxyUrl).to.eq('');
+  });
+
+  test('should return empty proxy URL when proxySupport is off', async () => {
+    // Given http.proxy is set but proxySupport is off
+    const httpConfig = vscode.workspace.getConfiguration('http');
+    await httpConfig.update('proxy', 'http://proxy.example.com:8080', vscode.ConfigurationTarget.Global);
+    await httpConfig.update('proxySupport', 'off', vscode.ConfigurationTarget.Global);
+
+    // When loadData() is called
+    globalConfig.loadData();
+
+    // Then the proxy URL should be empty
+    expect(globalConfig.exhortProxyUrl).to.eq('');
+
+    // Cleanup
+    await httpConfig.update('proxy', undefined, vscode.ConfigurationTarget.Global);
+    await httpConfig.update('proxySupport', undefined, vscode.ConfigurationTarget.Global);
   });
 
   test('should retrieve telemetry parameters from getTelemetryId and set process environment variables', async () => {

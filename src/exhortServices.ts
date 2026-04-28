@@ -147,4 +147,16 @@ async function batchStackAnalysisService(workspaceRoot: string, options: BatchOp
   return result;
 }
 
-export { buildBaseOptions, imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference };
+/**
+ * Generates a CycloneDX SBOM for the given manifest file.
+ * @param pathToManifest The path to the manifest file.
+ * @param options Additional options for generation.
+ * @returns A promise resolving to the SBOM as a parsed JSON object.
+ */
+async function generateSbomService(pathToManifest: string, options: Options): Promise<object> {
+  // Cast exhort to access generateSbom which exists at runtime but
+  // is not yet in the published type definitions
+  return await (exhort as any).generateSbom(pathToManifest, options);
+}
+
+export { buildBaseOptions, imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference, generateSbomService };

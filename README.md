@@ -218,6 +218,11 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	The command detects the workspace root, discovers all sub-packages (via `pnpm-workspace.yaml`, `package.json` workspaces, or `cargo metadata`), generates SBOMs in parallel, and produces a combined analysis report.
 	Existing exclude patterns from `redHatDependencyAnalytics.exclude` are automatically applied to workspace package discovery.
 
+- **Generate SBOM**
+	<br >Generate a CycloneDX SBOM from a supported manifest file using the _RHDA: Generate SBOM_ command.
+	The command is available from the Command Palette (Ctrl+Shift+P / Cmd+Shift+P), editor title bar, editor context menu, and explorer context menu when a supported manifest file is open or selected.
+	After generation, a Save File dialog lets you choose where to save the resulting `bom.json` file.
+
 - **Excluding dependencies with `exhortignore`**
 	<br >You can exclude a package from analysis by marking the package for exclusion.
 	How you exclude a package varies based on the your project's language:

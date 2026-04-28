@@ -84,6 +84,11 @@
         "command": "rhda.stackAnalysisBatch",
         "title": "Red Hat Dependency Analytics Batch Report (Workspace)...",
         "category": "Red Hat Dependency Analytics"
+      },
+      {
+        "command": "rhda.generateSbom",
+        "title": "RHDA: Generate SBOM",
+        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -127,6 +132,34 @@
           "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile",
           "group": "navigation"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == package.json"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == go.mod"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pyproject.toml"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == build.gradle"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == Cargo.toml"
         }
       ],
       "explorer/context": [
@@ -161,6 +194,34 @@
         {
           "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == package.json"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == go.mod"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pyproject.toml"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == build.gradle"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == Cargo.toml"
         }
       ],
       "editor/context": [
@@ -195,6 +256,34 @@
         {
           "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == package.json"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == go.mod"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == requirements.txt"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pyproject.toml"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == build.gradle"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == Cargo.toml"
         }
       ],
       "commandPalette": [

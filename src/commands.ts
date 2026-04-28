@@ -12,3 +12,4 @@ export const STACK_LOGS_COMMAND = 'rhda.stackLogs';
 export const TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND = 'rhda.trackRecommendationAcceptance';
 export const LLM_MODELS_ANALYSIS_REPORT = 'rhda.llmModelsAnalysisReport';
 export const STACK_ANALYSIS_BATCH_COMMAND = 'rhda.stackAnalysisBatch';
+export const GENERATE_SBOM_COMMAND = 'rhda.generateSbom';

@@ -16,11 +16,14 @@ suite('ExhortServices module', async () => {
 
   const batchAnalysisReportHtmlMock = '<html>RHDA Batch Report Mock</html>';
 
+  const sbomMock = { bomFormat: 'CycloneDX', specVersion: '1.4', components: [] };
+
   const exhortMock = {
     default: {
       stackAnalysis: async () => stackAnalysisReportHtmlMock,
       stackAnalysisBatch: async () => batchAnalysisReportHtmlMock,
       validateToken: async (statusCode: any) => ({ status: statusCode }),
+      generateSbom: async () => sbomMock,
     }
   };
 
@@ -105,6 +108,35 @@ suite('ExhortServices module', async () => {
       })
       .catch((error: Error) => {
         expect(error.message).to.equal('Batch Analysis Error');
+      });
+  });
+
+  test('should generate SBOM from Exhort generateSbom service', async () => {
+    await exhortServicesRewire.generateSbomService('mock/path/to/manifest', {})
+      .then((result: object) => {
+        expect(result).to.deep.equal(sbomMock);
+      });
+  });
+
+  test('should fail to generate SBOM and reject with error', async () => {
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const exhortMock = {
+      default: {
+        generateSbom: async () => {
+          throw new Error('SBOM Generation Error');
+        },
+      }
+    };
+
+    exhortServicesRewire.__Rewire__('trustify_da_javascript_client_1', exhortMock);
+
+    await exhortServicesRewire.generateSbomService('mock/path/to/manifest', {})
+      .then(() => {
+        throw new Error('should have thrown SBOM Generation Error');
+      })
+      .catch((error: Error) => {
+        expect(error.message).to.equal('SBOM Generation Error');
       });
   });
 

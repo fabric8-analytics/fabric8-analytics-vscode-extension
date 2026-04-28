@@ -178,4 +178,4 @@ function metricsFromReport(report: string): ResponseMetrics | undefined {
   };
 }
 
-export { generateRHDAReport, updateCurrentWebviewPanel };
+export { generateRHDAReport, updateCurrentWebviewPanel, getFileType };

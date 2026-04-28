@@ -298,6 +298,10 @@
         {
           "command": "rhda.stackAnalysisFromExplorer",
           "when": "false"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ]
     },

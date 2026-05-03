@@ -544,7 +544,7 @@ function registerGenerateSbomCommand(context: vscode.ExtensionContext) {
 
       const fileType = getFileType(filePath);
       if (!fileType || fileType === 'docker') {
-        vscode.window.showErrorMessage(`File ${fileName} is not supported for SBOM generation.`);
+        vscode.window.showErrorMessage(`File ${filePath} is not supported for SBOM generation.`);
         return;
       }
 

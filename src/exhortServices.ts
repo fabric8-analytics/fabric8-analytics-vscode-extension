@@ -136,15 +136,19 @@ async function tokenValidationService(options: Options, source: string): Promise
  * @returns A promise resolving to the batch stack analysis report in HTML format.
  */
 async function batchStackAnalysisService(workspaceRoot: string, options: BatchOptions): Promise<string> {
-  // Cast exhort to access stackAnalysisBatch which exists at runtime but
-  // is not yet in the published type definitions
-  const result = await (exhort as any).stackAnalysisBatch(workspaceRoot, true, options);
+  const result = await exhort.stackAnalysisBatch(workspaceRoot, true, options);
   // When batchMetadata is enabled, the result is { analysis, metadata };
   // otherwise it's the raw HTML string
-  if (result && typeof result === 'object' && 'analysis' in result) {
+  if (typeof result === 'string') {
+    return result;
+  }
+  if ('analysis' in result) {
+    if (typeof result.analysis !== 'string') {
+      throw new Error('Unexpected non-HTML response from stackAnalysisBatch');
+    }
     return result.analysis;
   }
-  return result;
+  throw new Error('Unexpected non-HTML response from stackAnalysisBatch');
 }
 
 /**
@@ -154,9 +158,7 @@ async function batchStackAnalysisService(workspaceRoot: string, options: BatchOp
  * @returns A promise resolving to the SBOM as a parsed JSON object.
  */
 async function generateSbomService(pathToManifest: string, options: Options): Promise<object> {
-  // Cast exhort to access generateSbom which exists at runtime but
-  // is not yet in the published type definitions
-  return await (exhort as any).generateSbom(pathToManifest, options);
+  return await exhort.generateSbom(pathToManifest, options);
 }
 
 export { buildBaseOptions, imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference, generateSbomService };

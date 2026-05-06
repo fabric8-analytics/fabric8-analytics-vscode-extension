@@ -135,31 +135,7 @@
         },
         {
           "command": "rhda.generateSbom",
-          "when": "resourceFilename == pom.xml"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == package.json"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == go.mod"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == requirements.txt"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == pyproject.toml"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == build.gradle"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == Cargo.toml"
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ],
       "explorer/context": [
@@ -197,31 +173,7 @@
         },
         {
           "command": "rhda.generateSbom",
-          "when": "resourceFilename == package.json"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == pom.xml"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == go.mod"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == requirements.txt"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == pyproject.toml"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == build.gradle"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == Cargo.toml"
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ],
       "editor/context": [
@@ -259,31 +211,7 @@
         },
         {
           "command": "rhda.generateSbom",
-          "when": "resourceFilename == package.json"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == pom.xml"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == go.mod"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == requirements.txt"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == pyproject.toml"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == build.gradle"
-        },
-        {
-          "command": "rhda.generateSbom",
-          "when": "resourceFilename == Cargo.toml"
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ],
       "commandPalette": [

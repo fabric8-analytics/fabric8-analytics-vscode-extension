@@ -571,10 +571,9 @@ function registerGenerateSbomCommand(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage(`SBOM saved to ${saveUri.fsPath}`);
         record(context, TelemetryActions.sbomGenerationDone, { manifest: fileName, fileName: fileName });
       } catch (error) {
-        const message = (error as Error).message;
-        vscode.window.showErrorMessage(`Failed to generate SBOM for ${fileName}: ${message}`);
-        outputChannelDep.error(`SBOM generation failed for ${filePath}: ${message}`);
-        record(context, TelemetryActions.sbomGenerationFailed, { manifest: fileName, fileName: fileName, error: message });
+        vscode.window.showErrorMessage(`RHDA: Failed to generate SBOM. ${buildNotificationErrorMessage(error as Error)}`);
+        outputChannelDep.error(`SBOM generation failed for ${filePath}: ${buildLogErrorMessage(error as Error)}`);
+        record(context, TelemetryActions.sbomGenerationFailed, { manifest: fileName, fileName: fileName, error: (error as Error).message });
       }
     }
   );

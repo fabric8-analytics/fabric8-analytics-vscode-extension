@@ -29,7 +29,8 @@ suite('Extension module', () => {
       commands.STACK_ANALYSIS_FROM_EDITOR_COMMAND,
       commands.STACK_ANALYSIS_FROM_EXPLORER_COMMAND,
       commands.STACK_ANALYSIS_FROM_PIE_BTN_COMMAND,
-      commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND
+      commands.STACK_ANALYSIS_FROM_STATUS_BAR_COMMAND,
+      commands.GENERATE_SBOM_COMMAND
     ];
     expect((await vscode.commands.getCommands(true))).to.include.members(FABRIC8_COMMANDS);
   });

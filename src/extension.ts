@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 
 import * as commands from './commands';
 import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, REDHAT_CATALOG } from './constants';
-import { generateRHDAReport } from './rhda';
+import { generateRHDAReport, getFileType } from './rhda';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
 import { caStatusBarProvider } from './caStatusBarProvider';
@@ -24,6 +24,7 @@ import { Language, Parser, Query } from 'web-tree-sitter';
 import { getValidAccessToken, performOIDCAuthorizationFlow } from './oidcAuthentication';
 import { TokenProvider, VSCodeTokenProvider } from './tokenProvider';
 import { executeBatchStackAnalysis } from './batchAnalysis';
+import { generateSbomService, buildBaseOptions } from './exhortServices';
 
 export let outputChannelDep: DepOutputChannel;
 
@@ -318,6 +319,7 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
   );
 
   registerStackAnalysisCommands(context, tokenProvider);
+  registerGenerateSbomCommand(context);
 
   const disposableBatchAnalysisCommand = vscode.commands.registerCommand(
     commands.STACK_ANALYSIS_BATCH_COMMAND,
@@ -516,6 +518,67 @@ function showRHRepositoryRecommendationNotification() {
     'This ensures that the applied dependencies work correctly. ' +
     `Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
   vscode.window.showWarningMessage(msg);
+}
+
+/**
+ * Registers the Generate SBOM command.
+ * @param context - The extension context.
+ */
+function registerGenerateSbomCommand(context: vscode.ExtensionContext) {
+  const disposable = vscode.commands.registerCommand(
+    commands.GENERATE_SBOM_COMMAND,
+    async (uri?: vscode.Uri) => {
+      const fileUri = uri || vscode.window.activeTextEditor?.document.uri;
+      if (!fileUri) {
+        vscode.window.showErrorMessage('No manifest file selected. Open or select a supported manifest file.');
+        return;
+      }
+
+      if (fileUri.scheme !== 'file') {
+        vscode.window.showErrorMessage('SBOM generation is only supported for local files.');
+        return;
+      }
+
+      const filePath = fileUri.fsPath;
+      const fileName = path.basename(filePath);
+
+      const fileType = getFileType(filePath);
+      if (!fileType || fileType === 'docker') {
+        vscode.window.showErrorMessage(`File ${filePath} is not supported for SBOM generation.`);
+        return;
+      }
+
+      try {
+        const options = buildBaseOptions();
+        const sbom = await generateSbomService(filePath, options);
+
+        const owningFolder = vscode.workspace.getWorkspaceFolder(fileUri)?.uri
+          ?? vscode.Uri.file(path.dirname(filePath));
+        const defaultUri = vscode.Uri.joinPath(owningFolder, 'bom.json');
+
+        const saveUri = await vscode.window.showSaveDialog({
+          defaultUri,
+          filters: { 'JSON': ['json'] },
+        });
+
+        if (!saveUri) {
+          return;
+        }
+
+        const content = Buffer.from(JSON.stringify(sbom, null, 2), 'utf-8');
+        await vscode.workspace.fs.writeFile(saveUri, content);
+
+        vscode.window.showInformationMessage(`SBOM saved to ${saveUri.fsPath}`);
+        record(context, TelemetryActions.sbomGenerationDone, { manifest: fileName, fileName: fileName });
+      } catch (error) {
+        vscode.window.showErrorMessage(`RHDA: Failed to generate SBOM. ${buildNotificationErrorMessage(error as Error)}`);
+        outputChannelDep.error(`SBOM generation failed for ${filePath}: ${buildLogErrorMessage(error as Error)}`);
+        record(context, TelemetryActions.sbomGenerationFailed, { manifest: fileName, fileName: fileName, error: (error as Error).message });
+      }
+    }
+  );
+
+  context.subscriptions.push(disposable);
 }
 
 /**

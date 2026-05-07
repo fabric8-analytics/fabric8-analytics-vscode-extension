@@ -8,24 +8,6 @@ import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/Anal
 import { globalConfig } from './config';
 
 /**
- * Options for batch analysis.
- * The upstream Options type only allows string values, but the JS client's
- * stackAnalysisBatch() also accepts number, boolean, and string[] fields.
- *
- * Batch-specific fields below use camelCase property names as read by the
- * client's resolve helpers (e.g. opts.batchConcurrency first). The
- * TRUSTIFY_DA_* env var names are fallbacks via process.env, not the opts
- * keys for those settings—do not rename batch fields to match env names.
- */
-export interface BatchOptions {
-  [key: string]: string | number | boolean | string[] | undefined;
-  batchConcurrency?: number;
-  continueOnError?: boolean;
-  batchMetadata?: boolean;
-  workspaceDiscoveryIgnore?: string[];
-}
-
-/**
  * Builds the common options object from globalConfig, shared across
  * stack analysis, batch analysis, and token validation calls.
  */
@@ -135,16 +117,22 @@ async function tokenValidationService(options: Options, source: string): Promise
  * @param options Additional options for the analysis including batch-specific settings.
  * @returns A promise resolving to the batch stack analysis report in HTML format.
  */
-async function batchStackAnalysisService(workspaceRoot: string, options: BatchOptions): Promise<string> {
-  // Cast exhort to access stackAnalysisBatch which exists at runtime but
-  // is not yet in the published type definitions
-  const result = await (exhort as any).stackAnalysisBatch(workspaceRoot, true, options);
-  // When batchMetadata is enabled, the result is { analysis, metadata };
-  // otherwise it's the raw HTML string
-  if (result && typeof result === 'object' && 'analysis' in result) {
-    return result.analysis;
+async function batchStackAnalysisService(workspaceRoot: string, options: Options): Promise<string> {
+  if (options.batchMetadata) {
+    const { analysis } = await exhort.stackAnalysisBatch(workspaceRoot, true, { ...options, batchMetadata: true });
+    return analysis;
   }
-  return result;
+  return await exhort.stackAnalysisBatch(workspaceRoot, true, { ...options, batchMetadata: false });
 }
 
-export { buildBaseOptions, imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference };
+/**
+ * Generates a CycloneDX SBOM for the given manifest file.
+ * @param pathToManifest The path to the manifest file.
+ * @param options Additional options for generation.
+ * @returns A promise resolving to the SBOM as a parsed JSON object.
+ */
+async function generateSbomService(pathToManifest: string, options: Options): Promise<object> {
+  return await exhort.generateSbom(pathToManifest, options);
+}
+
+export { buildBaseOptions, imageAnalysisService, stackAnalysisService, batchStackAnalysisService, tokenValidationService, parseImageReference, generateSbomService };

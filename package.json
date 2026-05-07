@@ -84,6 +84,11 @@
         "command": "rhda.stackAnalysisBatch",
         "title": "Red Hat Dependency Analytics Batch Report (Workspace)...",
         "category": "Red Hat Dependency Analytics"
+      },
+      {
+        "command": "rhda.generateSbom",
+        "title": "RHDA: Generate SBOM",
+        "category": "Red Hat Dependency Analytics"
       }
     ],
     "menus": {
@@ -127,6 +132,10 @@
           "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile",
           "group": "navigation"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ],
       "explorer/context": [
@@ -161,6 +170,10 @@
         {
           "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ],
       "editor/context": [
@@ -195,6 +208,10 @@
         {
           "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == Dockerfile || resourceFilename == Containerfile"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ],
       "commandPalette": [
@@ -209,6 +226,10 @@
         {
           "command": "rhda.stackAnalysisFromExplorer",
           "when": "false"
+        },
+        {
+          "command": "rhda.generateSbom",
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
         }
       ]
     },
@@ -525,7 +546,7 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustify-da/trustify-da-api-model": "^2.0.7",
-    "@trustify-da/trustify-da-javascript-client": "^0.3.0-ea.dcb2120",
+    "@trustify-da/trustify-da-javascript-client": "^0.3.0-ea.2e5fe72",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/parser": "^1.0.11",
     "cli-table3": "^0.6.5",

@@ -21,7 +21,9 @@ enum TelemetryActions {
   llmAnalysisDiagnosticsHovered = 'llm_analysis_diagnostics_hovered',
   llmAnalysisReportDone = 'llm_analysis_report_done',
   batchAnalysisDone = 'batch_analysis_done',
-  batchAnalysisFailed = 'batch_analysis_failed'
+  batchAnalysisFailed = 'batch_analysis_failed',
+  sbomGenerationDone = 'sbom_generation_done',
+  sbomGenerationFailed = 'sbom_generation_failed'
 }
 
 let telemetryServiceObj: TelemetryService | null = null;

@@ -6,8 +6,12 @@
 
 import exhort, { Options } from '@trustify-da/trustify-da-javascript-client';
 
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { isDefined } from '../utils';
 import { IDependencyProvider } from '../dependencyAnalysis/collector';
+import { PYPI } from '../constants';
 import { Uri } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
@@ -59,7 +63,8 @@ class DependencyData {
     public issues: Issue[],
     public recommendationRef: string,
     public remediationRef: string,
-    public highestVulnerabilitySeverity: string
+    public highestVulnerabilitySeverity: string,
+    public pythonProvider: string = ''
   ) { }
 }
 
@@ -93,6 +98,9 @@ class AnalysisResponse {
     this.provider = provider;
     const failedProviders: string[] = [];
     const sources: ISource[] = [];
+    const pythonProvider = provider.getEcosystem() === PYPI
+      ? this.detectPythonProvider(path.dirname(diagnosticFilePath.fsPath))
+      : '';
 
     if (isDefined(resData, 'providers')) {
       Object.entries(resData.providers).map(([providerName, providerData]) => {
@@ -140,7 +148,7 @@ class AnalysisResponse {
 
             const dd = issues.length
               ? new DependencyData(source.id, issues, '', this.getRemediation(issues[0]), this.getHighestSeverity(d))
-              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d));
+              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d), pythonProvider);
 
             const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -207,6 +215,22 @@ class AnalysisResponse {
    */
   private getRecommendation(dependency: DependencyReport): string {
     return isDefined(dependency, 'recommendation') ? this.provider.resolveDependencyFromReference(dependency.recommendation.split('?')[0]) : '';
+  }
+
+  /**
+   * Detects the Python sub-provider by checking for lock files in the project directory.
+   * @param projectDir The directory containing the manifest file.
+   * @returns The detected provider name: 'uv', 'poetry', or 'pip' (default).
+   * @private
+   */
+  private detectPythonProvider(projectDir: string): string {
+    if (fs.existsSync(path.join(projectDir, 'uv.lock'))) {
+      return 'uv';
+    }
+    if (fs.existsSync(path.join(projectDir, 'poetry.lock'))) {
+      return 'poetry';
+    }
+    return 'pip';
   }
 }
 

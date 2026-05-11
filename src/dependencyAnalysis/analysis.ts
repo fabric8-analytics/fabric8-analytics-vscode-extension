@@ -6,13 +6,12 @@
 
 import exhort, { Options } from '@trustify-da/trustify-da-javascript-client';
 
-import * as fs from 'fs';
 import * as path from 'path';
 
 import { isDefined } from '../utils';
 import { IDependencyProvider } from '../dependencyAnalysis/collector';
 import { PYPI } from '../constants';
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
 import { Source } from '@trustify-da/trustify-da-api-model/model/v5/Source';
@@ -94,13 +93,10 @@ class AnalysisResponse {
   };
   licenses?: Array<LicenseProviderResult>;
 
-  constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider) {
+  constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider, pythonProvider: string = '') {
     this.provider = provider;
     const failedProviders: string[] = [];
     const sources: ISource[] = [];
-    const pythonProvider = provider.getEcosystem() === PYPI
-      ? this.detectPythonProvider(diagnosticFilePath.fsPath)
-      : '';
 
     if (isDefined(resData, 'providers')) {
       Object.entries(resData.providers).map(([providerName, providerData]) => {
@@ -217,55 +213,71 @@ class AnalysisResponse {
     return isDefined(dependency, 'recommendation') ? this.provider.resolveDependencyFromReference(dependency.recommendation.split('?')[0]) : '';
   }
 
-  /**
-   * Detects the Python sub-provider by checking for lock files in the project directory.
-   * When both uv.lock and poetry.lock exist, disambiguates by inspecting the manifest
-   * for [tool.poetry] or [tool.uv] sections.
-   * @param manifestPath The absolute path to the manifest file being analyzed.
-   * @returns The detected provider name: 'uv', 'poetry', or 'pip' (default).
-   * @private
-   */
-  private detectPythonProvider(manifestPath: string): string {
-    const projectDir = path.dirname(manifestPath);
-    const hasUvLock = fs.existsSync(path.join(projectDir, 'uv.lock'));
-    const hasPoetryLock = fs.existsSync(path.join(projectDir, 'poetry.lock'));
+}
 
-    if (hasUvLock && hasPoetryLock) {
-      return this.disambiguatePythonProvider(manifestPath);
-    }
-    if (hasUvLock) {
-      return 'uv';
-    }
-    if (hasPoetryLock) {
+/**
+ * Checks whether a file exists using the VS Code async filesystem API.
+ * @param fileUri - The URI of the file to check.
+ * @returns A Promise resolving to true if the file exists, false otherwise.
+ */
+async function fileExists(fileUri: Uri): Promise<boolean> {
+  try {
+    await workspace.fs.stat(fileUri);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Detects the Python sub-provider by checking for lock files in the project directory.
+ * When both uv.lock and poetry.lock exist, disambiguates by inspecting the manifest
+ * for [tool.poetry] or [tool.uv] sections.
+ * @param diagnosticFilePath - The URI of the manifest file being analyzed.
+ * @returns A Promise resolving to the detected provider name: 'uv', 'poetry', or 'pip' (default).
+ */
+async function detectPythonProvider(diagnosticFilePath: Uri): Promise<string> {
+  const projectDir = Uri.file(path.dirname(diagnosticFilePath.fsPath));
+  const [hasUvLock, hasPoetryLock] = await Promise.all([
+    fileExists(Uri.joinPath(projectDir, 'uv.lock')),
+    fileExists(Uri.joinPath(projectDir, 'poetry.lock')),
+  ]);
+
+  if (hasUvLock && hasPoetryLock) {
+    return disambiguatePythonProvider(diagnosticFilePath);
+  }
+  if (hasUvLock) {
+    return 'uv';
+  }
+  if (hasPoetryLock) {
+    return 'poetry';
+  }
+  return 'pip';
+}
+
+/**
+ * Disambiguates between uv and poetry when both lock files are present
+ * by inspecting the manifest contents for tool-specific sections.
+ * @param diagnosticFilePath - The URI of the manifest file.
+ * @returns A Promise resolving to 'poetry', 'uv', or 'pip' if neither/both sections are found.
+ */
+async function disambiguatePythonProvider(diagnosticFilePath: Uri): Promise<string> {
+  try {
+    const contentBytes = await workspace.fs.readFile(diagnosticFilePath);
+    const contents = Buffer.from(contentBytes).toString('utf-8');
+    const hasPoetrySection = /^\[tool\.poetry(?:\.|\])/m.test(contents);
+    const hasUvSection = /^\[\[?tool\.uv(?:\.|\])/m.test(contents);
+
+    if (hasPoetrySection && !hasUvSection) {
       return 'poetry';
     }
-    return 'pip';
-  }
-
-  /**
-   * Disambiguates between uv and poetry when both lock files are present
-   * by inspecting the manifest contents for tool-specific sections.
-   * @param manifestPath The absolute path to the manifest file.
-   * @returns 'poetry' if [tool.poetry] is found, 'uv' if [tool.uv] is found, or 'pip' if neither.
-   * @private
-   */
-  private disambiguatePythonProvider(manifestPath: string): string {
-    try {
-      const contents = fs.readFileSync(manifestPath, 'utf-8');
-      const hasPoetrySection = /^\[tool\.poetry[\].]/m.test(contents);
-      const hasUvSection = /^\[tool\.uv[\].]/m.test(contents);
-
-      if (hasPoetrySection && !hasUvSection) {
-        return 'poetry';
-      }
-      if (hasUvSection && !hasPoetrySection) {
-        return 'uv';
-      }
-    } catch {
-      // If we can't read the manifest, fall through to default
+    if (hasUvSection && !hasPoetrySection) {
+      return 'uv';
     }
-    return 'pip';
+  } catch {
+    // If we can't read the manifest, fall through to default
   }
+  return 'pip';
 }
 
 /**
@@ -275,9 +287,12 @@ class AnalysisResponse {
  * @returns A Promise resolving to an AnalysisResponse object.
  */
 async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnosticFilePath: Uri, provider: IDependencyProvider, options: Options): Promise<AnalysisResponse> {
-  const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options);
+  const [componentAnalysisJson, pythonProvider] = await Promise.all([
+    exhort.componentAnalysis(diagnosticFilePath.fsPath, options),
+    provider.getEcosystem() === PYPI ? detectPythonProvider(diagnosticFilePath) : Promise.resolve(''),
+  ]);
 
-  return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider);
+  return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider, pythonProvider);
 }
 
 export { executeComponentAnalysis, DependencyData };

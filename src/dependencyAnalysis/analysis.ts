@@ -99,7 +99,7 @@ class AnalysisResponse {
     const failedProviders: string[] = [];
     const sources: ISource[] = [];
     const pythonProvider = provider.getEcosystem() === PYPI
-      ? this.detectPythonProvider(path.dirname(diagnosticFilePath.fsPath))
+      ? this.detectPythonProvider(diagnosticFilePath.fsPath)
       : '';
 
     if (isDefined(resData, 'providers')) {
@@ -219,16 +219,50 @@ class AnalysisResponse {
 
   /**
    * Detects the Python sub-provider by checking for lock files in the project directory.
-   * @param projectDir The directory containing the manifest file.
+   * When both uv.lock and poetry.lock exist, disambiguates by inspecting the manifest
+   * for [tool.poetry] or [tool.uv] sections.
+   * @param manifestPath The absolute path to the manifest file being analyzed.
    * @returns The detected provider name: 'uv', 'poetry', or 'pip' (default).
    * @private
    */
-  private detectPythonProvider(projectDir: string): string {
-    if (fs.existsSync(path.join(projectDir, 'uv.lock'))) {
+  private detectPythonProvider(manifestPath: string): string {
+    const projectDir = path.dirname(manifestPath);
+    const hasUvLock = fs.existsSync(path.join(projectDir, 'uv.lock'));
+    const hasPoetryLock = fs.existsSync(path.join(projectDir, 'poetry.lock'));
+
+    if (hasUvLock && hasPoetryLock) {
+      return this.disambiguatePythonProvider(manifestPath);
+    }
+    if (hasUvLock) {
       return 'uv';
     }
-    if (fs.existsSync(path.join(projectDir, 'poetry.lock'))) {
+    if (hasPoetryLock) {
       return 'poetry';
+    }
+    return 'pip';
+  }
+
+  /**
+   * Disambiguates between uv and poetry when both lock files are present
+   * by inspecting the manifest contents for tool-specific sections.
+   * @param manifestPath The absolute path to the manifest file.
+   * @returns 'poetry' if [tool.poetry] is found, 'uv' if [tool.uv] is found, or 'pip' if neither.
+   * @private
+   */
+  private disambiguatePythonProvider(manifestPath: string): string {
+    try {
+      const contents = fs.readFileSync(manifestPath, 'utf-8');
+      const hasPoetrySection = /^\[tool\.poetry[\].]/m.test(contents);
+      const hasUvSection = /^\[tool\.uv[\].]/m.test(contents);
+
+      if (hasPoetrySection && !hasUvSection) {
+        return 'poetry';
+      }
+      if (hasUvSection && !hasPoetrySection) {
+        return 'uv';
+      }
+    } catch {
+      // If we can't read the manifest, fall through to default
     }
     return 'pip';
   }

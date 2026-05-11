@@ -52,7 +52,7 @@ export const RHDA_DIAGNOSTIC_SOURCE = 'Red Hat Dependency Analytics Plugin';
 export const VERSION_PLACEHOLDER: string = '__VERSION__';
 
 // Red Hat trusted library registry for Python packages
-export const REDHAT_TRUSTED_REGISTRY_URL = 'https://packages.redhat.com/trusted-libraries/python/simple/';
+export const REDHAT_TRUSTED_REGISTRY_URL = 'https://<username>:<password>@packages.redhat.com/trusted-libraries/python/';
 
 // Represents provider ecosystem names.
 export const GRADLE = 'gradle';

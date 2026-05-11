@@ -6,9 +6,12 @@
 
 import exhort, { Options } from '@trustify-da/trustify-da-javascript-client';
 
+import * as path from 'path';
+
 import { isDefined } from '../utils';
 import { IDependencyProvider } from '../dependencyAnalysis/collector';
-import { Uri } from 'vscode';
+import { PYPI } from '../constants';
+import { Uri, workspace } from 'vscode';
 import { notifications, outputChannelDep } from '../extension';
 import { AnalysisReport } from '@trustify-da/trustify-da-api-model/model/v5/AnalysisReport';
 import { Source } from '@trustify-da/trustify-da-api-model/model/v5/Source';
@@ -59,7 +62,8 @@ class DependencyData {
     public issues: Issue[],
     public recommendationRef: string,
     public remediationRef: string,
-    public highestVulnerabilitySeverity: string
+    public highestVulnerabilitySeverity: string,
+    public pythonProvider: string = ''
   ) { }
 }
 
@@ -89,7 +93,7 @@ class AnalysisResponse {
   };
   licenses?: Array<LicenseProviderResult>;
 
-  constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider) {
+  constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider, pythonProvider: string = '') {
     this.provider = provider;
     const failedProviders: string[] = [];
     const sources: ISource[] = [];
@@ -140,7 +144,7 @@ class AnalysisResponse {
 
             const dd = issues.length
               ? new DependencyData(source.id, issues, '', this.getRemediation(issues[0]), this.getHighestSeverity(d))
-              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d));
+              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d), pythonProvider);
 
             const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -208,6 +212,72 @@ class AnalysisResponse {
   private getRecommendation(dependency: DependencyReport): string {
     return isDefined(dependency, 'recommendation') ? this.provider.resolveDependencyFromReference(dependency.recommendation.split('?')[0]) : '';
   }
+
+}
+
+/**
+ * Checks whether a file exists using the VS Code async filesystem API.
+ * @param fileUri - The URI of the file to check.
+ * @returns A Promise resolving to true if the file exists, false otherwise.
+ */
+async function fileExists(fileUri: Uri): Promise<boolean> {
+  try {
+    await workspace.fs.stat(fileUri);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Detects the Python sub-provider by checking for lock files in the project directory.
+ * When both uv.lock and poetry.lock exist, disambiguates by inspecting the manifest
+ * for [tool.poetry] or [tool.uv] sections.
+ * @param diagnosticFilePath - The URI of the manifest file being analyzed.
+ * @returns A Promise resolving to the detected provider name: 'uv', 'poetry', or 'pip' (default).
+ */
+async function detectPythonProvider(diagnosticFilePath: Uri): Promise<string> {
+  const projectDir = Uri.file(path.dirname(diagnosticFilePath.fsPath));
+  const [hasUvLock, hasPoetryLock] = await Promise.all([
+    fileExists(Uri.joinPath(projectDir, 'uv.lock')),
+    fileExists(Uri.joinPath(projectDir, 'poetry.lock')),
+  ]);
+
+  if (hasUvLock && hasPoetryLock) {
+    return disambiguatePythonProvider(diagnosticFilePath);
+  }
+  if (hasUvLock) {
+    return 'uv';
+  }
+  if (hasPoetryLock) {
+    return 'poetry';
+  }
+  return 'pip';
+}
+
+/**
+ * Disambiguates between uv and poetry when both lock files are present
+ * by inspecting the manifest contents for tool-specific sections.
+ * @param diagnosticFilePath - The URI of the manifest file.
+ * @returns A Promise resolving to 'poetry', 'uv', or 'pip' if neither/both sections are found.
+ */
+async function disambiguatePythonProvider(diagnosticFilePath: Uri): Promise<string> {
+  try {
+    const contentBytes = await workspace.fs.readFile(diagnosticFilePath);
+    const contents = Buffer.from(contentBytes).toString('utf-8');
+    const hasPoetrySection = /^\[tool\.poetry(?:\.|\])/m.test(contents);
+    const hasUvSection = /^\[\[?tool\.uv(?:\.|\])/m.test(contents);
+
+    if (hasPoetrySection && !hasUvSection) {
+      return 'poetry';
+    }
+    if (hasUvSection && !hasPoetrySection) {
+      return 'uv';
+    }
+  } catch {
+    // If we can't read the manifest, fall through to default
+  }
+  return 'pip';
 }
 
 /**
@@ -217,9 +287,12 @@ class AnalysisResponse {
  * @returns A Promise resolving to an AnalysisResponse object.
  */
 async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnosticFilePath: Uri, provider: IDependencyProvider, options: Options): Promise<AnalysisResponse> {
-  const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options);
+  const [componentAnalysisJson, pythonProvider] = await Promise.all([
+    exhort.componentAnalysis(diagnosticFilePath.fsPath, options),
+    provider.getEcosystem() === PYPI ? detectPythonProvider(diagnosticFilePath) : Promise.resolve(''),
+  ]);
 
-  return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider);
+  return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider, pythonProvider);
 }
 
 export { executeComponentAnalysis, DependencyData };

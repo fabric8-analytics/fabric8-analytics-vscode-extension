@@ -279,6 +279,10 @@ suite('Code Action Handler tests', () => {
         );
     });
 
+    /**
+     * Verifies that recommendation-only diagnostics (Information severity)
+     * select recommendationRef as the code action target, not the empty remediationRef.
+     */
     test('should use recommendationRef for code action when diagnostic severity is Information', async () => {
         // Given a recommendation-only dependency (no issues) with a recommendationRef
         config.globalConfig.recommendationsEnabled = true;
@@ -307,6 +311,10 @@ suite('Code Action Handler tests', () => {
         expect(actionRef).to.not.equal('');
     });
 
+    /**
+     * Verifies that vulnerability diagnostics (Error severity) select
+     * remediationRef as the code action target, not recommendationRef.
+     */
     test('should use remediationRef for code action when diagnostic severity is Error', async () => {
         // Given a dependency with issues (has remediation)
         config.globalConfig.vulnerabilityAlertSeverity = 'Error';

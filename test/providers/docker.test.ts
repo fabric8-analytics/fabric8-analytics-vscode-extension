@@ -249,6 +249,60 @@ FROM alpine
         ]);
     });
 
+    test('tests multi-stage build aliases are filtered', async () => {
+        const deps = dependencyProvider.collect(`
+FROM node:26-alpine AS base
+RUN npm install
+FROM base AS builder
+RUN npm run build
+FROM base AS runner
+COPY --from=builder /app /app
+        `);
+        expect(deps.length).to.equal(1);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'node:26-alpine', position: { line: 2, column: 0 } },
+                line: 'FROM node:26-alpine AS base'
+            }
+        ]);
+    });
+
+    test('tests multi-stage build aliases are case-insensitive', async () => {
+        const deps = dependencyProvider.collect(`
+FROM alpine:latest AS Base
+FROM base AS builder
+FROM BASE AS runner
+        `);
+        expect(deps.length).to.equal(1);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'alpine:latest', position: { line: 2, column: 0 } },
+                line: 'FROM alpine:latest AS Base'
+            }
+        ]);
+    });
+
+    test('tests multi-stage build with platform and aliases', async () => {
+        const deps = dependencyProvider.collect(`
+FROM --platform=linux/amd64 node:20 AS build
+FROM build AS test
+FROM --platform=linux/arm64 alpine:3.19 AS runtime
+        `);
+        expect(deps.length).to.equal(2);
+        expect(deps).is.eql([
+            {
+                name: { value: 'node:20', position: { line: 2, column: 0 } },
+                line: 'FROM --platform=linux/amd64 node:20 AS build',
+                platform: 'linux/amd64'
+            },
+            {
+                name: { value: 'alpine:3.19', position: { line: 4, column: 0 } },
+                line: 'FROM --platform=linux/arm64 alpine:3.19 AS runtime',
+                platform: 'linux/arm64'
+            }
+        ]);
+    });
+
     test('tests file with various Dockerfile/Containerfile components', async () => {
         const deps = dependencyProvider.collect(`
 # Use an official Node.js runtime as a parent image

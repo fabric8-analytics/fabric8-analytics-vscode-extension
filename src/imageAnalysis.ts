@@ -43,6 +43,7 @@ interface IImageRef {
  */
 class DockerImageAnalysis {
   args: Map<string, string> = new Map<string, string>();
+  aliases: Set<string> = new Set<string>();
   images: IImageRef[] = [];
   imageAnalysisReportHtml: string = '';
   filePath: string;
@@ -123,10 +124,16 @@ class DockerImageAnalysis {
       let imageData = imageMatch[1];
       imageData = this.replaceArgsInString(imageData);
       imageData = imageData.replace(this.PLATFORM_REGEX, '');
+
+      const asMatch = imageData.match(this.AS_REGEX);
+      if (asMatch) {
+        this.aliases.add(asMatch[0].trim().split(/\s+/)[1].toLowerCase());
+      }
+
       imageData = imageData.replace(this.AS_REGEX, '');
       imageData = imageData.trim();
 
-      if (imageData === 'scratch') {
+      if (imageData === 'scratch' || this.aliases.has(imageData.toLowerCase())) {
         return;
       }
 

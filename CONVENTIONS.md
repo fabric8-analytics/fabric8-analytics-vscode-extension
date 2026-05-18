@@ -40,7 +40,7 @@ src/
 ├── constants.ts                    # Enums and constants
 ├── config.ts                       # Configuration class
 ├── vulnerability.ts                # Vulnerability data class
-├── exhortServices.ts               # Service functions
+├── exhortServices.ts               # Trustify DA Javascript client functions
 ├── utils.ts                        # Utility functions
 ├── providers/                      # Manifest file parsers (per ecosystem)
 │   ├── pom.xml.ts

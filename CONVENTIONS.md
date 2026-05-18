@@ -49,7 +49,7 @@ src/
 │   ├── requirements.txt.ts
 │   ├── go.mod.ts
 │   └── docker.ts
-├── imageAnalysis/                  # Image analysis feature
+├── imageAnalysis/                  # OCI image analysis feature
 └── dependencyAnalysis/             # Dependency analysis feature
 
 test/

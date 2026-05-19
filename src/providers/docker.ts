@@ -12,6 +12,7 @@ import { IImageProvider, IImage, Image } from '../imageAnalysis/collector';
 export class ImageProvider implements IImageProvider {
 
   args: Map<string, string> = new Map<string, string>();
+  aliases: Set<string> = new Set<string>();
 
   /**
    * Regular expression for matching 'FROM' statements.
@@ -76,10 +77,16 @@ export class ImageProvider implements IImageProvider {
       let imageData = imageMatch[1];
       imageData = this.replaceArgsInString(imageData);
       imageData = imageData.replace(this.PLATFORM_REGEX, '');
+
+      const asMatch = imageData.match(this.AS_REGEX);
+      if (asMatch) {
+        this.aliases.add(asMatch[0].trim().split(/\s+/)[1].toLowerCase());
+      }
+
       imageData = imageData.replace(this.AS_REGEX, '');
       imageData = imageData.trim();
 
-      if (imageData === 'scratch') {
+      if (imageData === 'scratch' || this.aliases.has(imageData.toLowerCase())) {
         return;
       }
 

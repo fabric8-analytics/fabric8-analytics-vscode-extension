@@ -55,7 +55,7 @@ export const VERSION_PLACEHOLDER: string = '__VERSION__';
 export const REDHAT_TRUSTED_PYTHON_REGISTRY_URL = 'https://USERNAME:PASSWORD@packages.redhat.com/trusted-libraries/python/';
 
 // Supported Python package managers for trusted registry instructions
-export type PythonPackageManager = 'pip' | 'uv' | 'poetry';
+export type pythonPackageManager = 'pip' | 'uv' | 'poetry';
 
 // Represents provider ecosystem names.
 export const GRADLE = 'gradle';

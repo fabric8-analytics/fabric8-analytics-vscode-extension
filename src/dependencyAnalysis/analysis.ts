@@ -19,6 +19,14 @@ import { LicenseProviderResult } from '@trustify-da/trustify-da-api-model/model/
 import { TokenProvider } from '../tokenProvider';
 
 /**
+ * Extended AnalysisReport with packageManager field added by the JS client at runtime.
+ * The JS client's componentAnalysis() dynamically adds this field before returning.
+ */
+interface ComponentAnalysisResult extends AnalysisReport {
+  packageManager?: string;
+}
+
+/**
  * Represents a source object with an ID and dependencies array.
  */
 interface ISource {
@@ -219,8 +227,8 @@ class AnalysisResponse {
  * @returns A Promise resolving to an AnalysisResponse object.
  */
 async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnosticFilePath: Uri, provider: IDependencyProvider, options: Options): Promise<AnalysisResponse> {
-  const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options);
-  const packageManager = (componentAnalysisJson as any).packageManager || '';
+  const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options) as ComponentAnalysisResult;
+  const packageManager = componentAnalysisJson.packageManager || '';
 
   return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider, packageManager);
 }

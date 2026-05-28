@@ -3,7 +3,8 @@
 import * as vscode from 'vscode';
 
 import { StatusMessages, Titles } from './constants';
-import { buildBaseOptions, batchStackAnalysisService, BatchOptions } from './exhortServices';
+import { buildBaseOptions, batchStackAnalysisService } from './exhortServices';
+import { Options } from '@trustify-da/trustify-da-javascript-client';
 import { globalConfig } from './config';
 import { updateCurrentWebviewPanel } from './rhda';
 import { buildLogErrorMessage } from './utils';
@@ -22,7 +23,7 @@ export async function executeBatchStackAnalysis(tokenProvider: TokenProvider, wo
   return await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: Titles.EXT_TITLE }, async p => {
     p.report({ message: StatusMessages.WIN_ANALYZING_DEPENDENCIES });
 
-    const options: BatchOptions = {
+    const options: Options = {
       ...buildBaseOptions(),
       'TRUSTIFY_DA_TOKEN': await tokenProvider.getToken() ?? '',
       'batchConcurrency': globalConfig.batchConcurrency,

@@ -25,6 +25,7 @@ ARG ARG_TAG=latest
 FROM --platform=linux/amd64 \${ARG_IMAGE}:\${ARG_TAG} as stage1$ARG_FAKE
 FROM ubuntu
 FROM scratch
+FROM stage1 AS runner
     `;
     const encodedMockFileContent = Buffer.from(mockFileContent, 'utf-8');
 

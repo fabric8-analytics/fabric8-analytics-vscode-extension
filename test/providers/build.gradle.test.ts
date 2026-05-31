@@ -318,6 +318,34 @@ dependencies {
         ]);
     });
 
+    /// Verifies that Kotlin DSL string notation dependencies are correctly parsed.
+    test('tests build.gradle.kts with Kotlin DSL string notation dependencies', async () => {
+        const deps = dependencyProvider.collect(`
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("log4j:log4j:1.2.3")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+}
+        `);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'log4j/log4j', position: { line: 11, column: 21 } },
+                version: { value: '1.2.3', position: { line: 11, column: 33 } }
+            },
+            {
+                name: { value: 'org.apache.commons/commons-lang3', position: { line: 12, column: 21 } },
+                version: { value: '3.12.0', position: { line: 12, column: 54 } }
+            }
+        ]);
+    });
+
     test('tests build.gradle dependencies with missing version parameter', async () => {
         const deps = dependencyProvider.collect(`
 plugins {

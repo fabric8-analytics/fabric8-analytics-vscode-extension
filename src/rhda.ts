@@ -29,6 +29,7 @@ const PACKAGE_JSON = 'package.json';
 const REQUIREMENTS_TXT = 'requirements.txt';
 const PYPROJECT_TOML = 'pyproject.toml';
 const BUILD_GRADLE = 'build.gradle';
+const BUILD_GRADLE_KTS = 'build.gradle.kts';
 const CARGO_TOML = 'Cargo.toml';
 const DOCKERFILE = 'Dockerfile';
 const CONTAINERFILE = 'Containerfile';
@@ -52,7 +53,7 @@ function getFileType(filePath: string): supportedFileTypes | undefined {
   else if (basename === REQUIREMENTS_TXT || basename === PYPROJECT_TOML) {
     return 'python';
   }
-  else if (basename === BUILD_GRADLE) {
+  else if (basename === BUILD_GRADLE || basename === BUILD_GRADLE_KTS) {
     return 'gradle';
   }
   else if (basename === CARGO_TOML) {

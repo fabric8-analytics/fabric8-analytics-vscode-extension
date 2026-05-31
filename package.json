@@ -46,6 +46,7 @@
     "workspaceContains:**/requirements.txt",
     "workspaceContains:**/pyproject.toml",
     "workspaceContains:**/build.gradle",
+    "workspaceContains:**/build.gradle.kts",
     "workspaceContains:**/Cargo.toml",
     "workspaceContains:**/Dockerfile",
     "workspaceContains:**/Containerfile",
@@ -125,6 +126,11 @@
         },
         {
           "command": "rhda.stackAnalysisFromPieBtn",
+          "when": "resourceFilename == build.gradle.kts",
+          "group": "navigation"
+        },
+        {
+          "command": "rhda.stackAnalysisFromPieBtn",
           "when": "resourceFilename == Cargo.toml",
           "group": "navigation"
         },
@@ -135,7 +141,7 @@
         },
         {
           "command": "rhda.generateSbom",
-          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == build.gradle.kts || resourceFilename == Cargo.toml"
         }
       ],
       "explorer/context": [
@@ -165,6 +171,10 @@
         },
         {
           "command": "rhda.stackAnalysisFromExplorer",
+          "when": "resourceFilename == build.gradle.kts"
+        },
+        {
+          "command": "rhda.stackAnalysisFromExplorer",
           "when": "resourceFilename == Cargo.toml"
         },
         {
@@ -173,7 +183,7 @@
         },
         {
           "command": "rhda.generateSbom",
-          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == build.gradle.kts || resourceFilename == Cargo.toml"
         }
       ],
       "editor/context": [
@@ -203,6 +213,10 @@
         },
         {
           "command": "rhda.stackAnalysisFromEditor",
+          "when": "resourceFilename == build.gradle.kts"
+        },
+        {
+          "command": "rhda.stackAnalysisFromEditor",
           "when": "resourceFilename == Cargo.toml"
         },
         {
@@ -211,7 +225,7 @@
         },
         {
           "command": "rhda.generateSbom",
-          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == build.gradle.kts || resourceFilename == Cargo.toml"
         }
       ],
       "commandPalette": [
@@ -229,7 +243,7 @@
         },
         {
           "command": "rhda.generateSbom",
-          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == Cargo.toml"
+          "when": "resourceFilename == pom.xml || resourceFilename == package.json || resourceFilename == go.mod || resourceFilename == requirements.txt || resourceFilename == pyproject.toml || resourceFilename == build.gradle || resourceFilename == build.gradle.kts || resourceFilename == Cargo.toml"
         }
       ]
     },

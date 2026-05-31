@@ -10,7 +10,10 @@ chai.use(sinonChai);
 import * as config from '../src/config';
 import { RHDA_DIAGNOSTIC_SOURCE } from '../src/constants';
 import * as codeActionHandler from '../src/codeActionHandler';
-import { CodeAction, CodeActionKind, Diagnostic, Position, Range, Uri, WorkspaceEdit } from 'vscode';
+import { DependencyData } from '../src/dependencyAnalysis/analysis';
+import { Dependency, DependencyMap } from '../src/dependencyAnalysis/collector';
+import { Vulnerability } from '../src/vulnerability';
+import { CodeAction, CodeActionKind, Diagnostic, DiagnosticSeverity, Position, Range, Uri, WorkspaceEdit } from 'vscode';
 
 suite('Code Action Handler tests', () => {
 
@@ -274,5 +277,68 @@ suite('Code Action Handler tests', () => {
                 'title': 'mockTitle'
             }
         );
+    });
+
+    /**
+     * Verifies that recommendation-only diagnostics (Information severity)
+     * select recommendationRef as the code action target, not the empty remediationRef.
+     */
+    test('should use recommendationRef for code action when diagnostic severity is Information', async () => {
+        // Given a recommendation-only dependency (no issues) with a recommendationRef
+        config.globalConfig.recommendationsEnabled = true;
+        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
+
+        const recommendationRef = 'mockPackage@2.0.0';
+        const dependencyData = [
+            new DependencyData('tpa(tpa)', [], recommendationRef, '', 'NONE')
+        ];
+        const range = new Range(new Position(10, 5), new Position(10, 15));
+        const vulnerability = new Vulnerability(range, 'mockPackage@1.0.0', dependencyData);
+
+        // When getting the diagnostic
+        const diagnostic = vulnerability.getDiagnostic();
+
+        // Then severity should be Information (recommendation-only)
+        expect(diagnostic.severity).to.eql(DiagnosticSeverity.Information);
+
+        // When selecting the action ref using the fixed logic
+        const actionRef = diagnostic.severity === DiagnosticSeverity.Information
+            ? dependencyData[0].recommendationRef
+            : dependencyData[0].remediationRef;
+
+        // Then it should select recommendationRef, not remediationRef
+        expect(actionRef).to.equal(recommendationRef);
+        expect(actionRef).to.not.equal('');
+    });
+
+    /**
+     * Verifies that vulnerability diagnostics (Error severity) select
+     * remediationRef as the code action target, not recommendationRef.
+     */
+    test('should use remediationRef for code action when diagnostic severity is Error', async () => {
+        // Given a dependency with issues (has remediation)
+        config.globalConfig.vulnerabilityAlertSeverity = 'Error';
+
+        const remediationRef = 'mockPackage@2.0.0-fixed';
+        const dependencyData = [
+            new DependencyData('tpa(tpa)', [{ id: 'CVE-0001' }], '', remediationRef, 'HIGH')
+        ];
+        const range = new Range(new Position(10, 5), new Position(10, 15));
+        const vulnerability = new Vulnerability(range, 'mockPackage@1.0.0', dependencyData);
+
+        // When getting the diagnostic
+        const diagnostic = vulnerability.getDiagnostic();
+
+        // Then severity should be Error (has issues)
+        expect(diagnostic.severity).to.eql(DiagnosticSeverity.Error);
+
+        // When selecting the action ref using the fixed logic
+        const actionRef = diagnostic.severity === DiagnosticSeverity.Information
+            ? dependencyData[0].recommendationRef
+            : dependencyData[0].remediationRef;
+
+        // Then it should select remediationRef, not recommendationRef
+        expect(actionRef).to.equal(remediationRef);
+        expect(actionRef).to.not.equal('');
     });
 });

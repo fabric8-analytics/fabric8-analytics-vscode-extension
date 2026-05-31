@@ -51,6 +51,12 @@ export const RHDA_DIAGNOSTIC_SOURCE = 'Red Hat Dependency Analytics Plugin';
 // Placeholder used as a version for dependency templates.
 export const VERSION_PLACEHOLDER: string = '__VERSION__';
 
+// Red Hat trusted library registry for Python packages
+export const REDHAT_TRUSTED_PYTHON_REGISTRY_URL = 'https://USERNAME:PASSWORD@packages.redhat.com/trusted-libraries/python/';
+
+// Supported Python package managers for trusted registry instructions
+export type pythonPackageManager = 'pip' | 'uv' | 'poetry';
+
 // Represents provider ecosystem names.
 export const GRADLE = 'gradle';
 export const MAVEN = 'maven';

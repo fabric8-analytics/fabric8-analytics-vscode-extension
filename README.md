@@ -187,6 +187,15 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediation.
 	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
 
+	<br >**Python trusted library recommendations:**
+	For Python projects, when a dependency has a trusted library recommendation, the extension displays a blue informational diagnostic with provider-specific instructions for configuring the Red Hat trusted library registry:
+
+	- **pip**: Add `extra-index-url` to your `pip.conf` under `[global]`
+	- **uv**: Add a `[[tool.uv.index]]` entry to your `pyproject.toml`
+	- **poetry**: Run `poetry source add` to register the trusted registry
+
+	The package manager is automatically detected based on your project setup. These recommendations are gated behind the `redHatDependencyAnalytics.recommendations.enabled` setting (default: `true`).
+
 - **License compatibility checking**
 	<br >Red Hat Dependency Analytics automatically checks for license compatibility issues in your project:
 

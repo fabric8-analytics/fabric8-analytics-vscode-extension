@@ -19,6 +19,14 @@ import { LicenseProviderResult } from '@trustify-da/trustify-da-api-model/model/
 import { TokenProvider } from '../tokenProvider';
 
 /**
+ * Extended AnalysisReport with packageManager field added by the JS client at runtime.
+ * The JS client's componentAnalysis() dynamically adds this field before returning.
+ */
+interface ComponentAnalysisResult extends AnalysisReport {
+  packageManager?: string;
+}
+
+/**
  * Represents a source object with an ID and dependencies array.
  */
 interface ISource {
@@ -59,7 +67,8 @@ class DependencyData {
     public issues: Issue[],
     public recommendationRef: string,
     public remediationRef: string,
-    public highestVulnerabilitySeverity: string
+    public highestVulnerabilitySeverity: string,
+    public packageManager: string = ''
   ) { }
 }
 
@@ -89,7 +98,7 @@ class AnalysisResponse {
   };
   licenses?: Array<LicenseProviderResult>;
 
-  constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider) {
+  constructor(resData: AnalysisReport, diagnosticFilePath: Uri, provider: IDependencyProvider, packageManager: string = '') {
     this.provider = provider;
     const failedProviders: string[] = [];
     const sources: ISource[] = [];
@@ -140,7 +149,7 @@ class AnalysisResponse {
 
             const dd = issues.length
               ? new DependencyData(source.id, issues, '', this.getRemediation(issues[0]), this.getHighestSeverity(d))
-              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d));
+              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d), packageManager);
 
             const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -208,6 +217,7 @@ class AnalysisResponse {
   private getRecommendation(dependency: DependencyReport): string {
     return isDefined(dependency, 'recommendation') ? this.provider.resolveDependencyFromReference(dependency.recommendation.split('?')[0]) : '';
   }
+
 }
 
 /**
@@ -217,9 +227,10 @@ class AnalysisResponse {
  * @returns A Promise resolving to an AnalysisResponse object.
  */
 async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnosticFilePath: Uri, provider: IDependencyProvider, options: Options): Promise<AnalysisResponse> {
-  const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options);
+  const componentAnalysisJson = await exhort.componentAnalysis(diagnosticFilePath.fsPath, options) as ComponentAnalysisResult;
+  const packageManager = componentAnalysisJson.packageManager || '';
 
-  return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider);
+  return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider, packageManager);
 }
 
 export { executeComponentAnalysis, DependencyData };

@@ -89,6 +89,48 @@ suite('ExhortServices module', async () => {
       });
   });
 
+  test('should extract analysis from batch result object with metadata', async () => {
+    const batchResultWithMetadata = {
+      analysis: '<html>Batch Report With Metadata</html>',
+      metadata: { totalManifests: 3 }
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const exhortMock = {
+      default: {
+        stackAnalysisBatch: async () => batchResultWithMetadata,
+      }
+    };
+
+    exhortServicesRewire.__Rewire__('trustify_da_javascript_client_1', exhortMock);
+
+    await exhortServicesRewire.batchStackAnalysisService('mock/workspace/root', {})
+      .then((result: string) => {
+        expect(result).to.equal('<html>Batch Report With Metadata</html>');
+      });
+  });
+
+  test('should throw on unexpected batch analysis result shape', async () => {
+    const unexpectedResult = { someField: 'not analysis' };
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const exhortMock = {
+      default: {
+        stackAnalysisBatch: async () => unexpectedResult,
+      }
+    };
+
+    exhortServicesRewire.__Rewire__('trustify_da_javascript_client_1', exhortMock);
+
+    await exhortServicesRewire.batchStackAnalysisService('mock/workspace/root', {})
+      .then(() => {
+        throw new Error('should have thrown');
+      })
+      .catch((error: Error) => {
+        expect(error.message).to.equal('Unexpected batch stack analysis result shape');
+      });
+  });
+
   test('should fail to generate RHDA batch report and reject with error', async () => {
 
     // eslint-disable-next-line @typescript-eslint/no-shadow

@@ -119,10 +119,13 @@ async function tokenValidationService(options: Options, source: string): Promise
  */
 async function batchStackAnalysisService(workspaceRoot: string, options: Options): Promise<string> {
   const result = await exhort.stackAnalysisBatch(workspaceRoot, true, options);
-  if (result && typeof result === 'object' && 'analysis' in result) {
-    return result.analysis as string;
+  if (typeof result === 'string') {
+    return result;
   }
-  return result as string;
+  if (result && typeof result === 'object' && 'analysis' in result && typeof result.analysis === 'string') {
+    return result.analysis;
+  }
+  throw new Error('Unexpected batch stack analysis result shape');
 }
 
 /**

@@ -65,8 +65,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
         const loc = vulnerabilityDiagnostic.range.start.line + '|' + vulnerabilityDiagnostic.range.start.character;
 
         dependencyData.forEach(dd => {
-          // TODO: we never use DiagnosticSeverity.Hint aka 3, so this always selects dd.remediationRef
-          const actionRef = vulnerabilityDiagnostic.severity < 3 ? dd.remediationRef : dd.recommendationRef;
+          const actionRef = dd.issues.length > 0 ? dd.remediationRef : dd.recommendationRef;
           if (actionRef) {
             this.createCodeAction(dependency, loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic);
           }
@@ -329,4 +328,4 @@ function processIncompatibleDependencies(
   });
 }
 
-export { performDiagnostics };
+export { DiagnosticsPipeline, performDiagnostics };

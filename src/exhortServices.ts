@@ -118,11 +118,14 @@ async function tokenValidationService(options: Options, source: string): Promise
  * @returns A promise resolving to the batch stack analysis report in HTML format.
  */
 async function batchStackAnalysisService(workspaceRoot: string, options: Options): Promise<string> {
-  if (options.batchMetadata) {
-    const { analysis } = await exhort.stackAnalysisBatch(workspaceRoot, true, { ...options, batchMetadata: true });
-    return analysis;
+  const result = await exhort.stackAnalysisBatch(workspaceRoot, true, options);
+  if (typeof result === 'string') {
+    return result;
   }
-  return await exhort.stackAnalysisBatch(workspaceRoot, true, { ...options, batchMetadata: false });
+  if (result && typeof result === 'object' && 'analysis' in result && typeof result.analysis === 'string') {
+    return result.analysis;
+  }
+  throw new Error('Unexpected batch stack analysis result shape');
 }
 
 /**

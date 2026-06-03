@@ -318,6 +318,136 @@ dependencies {
         ]);
     });
 
+    /// Verifies that Kotlin DSL string notation dependencies are correctly parsed.
+    test('tests build.gradle.kts with Kotlin DSL string notation dependencies', async () => {
+        const deps = dependencyProvider.collect(`
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("log4j:log4j:1.2.3")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+}
+        `);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'log4j/log4j', position: { line: 11, column: 21 } },
+                version: { value: '1.2.3', position: { line: 11, column: 33 } }
+            },
+            {
+                name: { value: 'org.apache.commons/commons-lang3', position: { line: 12, column: 21 } },
+                version: { value: '3.12.0', position: { line: 12, column: 54 } }
+            }
+        ]);
+    });
+
+    /// Verifies that Kotlin DSL string notation dependencies without a version are correctly parsed.
+    test('tests build.gradle.kts with Kotlin DSL string notation without version', async () => {
+        const deps = dependencyProvider.collect(`
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("log4j:log4j")
+}
+        `);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'log4j/log4j', position: { line: 11, column: 21 } },
+                context: { value: 'log4j:log4j:__VERSION__', range: { start: { line: 11, character: 21 }, end: { line: 11, character: 32 } } }
+            }
+        ]);
+    });
+
+    /// Verifies that Kotlin DSL string notation dependencies with trailing comments are correctly parsed.
+    test('tests build.gradle.kts with Kotlin DSL trailing comments', async () => {
+        const deps = dependencyProvider.collect(`
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("log4j:log4j:1.2.3") // some comment
+    implementation("org.apache.commons:commons-lang3:3.12.0") // another comment
+}
+        `);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'log4j/log4j', position: { line: 11, column: 21 } },
+                version: { value: '1.2.3', position: { line: 11, column: 33 } }
+            },
+            {
+                name: { value: 'org.apache.commons/commons-lang3', position: { line: 12, column: 21 } },
+                version: { value: '3.12.0', position: { line: 12, column: 54 } }
+            }
+        ]);
+    });
+
+    /// Verifies that Kotlin DSL map notation dependencies (using = instead of :) are correctly parsed.
+    test('tests build.gradle.kts with Kotlin DSL map notation dependencies', async () => {
+        const deps = dependencyProvider.collect(`
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(group = "log4j", name = "log4j", version = "1.2.3")
+    implementation(version = "3.12.0", name = "commons-lang3", group = "org.apache.commons")
+}
+        `);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'log4j/log4j', position: { line: 11, column: 29 } },
+                version: { value: '1.2.3', position: { line: 11, column: 64 } }
+            },
+            {
+                name: { value: 'org.apache.commons/commons-lang3', position: { line: 12, column: 73 } },
+                version: { value: '3.12.0', position: { line: 12, column: 31 } }
+            }
+        ]);
+    });
+
+    /// Verifies that Kotlin DSL map notation without a version is correctly parsed.
+    test('tests build.gradle.kts with Kotlin DSL map notation without version', async () => {
+        const deps = dependencyProvider.collect(`
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(group = "log4j", name = "log4j")
+}
+        `);
+        expect(deps).is.containSubset([
+            {
+                name: { value: 'log4j/log4j', position: { line: 11, column: 29 } },
+                context: { value: 'name = "log4j", version = "__VERSION__"', range: { start: { line: 11, character: 37 }, end: { line: 11, character: 51 } } }
+            }
+        ]);
+    });
+
     test('tests build.gradle dependencies with missing version parameter', async () => {
         const deps = dependencyProvider.collect(`
 plugins {

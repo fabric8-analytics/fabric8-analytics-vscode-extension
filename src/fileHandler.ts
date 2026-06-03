@@ -48,7 +48,7 @@ export class AnalysisMatcher {
       providerName: 'pyproject'
     },
     {
-      pattern: /^build\.gradle$/,
+      pattern: /^build\.gradle(\.kts)?$/,
       callback: (tokenProvider, path, contents) => { return dependencyDiagnostics.performDiagnostics(tokenProvider, path, contents, new BuildGradle()); },
       providerName: 'gradle'
     },

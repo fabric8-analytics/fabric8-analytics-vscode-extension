@@ -30,9 +30,19 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
   FIND_KEY_VALUE_PAIRS_WITH_EQUALS_REGEX: RegExp = /\b(\w+)\s*=\s*(['"])(.*?)\2/;
 
   /**
+   * Regular expression for locating key-value pairs with equals signs (global, for dependency extraction).
+   */
+  FIND_KEY_VALUE_PAIRS_WITH_EQUALS_GLOBAL_REGEX: RegExp = /\b(\w+)\s*=\s*(['"])(.*?)\2/g;
+
+  /**
    * Regular expression for matching key value pairs.
    */
   SPLIT_KEY_VALUE_PAIRS_WITH_COLON_REGEX: RegExp = /\s*:\s*/;
+
+  /**
+   * Regular expression for splitting key-value pairs with equals signs.
+   */
+  SPLIT_KEY_VALUE_PAIRS_WITH_EQUALS_REGEX: RegExp = /\s*=\s*/;
 
   /**
    * Regular expression for matching strings enclosed in double or single quotes.
@@ -101,16 +111,22 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     const myClassObj = { group: '', name: '', version: '' };
     let depData: string;
 
-    const keyValuePairs = cleanLine.match(this.FIND_KEY_VALUE_PAIRS_WITH_COLON_REGEX);
+    // Try colon-separated map notation first (Groovy: group: "log4j", name: "log4j")
+    // then equals-separated map notation (Kotlin DSL: group = "log4j", name = "log4j")
+    const colonKeyValuePairs = cleanLine.match(this.FIND_KEY_VALUE_PAIRS_WITH_COLON_REGEX);
+    const equalsKeyValuePairs = !colonKeyValuePairs ? cleanLine.match(this.FIND_KEY_VALUE_PAIRS_WITH_EQUALS_GLOBAL_REGEX) : null;
+    const keyValuePairs = colonKeyValuePairs || equalsKeyValuePairs;
+    const splitRegex = colonKeyValuePairs ? this.SPLIT_KEY_VALUE_PAIRS_WITH_COLON_REGEX : this.SPLIT_KEY_VALUE_PAIRS_WITH_EQUALS_REGEX;
+
     if (keyValuePairs) {
       // extract data from dependency in Map format
       keyValuePairs.forEach(pair => {
-        const [key, value] = pair.split(this.SPLIT_KEY_VALUE_PAIRS_WITH_COLON_REGEX);
+        const [key, value] = pair.split(splitRegex);
         const match = value.match(this.BETWEEN_QUOTES_REGEX);
         if (!match) { return; }
 
         const valueData = match[2];
-        switch (key) {
+        switch (key.trim()) {
           case 'group':
             myClassObj.group = valueData;
             break;
@@ -147,9 +163,10 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     // For Gradle, we place diagnostics on the dependency string in the file
     let namePosition = { line: index + 1, column: 0 };
     if (keyValuePairs) {
-      // For map format like: group: "log4j", name: "log4j"
+      // For map format like: group: "log4j" (Groovy) or group = "log4j" (Kotlin DSL)
       // Find the start of the group value
-      const groupMatch = line.match(/group\s*:\s*(['"])(.*?)\1/);
+      const groupPattern = colonKeyValuePairs ? /group\s*:\s*(['"])(.*?)\1/ : /group\s*=\s*(['"])(.*?)\1/;
+      const groupMatch = line.match(groupPattern);
       if (groupMatch) {
         const groupStr = groupMatch[0];
         const groupValue = groupMatch[2];
@@ -177,10 +194,12 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
       // if version is not specified, generate placeholder template
       if (keyValuePairs) {
         const quotedName = `"${myClassObj.name}"`;
+        const sep = colonKeyValuePairs ? ':' : '=';
+        const nameFragment = `name${sep === ':' ? ': ' : ' = '}${quotedName}`;
         dep.context = {
-          value: `name: ${quotedName}, version: "${VERSION_PLACEHOLDER}"`, range: new Range(
-            new Position(index + 1, line.indexOf(`name: ${quotedName}`) + 1),
-            new Position(index + 1, line.indexOf(`name: ${quotedName}`) + `name: ${quotedName}`.length + 1),
+          value: `${nameFragment}, version${sep === ':' ? ': ' : ' = '}"${VERSION_PLACEHOLDER}"`, range: new Range(
+            new Position(index + 1, line.indexOf(nameFragment) + 1),
+            new Position(index + 1, line.indexOf(nameFragment) + nameFragment.length + 1),
           )
         };
       } else {

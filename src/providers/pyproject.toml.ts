@@ -218,10 +218,11 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     }
 
     const topLevel = ast.body[0];
+    let poetryFallback: LicenseFieldPosition | undefined;
 
     for (const node of topLevel.body) {
       if (node.type === 'TOMLTable') {
-        // [project] — PEP 639 string or PEP 621 inline table
+        // [project] — PEP 639 string or PEP 621 inline table (takes precedence per PEP 621)
         if (this.keyPathEquals(node.resolvedKey, 'project')) {
           const licenseKv = node.body.find(kv => keyName(kv.key.keys[0]) === 'license');
           if (licenseKv) {
@@ -245,11 +246,11 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
           }
         }
 
-        // [tool.poetry] — Poetry-style license
-        if (this.keyPathEquals(node.resolvedKey, 'tool', 'poetry')) {
+        // [tool.poetry] — Poetry-style license (fallback only)
+        if (!poetryFallback && this.keyPathEquals(node.resolvedKey, 'tool', 'poetry')) {
           const licenseKv = node.body.find(kv => keyName(kv.key.keys[0]) === 'license');
           if (licenseKv && licenseKv.value.type === 'TOMLValue' && licenseKv.value.kind === 'string') {
-            return {
+            poetryFallback = {
               value: String(licenseKv.value.value),
               position: this.toValuePosition(licenseKv.value.loc),
             };
@@ -258,6 +259,6 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
       }
     }
 
-    return undefined;
+    return poetryFallback;
   }
 }

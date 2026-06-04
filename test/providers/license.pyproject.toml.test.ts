@@ -99,5 +99,22 @@ license = "MIT"
 
         expect(result).to.not.be.undefined;
         expect(result?.value).to.equal('BSD-3-Clause');
+        expect(result?.position.line).to.equal(3);
+    });
+
+    test('should prefer [project] license even when [tool.poetry] appears first', () => {
+        const contents = `[tool.poetry]
+name = "my-package"
+license = "MIT"
+
+[project]
+name = "my-package"
+license = "BSD-3-Clause"
+`;
+        const result = dependencyProvider.extractLicensePosition?.(contents);
+
+        expect(result).to.not.be.undefined;
+        expect(result?.value).to.equal('BSD-3-Clause');
+        expect(result?.position.line).to.equal(7);
     });
 });

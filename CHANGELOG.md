@@ -4,11 +4,13 @@
 
 ### Enhancements
 
-- Added "Generate SBOM" command that creates a CycloneDX SBOM from supported manifest files and saves it to a user-chosen location. See [PR#889](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/889) for details.
-- Added support for `pyproject.toml` files with both PEP 621 and Poetry dependency formats, including new `uv` and `poetry` executable path settings. See [PR#885](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/885) for details.
+- Added "Generate SBOM" command that creates a CycloneDX SBOM from supported manifest files and saves it to a user-defined location. See [PR#889](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/889) for details.
+- Added trusted library recommendations with per-provider remediation instructions. See [PR#891](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/891) for details.
+- Added support for `pyproject.toml` files with both PEP 621 and Poetry dependency formats, including the new `uv` and `poetry` executable path settings. See [PR#885](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/885) for details.
 - Added batch workspace analysis command for analyzing all manifest files in a workspace. See [PR#880](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/880) for details.
 - Added support for Rust `Cargo.toml` manifest files. See [PR#878](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/878) for details.
-- Added license compatibility checking feature that detects license mismatches between manifest files and LICENSE files, and identifies dependencies with incompatible licenses. See [PR#874](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/874) for details.
+- Added a license compatibility checking feature that detects license mismatches between manifest files and `LICENSE` files, and identifies dependencies with incompatible licenses. Enable via `redHatDependencyAnalytics.licenseCheckEnabled`. See [PR#874](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/874) for details.
+- Added support for `build.gradle.kts` (Gradle Kotlin DSL) manifest files. See [PR#903](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/903) for details.
 - Added Red Hat OIDC authentication support. See [PR#844](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/844) for details.
 
 ### Fixes
@@ -20,8 +22,11 @@
 
 ### Chores
 
-- Bumped JavaScript API for improved `requirements.txt` handling. See [PR#892](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/892), [PR#875](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/875) for details.
-- Changed default for Go MVS algorithm to enabled. See [PR#862](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/862) for details.
+- Changed the default for Go MVS algorithm to enabled. See [PR#862](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/862) for details.
+
+### Known Issues
+
+- In rare cases, opening the stack analysis HTML report might fail with an error. This can be caused by an upstream VS Code bug ([vscode#125993](https://github.com/microsoft/vscode/issues/125993)). To workaround this issue, restart all VS Code instances, or remove the VS Code webview cache directory.
 
 ## 0.10.2 (December 19th 2025)
 

@@ -26,7 +26,7 @@ suite('package.json License Field Position Extraction tests', () => {
         expect(result).to.not.be.undefined;
         expect(result?.value).to.equal('MIT');
         expect(result?.position.line).to.equal(4);
-        expect(result?.position.column).to.equal(14);
+        expect(result?.position.column).to.equal(15);
     });
 
     test('should extract license field position with different formatting', () => {

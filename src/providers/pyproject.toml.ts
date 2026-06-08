@@ -6,7 +6,7 @@
 
 import { parseTOML, type AST } from 'toml-eslint-parser';
 import { PYPI } from '../constants';
-import { IDependencyProvider, EcosystemDependencyResolver, Dependency } from '../dependencyAnalysis/collector';
+import { IDependencyProvider, EcosystemDependencyResolver, Dependency, LicenseFieldPosition } from '../dependencyAnalysis/collector';
 
 /**
  * Returns the string name of a TOML key part (bare or quoted).
@@ -199,5 +199,66 @@ export class DependencyProvider extends EcosystemDependencyResolver implements I
     }
 
     return dependencies;
+  }
+
+  /**
+   * Extracts the license field position from a pyproject.toml file.
+   *
+   * Supports three license field formats:
+   * - Poetry style: `[tool.poetry] license = "MIT"`
+   * - PEP 639 style: `[project] license = "MIT"` (simple string)
+   * - PEP 621 classic: `[project] license = {text = "MIT"}` (inline table with `text` key)
+   */
+  extractLicensePosition(contents: string): LicenseFieldPosition | undefined {
+    let ast: AST.TOMLProgram;
+    try {
+      ast = this.parseToml(contents);
+    } catch {
+      return undefined;
+    }
+
+    const topLevel = ast.body[0];
+    let poetryFallback: LicenseFieldPosition | undefined;
+
+    for (const node of topLevel.body) {
+      if (node.type === 'TOMLTable') {
+        // [project] — PEP 639 string or PEP 621 inline table (takes precedence per PEP 621)
+        if (this.keyPathEquals(node.resolvedKey, 'project')) {
+          const licenseKv = node.body.find(kv => keyName(kv.key.keys[0]) === 'license');
+          if (licenseKv) {
+            // PEP 639: license = "MIT"
+            if (licenseKv.value.type === 'TOMLValue' && licenseKv.value.kind === 'string') {
+              return {
+                value: String(licenseKv.value.value),
+                position: this.toValuePosition(licenseKv.value.loc),
+              };
+            }
+            // PEP 621: license = {text = "MIT"}
+            if (licenseKv.value.type === 'TOMLInlineTable') {
+              const textKv = licenseKv.value.body.find(inner => keyName(inner.key.keys[0]) === 'text');
+              if (textKv && textKv.value.type === 'TOMLValue' && textKv.value.kind === 'string') {
+                return {
+                  value: String(textKv.value.value),
+                  position: this.toValuePosition(textKv.value.loc),
+                };
+              }
+            }
+          }
+        }
+
+        // [tool.poetry] — Poetry-style license (fallback only)
+        if (!poetryFallback && this.keyPathEquals(node.resolvedKey, 'tool', 'poetry')) {
+          const licenseKv = node.body.find(kv => keyName(kv.key.keys[0]) === 'license');
+          if (licenseKv && licenseKv.value.type === 'TOMLValue' && licenseKv.value.kind === 'string') {
+            poetryFallback = {
+              value: String(licenseKv.value.value),
+              position: this.toValuePosition(licenseKv.value.loc),
+            };
+          }
+        }
+      }
+    }
+
+    return poetryFallback;
   }
 }

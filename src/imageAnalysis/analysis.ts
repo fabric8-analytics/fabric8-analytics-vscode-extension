@@ -67,12 +67,12 @@ class AnalysisResponse {
     const failedProviders: string[] = [];
 
     Object.entries(resData).map(([imageRef, imageData]) => {
-      const artifacts: IArtifact[] = [];
-      let hasProviderRecommendations = false;
-
       if (isDefined(imageData, 'providers')) {
         Object.entries(imageData.providers).map(([providerName, providerData]: [string, ProviderReport]) => {
           if (providerData?.status?.ok) {
+            const artifacts: IArtifact[] = [];
+            let hasProviderRecommendations = false;
+
             if (isDefined(providerData, 'sources')) {
               Object.entries(providerData.sources).map(([sourceName, sourceData]: [string, Source]) => {
                 if (isDefined(sourceData, 'summary')) {
@@ -109,22 +109,22 @@ class AnalysisResponse {
                 }
               });
             }
+
+            artifacts.forEach(artifact => {
+              const sd = new ImageData(
+                artifact.id,
+                artifact.dependencies?.flatMap(dependency => dependency.issues || []) || [],
+                hasProviderRecommendations ? '' : this.getRecommendation(artifact.dependencies),
+                this.getHighestSeverity(artifact.summary),
+              );
+
+              const dataArray = this.images.get(imageRef) || [];
+              dataArray.push(sd);
+              this.images.set(imageRef, dataArray);
+            });
           } else {
             failedProviders.push(providerName);
           }
-        });
-
-        artifacts.forEach(artifact => {
-          const sd = new ImageData(
-            artifact.id,
-            artifact.dependencies?.flatMap(dependency => dependency.issues || []) || [],
-            hasProviderRecommendations ? '' : this.getRecommendation(artifact.dependencies),
-            this.getHighestSeverity(artifact.summary),
-          );
-
-          const dataArray = this.images.get(imageRef) || [];
-          dataArray.push(sd);
-          this.images.set(imageRef, dataArray);
         });
       }
 
@@ -202,4 +202,4 @@ async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[], o
   return new AnalysisResponse(imageAnalysisJson, diagnosticFilePath);
 }
 
-export { executeImageAnalysis, ImageData, parseImageRefFromPurl };
+export { executeImageAnalysis, AnalysisResponse, ImageData, parseImageRefFromPurl };

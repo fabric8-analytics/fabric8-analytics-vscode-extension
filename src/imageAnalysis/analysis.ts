@@ -33,6 +33,23 @@ interface IArtifact {
   dependencies: DependencyReport[] | undefined;
 }
 
+/**
+ * Extracts the namespace/name portion from a PURL string, stripping the
+ * `pkg:<type>/` prefix and `@<version>` suffix. Handles PURLs with
+ * multiple colons (e.g., registry ports, sha256 digests).
+ * @param purl - A Package URL string (e.g., `pkg:docker/nginx@1.25`).
+ * @returns The namespace/name portion (e.g., `nginx`), or empty string if invalid.
+ */
+function parseImageRefFromPurl(purl: string): string {
+  const slashIndex = purl.indexOf('/');
+  if (slashIndex === -1) {
+    return '';
+  }
+  const withoutPrefix = purl.substring(slashIndex + 1);
+  const atIndex = withoutPrefix.indexOf('@');
+  return atIndex === -1 ? withoutPrefix : withoutPrefix.substring(0, atIndex);
+}
+
 class ImageData {
   constructor(
     public sourceId: string,
@@ -74,7 +91,7 @@ class AnalysisResponse {
                 if (recSourceData.dependencies) {
                   recSourceData.dependencies.forEach(recReport => {
                     if (recReport.recommendation) {
-                      const recommendationRef = recReport.recommendation.split(':')[1]?.split('@')[0] || '';
+                      const recommendationRef = parseImageRefFromPurl(recReport.recommendation);
                       if (recommendationRef) {
                         const sd = new ImageData(
                           providerName,
@@ -164,7 +181,7 @@ class AnalysisResponse {
   private getRecommendation(dependencies: DependencyReport[] | undefined): string {
     let recommendation = '';
     if (dependencies && dependencies.length > 0) {
-      recommendation = isDefined(dependencies[0], 'recommendation') ? dependencies[0].recommendation.split(':')[1].split('@')[0] : '';
+      recommendation = isDefined(dependencies[0], 'recommendation') ? parseImageRefFromPurl(dependencies[0].recommendation) : '';
     }
     return recommendation;
   }
@@ -185,4 +202,4 @@ async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[], o
   return new AnalysisResponse(imageAnalysisJson, diagnosticFilePath);
 }
 
-export { executeImageAnalysis, ImageData };
+export { executeImageAnalysis, ImageData, parseImageRefFromPurl };

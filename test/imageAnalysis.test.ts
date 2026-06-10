@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import * as exhortServices from '../src/exhortServices';
 import { globalConfig } from '../src/config';
 import { executeDockerImageAnalysis } from '../src/imageAnalysis';
+import { parseImageRefFromPurl } from '../src/imageAnalysis/analysis';
 import * as rhda from '../src/rhda';
 import { DepOutputChannel } from '../src/depOutputChannel';
 import { MockTokenProvider } from '../src/tokenProvider';
@@ -86,5 +87,52 @@ FROM stage1 AS runner
                 expect(error.message).to.eq('Mock Error');
                 expect(updateCurrentWebviewPanelSpy.calledOnceWithExactly('error')).to.be.true;
             });
+    });
+});
+
+suite('parseImageRefFromPurl', () => {
+    const cases: { input: string; expected: string; description: string }[] = [
+        {
+            input: 'pkg:docker/nginx@1.25',
+            expected: 'nginx',
+            description: 'should parse simple image PURL',
+        },
+        {
+            input: 'pkg:docker/library/nginx@1.25',
+            expected: 'library/nginx',
+            description: 'should parse namespaced image PURL',
+        },
+        {
+            input: 'pkg:docker/registry.example.com:5000/myimage@1.0',
+            expected: 'registry.example.com:5000/myimage',
+            description: 'should handle registry-qualified PURLs with port colons',
+        },
+        {
+            input: 'pkg:docker/image@sha256:abc123',
+            expected: 'image',
+            description: 'should handle PURLs with sha256 digest in version',
+        },
+        {
+            input: 'pkg:oci/ubi9/ubi-minimal@9.4',
+            expected: 'ubi9/ubi-minimal',
+            description: 'should parse OCI-type PURLs',
+        },
+        {
+            input: 'pkg:docker/registry.io:443/org/image@2.0?os=linux',
+            expected: 'registry.io:443/org/image',
+            description: 'should handle port, namespace, and query params',
+        },
+        {
+            input: 'invalidpurl',
+            expected: '',
+            description: 'should return empty string for PURL without slash',
+        },
+    ];
+
+    cases.forEach(({ input, expected, description }) => {
+        /** Verifies PURL parsing for: ${description} */
+        test(description, () => {
+            expect(parseImageRefFromPurl(input)).to.equal(expected);
+        });
     });
 });

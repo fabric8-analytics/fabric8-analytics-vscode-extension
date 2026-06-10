@@ -69,7 +69,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
             ? dd.recommendationRef
             : dd.remediationRef;
           if (actionRef) {
-            this.createCodeAction(dependency, loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic);
+            this.createCodeAction(dependency, loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic, dd.recommendationSourceId);
           }
 
           for (const vuln of dd.issues) {
@@ -89,12 +89,15 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
    * @param context - Dependency context object.
    * @param sourceId - Source ID.
    * @param vulnerabilityDiagnostic - Vulnerability diagnostic object.
+   * @param recommendationSourceId - Optional recommendation source identifier.
    * @private
    */
-  private createCodeAction(dependency: Dependency, loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
+  private createCodeAction(dependency: Dependency, loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic, recommendationSourceId: string = '') {
     const switchToVersion = ref.split('@')[1];
     const versionReplacementString = context ? context.value.replace(VERSION_PLACEHOLDER, switchToVersion) : switchToVersion;
-    const title = `Switch to version ${switchToVersion} for ${sourceId}`;
+    const title = recommendationSourceId
+      ? `Switch to version ${switchToVersion} (${recommendationSourceId})`
+      : `Switch to version ${switchToVersion} for ${sourceId}`;
     const codeAction = generateSwitchToRecommendedVersionAction(title, ref, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath, dependency.version);
     registerCodeAction(this.diagnosticFilePath, loc, codeAction);
   }

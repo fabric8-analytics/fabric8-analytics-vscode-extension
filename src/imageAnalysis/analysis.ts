@@ -38,7 +38,8 @@ class ImageData {
     public sourceId: string,
     public issues: Issue[],
     public recommendationRef: string,
-    public highestVulnerabilitySeverity: string
+    public highestVulnerabilitySeverity: string,
+    public recommendationSourceId: string = ''
   ) { }
 }
 
@@ -50,6 +51,7 @@ class AnalysisResponse {
 
     Object.entries(resData).map(([imageRef, imageData]) => {
       const artifacts: IArtifact[] = [];
+      let hasProviderRecommendations = false;
 
       if (isDefined(imageData, 'providers')) {
         Object.entries(imageData.providers).map(([providerName, providerData]: [string, ProviderReport]) => {
@@ -65,6 +67,31 @@ class AnalysisResponse {
                 }
               });
             }
+
+            if (isDefined(providerData, 'recommendations')) {
+              hasProviderRecommendations = true;
+              Object.entries(providerData.recommendations).map(([recSourceName, recSourceData]) => {
+                if (recSourceData.dependencies) {
+                  recSourceData.dependencies.forEach(recReport => {
+                    if (recReport.recommendation) {
+                      const recommendationRef = recReport.recommendation.split(':')[1]?.split('@')[0] || '';
+                      if (recommendationRef) {
+                        const sd = new ImageData(
+                          providerName,
+                          [],
+                          recommendationRef,
+                          'NONE',
+                          recSourceName
+                        );
+                        const dataArray = this.images.get(imageRef) || [];
+                        dataArray.push(sd);
+                        this.images.set(imageRef, dataArray);
+                      }
+                    }
+                  });
+                }
+              });
+            }
           } else {
             failedProviders.push(providerName);
           }
@@ -74,7 +101,7 @@ class AnalysisResponse {
           const sd = new ImageData(
             artifact.id,
             artifact.dependencies?.flatMap(dependency => dependency.issues || []) || [],
-            this.getRecommendation(artifact.dependencies),
+            hasProviderRecommendations ? '' : this.getRecommendation(artifact.dependencies),
             this.getHighestSeverity(artifact.summary),
           );
 

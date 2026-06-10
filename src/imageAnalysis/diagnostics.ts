@@ -54,7 +54,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
 
         imageData.forEach(id => {
           if (id.recommendationRef && globalConfig.recommendationsEnabled) {
-            this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic);
+            this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic, id.recommendationSourceId);
           }
 
           for (const vuln of id.issues) {
@@ -74,10 +74,14 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
    * @param imageRef - The reference name of the image.
    * @param sourceId - Source ID.
    * @param vulnerabilityDiagnostic - Vulnerability diagnostic object.
+   * @param recommendationSourceId - Optional recommendation source identifier.
    * @private
    */
-  private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic) {
-    const title = `${sourceId}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
+  private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic, recommendationSourceId: string = '') {
+    const sourceLabel = recommendationSourceId
+      ? `${sourceId} (${recommendationSourceId})`
+      : sourceId;
+    const title = `${sourceLabel}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
     const codeAction = generateRedirectToRecommendedVersionAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath);
     registerCodeAction(this.diagnosticFilePath, loc, codeAction);
   }

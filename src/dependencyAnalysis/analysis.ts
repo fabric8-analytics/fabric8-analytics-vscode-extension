@@ -32,6 +32,7 @@ interface ComponentAnalysisResult extends AnalysisReport {
 interface ISource {
   id: string;
   dependencies: DependencyReport[];
+  hasProviderRecommendations: boolean;
 }
 
 export interface ResponseMetrics {
@@ -68,7 +69,8 @@ class DependencyData {
     public recommendationRef: string,
     public remediationRef: string,
     public highestVulnerabilitySeverity: string,
-    public packageManager: string = ''
+    public packageManager: string = '',
+    public recommendationSourceId: string = ''
   ) { }
 }
 
@@ -107,9 +109,15 @@ class AnalysisResponse {
       Object.entries(resData.providers).map(([providerName, providerData]) => {
         this.metrics.providers[providerName] = {};
         if (isDefined(providerData, 'status', 'ok') && providerData.status.ok) {
+          const hasProviderRecommendations = isDefined(providerData, 'recommendations');
+
           if (isDefined(providerData, 'sources')) {
             Object.entries(providerData.sources).map(([sourceName, sourceData]) => {
-              sources.push({ id: `${providerName}(${sourceName})`, dependencies: this.getDependencies(sourceData) });
+              sources.push({
+                id: `${providerName}(${sourceName})`,
+                dependencies: this.getDependencies(sourceData),
+                hasProviderRecommendations,
+              });
 
               if (isDefined(sourceData, 'summary')) {
                 this.metrics.providers[providerName][sourceName] = {
@@ -124,6 +132,30 @@ class AnalysisResponse {
                   remediations: sourceData.summary.remediations ?? 0,
                   total: sourceData.summary.total ?? 0,
                 };
+              }
+            });
+          }
+
+          if (hasProviderRecommendations) {
+            Object.entries(providerData.recommendations).map(([recSourceName, recSourceData]) => {
+              if (recSourceData.dependencies) {
+                recSourceData.dependencies.forEach(recReport => {
+                  if (isDefined(recReport, 'ref') && isDefined(recReport, 'recommendation')) {
+                    const resolvedRef = this.provider.resolveDependencyFromReference(recReport.ref);
+                    const recommendationRef = this.provider.resolveDependencyFromReference(recReport.recommendation.split('?')[0]);
+                    const dd = new DependencyData(
+                      providerName,
+                      [],
+                      recommendationRef,
+                      '',
+                      'NONE',
+                      packageManager,
+                      recSourceName
+                    );
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                    this.dependencies.get(resolvedRef)?.push(dd) || this.dependencies.set(resolvedRef, [dd]);
+                  }
+                });
               }
             });
           }
@@ -144,12 +176,16 @@ class AnalysisResponse {
       sources.forEach(source => {
         source.dependencies.forEach(d => {
           if (isDefined(d, 'ref')) {
-
             const issues = isDefined(d, 'issues') ? d.issues : [];
 
-            const dd = issues.length
-              ? new DependencyData(source.id, issues, '', this.getRemediation(issues[0]), this.getHighestSeverity(d))
-              : new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d), packageManager);
+            let dd: DependencyData;
+            if (issues.length) {
+              dd = new DependencyData(source.id, issues, '', this.getRemediation(issues[0]), this.getHighestSeverity(d));
+            } else if (!source.hasProviderRecommendations) {
+              dd = new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d), packageManager);
+            } else {
+              return;
+            }
 
             const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions

@@ -2,7 +2,7 @@
   "name": "fabric8-analytics",
   "displayName": "Red Hat Dependency Analytics",
   "description": "Provides insights on security vulnerabilities and license compatibility in your application dependencies.",
-  "version": "0.10.2",
+  "version": "1.0.0",
   "author": "Red Hat",
   "publisher": "redhat",
   "preview": true,

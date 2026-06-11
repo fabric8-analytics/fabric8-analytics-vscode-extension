@@ -16,6 +16,7 @@ import { notifications, outputChannelDep } from '../extension';
 import { imageAnalysisService } from '../exhortServices';
 import { type IOptions } from '../imageAnalysis';
 import { Issue } from '@trustify-da/trustify-da-api-model/model/v5/Issue';
+import { PackageURL } from 'packageurl-js';
 
 /**
  * Represents the Red Hat Dependency Analytics (RHDA) analysis report, with images mapped by string keys.
@@ -34,20 +35,18 @@ interface IArtifact {
 }
 
 /**
- * Extracts the namespace/name portion from a PURL string, stripping the
- * `pkg:<type>/` prefix and `@<version>` suffix. Handles PURLs with
- * multiple colons (e.g., registry ports, sha256 digests).
+ * Extracts the namespace/name image reference from a PURL string using the
+ * spec-compliant `packageurl-js` library.
  * @param purl - A Package URL string (e.g., `pkg:docker/nginx@1.25`).
  * @returns The namespace/name portion (e.g., `nginx`), or empty string if invalid.
  */
 function parseImageRefFromPurl(purl: string): string {
-  const slashIndex = purl.indexOf('/');
-  if (slashIndex === -1) {
+  try {
+    const parsed = PackageURL.fromString(purl);
+    return [parsed.namespace, parsed.name].filter(Boolean).join('/');
+  } catch {
     return '';
   }
-  const withoutPrefix = purl.substring(slashIndex + 1);
-  const atIndex = withoutPrefix.indexOf('@');
-  return atIndex === -1 ? withoutPrefix : withoutPrefix.substring(0, atIndex);
 }
 
 class ImageData {
@@ -202,4 +201,4 @@ async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[], o
   return new AnalysisResponse(imageAnalysisJson, diagnosticFilePath);
 }
 
-export { executeImageAnalysis, AnalysisResponse, ImageData, parseImageRefFromPurl };
+export { executeImageAnalysis, AnalysisResponse, ImageData };

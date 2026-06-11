@@ -87,7 +87,7 @@ jobs:
         run: |
           git add package.json
           git add package-lock.json
-          git commit -m "[release] ${{ steps.bump.outputs.version }}"
+          git commit -m "chore(release): ${{ steps.bump.outputs.version }}"
 
       - name: Push changes
         run: |
@@ -98,7 +98,7 @@ jobs:
           gh label create "${{ steps.bump.outputs.version }}" --force
           gh pr create \
             --base main \
-            --title "[release] ${{ steps.bump.outputs.version }}" \
+            --title "chore(release): ${{ steps.bump.outputs.version }}" \
             --body "$PR_BODY" \
             --head release/${{ steps.bump.outputs.version }} \
             --label "release" --label "${{ steps.bump.outputs.version }}"

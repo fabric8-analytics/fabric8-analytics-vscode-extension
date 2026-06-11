@@ -12,7 +12,7 @@ jobs:
   release:
     permissions: write-all
     runs-on: ubuntu-latest
-    if: "github.repository_owner == 'fabric8-analytics' && startsWith(github.event.head_commit.message, 'chore(release):')"
+    if: "github.repository_owner == 'fabric8-analytics' && contains(github.event.head_commit.message, 'chore(release):')"
     name: Create & publish a release
     environment: production
 

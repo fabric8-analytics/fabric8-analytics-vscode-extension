@@ -341,4 +341,34 @@ suite('Code Action Handler tests', () => {
         expect(actionRef).to.equal(remediationRef);
         expect(actionRef).to.not.equal('');
     });
+
+    /**
+     * Verifies that code action uses the correct recommendation ref per source type
+     * when recommendationSourceId is set on the DependencyData.
+     */
+    test('should select correct recommendationRef per recommendation source type', async () => {
+        // Given multiple recommendation sources for the same dependency
+        config.globalConfig.recommendationsEnabled = true;
+
+        const trustedContentRef = 'mockPackage@2.0.0';
+        const trustedLibrariesRef = 'mockPackage@2.0.0-rh';
+        const dependencyData = [
+            new DependencyData('rhtpa', [], trustedContentRef, '', 'NONE', '', 'trusted-content'),
+            new DependencyData('rhtpa', [], trustedLibrariesRef, '', 'NONE', '', 'trusted-libraries')
+        ];
+        const range = new Range(new Position(10, 5), new Position(10, 15));
+        const vulnerability = new Vulnerability(range, 'mockPackage@1.0.0', dependencyData);
+
+        // When getting the diagnostic
+        const diagnostic = vulnerability.getDiagnostic();
+
+        // Then severity should be Information (recommendation-only)
+        expect(diagnostic.severity).to.eql(DiagnosticSeverity.Information);
+
+        // Then each entry should have its own recommendation ref
+        expect(dependencyData[0].recommendationRef).to.equal(trustedContentRef);
+        expect(dependencyData[0].recommendationSourceId).to.equal('trusted-content');
+        expect(dependencyData[1].recommendationRef).to.equal(trustedLibrariesRef);
+        expect(dependencyData[1].recommendationSourceId).to.equal('trusted-libraries');
+    });
 });

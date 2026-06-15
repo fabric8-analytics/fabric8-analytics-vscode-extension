@@ -16,6 +16,7 @@ import { notifications, outputChannelDep } from '../extension';
 import { imageAnalysisService } from '../exhortServices';
 import { type IOptions } from '../imageAnalysis';
 import { Issue } from '@trustify-da/trustify-da-api-model/model/v5/Issue';
+import { PackageURL } from 'packageurl-js';
 
 /**
  * Represents the Red Hat Dependency Analytics (RHDA) analysis report, with images mapped by string keys.
@@ -33,12 +34,28 @@ interface IArtifact {
   dependencies: DependencyReport[] | undefined;
 }
 
+/**
+ * Extracts the namespace/name image reference from a PURL string using the
+ * spec-compliant `packageurl-js` library.
+ * @param purl - A Package URL string (e.g., `pkg:docker/nginx@1.25`).
+ * @returns The namespace/name portion (e.g., `nginx`), or empty string if invalid.
+ */
+function parseImageRefFromPurl(purl: string): string {
+  try {
+    const parsed = PackageURL.fromString(purl);
+    return [parsed.namespace, parsed.name].filter(Boolean).join('/');
+  } catch {
+    return '';
+  }
+}
+
 class ImageData {
   constructor(
     public sourceId: string,
     public issues: Issue[],
     public recommendationRef: string,
-    public highestVulnerabilitySeverity: string
+    public highestVulnerabilitySeverity: string,
+    public recommendationSourceId: string = ''
   ) { }
 }
 
@@ -49,11 +66,12 @@ class AnalysisResponse {
     const failedProviders: string[] = [];
 
     Object.entries(resData).map(([imageRef, imageData]) => {
-      const artifacts: IArtifact[] = [];
-
       if (isDefined(imageData, 'providers')) {
         Object.entries(imageData.providers).map(([providerName, providerData]: [string, ProviderReport]) => {
           if (providerData?.status?.ok) {
+            const artifacts: IArtifact[] = [];
+            let hasProviderRecommendations = false;
+
             if (isDefined(providerData, 'sources')) {
               Object.entries(providerData.sources).map(([sourceName, sourceData]: [string, Source]) => {
                 if (isDefined(sourceData, 'summary')) {
@@ -65,22 +83,47 @@ class AnalysisResponse {
                 }
               });
             }
+
+            if (isDefined(providerData, 'recommendations')) {
+              hasProviderRecommendations = true;
+              Object.entries(providerData.recommendations).map(([recSourceName, recSourceData]) => {
+                if (recSourceData.dependencies) {
+                  recSourceData.dependencies.forEach(recReport => {
+                    if (recReport.recommendation) {
+                      const recommendationRef = parseImageRefFromPurl(recReport.recommendation);
+                      if (recommendationRef) {
+                        const sd = new ImageData(
+                          providerName,
+                          [],
+                          recommendationRef,
+                          'NONE',
+                          recSourceName
+                        );
+                        const dataArray = this.images.get(imageRef) || [];
+                        dataArray.push(sd);
+                        this.images.set(imageRef, dataArray);
+                      }
+                    }
+                  });
+                }
+              });
+            }
+
+            artifacts.forEach(artifact => {
+              const sd = new ImageData(
+                artifact.id,
+                artifact.dependencies?.flatMap(dependency => dependency.issues || []) || [],
+                hasProviderRecommendations ? '' : this.getRecommendation(artifact.dependencies),
+                this.getHighestSeverity(artifact.summary),
+              );
+
+              const dataArray = this.images.get(imageRef) || [];
+              dataArray.push(sd);
+              this.images.set(imageRef, dataArray);
+            });
           } else {
             failedProviders.push(providerName);
           }
-        });
-
-        artifacts.forEach(artifact => {
-          const sd = new ImageData(
-            artifact.id,
-            artifact.dependencies?.flatMap(dependency => dependency.issues || []) || [],
-            this.getRecommendation(artifact.dependencies),
-            this.getHighestSeverity(artifact.summary),
-          );
-
-          const dataArray = this.images.get(imageRef) || [];
-          dataArray.push(sd);
-          this.images.set(imageRef, dataArray);
         });
       }
 
@@ -137,7 +180,7 @@ class AnalysisResponse {
   private getRecommendation(dependencies: DependencyReport[] | undefined): string {
     let recommendation = '';
     if (dependencies && dependencies.length > 0) {
-      recommendation = isDefined(dependencies[0], 'recommendation') ? dependencies[0].recommendation.split(':')[1].split('@')[0] : '';
+      recommendation = isDefined(dependencies[0], 'recommendation') ? parseImageRefFromPurl(dependencies[0].recommendation) : '';
     }
     return recommendation;
   }
@@ -158,4 +201,4 @@ async function executeImageAnalysis(diagnosticFilePath: Uri, images: IImage[], o
   return new AnalysisResponse(imageAnalysisJson, diagnosticFilePath);
 }
 
-export { executeImageAnalysis, ImageData };
+export { executeImageAnalysis, AnalysisResponse, ImageData };

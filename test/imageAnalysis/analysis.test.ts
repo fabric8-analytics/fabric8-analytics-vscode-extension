@@ -11,6 +11,7 @@ import { executeImageAnalysis } from '../../src/imageAnalysis/analysis';
 import { Uri } from 'vscode';
 import { IImage } from '../../src/imageAnalysis/collector';
 import { type IOptions } from '../../src/imageAnalysis';
+import { SourceSummary } from '@trustify-da/trustify-da-api-model/model/v5/SourceSummary';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -19,7 +20,7 @@ chai.use(sinonChai);
  * Creates a mock IExhortAnalysisReport with a single provider/source
  * using the given SourceSummary fields.
  */
-function createMockReport(imageRef: string, summary: Record<string, number>) {
+function createMockReport(imageRef: string, summary: Partial<SourceSummary>) {
   return {
     [imageRef]: {
       providers: {

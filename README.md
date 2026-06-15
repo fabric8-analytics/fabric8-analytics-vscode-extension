@@ -183,7 +183,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 
 	![ Animated screenshot showing how to access the _Quick Fix..._ menu, and switching to a Red Hat recommended package version ](images/screencasts/quickfix.gif)
 
-	<br >**IMPORTANT:** For Maven projects only, when analyzing a `pom.xml` file.
+	<br >**IMPORTANT:** For Maven and Gradle projects, when analyzing a `pom.xml` or `build.gradle`/`build.gradle.kts` file.
 	You must configure Red Hat's generally available (GA) repository to use the recommendations or remediation.
 	Add this repository, `https://maven.repository.redhat.com/ga/`, to your project's configuration.
 
@@ -199,7 +199,7 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 - **License compatibility checking**
 	<br >Red Hat Dependency Analytics automatically checks for license compatibility issues in your project:
 
-	- **License mismatch detection**: For projects with license fields in their manifest files (`package.json`, `pom.xml`, `build.gradle`, `Cargo.toml`), the extension detects mismatches between the license declared in the manifest and the LICENSE file. A red underline appears on the license field with a quick fix to update the manifest with the LICENSE file's value.
+	- **License mismatch detection**: For projects with license fields in their manifest files (`package.json`, `pom.xml`, `build.gradle`, `Cargo.toml`, `pyproject.toml`), the extension detects mismatches between the license declared in the manifest and the LICENSE file. A red underline appears on the license field with a quick fix to update the manifest with the LICENSE file's value.
 
 	- **Incompatible dependency licenses**: The extension identifies dependencies whose licenses are more restrictive than your project's license. A notification displays the count of incompatible dependencies, helping you maintain license compliance.
 

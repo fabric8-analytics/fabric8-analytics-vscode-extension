@@ -52,6 +52,7 @@ export interface ResponseMetrics {
         high: number,
         medium: number,
         low: number,
+        unknown: number,
         remediations: number,
         recommendations: number,
       }
@@ -126,8 +127,9 @@ class AnalysisResponse {
                   transitive: sourceData.summary.transitive ?? 0,
                   critical: sourceData.summary.critical ?? 0,
                   high: sourceData.summary.high ?? 0,
-                  medium: sourceData.summary.dependencies ?? 0,
+                  medium: sourceData.summary.medium ?? 0,
                   low: sourceData.summary.low ?? 0,
+                  unknown: sourceData.summary.unknown ?? 0,
                   recommendations: sourceData.summary.recommendations ?? 0,
                   remediations: sourceData.summary.remediations ?? 0,
                   total: sourceData.summary.total ?? 0,

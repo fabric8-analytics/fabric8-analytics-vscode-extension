@@ -161,6 +161,7 @@ function metricsFromReport(report: string): ResponseMetrics | undefined {
             high: source.summary.high ?? 0,
             medium: source.summary.medium ?? 0,
             low: source.summary.low ?? 0,
+            unknown: source.summary.unknown ?? 0,
             remediations: source.summary.remediations ?? 0,
             recommendations: source.summary.recommendations ?? 0,
           };

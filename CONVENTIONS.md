@@ -72,6 +72,7 @@ test/
 - **Coverage**: nyc 17.0.0
 - **Test naming**: `"should [expected behavior]"`
 - **Mock pattern**: Mock classes defined within test suites
+- **Mock data typing**: Use `Partial<T>` with the real type instead of `Record<string, number>` or similar loose types for mock data, so typos in field names are caught at compile time
 - **Test scripts**: `npm run test-compile && node ./out/test/runTest.js`
 
 ## Commit Messages

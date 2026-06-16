@@ -166,6 +166,8 @@ class AnalysisResponse {
       highestSeverity = 'MEDIUM';
     } else if (isDefined(summary, 'low') && summary.low > 0) {
       highestSeverity = 'LOW';
+    } else if (isDefined(summary, 'unknown') && summary.unknown > 0) {
+      highestSeverity = 'UNKNOWN';
     }
 
     return highestSeverity;

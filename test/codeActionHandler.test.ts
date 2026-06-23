@@ -356,9 +356,28 @@ suite('Code Action Handler tests', () => {
             Uri.file('mock/path/Dockerfile')
         );
 
-        expect(codeAction.title).to.equal(title);
-        expect(codeAction.kind).to.deep.equal(CodeActionKind.QuickFix);
-        expect(codeAction.command!.arguments![0]).to.equal('ubi9/openjdk-11-hardened');
+        expect(codeAction).to.deep.equal(
+            {
+                'command': {
+                    'command': 'mockTrackRecommendationAcceptanceCommand',
+                    'title': 'Track recommendation acceptance',
+                    'arguments': [
+                        'ubi9/openjdk-11-hardened',
+                        'Dockerfile'
+                    ]
+                },
+                'diagnostics': [
+                    {
+                        'message': 'another mock message',
+                        'range': new Range(321, 321, 654, 654),
+                        'severity': 3,
+                        'source': 'mockSource'
+                    }
+                ],
+                'kind': { 'value': 'quickfix' },
+                'title': title
+            }
+        );
     });
 
     /**

@@ -343,6 +343,25 @@ suite('Code Action Handler tests', () => {
     });
 
     /**
+     * Verifies that code action for hardened image recommendation uses distinct title.
+     */
+    test('should generate redirect code action for hardened image recommendation', async () => {
+        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
+
+        const title = 'rhtpa (hardened): Switch to Red Hat Hardened Image ubi9/openjdk-11-hardened for enhanced security';
+        const codeAction: CodeAction = codeActionHandler.generateRedirectToRecommendedVersionAction(
+            title,
+            'ubi9/openjdk-11-hardened',
+            mockDiagnostic1[0],
+            Uri.file('mock/path/Dockerfile')
+        );
+
+        expect(codeAction.title).to.equal(title);
+        expect(codeAction.kind).to.deep.equal(CodeActionKind.QuickFix);
+        expect(codeAction.command!.arguments![0]).to.equal('ubi9/openjdk-11-hardened');
+    });
+
+    /**
      * Verifies that code action uses the correct recommendation ref per source type
      * when recommendationSourceId is set on the DependencyData.
      */

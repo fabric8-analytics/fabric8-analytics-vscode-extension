@@ -148,6 +148,38 @@ suite('Config module', () => {
     expect(process.env['VSCEXT_TRUSTIFY_DA_DOCKER_PATH']).to.equal('docker');
     expect(process.env['VSCEXT_TRUSTIFY_DA_PODMAN_PATH']).to.equal('podman');
     expect(process.env['VSCEXT_TRUSTIFY_DA_IMAGE_PLATFORM']).to.equal('');
+    expect(process.env['VSCEXT_TRUSTIFY_DA_RECOMMENDATIONS_ENABLED']).to.equal('true');
+  });
+
+  /**
+   * Verifies that TRUSTIFY_DA_RECOMMENDATIONS_ENABLED is set to 'false'
+   * when recommendations.enabled is false.
+   */
+  test('should pass TRUSTIFY_DA_RECOMMENDATIONS_ENABLED=false when recommendations.enabled is false', async () => {
+    // Given recommendations are disabled
+    const rhdaConfig = vscode.workspace.getConfiguration('redHatDependencyAnalytics');
+    await rhdaConfig.update('recommendations.enabled', false, vscode.ConfigurationTarget.Global);
+
+    sandbox.stub(redhatTelemetry, 'getTelemetryId').resolves(mockId);
+
+    globalConfig.linkToSecretStorage({
+      secrets: {
+        onDidChange: sandbox.stub(),
+        store: () => sandbox.stub() as any,
+        get: async () => '',
+        delete: () => sandbox.stub() as any
+      }
+    });
+
+    // When authorizing
+    globalConfig.loadData();
+    await globalConfig.authorizeRHDA(context);
+
+    // Then the env var should be 'false'
+    expect(process.env['VSCEXT_TRUSTIFY_DA_RECOMMENDATIONS_ENABLED']).to.equal('false');
+
+    // Cleanup
+    await rhdaConfig.update('recommendations.enabled', undefined, vscode.ConfigurationTarget.Global);
   });
 }).beforeEach(() => {
   globalConfig.loadData();

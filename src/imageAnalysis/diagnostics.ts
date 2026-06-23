@@ -81,7 +81,9 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
     const sourceLabel = recommendationSourceId
       ? `${sourceId} (${recommendationSourceId})`
       : sourceId;
-    const title = `${sourceLabel}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
+    const title = recommendationSourceId === 'hardened'
+      ? `${sourceLabel}: Switch to Red Hat Hardened Image ${imageRef} for enhanced security`
+      : `${sourceLabel}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
     const codeAction = generateRedirectToRecommendedVersionAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath);
     registerCodeAction(this.diagnosticFilePath, loc, codeAction);
   }
@@ -108,6 +110,7 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
       'TRUSTIFY_DA_DOCKER_PATH': globalConfig.exhortDockerPath,
       'TRUSTIFY_DA_PODMAN_PATH': globalConfig.exhortPodmanPath,
       'TRUSTIFY_DA_IMAGE_PLATFORM': globalConfig.exhortImagePlatform,
+      'TRUSTIFY_DA_RECOMMENDATIONS_ENABLED': globalConfig.recommendationsEnabled ? 'true' : 'false',
     };
 
     const images = provider.collect(contents);

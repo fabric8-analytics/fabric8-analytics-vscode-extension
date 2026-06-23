@@ -95,9 +95,14 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
   private createCodeAction(dependency: Dependency, loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic, recommendationSourceId: string = '') {
     const switchToVersion = ref.split('@')[1];
     const versionReplacementString = context ? context.value.replace(VERSION_PLACEHOLDER, switchToVersion) : switchToVersion;
-    const title = recommendationSourceId
-      ? `Switch to version ${switchToVersion} (${recommendationSourceId})`
-      : `Switch to version ${switchToVersion} for ${sourceId}`;
+    let title: string;
+    if (recommendationSourceId === 'hardened') {
+      title = `Switch to Red Hat Hardened version ${switchToVersion} for ${sourceId}`;
+    } else if (recommendationSourceId) {
+      title = `Switch to version ${switchToVersion} (${recommendationSourceId})`;
+    } else {
+      title = `Switch to version ${switchToVersion} for ${sourceId}`;
+    }
     const codeAction = generateSwitchToRecommendedVersionAction(title, ref, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath, dependency.version);
     registerCodeAction(this.diagnosticFilePath, loc, codeAction);
   }
@@ -139,7 +144,8 @@ async function performDiagnostics(tokenProvider: TokenProvider, diagnosticFilePa
       'TRUSTIFY_DA_POETRY_PATH': globalConfig.exhortPoetryPath,
       'TRUSTIFY_DA_UV_PATH': globalConfig.exhortUvPath,
       'TRUSTIFY_DA_CARGO_PATH': globalConfig.exhortCargoPath,
-      'TRUSTIFY_DA_LICENSE_CHECK': globalConfig.licenseCheckEnabled.toString()
+      'TRUSTIFY_DA_LICENSE_CHECK': globalConfig.licenseCheckEnabled.toString(),
+      'TRUSTIFY_DA_RECOMMENDATIONS_ENABLED': globalConfig.recommendationsEnabled ? 'true' : 'false',
     };
 
     const dependencies = provider.collect(contents);

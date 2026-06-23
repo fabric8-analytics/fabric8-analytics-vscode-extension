@@ -229,6 +229,7 @@ class Config {
     process.env['VSCEXT_TRUSTIFY_DA_DOCKER_PATH'] = this.exhortDockerPath;
     process.env['VSCEXT_TRUSTIFY_DA_PODMAN_PATH'] = this.exhortPodmanPath;
     process.env['VSCEXT_TRUSTIFY_DA_IMAGE_PLATFORM'] = this.exhortImagePlatform;
+    process.env['VSCEXT_TRUSTIFY_DA_RECOMMENDATIONS_ENABLED'] = this.recommendationsEnabled ? 'true' : 'false';
   }
 
   /**

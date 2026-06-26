@@ -38,6 +38,7 @@ function buildBaseOptions(): Options {
     'TRUSTIFY_DA_UV_PATH': globalConfig.exhortUvPath,
     'TRUSTIFY_DA_CARGO_PATH': globalConfig.exhortCargoPath,
     'TRUSTIFY_DA_PROXY_URL': globalConfig.exhortProxyUrl,
+    'TRUSTIFY_DA_RECOMMENDATIONS_ENABLED': globalConfig.recommendationsEnabled ? 'true' : 'false',
   };
 }
 

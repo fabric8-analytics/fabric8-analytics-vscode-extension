@@ -155,7 +155,7 @@ suite('AnalysisResponse provider scoping', () => {
             d => d.sourceId === 'providerA' && d.recommendationSourceId === 'trusted-content'
         );
         expect(providerARecommendation).to.not.be.undefined;
-        expect(providerARecommendation!.recommendationRef).to.equal('ubi9/nginx');
+        expect(providerARecommendation!.recommendationRef).to.equal('ubi9/nginx:1.26');
 
         // providerA's artifact should have empty recommendationRef (suppressed by provider recommendations)
         const providerAArtifact = imageDataList!.find(
@@ -169,6 +169,6 @@ suite('AnalysisResponse provider scoping', () => {
             d => d.sourceId === 'providerB(sourceB)' && d.recommendationSourceId === ''
         );
         expect(providerBArtifact).to.not.be.undefined;
-        expect(providerBArtifact!.recommendationRef).to.equal('nginx');
+        expect(providerBArtifact!.recommendationRef).to.equal('nginx:1.27');
     });
 });

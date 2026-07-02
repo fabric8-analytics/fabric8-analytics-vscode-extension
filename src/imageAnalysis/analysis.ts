@@ -35,15 +35,18 @@ interface IArtifact {
 }
 
 /**
- * Extracts the namespace/name image reference from a PURL string using the
- * spec-compliant `packageurl-js` library.
- * @param purl - A Package URL string (e.g., `pkg:docker/nginx@1.25`).
- * @returns The namespace/name portion (e.g., `nginx`), or empty string if invalid.
+ * Reconstructs a full image reference from a PURL string, including registry and tag.
+ * @param purl - A Package URL string (e.g., `pkg:oci/go@1.25?repository_url=quay.io/hummingbird/go`).
+ * @returns The full image reference (e.g., `quay.io/hummingbird/go:1.25`), or empty string if invalid.
  */
 function parseImageRefFromPurl(purl: string): string {
   try {
     const parsed = PackageURL.fromString(purl);
-    return [parsed.namespace, parsed.name].filter(Boolean).join('/');
+    const repositoryUrl = parsed.qualifiers?.repository_url;
+    // repository_url already contains the full image path (e.g., quay.io/hummingbird/go),
+    // so use it directly. Only fall back to namespace/name when repository_url is absent.
+    const fullName = repositoryUrl || [parsed.namespace, parsed.name].filter(Boolean).join('/');
+    return parsed.version ? `${fullName}:${parsed.version}` : fullName;
   } catch {
     return '';
   }
@@ -86,12 +89,15 @@ class AnalysisResponse {
 
             if (isDefined(providerData, 'recommendations')) {
               hasProviderRecommendations = true;
+              const seenRecommendations = new Set<string>();
               Object.entries(providerData.recommendations).map(([recSourceName, recSourceData]) => {
                 if (recSourceData.dependencies) {
                   recSourceData.dependencies.forEach(recReport => {
                     if (recReport.recommendation) {
                       const recommendationRef = parseImageRefFromPurl(recReport.recommendation);
-                      if (recommendationRef) {
+                      const dedupeKey = `${recommendationRef}|${recSourceName}`;
+                      if (recommendationRef && !seenRecommendations.has(dedupeKey)) {
+                        seenRecommendations.add(dedupeKey);
                         const sd = new ImageData(
                           providerName,
                           [],

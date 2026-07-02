@@ -7,7 +7,8 @@
 import { buildLogErrorMessage, buildNotificationErrorMessage } from '../utils';
 import { IImageProvider, ImageMap, getRange } from '../imageAnalysis/collector';
 import { AbstractDiagnosticsPipeline } from '../diagnosticsPipeline';
-import { clearCodeActionsMap, registerCodeAction, generateRedirectToRecommendedVersionAction } from '../codeActionHandler';
+import { clearCodeActionsMap, registerCodeAction, generateReplaceImageAction } from '../codeActionHandler';
+import { IPositionedString } from '../positionTypes';
 import { executeImageAnalysis, ImageData } from './analysis';
 import { Vulnerability } from '../vulnerability';
 import { Diagnostic, DiagnosticSeverity, Uri } from 'vscode';
@@ -51,10 +52,15 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
         this.diagnostics.push(vulnerabilityDiagnostic);
 
         const loc = vulnerabilityDiagnostic.range.start.line + '|' + vulnerabilityDiagnostic.range.start.character;
+        const registeredRecommendations = new Set<string>();
 
         imageData.forEach(id => {
           if (id.recommendationRef && globalConfig.recommendationsEnabled) {
-            this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic, id.recommendationSourceId);
+            const dedupeKey = `${id.recommendationRef}|${id.recommendationSourceId}`;
+            if (!registeredRecommendations.has(dedupeKey)) {
+              registeredRecommendations.add(dedupeKey);
+              this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic, image.name, id.recommendationSourceId);
+            }
           }
 
           for (const vuln of id.issues) {
@@ -71,21 +77,22 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
   /**
    * Creates a code action.
    * @param loc - Location of code action effect.
-   * @param imageRef - The reference name of the image.
+   * @param imageRef - The reference name of the recommended image.
    * @param sourceId - Source ID.
    * @param vulnerabilityDiagnostic - Vulnerability diagnostic object.
+   * @param imageName - The original image name position and value, used to narrow the replacement range.
    * @param recommendationSourceId - Optional recommendation source identifier.
    * @private
    */
-  private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic, recommendationSourceId: string = '') {
+  private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic, imageName: IPositionedString, recommendationSourceId: string = '') {
     const sourceLabel = recommendationSourceId
       ? `${sourceId} (${recommendationSourceId})`
       : sourceId;
     const title = recommendationSourceId === 'hardened'
       ? `${sourceLabel}: Switch to Red Hat Hardened Image ${imageRef} for enhanced security`
       : `${sourceLabel}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
-    const codeAction = generateRedirectToRecommendedVersionAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath);
-    registerCodeAction(this.diagnosticFilePath, loc, codeAction);
+    const replaceAction = generateReplaceImageAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath, imageName);
+    registerCodeAction(this.diagnosticFilePath, loc, replaceAction);
   }
 }
 

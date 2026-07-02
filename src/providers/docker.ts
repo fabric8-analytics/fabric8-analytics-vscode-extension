@@ -90,7 +90,8 @@ export class ImageProvider implements IImageProvider {
         return;
       }
 
-      const image = new Image({ value: imageData, position: { line: index + 1, column: 0 } }, line);
+      const col = line.indexOf(imageData);
+      const image = new Image({ value: imageData, position: { line: index + 1, column: col !== -1 ? col : 0 } }, line);
 
       const platformMatch = line.match(this.PLATFORM_REGEX);
       if (platformMatch) {

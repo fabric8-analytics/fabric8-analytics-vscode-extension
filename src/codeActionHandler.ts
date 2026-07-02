@@ -118,19 +118,26 @@ function generateSwitchToRecommendedVersionAction(title: string, dependency: str
 }
 
 /**
- * Generates a code action to redirect to the recommended version catalog.
+ * Generates a code action to replace the Dockerfile image with a hardened recommendation.
  * @param title - The title of the code action.
- * @param imageRef - The image reference provided by exhort.
- * @param diagnostic - The diagnostic information.
- * @param uri - The URI of the file.
- * @returns A CodeAction object for redirecting to the recommended version catalog.
+ * @param imageRef - The recommended hardened image reference.
+ * @param diagnostic - The diagnostic information covering the image name range.
+ * @param uri - The URI of the Dockerfile.
+ * @param replacementRange - The image name position and value, used to narrow the edit to just the image name portion of the FROM line.
+ * @returns A CodeAction object that replaces the image reference and fires the tracking command.
  */
-function generateRedirectToRecommendedVersionAction(title: string, imageRef: string, diagnostic: Diagnostic, uri: Uri): CodeAction {
+function generateReplaceImageAction(title: string, imageRef: string, diagnostic: Diagnostic, uri: Uri, replacementRange: IPositionedString): CodeAction {
   const codeAction: CodeAction = {
     title: title,
     diagnostics: [diagnostic],
     kind: CodeActionKind.QuickFix,
+    edit: new WorkspaceEdit()
   };
+
+  codeAction.edit!.replace(uri, new Range(
+    new Position(replacementRange.position.line - 1, replacementRange.position.column),
+    new Position(replacementRange.position.line - 1, replacementRange.position.column + replacementRange.value.length)
+  ), imageRef);
 
   codeAction.command = {
     title: 'Track recommendation acceptance',
@@ -163,4 +170,4 @@ function generateUpdateManifestLicenseAction(fileLicense: string, diagnostic: Di
   return codeAction;
 }
 
-export { getCodeActionsMap, clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateRedirectToRecommendedVersionAction, getDiagnosticsCodeActions, generateUpdateManifestLicenseAction };
+export { getCodeActionsMap, clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateReplaceImageAction, getDiagnosticsCodeActions, generateUpdateManifestLicenseAction };

@@ -102,5 +102,7 @@ export function getRange(img: IImage): Range {
   const pos: IPosition = img.name.position;
   const length = img.line.length;
 
-  return new Range(new Position(pos.line - 1, pos.column), new Position(pos.line - 1, pos.column + length));
+  // Diagnostic range covers the entire FROM line (column 0 to line end).
+  // image.name.position.column tracks the image-name offset for replacement edits.
+  return new Range(new Position(pos.line - 1, 0), new Position(pos.line - 1, length));
 }

@@ -26,19 +26,19 @@ FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1a
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'alpine', position: { line: 2, column: 0 } },
+                name: { value: 'alpine', position: { line: 2, column: 5 } },
                 line: 'FROM alpine'
             },
             {
-                name: { value: 'alpine:latest', position: { line: 3, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 3, column: 5 } },
                 line: 'FROM alpine:latest'
             },
             {
-                name: { value: 'alpine:1.2.3', position: { line: 4, column: 0 } },
+                name: { value: 'alpine:1.2.3', position: { line: 4, column: 5 } },
                 line: 'FROM alpine:1.2.3'
             },
             {
-                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 5, column: 0 } },
+                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 5, column: 5 } },
                 line: 'FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b'
             }
         ]);
@@ -56,19 +56,19 @@ FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1a
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'alpine', position: { line: 3, column: 0 } },
+                name: { value: 'alpine', position: { line: 3, column: 5 } },
                 line: 'FROM alpine'
             },
             {
-                name: { value: 'alpine:latest', position: { line: 5, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 5, column: 5 } },
                 line: 'FROM alpine:latest'
             },
             {
-                name: { value: 'alpine:1.2.3', position: { line: 6, column: 0 } },
+                name: { value: 'alpine:1.2.3', position: { line: 6, column: 5 } },
                 line: 'FROM alpine:1.2.3'
             },
             {
-                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 7, column: 0 } },
+                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 7, column: 5 } },
                 line: 'FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b'
             }
         ]);
@@ -91,19 +91,19 @@ FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1a
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'alpine', position: { line: 3, column: 0 } },
+                name: { value: 'alpine', position: { line: 3, column: 5 } },
                 line: 'FROM alpine'
             },
             {
-                name: { value: 'alpine:latest', position: { line: 6, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 6, column: 5 } },
                 line: 'FROM alpine:latest'
             },
             {
-                name: { value: 'alpine:1.2.3', position: { line: 7, column: 0 } },
+                name: { value: 'alpine:1.2.3', position: { line: 7, column: 5 } },
                 line: 'FROM alpine:1.2.3'
             },
             {
-                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 12, column: 0 } },
+                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 12, column: 5 } },
                 line: 'FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b'
             }
         ]);
@@ -118,22 +118,22 @@ FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeb
         `);
         expect(deps).is.eql([
             {
-                name: { value: 'alpine', position: { line: 2, column: 0 } },
+                name: { value: 'alpine', position: { line: 2, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine',
                 platform: 'linux/amd64'
             },
             {
-                name: { value: 'alpine:latest', position: { line: 3, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 3, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine:latest',
                 platform: 'linux/amd64'
             },
             {
-                name: { value: 'alpine:1.2.3', position: { line: 4, column: 0 } },
+                name: { value: 'alpine:1.2.3', position: { line: 4, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine:1.2.3',
                 platform: 'linux/amd64'
             },
             {
-                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 5, column: 0 } },
+                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 5, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b',
                 platform: 'linux/amd64'
             }
@@ -148,15 +148,15 @@ FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1a
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'alpine', position: { line: 2, column: 0 } },
+                name: { value: 'alpine', position: { line: 2, column: 5 } },
                 line: 'FROM alpine as stage1'
             },
             {
-                name: { value: 'alpine:latest', position: { line: 3, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 3, column: 5 } },
                 line: 'FROM alpine:latest As stage2'
             },
             {
-                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 4, column: 0 } },
+                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 4, column: 5 } },
                 line: 'FROM alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b AS stage3'
             }
         ]);
@@ -170,17 +170,17 @@ FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeb
         `);
         expect(deps).is.eql([
             {
-                name: { value: 'alpine', position: { line: 2, column: 0 } },
+                name: { value: 'alpine', position: { line: 2, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine as stage1',
                 platform: 'linux/amd64'
             },
             {
-                name: { value: 'alpine:latest', position: { line: 3, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 3, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine:latest As stage2',
                 platform: 'linux/amd64'
             },
             {
-                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 4, column: 0 } },
+                name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 4, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b AS stage3',
                 platform: 'linux/amd64'
             }
@@ -214,11 +214,11 @@ FROM registry.access.redhat.com/ubi9/nodejs-20-minimal
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'docker.io/library/nginx:1.2.3', position: { line: 2, column: 0 } },
+                name: { value: 'docker.io/library/nginx:1.2.3', position: { line: 2, column: 5 } },
                 line: 'FROM docker.io/library/nginx:1.2.3'
             },
             {
-                name: { value: 'registry.access.redhat.com/ubi9/nodejs-20-minimal', position: { line: 3, column: 0 } },
+                name: { value: 'registry.access.redhat.com/ubi9/nodejs-20-minimal', position: { line: 3, column: 5 } },
                 line: 'FROM registry.access.redhat.com/ubi9/nodejs-20-minimal'
             }
         ]);
@@ -231,19 +231,19 @@ FROM alpine
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'alpine', position: { line: 3, column: 0 } },
+                name: { value: 'alpine', position: { line: 3, column: 5 } },
                 line: 'FROM alpine'
             }
         ]);
     });
 
     test('tests file with spaces before and after image and line', async () => {
-        const deps = dependencyProvider.collect(`      
+        const deps = dependencyProvider.collect(`
             FROM    alpine:latest      as stage1
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'alpine:latest', position: { line: 2, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 2, column: 20 } },
                 line: '            FROM    alpine:latest      as stage1'
             }
         ]);
@@ -261,7 +261,7 @@ COPY --from=builder /app /app
         expect(deps.length).to.equal(1);
         expect(deps).is.containSubset([
             {
-                name: { value: 'node:26-alpine', position: { line: 2, column: 0 } },
+                name: { value: 'node:26-alpine', position: { line: 2, column: 5 } },
                 line: 'FROM node:26-alpine AS base'
             }
         ]);
@@ -276,7 +276,7 @@ FROM BASE AS runner
         expect(deps.length).to.equal(1);
         expect(deps).is.containSubset([
             {
-                name: { value: 'alpine:latest', position: { line: 2, column: 0 } },
+                name: { value: 'alpine:latest', position: { line: 2, column: 5 } },
                 line: 'FROM alpine:latest AS Base'
             }
         ]);
@@ -291,12 +291,12 @@ FROM --platform=linux/arm64 alpine:3.19 AS runtime
         expect(deps.length).to.equal(2);
         expect(deps).is.eql([
             {
-                name: { value: 'node:20', position: { line: 2, column: 0 } },
+                name: { value: 'node:20', position: { line: 2, column: 28 } },
                 line: 'FROM --platform=linux/amd64 node:20 AS build',
                 platform: 'linux/amd64'
             },
             {
-                name: { value: 'alpine:3.19', position: { line: 4, column: 0 } },
+                name: { value: 'alpine:3.19', position: { line: 4, column: 28 } },
                 line: 'FROM --platform=linux/arm64 alpine:3.19 AS runtime',
                 platform: 'linux/arm64'
             }
@@ -328,7 +328,7 @@ CMD ["node", "index.js"]
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'node:14', position: { line: 3, column: 0 } },
+                name: { value: 'node:14', position: { line: 3, column: 5 } },
                 line: 'FROM node:14'
             }
         ]);

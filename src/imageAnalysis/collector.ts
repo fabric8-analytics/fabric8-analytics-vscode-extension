@@ -15,6 +15,7 @@ export interface IImage {
   name: IPositionedString;
   line: string;
   platform: string | undefined;
+  rawToken?: IPositionedString;
 }
 
 /**
@@ -22,6 +23,7 @@ export interface IImage {
  */
 export class Image implements IImage {
   public platform: string | undefined;
+  public rawToken?: IPositionedString;
 
   constructor(
     public name: IPositionedString,

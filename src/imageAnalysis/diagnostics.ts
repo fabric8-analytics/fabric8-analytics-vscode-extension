@@ -59,7 +59,8 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
             const dedupeKey = `${id.recommendationRef}|${id.recommendationSourceId}`;
             if (!registeredRecommendations.has(dedupeKey)) {
               registeredRecommendations.add(dedupeKey);
-              this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic, image.name, id.recommendationSourceId);
+              const replacementRange = image.rawToken ?? image.name;
+              this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic, replacementRange, id.recommendationSourceId);
             }
           }
 

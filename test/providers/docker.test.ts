@@ -196,15 +196,40 @@ FROM $ARG_IMAGE
         `);
         expect(deps).is.containSubset([
             {
-                name: { value: 'python:3.9.5', position: { line: 4, column: 0 } },
+                name: { value: 'python:3.9.5', position: { line: 4, column: 28 } },
                 line: 'FROM --platform=linux/amd64 ${ARG_IMAGE}:${ARG_TAG} as stage1$ARG_FAKE',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: { value: '${ARG_IMAGE}:${ARG_TAG}', position: { line: 4, column: 28 } }
             },
             {
-                name: { value: 'python', position: { line: 5, column: 0 } },
+                name: { value: 'python', position: { line: 5, column: 5 } },
                 line: 'FROM $ARG_IMAGE',
+                rawToken: { value: '$ARG_IMAGE', position: { line: 5, column: 5 } }
             }
         ]);
+    });
+
+    /**
+     * Verifies that ARG-expanded FROM lines store rawToken for accurate quick-fix replacement.
+     */
+    test('tests ARG-expanded FROM lines store rawToken with original placeholder range', async () => {
+        // Given a Dockerfile with ARG placeholders in FROM lines
+        const deps = dependencyProvider.collect(`
+ARG BASE=nginx
+FROM \${BASE}:latest
+FROM --platform=linux/amd64 \${BASE}
+        `);
+
+        // Then ARG-expanded images should have rawToken with placeholder text and position
+        expect(deps.length).to.equal(2);
+        expect(deps[0].rawToken).to.deep.equal({ value: '${BASE}:latest', position: { line: 3, column: 5 } });
+        expect(deps[1].rawToken).to.deep.equal({ value: '${BASE}', position: { line: 4, column: 28 } });
+
+        // And non-ARG FROM lines should not have rawToken
+        const deps2 = dependencyProvider.collect(`
+FROM nginx:latest
+        `);
+        expect(deps2[0].rawToken).to.be.undefined;
     });
 
     test('tests file with image registries', async () => {

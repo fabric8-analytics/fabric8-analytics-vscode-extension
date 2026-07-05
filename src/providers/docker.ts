@@ -75,6 +75,11 @@ export class ImageProvider implements IImageProvider {
     const imageMatch = line.match(this.FROM_REGEX);
     if (imageMatch) {
       let imageData = imageMatch[1];
+
+      // Extract the raw token before ARG expansion for accurate replacement range
+      let rawImageToken = imageData.replace(this.PLATFORM_REGEX, '');
+      rawImageToken = rawImageToken.replace(this.AS_REGEX, '').trim();
+
       imageData = this.replaceArgsInString(imageData);
       imageData = imageData.replace(this.PLATFORM_REGEX, '');
 
@@ -91,7 +96,12 @@ export class ImageProvider implements IImageProvider {
       }
 
       const col = line.indexOf(imageData);
-      const image = new Image({ value: imageData, position: { line: index + 1, column: col !== -1 ? col : 0 } }, line);
+      const rawCol = line.indexOf(rawImageToken);
+      const image = new Image({ value: imageData, position: { line: index + 1, column: col !== -1 ? col : rawCol } }, line);
+
+      if (rawImageToken !== imageData) {
+        image.rawToken = { value: rawImageToken, position: { line: index + 1, column: rawCol } };
+      }
 
       const platformMatch = line.match(this.PLATFORM_REGEX);
       if (platformMatch) {

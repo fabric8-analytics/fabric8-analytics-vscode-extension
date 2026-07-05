@@ -120,22 +120,26 @@ FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeb
             {
                 name: { value: 'alpine', position: { line: 2, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             },
             {
                 name: { value: 'alpine:latest', position: { line: 3, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine:latest',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             },
             {
                 name: { value: 'alpine:1.2.3', position: { line: 4, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine:1.2.3',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             },
             {
                 name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 5, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             }
         ]);
     });
@@ -172,17 +176,20 @@ FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeb
             {
                 name: { value: 'alpine', position: { line: 2, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine as stage1',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             },
             {
                 name: { value: 'alpine:latest', position: { line: 3, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine:latest As stage2',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             },
             {
                 name: { value: 'alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b', position: { line: 4, column: 28 } },
                 line: 'FROM --platform=linux/amd64 alpine@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b AS stage3',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             }
         ]);
     });
@@ -318,12 +325,14 @@ FROM --platform=linux/arm64 alpine:3.19 AS runtime
             {
                 name: { value: 'node:20', position: { line: 2, column: 28 } },
                 line: 'FROM --platform=linux/amd64 node:20 AS build',
-                platform: 'linux/amd64'
+                platform: 'linux/amd64',
+                rawToken: undefined
             },
             {
                 name: { value: 'alpine:3.19', position: { line: 4, column: 28 } },
                 line: 'FROM --platform=linux/arm64 alpine:3.19 AS runtime',
-                platform: 'linux/arm64'
+                platform: 'linux/arm64',
+                rawToken: undefined
             }
         ]);
     });

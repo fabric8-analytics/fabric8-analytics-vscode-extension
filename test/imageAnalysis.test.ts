@@ -260,3 +260,48 @@ suite('AnalysisResponse provider scoping', () => {
         expect(providerBArtifact!.recommendationRef).to.equal('nginx:1.27');
     });
 });
+
+suite('AnalysisResponse empty fullName guard', () => {
+    /**
+     * Verifies that a malformed recommendation PURL does not produce a recommendation
+     * entry with a corrupt image reference.
+     */
+    test('should not create recommendation entry when recommendation PURL is invalid', () => {
+        // Given a recommendation with an unparseable PURL
+        const mockData = {
+            'docker.io/test:1.0': {
+                providers: {
+                    providerA: {
+                        status: { ok: true },
+                        sources: {
+                            sourceA: {
+                                summary: { total: 0, critical: 0, high: 0, medium: 0, low: 0 },
+                                dependencies: [],
+                            },
+                        },
+                        recommendations: {
+                            'trusted-content': {
+                                dependencies: [{
+                                    ref: 'pkg:oci/test@1.0?repository_url=docker.io/test',
+                                    recommendation: 'not-a-valid-purl',
+                                }],
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        // When constructing AnalysisResponse
+        const response = new AnalysisResponse(mockData as any, Uri.file('/mock/Dockerfile'));
+
+        // Then no trusted-content recommendation entry should exist (empty ref filtered out)
+        const imageDataList = response.images.get('docker.io/test:1.0');
+        expect(imageDataList).to.not.be.undefined;
+
+        const recommendation = imageDataList!.find(
+            d => d.recommendationSourceId === 'trusted-content'
+        );
+        expect(recommendation).to.be.undefined;
+    });
+});

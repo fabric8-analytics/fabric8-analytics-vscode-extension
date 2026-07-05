@@ -46,6 +46,9 @@ function parseImageRefFromPurl(purl: string): string {
     // repository_url already contains the full image path (e.g., quay.io/hummingbird/go),
     // so use it directly. Only fall back to namespace/name when repository_url is absent.
     const fullName = repositoryUrl || [parsed.namespace, parsed.name].filter(Boolean).join('/');
+    if (!fullName) {
+      return '';
+    }
     if (!parsed.version) {
       return fullName;
     }

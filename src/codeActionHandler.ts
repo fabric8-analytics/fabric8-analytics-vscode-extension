@@ -88,14 +88,15 @@ function generateFullStackAnalysisAction(): CodeAction {
 /**
  * Generates a code action to switch to the recommended version.
  * @param title - The title of the code action.
- * @param dependency - The dependency (package and version) provided by exhort.
+ * @param packageName - The package name for telemetry tracking.
+ * @param version - The recommended version for telemetry tracking.
  * @param versionReplacementString - The version replacement string.
  * @param diagnostic - The diagnostic information.
  * @param uri - The URI of the file.
  * @param replacementRange - Optional range to use for the replacement instead of diagnostic range to be used rather than deriving from the diagnostic
  * @returns A CodeAction object for switching to the recommended version.
  */
-function generateSwitchToRecommendedVersionAction(title: string, dependency: string, versionReplacementString: string, diagnostic: Diagnostic, uri: Uri, replacementRange?: IPositionedString): CodeAction {
+function generateSwitchToRecommendedVersionAction(title: string, packageName: string, version: string | undefined, versionReplacementString: string, diagnostic: Diagnostic, uri: Uri, replacementRange?: IPositionedString): CodeAction {
   const codeAction: CodeAction = {
     title: title,
     diagnostics: [diagnostic],
@@ -111,7 +112,7 @@ function generateSwitchToRecommendedVersionAction(title: string, dependency: str
   codeAction.command = {
     title: 'Track recommendation acceptance',
     command: globalConfig.trackRecommendationAcceptanceCommand,
-    arguments: [dependency, path.basename(uri.fsPath)],
+    arguments: [packageName, version, path.basename(uri.fsPath)],
   };
 
   return codeAction;
@@ -120,13 +121,15 @@ function generateSwitchToRecommendedVersionAction(title: string, dependency: str
 /**
  * Generates a code action to replace the Dockerfile image with a hardened recommendation.
  * @param title - The title of the code action.
- * @param imageRef - The recommended hardened image reference.
+ * @param imageRef - The recommended hardened image reference (for the WorkspaceEdit replacement).
+ * @param packageName - The image name without version, for telemetry tracking.
+ * @param version - The image version (tag or digest), for telemetry tracking.
  * @param diagnostic - The diagnostic information covering the image name range.
  * @param uri - The URI of the Dockerfile.
  * @param replacementRange - The image name position and value, used to narrow the edit to just the image name portion of the FROM line.
  * @returns A CodeAction object that replaces the image reference and fires the tracking command.
  */
-function generateReplaceImageAction(title: string, imageRef: string, diagnostic: Diagnostic, uri: Uri, replacementRange: IPositionedString): CodeAction {
+function generateReplaceImageAction(title: string, imageRef: string, packageName: string, version: string | undefined, diagnostic: Diagnostic, uri: Uri, replacementRange: IPositionedString): CodeAction {
   const codeAction: CodeAction = {
     title: title,
     diagnostics: [diagnostic],
@@ -142,7 +145,7 @@ function generateReplaceImageAction(title: string, imageRef: string, diagnostic:
   codeAction.command = {
     title: 'Track recommendation acceptance',
     command: globalConfig.trackRecommendationAcceptanceCommand,
-    arguments: [imageRef, path.basename(uri.fsPath)],
+    arguments: [packageName, version, path.basename(uri.fsPath)],
   };
 
   return codeAction;

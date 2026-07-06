@@ -198,14 +198,15 @@ suite('Code Action Handler tests', () => {
         const edit = new WorkspaceEdit();
         const uri = Uri.file('mock/path/pom.xml');
         edit.replace(uri, mockDiagnostic1[0].range, 'mockVersionReplacementString');
-        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage@mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri);
+        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage', 'mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri);
         expect(codeAction).to.deep.equal(
             {
                 'command': {
                     'command': 'mockTrackRecommendationAcceptanceCommand',
                     'title': 'Track recommendation acceptance',
                     'arguments': [
-                        'mockPackage@mockversion',
+                        'mockPackage',
+                        'mockversion',
                         'pom.xml'
                     ]
                 },
@@ -245,6 +246,8 @@ suite('Code Action Handler tests', () => {
         const codeAction: CodeAction = codeActionHandler.generateReplaceImageAction(
             title,
             'ubi9/openjdk-11-hardened:latest',
+            'ubi9/openjdk-11-hardened',
+            'latest',
             mockDiagnostic1[0],
             uri,
             imageName
@@ -257,7 +260,8 @@ suite('Code Action Handler tests', () => {
                     'command': 'mockTrackRecommendationAcceptanceCommand',
                     'title': 'Track recommendation acceptance',
                     'arguments': [
-                        'ubi9/openjdk-11-hardened:latest',
+                        'ubi9/openjdk-11-hardened',
+                        'latest',
                         'Dockerfile'
                     ]
                 },
@@ -289,6 +293,8 @@ suite('Code Action Handler tests', () => {
         const codeAction: CodeAction = codeActionHandler.generateReplaceImageAction(
             'rhtpa: Switch to Red Hat UBI ubi9/openjdk-17:latest for enhanced security and enterprise-grade stability',
             'ubi9/openjdk-17:latest',
+            'ubi9/openjdk-17',
+            'latest',
             mockDiagnostic1[0],
             uri,
             imageName
@@ -299,7 +305,8 @@ suite('Code Action Handler tests', () => {
             'command': 'mockTrackCommand',
             'title': 'Track recommendation acceptance',
             'arguments': [
-                'ubi9/openjdk-17:latest',
+                'ubi9/openjdk-17',
+                'latest',
                 'Containerfile'
             ]
         });
@@ -319,6 +326,8 @@ suite('Code Action Handler tests', () => {
         const replaceAction1 = codeActionHandler.generateReplaceImageAction(
             'rhtpa (hardened): Switch to Red Hat Hardened Image ubi9/openjdk-11-hardened:latest for enhanced security',
             'ubi9/openjdk-11-hardened:latest',
+            'ubi9/openjdk-11-hardened',
+            'latest',
             mockDiagnostic1[0],
             uri,
             imageName
@@ -326,6 +335,8 @@ suite('Code Action Handler tests', () => {
         const replaceAction2 = codeActionHandler.generateReplaceImageAction(
             'rhtpa (hardened): Switch to Red Hat Hardened Image ubi9/openjdk-17-hardened:latest for enhanced security',
             'ubi9/openjdk-17-hardened:latest',
+            'ubi9/openjdk-17-hardened',
+            'latest',
             mockDiagnostic1[0],
             uri,
             imageName

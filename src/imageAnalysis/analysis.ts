@@ -35,27 +35,40 @@ interface IArtifact {
 }
 
 /**
+ * Structured result from parsing an image PURL.
+ */
+interface ParsedImageRef {
+  /** Full image reference string (e.g., `quay.io/hummingbird/go:1.25`). */
+  ref: string;
+  /** Image name without version (e.g., `quay.io/hummingbird/go`). */
+  packageName: string;
+  /** Version portion (tag or digest), or undefined if absent. */
+  version: string | undefined;
+}
+
+/**
  * Reconstructs a full image reference from a PURL string, including registry and tag.
  * @param purl - A Package URL string (e.g., `pkg:oci/go@1.25?repository_url=quay.io/hummingbird/go`).
- * @returns The full image reference (e.g., `quay.io/hummingbird/go:1.25`), or empty string if invalid.
+ * @returns A structured image reference with separate name and version, or null if invalid.
  */
-function parseImageRefFromPurl(purl: string): string {
+function parseImageRefFromPurl(purl: string): ParsedImageRef | null {
   try {
     const parsed = PackageURL.fromString(purl);
     const repositoryUrl = parsed.qualifiers?.repository_url;
     // repository_url already contains the full image path (e.g., quay.io/hummingbird/go),
     // so use it directly. Only fall back to namespace/name when repository_url is absent.
-    const fullName = repositoryUrl || [parsed.namespace, parsed.name].filter(Boolean).join('/');
-    if (!fullName) {
-      return '';
+    const packageName = repositoryUrl || [parsed.namespace, parsed.name].filter(Boolean).join('/');
+    if (!packageName) {
+      return null;
     }
-    if (!parsed.version) {
-      return fullName;
+    const version = parsed.version || undefined;
+    if (!version) {
+      return { ref: packageName, packageName, version };
     }
-    const separator = parsed.version.startsWith('sha256:') ? '@' : ':';
-    return `${fullName}${separator}${parsed.version}`;
+    const separator = version.startsWith('sha256:') ? '@' : ':';
+    return { ref: `${packageName}${separator}${version}`, packageName, version };
   } catch {
-    return '';
+    return null;
   }
 }
 
@@ -65,7 +78,9 @@ class ImageData {
     public issues: Issue[],
     public recommendationRef: string,
     public highestVulnerabilitySeverity: string,
-    public recommendationSourceId: string = ''
+    public recommendationSourceId: string = '',
+    public recommendationPackage: string = '',
+    public recommendationVersion: string | undefined = undefined,
   ) { }
 }
 
@@ -101,16 +116,17 @@ class AnalysisResponse {
                 if (recSourceData.dependencies) {
                   recSourceData.dependencies.forEach(recReport => {
                     if (recReport.recommendation) {
-                      const recommendationRef = parseImageRefFromPurl(recReport.recommendation);
-                      const dedupeKey = `${recommendationRef}|${recSourceName}`;
-                      if (recommendationRef && !seenRecommendations.has(dedupeKey)) {
-                        seenRecommendations.add(dedupeKey);
+                      const parsed = parseImageRefFromPurl(recReport.recommendation);
+                      if (parsed && !seenRecommendations.has(`${parsed.ref}|${recSourceName}`)) {
+                        seenRecommendations.add(`${parsed.ref}|${recSourceName}`);
                         const sd = new ImageData(
                           providerName,
                           [],
-                          recommendationRef,
+                          parsed.ref,
                           'NONE',
-                          recSourceName
+                          recSourceName,
+                          parsed.packageName,
+                          parsed.version,
                         );
                         const dataArray = this.images.get(imageRef) || [];
                         dataArray.push(sd);
@@ -123,11 +139,15 @@ class AnalysisResponse {
             }
 
             artifacts.forEach(artifact => {
+              const recommendation = hasProviderRecommendations ? null : this.getRecommendation(artifact.dependencies);
               const sd = new ImageData(
                 artifact.id,
                 artifact.dependencies?.flatMap(dependency => dependency.issues || []) || [],
-                hasProviderRecommendations ? '' : this.getRecommendation(artifact.dependencies),
+                recommendation?.ref ?? '',
                 this.getHighestSeverity(artifact.summary),
+                '',
+                recommendation?.packageName ?? '',
+                recommendation?.version,
               );
 
               const dataArray = this.images.get(imageRef) || [];
@@ -192,12 +212,11 @@ class AnalysisResponse {
    * @returns The recommendation reference or an empty string.
    * @private
    */
-  private getRecommendation(dependencies: DependencyReport[] | undefined): string {
-    let recommendation = '';
-    if (dependencies && dependencies.length > 0) {
-      recommendation = isDefined(dependencies[0], 'recommendation') ? parseImageRefFromPurl(dependencies[0].recommendation) : '';
+  private getRecommendation(dependencies: DependencyReport[] | undefined): ParsedImageRef | null {
+    if (dependencies && dependencies.length > 0 && isDefined(dependencies[0], 'recommendation')) {
+      return parseImageRefFromPurl(dependencies[0].recommendation);
     }
-    return recommendation;
+    return null;
   }
 }
 

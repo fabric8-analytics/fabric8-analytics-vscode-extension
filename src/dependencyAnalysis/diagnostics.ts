@@ -93,6 +93,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
    * @private
    */
   private createCodeAction(dependency: Dependency, loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic, recommendationSourceId: string = '') {
+    const packageName = ref.split('@')[0];
     const switchToVersion = ref.split('@')[1];
     const versionReplacementString = context ? context.value.replace(VERSION_PLACEHOLDER, switchToVersion) : switchToVersion;
     let title: string;
@@ -103,7 +104,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
     } else {
       title = `Switch to version ${switchToVersion} for ${sourceId}`;
     }
-    const codeAction = generateSwitchToRecommendedVersionAction(title, ref, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath, dependency.version);
+    const codeAction = generateSwitchToRecommendedVersionAction(title, packageName, switchToVersion, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath, dependency.version);
     registerCodeAction(this.diagnosticFilePath, loc, codeAction);
   }
 }

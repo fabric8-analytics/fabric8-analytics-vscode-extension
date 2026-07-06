@@ -60,7 +60,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
             if (!registeredRecommendations.has(dedupeKey)) {
               registeredRecommendations.add(dedupeKey);
               const replacementRange = image.rawToken ?? image.name;
-              this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic, replacementRange, id.recommendationSourceId);
+              this.createCodeAction(loc, id.recommendationRef, id.sourceId, vulnerabilityDiagnostic, replacementRange, id.recommendationSourceId, id.recommendationPackage, id.recommendationVersion);
             }
           }
 
@@ -85,14 +85,14 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
    * @param recommendationSourceId - Optional recommendation source identifier.
    * @private
    */
-  private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic, imageName: IPositionedString, recommendationSourceId: string = '') {
+  private createCodeAction(loc: string, imageRef: string, sourceId: string, vulnerabilityDiagnostic: Diagnostic, imageName: IPositionedString, recommendationSourceId: string = '', packageName: string = '', version: string | undefined = undefined) {
     const sourceLabel = recommendationSourceId
       ? `${sourceId} (${recommendationSourceId})`
       : sourceId;
     const title = recommendationSourceId === 'hardened'
       ? `${sourceLabel}: Switch to Red Hat Hardened Image ${imageRef} for enhanced security`
       : `${sourceLabel}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
-    const replaceAction = generateReplaceImageAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath, imageName);
+    const replaceAction = generateReplaceImageAction(title, imageRef, packageName, version, vulnerabilityDiagnostic, this.diagnosticFilePath, imageName);
     registerCodeAction(this.diagnosticFilePath, loc, replaceAction);
   }
 }

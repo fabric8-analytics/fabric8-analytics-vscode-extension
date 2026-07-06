@@ -97,10 +97,10 @@ export class ImageProvider implements IImageProvider {
 
       const col = line.indexOf(imageData);
       const rawCol = line.indexOf(rawImageToken);
-      const image = new Image({ value: imageData, position: { line: index + 1, column: col !== -1 ? col : rawCol } }, line);
+      const image = new Image({ value: imageData, position: { line: index + 1, column: col !== -1 ? col : Math.max(0, rawCol) } }, line);
 
       if (rawImageToken !== imageData) {
-        image.rawToken = { value: rawImageToken, position: { line: index + 1, column: rawCol } };
+        image.rawToken = { value: rawImageToken, position: { line: index + 1, column: Math.max(0, rawCol) } };
       }
 
       const platformMatch = line.match(this.PLATFORM_REGEX);

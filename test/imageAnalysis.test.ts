@@ -91,6 +91,94 @@ FROM stage1 AS runner
     });
 });
 
+suite('AnalysisResponse digest vs tag separator', () => {
+    /**
+     * Verifies that a digest version (sha256:...) produces an image reference using @ separator.
+     */
+    test('should use @ separator for digest version in recommendation', () => {
+        // Given a recommendation PURL with a sha256 digest version
+        const mockData = {
+            'docker.io/alpine:3.18': {
+                providers: {
+                    providerA: {
+                        status: { ok: true },
+                        sources: {
+                            sourceA: {
+                                summary: { total: 0, critical: 0, high: 0, medium: 0, low: 0 },
+                                dependencies: [],
+                            },
+                        },
+                        recommendations: {
+                            'trusted-content': {
+                                dependencies: [{
+                                    ref: 'pkg:oci/alpine@3.18?repository_url=docker.io/library/alpine',
+                                    recommendation: 'pkg:oci/alpine@sha256%3Aabc123def456?repository_url=docker.io/library/alpine',
+                                }],
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        // When constructing AnalysisResponse
+        const response = new AnalysisResponse(mockData as any, Uri.file('/mock/Dockerfile'));
+
+        // Then the recommendation should use @ separator for the digest
+        const imageDataList = response.images.get('docker.io/alpine:3.18');
+        expect(imageDataList).to.not.be.undefined;
+
+        const recommendation = imageDataList!.find(
+            d => d.recommendationSourceId === 'trusted-content'
+        );
+        expect(recommendation).to.not.be.undefined;
+        expect(recommendation!.recommendationRef).to.equal('docker.io/library/alpine@sha256:abc123def456');
+    });
+
+    /**
+     * Verifies that a tag version continues to produce an image reference using : separator.
+     */
+    test('should use : separator for tag version in recommendation', () => {
+        // Given a recommendation PURL with a regular tag version
+        const mockData = {
+            'docker.io/nginx:1.25': {
+                providers: {
+                    providerA: {
+                        status: { ok: true },
+                        sources: {
+                            sourceA: {
+                                summary: { total: 0, critical: 0, high: 0, medium: 0, low: 0 },
+                                dependencies: [],
+                            },
+                        },
+                        recommendations: {
+                            'trusted-content': {
+                                dependencies: [{
+                                    ref: 'pkg:oci/nginx@1.25?repository_url=docker.io/library/nginx',
+                                    recommendation: 'pkg:oci/nginx@1.26?repository_url=docker.io/library/nginx',
+                                }],
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        // When constructing AnalysisResponse
+        const response = new AnalysisResponse(mockData as any, Uri.file('/mock/Dockerfile'));
+
+        // Then the recommendation should use : separator for the tag
+        const imageDataList = response.images.get('docker.io/nginx:1.25');
+        expect(imageDataList).to.not.be.undefined;
+
+        const recommendation = imageDataList!.find(
+            d => d.recommendationSourceId === 'trusted-content'
+        );
+        expect(recommendation).to.not.be.undefined;
+        expect(recommendation!.recommendationRef).to.equal('docker.io/library/nginx:1.26');
+    });
+});
+
 suite('AnalysisResponse provider scoping', () => {
     /**
      * Verifies that hasProviderRecommendations is scoped per-provider, not per-image.
@@ -155,7 +243,7 @@ suite('AnalysisResponse provider scoping', () => {
             d => d.sourceId === 'providerA' && d.recommendationSourceId === 'trusted-content'
         );
         expect(providerARecommendation).to.not.be.undefined;
-        expect(providerARecommendation!.recommendationRef).to.equal('ubi9/nginx');
+        expect(providerARecommendation!.recommendationRef).to.equal('ubi9/nginx:1.26');
 
         // providerA's artifact should have empty recommendationRef (suppressed by provider recommendations)
         const providerAArtifact = imageDataList!.find(
@@ -169,6 +257,51 @@ suite('AnalysisResponse provider scoping', () => {
             d => d.sourceId === 'providerB(sourceB)' && d.recommendationSourceId === ''
         );
         expect(providerBArtifact).to.not.be.undefined;
-        expect(providerBArtifact!.recommendationRef).to.equal('nginx');
+        expect(providerBArtifact!.recommendationRef).to.equal('nginx:1.27');
+    });
+});
+
+suite('AnalysisResponse empty fullName guard', () => {
+    /**
+     * Verifies that a malformed recommendation PURL does not produce a recommendation
+     * entry with a corrupt image reference.
+     */
+    test('should not create recommendation entry when recommendation PURL is invalid', () => {
+        // Given a recommendation with an unparseable PURL
+        const mockData = {
+            'docker.io/test:1.0': {
+                providers: {
+                    providerA: {
+                        status: { ok: true },
+                        sources: {
+                            sourceA: {
+                                summary: { total: 0, critical: 0, high: 0, medium: 0, low: 0 },
+                                dependencies: [],
+                            },
+                        },
+                        recommendations: {
+                            'trusted-content': {
+                                dependencies: [{
+                                    ref: 'pkg:oci/test@1.0?repository_url=docker.io/test',
+                                    recommendation: 'not-a-valid-purl',
+                                }],
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        // When constructing AnalysisResponse
+        const response = new AnalysisResponse(mockData as any, Uri.file('/mock/Dockerfile'));
+
+        // Then no trusted-content recommendation entry should exist (empty ref filtered out)
+        const imageDataList = response.images.get('docker.io/test:1.0');
+        expect(imageDataList).to.not.be.undefined;
+
+        const recommendation = imageDataList!.find(
+            d => d.recommendationSourceId === 'trusted-content'
+        );
+        expect(recommendation).to.be.undefined;
     });
 });

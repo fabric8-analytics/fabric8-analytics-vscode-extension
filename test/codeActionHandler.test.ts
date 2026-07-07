@@ -14,6 +14,7 @@ import { DependencyData } from '../src/dependencyAnalysis/analysis';
 import { Dependency, DependencyMap } from '../src/dependencyAnalysis/collector';
 import { Vulnerability } from '../src/vulnerability';
 import { CodeAction, CodeActionKind, Diagnostic, DiagnosticSeverity, Position, Range, Uri, WorkspaceEdit } from 'vscode';
+import { IPositionedString } from '../src/positionTypes';
 
 suite('Code Action Handler tests', () => {
 
@@ -197,14 +198,15 @@ suite('Code Action Handler tests', () => {
         const edit = new WorkspaceEdit();
         const uri = Uri.file('mock/path/pom.xml');
         edit.replace(uri, mockDiagnostic1[0].range, 'mockVersionReplacementString');
-        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage@mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri);
+        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage', 'mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri);
         expect(codeAction).to.deep.equal(
             {
                 'command': {
                     'command': 'mockTrackRecommendationAcceptanceCommand',
                     'title': 'Track recommendation acceptance',
                     'arguments': [
-                        'mockPackage@mockversion',
+                        'mockPackage',
+                        'mockversion',
                         'pom.xml'
                     ]
                 },
@@ -223,60 +225,135 @@ suite('Code Action Handler tests', () => {
         );
     });
 
-    test('should return a redirect to recommended version code action for Dockerfile', async () => {
+    /**
+     * Verifies that generateReplaceImageAction creates a CodeAction with a WorkspaceEdit
+     * that replaces only the image name range (not the full diagnostic range).
+     */
+    test('should return a replace image code action with WorkspaceEdit scoped to image name for Dockerfile', async () => {
+        // Given a configured tracking command, a diagnostic, and an image name range
         config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
+        const uri = Uri.file('mock/path/Dockerfile');
+        const title = 'rhtpa (hardened): Switch to Red Hat Hardened Image ubi9/openjdk-11-hardened:latest for enhanced security';
+        const imageName: IPositionedString = { value: 'golang:1.21', position: { line: 322, column: 5 } };
 
-        const codeAction: CodeAction = codeActionHandler.generateRedirectToRecommendedVersionAction('mockTitle', 'mockImage@mockTag', mockDiagnostic1[0], Uri.file('mock/path/Dockerfile'));
+        // When generating a replace image action
+        const expectedRange = new Range(
+            new Position(321, 5),
+            new Position(321, 5 + 'golang:1.21'.length)
+        );
+        const edit = new WorkspaceEdit();
+        edit.replace(uri, expectedRange, 'ubi9/openjdk-11-hardened:latest');
+        const codeAction: CodeAction = codeActionHandler.generateReplaceImageAction(
+            title,
+            'ubi9/openjdk-11-hardened:latest',
+            'ubi9/openjdk-11-hardened',
+            'latest',
+            mockDiagnostic1[0],
+            uri,
+            imageName
+        );
+
+        // Then the code action should have a WorkspaceEdit scoped to the image name
         expect(codeAction).to.deep.equal(
             {
                 'command': {
                     'command': 'mockTrackRecommendationAcceptanceCommand',
                     'title': 'Track recommendation acceptance',
                     'arguments': [
-                        'mockImage@mockTag',
+                        'ubi9/openjdk-11-hardened',
+                        'latest',
                         'Dockerfile'
                     ]
                 },
                 'diagnostics': [
                     {
                         'message': 'another mock message',
-                        'range': new Range(321, 321, 654, 654),
+                        'range': mockDiagnostic1[0].range,
                         'severity': 3,
                         'source': 'mockSource'
                     }
                 ],
+                'edit': edit,
                 'kind': { 'value': 'quickfix' },
-                'title': 'mockTitle'
+                'title': title
             }
         );
     });
 
-    test('should return a redirect to recommended version code action for Containerfile', async () => {
-        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
+    /**
+     * Verifies that generateReplaceImageAction attaches the tracking command to the code action.
+     */
+    test('should attach tracking command to replace image code action', async () => {
+        // Given a configured tracking command
+        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackCommand';
+        const uri = Uri.file('mock/path/Containerfile');
+        const imageName: IPositionedString = { value: 'node:18', position: { line: 322, column: 5 } };
 
-        const codeAction: CodeAction = codeActionHandler.generateRedirectToRecommendedVersionAction('mockTitle', 'mockImage@mockTag', mockDiagnostic1[0], Uri.file('mock/path/Containerfile'));
-        expect(codeAction).to.deep.equal(
-            {
-                'command': {
-                    'command': 'mockTrackRecommendationAcceptanceCommand',
-                    'title': 'Track recommendation acceptance',
-                    'arguments': [
-                        'mockImage@mockTag',
-                        'Containerfile'
-                    ]
-                },
-                'diagnostics': [
-                    {
-                        'message': 'another mock message',
-                        'range': new Range(321, 321, 654, 654),
-                        'severity': 3,
-                        'source': 'mockSource'
-                    }
-                ],
-                'kind': { 'value': 'quickfix' },
-                'title': 'mockTitle'
-            }
+        // When generating a replace image action
+        const codeAction: CodeAction = codeActionHandler.generateReplaceImageAction(
+            'rhtpa: Switch to Red Hat UBI ubi9/openjdk-17:latest for enhanced security and enterprise-grade stability',
+            'ubi9/openjdk-17:latest',
+            'ubi9/openjdk-17',
+            'latest',
+            mockDiagnostic1[0],
+            uri,
+            imageName
         );
+
+        // Then the tracking command should be attached with the image ref and file name
+        expect(codeAction.command).to.deep.equal({
+            'command': 'mockTrackCommand',
+            'title': 'Track recommendation acceptance',
+            'arguments': [
+                'ubi9/openjdk-17',
+                'latest',
+                'Containerfile'
+            ]
+        });
+    });
+
+    /**
+     * Verifies that multiple hardened recommendations produce multiple replace actions
+     * registered at the same location.
+     */
+    test('should register multiple replace actions for multiple hardened recommendations at the same location', () => {
+        // Given multiple hardened image recommendations for the same location
+        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackCommand';
+        const uri = Uri.file('mock/path/Dockerfile');
+        const loc = '10|5';
+        const imageName: IPositionedString = { value: 'golang:1.21', position: { line: 11, column: 5 } };
+
+        const replaceAction1 = codeActionHandler.generateReplaceImageAction(
+            'rhtpa (hardened): Switch to Red Hat Hardened Image ubi9/openjdk-11-hardened:latest for enhanced security',
+            'ubi9/openjdk-11-hardened:latest',
+            'ubi9/openjdk-11-hardened',
+            'latest',
+            mockDiagnostic1[0],
+            uri,
+            imageName
+        );
+        const replaceAction2 = codeActionHandler.generateReplaceImageAction(
+            'rhtpa (hardened): Switch to Red Hat Hardened Image ubi9/openjdk-17-hardened:latest for enhanced security',
+            'ubi9/openjdk-17-hardened:latest',
+            'ubi9/openjdk-17-hardened',
+            'latest',
+            mockDiagnostic1[0],
+            uri,
+            imageName
+        );
+
+        // When registering both actions at the same location
+        codeActionHandler.registerCodeAction(uri, loc, replaceAction1);
+        codeActionHandler.registerCodeAction(uri, loc, replaceAction2);
+
+        // Then both actions should be available at that location
+        const actions = codeActionHandler.getCodeActionsMap().get(uri.toString())?.get(loc);
+        expect(actions).to.have.lengthOf(2);
+        expect(actions![0].title).to.contain('ubi9/openjdk-11-hardened:latest');
+        expect(actions![1].title).to.contain('ubi9/openjdk-17-hardened:latest');
+        expect(actions![0].edit).to.not.be.undefined;
+        expect(actions![1].edit).to.not.be.undefined;
+        codeActionHandler.clearCodeActionsMap(uri);
     });
 
     /**
@@ -340,44 +417,6 @@ suite('Code Action Handler tests', () => {
         // Then it should select remediationRef, not recommendationRef
         expect(actionRef).to.equal(remediationRef);
         expect(actionRef).to.not.equal('');
-    });
-
-    /**
-     * Verifies that code action for hardened image recommendation uses distinct title.
-     */
-    test('should generate redirect code action for hardened image recommendation', async () => {
-        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
-
-        const title = 'rhtpa (hardened): Switch to Red Hat Hardened Image ubi9/openjdk-11-hardened for enhanced security';
-        const codeAction: CodeAction = codeActionHandler.generateRedirectToRecommendedVersionAction(
-            title,
-            'ubi9/openjdk-11-hardened',
-            mockDiagnostic1[0],
-            Uri.file('mock/path/Dockerfile')
-        );
-
-        expect(codeAction).to.deep.equal(
-            {
-                'command': {
-                    'command': 'mockTrackRecommendationAcceptanceCommand',
-                    'title': 'Track recommendation acceptance',
-                    'arguments': [
-                        'ubi9/openjdk-11-hardened',
-                        'Dockerfile'
-                    ]
-                },
-                'diagnostics': [
-                    {
-                        'message': 'another mock message',
-                        'range': new Range(321, 321, 654, 654),
-                        'severity': 3,
-                        'source': 'mockSource'
-                    }
-                ],
-                'kind': { 'value': 'quickfix' },
-                'title': title
-            }
-        );
     });
 
     /**

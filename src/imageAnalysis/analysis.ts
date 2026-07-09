@@ -61,7 +61,7 @@ function parseImageRefFromPurl(purl: string): ParsedImageRef | null {
     if (!packageName) {
       return null;
     }
-    const version = parsed.version || undefined;
+    const version = parsed.version || parsed.qualifiers?.tag || undefined;
     if (!version) {
       return { ref: packageName, packageName, version };
     }

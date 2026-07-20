@@ -90,8 +90,8 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
       ? `${sourceId} (${recommendationSourceId})`
       : sourceId;
     const title = `${sourceLabel}: Switch to ${imageRef} for enhanced security`;
-    const codeAction = generateRedirectToRecommendedVersionAction(title, imageRef, vulnerabilityDiagnostic, this.diagnosticFilePath);
-    registerCodeAction(this.diagnosticFilePath, loc, codeAction);
+    const replaceAction = generateReplaceImageAction(title, imageRef, packageName, version, vulnerabilityDiagnostic, this.diagnosticFilePath, imageName);
+    registerCodeAction(this.diagnosticFilePath, loc, replaceAction);
   }
 }
 

@@ -420,17 +420,28 @@ suite('Code Action Handler tests', () => {
     });
 
     /**
-     * Verifies that code action for hardened image recommendation uses distinct title.
+     * Verifies that code action for hardened image recommendation uses de-branded title.
      */
-    test('should generate redirect code action for hardened image recommendation', async () => {
+    test('should generate replace image code action for hardened image recommendation with generic title', async () => {
         config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
-
+        const uri = Uri.file('mock/path/Dockerfile');
         const title = 'rhtpa (hardened): Switch to ubi9/openjdk-11-hardened for enhanced security';
-        const codeAction: CodeAction = codeActionHandler.generateRedirectToRecommendedVersionAction(
+        const imageName: IPositionedString = { value: 'golang:1.21', position: { line: 322, column: 5 } };
+
+        const expectedRange = new Range(
+            new Position(321, 5),
+            new Position(321, 5 + 'golang:1.21'.length)
+        );
+        const edit = new WorkspaceEdit();
+        edit.replace(uri, expectedRange, 'ubi9/openjdk-11-hardened');
+        const codeAction: CodeAction = codeActionHandler.generateReplaceImageAction(
             title,
             'ubi9/openjdk-11-hardened',
+            'ubi9/openjdk-11-hardened',
+            undefined,
             mockDiagnostic1[0],
-            Uri.file('mock/path/Dockerfile')
+            uri,
+            imageName
         );
 
         expect(codeAction).to.deep.equal(
@@ -440,17 +451,19 @@ suite('Code Action Handler tests', () => {
                     'title': 'Track recommendation acceptance',
                     'arguments': [
                         'ubi9/openjdk-11-hardened',
+                        undefined,
                         'Dockerfile'
                     ]
                 },
                 'diagnostics': [
                     {
                         'message': 'another mock message',
-                        'range': new Range(321, 321, 654, 654),
+                        'range': mockDiagnostic1[0].range,
                         'severity': 3,
                         'source': 'mockSource'
                     }
                 ],
+                'edit': edit,
                 'kind': { 'value': 'quickfix' },
                 'title': title
             }

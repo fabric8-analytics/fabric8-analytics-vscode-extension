@@ -208,11 +208,10 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 - **Docker scanning**
     <br >Upon opening a Dockerfile, a vulnerability scan starts analyzing the images within the Dockerfile.
     After the analysis finishes, you can view any recommendations and remediation by clicking the _Quick Fix..._ menu from the highlighted image name.
-	Any recommendations for an alternative image does not replace the current image.
-	By clicking _Switch to..._, you go to Red Hat's Ecosystem Catalog for the recommended image.
+	Any recommendations for an alternative image do not replace the current image.
 
 	<br >You must have the [`syft`](https://github.com/anchore/syft#installation) and [`skopeo`](https://www.redhat.com/en/topics/containers/what-is-skopeo) binaries installed on your workstation to use the Docker scanning feature.
-	You can specify a specific path to these binaries, and others by settings the following parameters:
+	You can specify a specific path to these binaries, and others by setting the following parameters:
 
 	* `syft.executable.path`: Specify the absolute path of `syft` executable
 	* `syft.config.path`: Specify the absolute path to the Syft configuration file

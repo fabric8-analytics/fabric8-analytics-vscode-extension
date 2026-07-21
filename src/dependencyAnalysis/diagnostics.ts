@@ -97,9 +97,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
     const switchToVersion = ref.split('@')[1];
     const versionReplacementString = context ? context.value.replace(VERSION_PLACEHOLDER, switchToVersion) : switchToVersion;
     let title: string;
-    if (recommendationSourceId === 'hardened') {
-      title = `Switch to Red Hat Hardened version ${switchToVersion} for ${sourceId}`;
-    } else if (recommendationSourceId) {
+    if (recommendationSourceId) {
       title = `Switch to version ${switchToVersion} (${recommendationSourceId})`;
     } else {
       title = `Switch to version ${switchToVersion} for ${sourceId}`;

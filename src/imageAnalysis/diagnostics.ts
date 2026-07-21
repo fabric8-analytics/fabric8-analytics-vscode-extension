@@ -89,9 +89,7 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<ImageData> {
     const sourceLabel = recommendationSourceId
       ? `${sourceId} (${recommendationSourceId})`
       : sourceId;
-    const title = recommendationSourceId === 'hardened'
-      ? `${sourceLabel}: Switch to Red Hat Hardened Image ${imageRef} for enhanced security`
-      : `${sourceLabel}: Switch to Red Hat UBI ${imageRef} for enhanced security and enterprise-grade stability`;
+    const title = `${sourceLabel}: Switch to ${imageRef} for enhanced security`;
     const replaceAction = generateReplaceImageAction(title, imageRef, packageName, version, vulnerabilityDiagnostic, this.diagnosticFilePath, imageName);
     registerCodeAction(this.diagnosticFilePath, loc, replaceAction);
   }

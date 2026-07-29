@@ -226,6 +226,22 @@ suite('Code Action Handler tests', () => {
         );
     });
 
+    /** Verifies that sourceId is passed as the fourth command argument when provided. */
+    test('should pass sourceId as fourth command argument when provided', async () => {
+        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
+
+        const edit = new WorkspaceEdit();
+        const uri = Uri.file('mock/path/pom.xml');
+        edit.replace(uri, mockDiagnostic1[0].range, 'mockVersionReplacementString');
+        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage', 'mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri, undefined, 'trustify(rhlw-remediated)');
+        expect(codeAction.command!.arguments).to.deep.equal([
+            'mockPackage',
+            'mockversion',
+            'pom.xml',
+            'trustify(rhlw-remediated)',
+        ]);
+    });
+
     /**
      * Verifies that generateReplaceImageAction creates a CodeAction with a WorkspaceEdit
      * that replaces only the image name range (not the full diagnostic range).

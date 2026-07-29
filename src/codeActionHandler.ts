@@ -96,7 +96,7 @@ function generateFullStackAnalysisAction(): CodeAction {
  * @param replacementRange - Optional range to use for the replacement instead of diagnostic range to be used rather than deriving from the diagnostic
  * @returns A CodeAction object for switching to the recommended version.
  */
-function generateSwitchToRecommendedVersionAction(title: string, packageName: string, version: string | undefined, versionReplacementString: string, diagnostic: Diagnostic, uri: Uri, replacementRange?: IPositionedString): CodeAction {
+function generateSwitchToRecommendedVersionAction(title: string, packageName: string, version: string | undefined, versionReplacementString: string, diagnostic: Diagnostic, uri: Uri, replacementRange?: IPositionedString, sourceId?: string): CodeAction {
   const codeAction: CodeAction = {
     title: title,
     diagnostics: [diagnostic],
@@ -112,7 +112,7 @@ function generateSwitchToRecommendedVersionAction(title: string, packageName: st
   codeAction.command = {
     title: 'Track recommendation acceptance',
     command: globalConfig.trackRecommendationAcceptanceCommand,
-    arguments: [packageName, version, path.basename(uri.fsPath)],
+    arguments: [packageName, version, path.basename(uri.fsPath), sourceId],
   };
 
   return codeAction;

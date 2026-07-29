@@ -207,7 +207,8 @@ suite('Code Action Handler tests', () => {
                     'arguments': [
                         'mockPackage',
                         'mockversion',
-                        'pom.xml'
+                        'pom.xml',
+                        undefined,
                     ]
                 },
                 'diagnostics': [

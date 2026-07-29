@@ -43,6 +43,10 @@ export const DEFAULT_RHDA_REPORT_FILE_PATH = '/tmp/redhatDependencyAnalyticsRepo
 export const REDHAT_MAVEN_REPOSITORY = 'https://maven.repository.redhat.com/ga/';
 // Red Hat GA Repository documentation
 export const REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL = 'https://access.redhat.com/maven-repository';
+// Red Hat Lightwell remediated Maven repository
+export const RHLW_MAVEN_REPOSITORY = 'https://packages.redhat.com/lightwell/java/remediated/';
+// Red Hat Lightwell documentation (reuses Red Hat Maven repository docs)
+export const RHLW_MAVEN_REPOSITORY_DOCUMENTATION_URL = 'https://access.redhat.com/maven-repository';
 // Red Hat certified container image catalog
 export const REDHAT_CATALOG = 'https://catalog.redhat.com/software/containers/search';
 // Default source name for the Red Hat Dependency Analytics extension in diagnostics

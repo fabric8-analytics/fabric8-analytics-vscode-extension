@@ -335,15 +335,6 @@ class AnalysisResponse {
 
 }
 
-function isRedHatSource(sourceId: string): boolean {
-  const s = sourceId.toLowerCase();
-  return s.includes('redhat') || s.includes('rhlw');
-}
-
-function isRhlwSource(sourceId: string): boolean {
-  return sourceId.toLowerCase().includes('rhlw');
-}
-
 /**
  * Performs RHDA component analysis on provided manifest contents/path and fileType based on ecosystem.
  * @param diagnosticFilePath - The path to the manifest file to analyze.
@@ -357,4 +348,4 @@ async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnostic
   return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider, packageManager);
 }
 
-export { executeComponentAnalysis, DependencyData, FixOption, isRedHatSource, isRhlwSource };
+export { executeComponentAnalysis, DependencyData, FixOption };

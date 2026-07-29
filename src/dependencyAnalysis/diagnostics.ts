@@ -6,7 +6,8 @@
 
 import { Dependency, DependencyMap, IDependencyProvider, getRange } from '../dependencyAnalysis/collector';
 import { IPositionedContext } from '../positionTypes';
-import { executeComponentAnalysis, DependencyData, isRedHatSource } from './analysis';
+import { executeComponentAnalysis, DependencyData } from './analysis';
+import { isRedHatSource } from './sourceDetection';
 import { Vulnerability } from '../vulnerability';
 import { VERSION_PLACEHOLDER, RHDA_DIAGNOSTIC_SOURCE } from '../constants';
 import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateUpdateManifestLicenseAction } from '../codeActionHandler';

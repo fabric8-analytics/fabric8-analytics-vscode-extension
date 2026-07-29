@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 
 import * as commands from './commands';
 import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, RHLW_MAVEN_REPOSITORY, RHLW_MAVEN_REPOSITORY_DOCUMENTATION_URL, REDHAT_CATALOG } from './constants';
-import { isRhlwSource } from './dependencyAnalysis/analysis';
+import { isRhlwSource } from './dependencyAnalysis/sourceDetection';
 import { generateRHDAReport, getFileType } from './rhda';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';

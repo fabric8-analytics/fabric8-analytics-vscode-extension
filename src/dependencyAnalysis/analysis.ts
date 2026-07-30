@@ -67,9 +67,6 @@ interface FixOption {
   version: string;
   ref: string;
   advisoryId?: string;
-  remediationCategory?: string;
-  remediationDetails?: string;
-  remediationUrl?: string;
 }
 
 /**
@@ -83,7 +80,6 @@ class DependencyData {
     public issues: Issue[],
     public recommendationRef: string,
     public remediationRef: string,
-    public highestVulnerabilitySeverity: string,
     public packageManager: string = '',
     public recommendationSourceId: string = '',
     fixOptions: FixOption[] = []
@@ -167,7 +163,6 @@ class AnalysisResponse {
                       [],
                       recommendationRef,
                       '',
-                      'NONE',
                       packageManager,
                       recSourceName
                     );
@@ -202,9 +197,9 @@ class AnalysisResponse {
             if (issues.length) {
               const remediationRef = this.getRemediation(issues[0]);
               const fixOptions = this.extractFixOptions(issues, resolvedRef, remediationRef);
-              dd = new DependencyData(source.id, issues, '', remediationRef, this.getHighestSeverity(d), '', '', fixOptions);
+              dd = new DependencyData(source.id, issues, '', remediationRef, '', '', fixOptions);
             } else if (!source.hasProviderRecommendations) {
-              dd = new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d), packageManager);
+              dd = new DependencyData(source.id, issues, this.getRecommendation(d), '', packageManager);
             } else {
               return;
             }
@@ -246,16 +241,6 @@ class AnalysisResponse {
   }
 
   /**
-   * Retrieves the highest vulnerability severity value from a dependency.
-   * @param dependency The dependency object.
-   * @returns The highest severity level or NONE if none exists.
-   * @private
-   */
-  private getHighestSeverity(dependency: DependencyReport): string {
-    return isDefined(dependency, 'highestVulnerability', 'severity') ? dependency.highestVulnerability.severity : 'NONE';
-  }
-
-  /**
    * Retrieves the remediation reference from an issue.
    * @param issue The issue object.
    * @returns The remediation reference or empty string if none exists.
@@ -294,14 +279,10 @@ class AnalysisResponse {
             continue;
           }
           seenVersions.add(adv.fixedIn);
-          const firstRemediation = adv.remediations?.[0];
           options.push({
             version: adv.fixedIn,
             ref: `${packageName}@${adv.fixedIn}`,
             advisoryId: adv.advisory?.id,
-            remediationCategory: firstRemediation?.category as string | undefined,
-            remediationDetails: firstRemediation?.details,
-            remediationUrl: firstRemediation?.url,
           });
         }
       }
@@ -348,4 +329,4 @@ async function executeComponentAnalysis(tokenProvider: TokenProvider, diagnostic
   return new AnalysisResponse(componentAnalysisJson, diagnosticFilePath, provider, packageManager);
 }
 
-export { executeComponentAnalysis, DependencyData, FixOption };
+export { executeComponentAnalysis, DependencyData };

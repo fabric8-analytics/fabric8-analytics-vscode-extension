@@ -308,7 +308,7 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
   const disposableTrackRecommendationAcceptance = vscode.commands.registerCommand(
     commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
     (packageName, version, fileName, sourceId) => {
-      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: packageName, version: version });
+      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: packageName, version: version, sourceId: sourceId });
 
       if (fileName === 'Dockerfile' || fileName === 'Containerfile') {
         redirectToRedHatCatalog();

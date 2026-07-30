@@ -207,7 +207,8 @@ suite('Code Action Handler tests', () => {
                     'arguments': [
                         'mockPackage',
                         'mockversion',
-                        'pom.xml'
+                        'pom.xml',
+                        undefined,
                     ]
                 },
                 'diagnostics': [
@@ -223,6 +224,22 @@ suite('Code Action Handler tests', () => {
                 'title': 'mockTitle'
             }
         );
+    });
+
+    /** Verifies that sourceId is passed as the fourth command argument when provided. */
+    test('should pass sourceId as fourth command argument when provided', async () => {
+        config.globalConfig.trackRecommendationAcceptanceCommand = 'mockTrackRecommendationAcceptanceCommand';
+
+        const edit = new WorkspaceEdit();
+        const uri = Uri.file('mock/path/pom.xml');
+        edit.replace(uri, mockDiagnostic1[0].range, 'mockVersionReplacementString');
+        const codeAction: CodeAction = codeActionHandler.generateSwitchToRecommendedVersionAction('mockTitle', 'mockPackage', 'mockversion', 'mockVersionReplacementString', mockDiagnostic1[0], uri, undefined, 'trustify(rhlw-remediated)');
+        expect(codeAction.command!.arguments).to.deep.equal([
+            'mockPackage',
+            'mockversion',
+            'pom.xml',
+            'trustify(rhlw-remediated)',
+        ]);
     });
 
     /**
@@ -367,7 +384,7 @@ suite('Code Action Handler tests', () => {
 
         const recommendationRef = 'mockPackage@2.0.0';
         const dependencyData = [
-            new DependencyData('tpa(tpa)', [], recommendationRef, '', 'NONE')
+            new DependencyData('tpa(tpa)', [], recommendationRef, '')
         ];
         const range = new Range(new Position(10, 5), new Position(10, 15));
         const vulnerability = new Vulnerability(range, 'mockPackage@1.0.0', dependencyData);
@@ -398,7 +415,7 @@ suite('Code Action Handler tests', () => {
 
         const remediationRef = 'mockPackage@2.0.0-fixed';
         const dependencyData = [
-            new DependencyData('tpa(tpa)', [{ id: 'CVE-0001' }], '', remediationRef, 'HIGH')
+            new DependencyData('tpa(tpa)', [{ id: 'CVE-0001' }], '', remediationRef)
         ];
         const range = new Range(new Position(10, 5), new Position(10, 15));
         const vulnerability = new Vulnerability(range, 'mockPackage@1.0.0', dependencyData);
@@ -481,8 +498,8 @@ suite('Code Action Handler tests', () => {
         const trustedContentRef = 'mockPackage@2.0.0';
         const trustedLibrariesRef = 'mockPackage@2.0.0-rh';
         const dependencyData = [
-            new DependencyData('rhtpa', [], trustedContentRef, '', 'NONE', '', 'trusted-content'),
-            new DependencyData('rhtpa', [], trustedLibrariesRef, '', 'NONE', '', 'trusted-libraries')
+            new DependencyData('rhtpa', [], trustedContentRef, '', '', 'trusted-content'),
+            new DependencyData('rhtpa', [], trustedLibrariesRef, '', '', 'trusted-libraries')
         ];
         const range = new Range(new Position(10, 5), new Position(10, 15));
         const vulnerability = new Vulnerability(range, 'mockPackage@1.0.0', dependencyData);

@@ -7,6 +7,7 @@
 import { Dependency, DependencyMap, IDependencyProvider, getRange } from '../dependencyAnalysis/collector';
 import { IPositionedContext } from '../positionTypes';
 import { executeComponentAnalysis, DependencyData } from './analysis';
+import { isRedHatSource } from './sourceDetection';
 import { Vulnerability } from '../vulnerability';
 import { VERSION_PLACEHOLDER, RHDA_DIAGNOSTIC_SOURCE } from '../constants';
 import { clearCodeActionsMap, registerCodeAction, generateSwitchToRecommendedVersionAction, generateUpdateManifestLicenseAction } from '../codeActionHandler';
@@ -53,7 +54,13 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
       const dependency = this.dependencyMap.get(dependencyRef);
 
       if (dependency) {
-        const vulnerability = new Vulnerability(getRange(dependency, ecosystem), ref, dependencyData);
+        const sortedData = [...dependencyData].sort((a, b) => {
+          const aRh = isRedHatSource(a.sourceId) ? 0 : 1;
+          const bRh = isRedHatSource(b.sourceId) ? 0 : 1;
+          return aRh - bRh;
+        });
+
+        const vulnerability = new Vulnerability(getRange(dependency, ecosystem), ref, sortedData);
 
         const vulnerabilityDiagnostic = vulnerability.getDiagnostic();
         if (vulnerabilityDiagnostic.severity === DiagnosticSeverity.Information && !globalConfig.recommendationsEnabled) {
@@ -64,12 +71,21 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
 
         const loc = vulnerabilityDiagnostic.range.start.line + '|' + vulnerabilityDiagnostic.range.start.character;
 
-        dependencyData.forEach(dd => {
+        sortedData.forEach(dd => {
           const actionRef = vulnerabilityDiagnostic.severity === DiagnosticSeverity.Information
             ? dd.recommendationRef
             : dd.remediationRef;
           if (actionRef) {
             this.createCodeAction(dependency, loc, actionRef, dependency.context, dd.sourceId, vulnerabilityDiagnostic, dd.recommendationSourceId);
+          }
+
+          if (vulnerabilityDiagnostic.severity !== DiagnosticSeverity.Information) {
+            for (const option of dd.fixOptions) {
+              const label = option.advisoryId
+                ? `Switch to version ${option.version} (${option.advisoryId})`
+                : `Switch to version ${option.version}`;
+              this.createCodeAction(dependency, loc, option.ref, dependency.context, dd.sourceId, vulnerabilityDiagnostic, '', label);
+            }
           }
 
           for (const vuln of dd.issues) {
@@ -92,17 +108,19 @@ class DiagnosticsPipeline extends AbstractDiagnosticsPipeline<DependencyData> {
    * @param recommendationSourceId - Optional recommendation source identifier.
    * @private
    */
-  private createCodeAction(dependency: Dependency, loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic, recommendationSourceId: string = '') {
+  private createCodeAction(dependency: Dependency, loc: string, ref: string, context: IPositionedContext | undefined, sourceId: string, vulnerabilityDiagnostic: Diagnostic, recommendationSourceId: string = '', explicitTitle?: string) {
     const packageName = ref.split('@')[0];
     const switchToVersion = ref.split('@')[1];
     const versionReplacementString = context ? context.value.replace(VERSION_PLACEHOLDER, switchToVersion) : switchToVersion;
     let title: string;
-    if (recommendationSourceId) {
+    if (explicitTitle) {
+      title = explicitTitle;
+    } else if (recommendationSourceId) {
       title = `Switch to version ${switchToVersion} (${recommendationSourceId})`;
     } else {
       title = `Switch to version ${switchToVersion} for ${sourceId}`;
     }
-    const codeAction = generateSwitchToRecommendedVersionAction(title, packageName, switchToVersion, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath, dependency.version);
+    const codeAction = generateSwitchToRecommendedVersionAction(title, packageName, switchToVersion, versionReplacementString, vulnerabilityDiagnostic, this.diagnosticFilePath, dependency.version, sourceId);
     registerCodeAction(this.diagnosticFilePath, loc, codeAction);
   }
 }

@@ -61,18 +61,31 @@ export interface ResponseMetrics {
 }
 
 /**
+ * Fix version option extracted from remediation data (advisory-level or top-level fixedIn).
+ */
+interface FixOption {
+  version: string;
+  ref: string;
+  advisoryId?: string;
+}
+
+/**
  * Implementation of IDependencyData interface.
  */
 class DependencyData {
+  public fixOptions: FixOption[];
+
   constructor(
     public sourceId: string,
     public issues: Issue[],
     public recommendationRef: string,
     public remediationRef: string,
-    public highestVulnerabilitySeverity: string,
     public packageManager: string = '',
-    public recommendationSourceId: string = ''
-  ) { }
+    public recommendationSourceId: string = '',
+    fixOptions: FixOption[] = []
+  ) {
+    this.fixOptions = fixOptions;
+  }
 }
 
 class AnalysisResponse {
@@ -150,7 +163,6 @@ class AnalysisResponse {
                       [],
                       recommendationRef,
                       '',
-                      'NONE',
                       packageManager,
                       recSourceName
                     );
@@ -179,17 +191,19 @@ class AnalysisResponse {
         source.dependencies.forEach(d => {
           if (isDefined(d, 'ref')) {
             const issues = isDefined(d, 'issues') ? d.issues : [];
+            const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
 
             let dd: DependencyData;
             if (issues.length) {
-              dd = new DependencyData(source.id, issues, '', this.getRemediation(issues[0]), this.getHighestSeverity(d));
+              const remediationRef = this.getRemediation(issues[0]);
+              const fixOptions = this.extractFixOptions(issues, resolvedRef, remediationRef);
+              dd = new DependencyData(source.id, issues, '', remediationRef, '', '', fixOptions);
             } else if (!source.hasProviderRecommendations) {
-              dd = new DependencyData(source.id, issues, this.getRecommendation(d), '', this.getHighestSeverity(d), packageManager);
+              dd = new DependencyData(source.id, issues, this.getRecommendation(d), '', packageManager);
             } else {
               return;
             }
 
-            const resolvedRef = this.provider.resolveDependencyFromReference(d.ref);
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             this.dependencies.get(resolvedRef)?.push(dd) || this.dependencies.set(resolvedRef, [dd]);
           }
@@ -227,16 +241,6 @@ class AnalysisResponse {
   }
 
   /**
-   * Retrieves the highest vulnerability severity value from a dependency.
-   * @param dependency The dependency object.
-   * @returns The highest severity level or NONE if none exists.
-   * @private
-   */
-  private getHighestSeverity(dependency: DependencyReport): string {
-    return isDefined(dependency, 'highestVulnerability', 'severity') ? dependency.highestVulnerability.severity : 'NONE';
-  }
-
-  /**
    * Retrieves the remediation reference from an issue.
    * @param issue The issue object.
    * @returns The remediation reference or empty string if none exists.
@@ -244,6 +248,60 @@ class AnalysisResponse {
    */
   private getRemediation(issue: Issue): string {
     return isDefined(issue, 'remediation', 'trustedContent', 'ref') ? this.provider.resolveDependencyFromReference(issue.remediation.trustedContent.ref.split('?')[0]) : '';
+  }
+
+  /**
+   * Extracts fix version options from remediation data across all issues.
+   * Reads from both advisory-level fixedIn and top-level remediation.fixedIn[].
+   * Deduplicates by version and excludes versions already covered by trustedContent.
+   * @private
+   */
+  private extractFixOptions(issues: Issue[], depRef: string, remediationRef: string): FixOption[] {
+    const packageName = depRef.split('@')[0];
+    const seenVersions = new Set<string>();
+
+    const trustedContentVersion = remediationRef ? remediationRef.split('@').pop() : '';
+    if (trustedContentVersion) {
+      seenVersions.add(trustedContentVersion);
+    }
+
+    const options: FixOption[] = [];
+
+    for (const issue of issues) {
+      if (!isDefined(issue, 'remediation')) {
+        continue;
+      }
+      const rem = issue.remediation;
+
+      if (rem.advisories) {
+        for (const adv of rem.advisories) {
+          if (!adv.fixedIn || seenVersions.has(adv.fixedIn)) {
+            continue;
+          }
+          seenVersions.add(adv.fixedIn);
+          options.push({
+            version: adv.fixedIn,
+            ref: `${packageName}@${adv.fixedIn}`,
+            advisoryId: adv.advisory?.id,
+          });
+        }
+      }
+
+      if (rem.fixedIn) {
+        for (const version of rem.fixedIn) {
+          if (!version || seenVersions.has(version)) {
+            continue;
+          }
+          seenVersions.add(version);
+          options.push({
+            version,
+            ref: `${packageName}@${version}`,
+          });
+        }
+      }
+    }
+
+    return options;
   }
 
   /**

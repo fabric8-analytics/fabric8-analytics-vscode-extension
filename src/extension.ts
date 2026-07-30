@@ -4,7 +4,8 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import * as commands from './commands';
-import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, REDHAT_CATALOG } from './constants';
+import { GlobalState, EXTENSION_QUALIFIED_ID, REDHAT_MAVEN_REPOSITORY, REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL, RHLW_MAVEN_REPOSITORY, RHLW_MAVEN_REPOSITORY_DOCUMENTATION_URL, REDHAT_CATALOG } from './constants';
+import { isRhlwSource } from './dependencyAnalysis/sourceDetection';
 import { generateRHDAReport, getFileType } from './rhda';
 import { globalConfig } from './config';
 import { StatusMessages, PromptText } from './constants';
@@ -306,14 +307,14 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
 
   const disposableTrackRecommendationAcceptance = vscode.commands.registerCommand(
     commands.TRACK_RECOMMENDATION_ACCEPTANCE_COMMAND,
-    (packageName, version, fileName) => {
-      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: packageName, version: version });
+    (packageName, version, fileName, sourceId) => {
+      record(context, TelemetryActions.componentAnalysisRecommendationAccepted, { manifest: fileName, fileName: fileName, package: packageName, version: version, sourceId: sourceId });
 
       if (fileName === 'Dockerfile' || fileName === 'Containerfile') {
         redirectToRedHatCatalog();
       }
       if (fileName === 'pom.xml') {
-        showRHRepositoryRecommendationNotification();
+        showRHRepositoryRecommendationNotification(sourceId);
       }
     }
   );
@@ -511,12 +512,18 @@ function redirectToRedHatCatalog() {
 
 /**
  * Shows a notification regarding Red Hat Dependency Analytics recommendations.
+ * @param sourceId - The source identifier to determine if the recommendation is RHLW-sourced.
  */
-function showRHRepositoryRecommendationNotification() {
+function showRHRepositoryRecommendationNotification(sourceId?: string) {
+  const rhlw = sourceId ? isRhlwSource(sourceId) : false;
+  const repoName = rhlw ? 'Red Hat Lightwell Repository' : 'Red Hat GA Repository';
+  const repoUrl = rhlw ? RHLW_MAVEN_REPOSITORY : REDHAT_MAVEN_REPOSITORY;
+  const docUrl = rhlw ? RHLW_MAVEN_REPOSITORY_DOCUMENTATION_URL : REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL;
+
   const msg = 'Important: If you apply Red Hat Dependency Analytics recommendations, ' +
-    `make sure the Red Hat GA Repository (${REDHAT_MAVEN_REPOSITORY}) has been added to your project configuration. ` +
+    `make sure the ${repoName} (${repoUrl}) has been added to your project configuration. ` +
     'This ensures that the applied dependencies work correctly. ' +
-    `Learn how to add the repository: [Click here](${REDHAT_MAVEN_REPOSITORY_DOCUMENTATION_URL})`;
+    `Learn how to add the repository: [Click here](${docUrl})`;
   vscode.window.showWarningMessage(msg);
 }
 

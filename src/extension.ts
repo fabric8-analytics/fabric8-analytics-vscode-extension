@@ -65,6 +65,11 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
     }
   };
 
+  // Refresh config now that VS Code's configuration is fully initialized.
+  // The globalConfig singleton was instantiated at module load time, before
+  // workspace settings (e.g. http.proxy) were available.
+  globalConfig.loadData();
+
   if (vscode.workspace.isTrusted) {
     registerFileHandlers();
   } else {
@@ -74,11 +79,6 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
       registerFileHandlers();
     }));
   }
-
-  // Refresh config now that VS Code's configuration is fully initialized.
-  // The globalConfig singleton was instantiated at module load time, before
-  // workspace settings (e.g. http.proxy) were available.
-  globalConfig.loadData();
 
   // show welcome message after first install or upgrade
   showUpdateNotification(context);

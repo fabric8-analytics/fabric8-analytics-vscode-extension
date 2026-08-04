@@ -66,7 +66,9 @@ When a specific path is configured in the settings, it takes precedence over the
 <br >Visual Studio Code by default executes binaries directly in a terminal found in your system's `PATH` environment.
 You can configure Visual Studio Code to look somewhere else to run the necessary binaries.
 You can configure this by accessing the [extension settings](https://code.visualstudio.com/docs/getstarted/settings).
-Click the **Workspace** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for your project.
+Click the **User** tab, search for the word _executable_, and specify the absolute path to the binary file you want to use for your project.
+
+**Note:** Executable path settings are scoped to the **User** (machine) level for security. They cannot be overridden by workspace-level `.vscode/settings.json` files.
 
 **Procedure**
 
@@ -164,6 +166,15 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 * `batchConcurrency` : Maximum number of parallel SBOM generations during batch workspace analysis. Default is `10`.
 * `continueOnError` : When `true`, batch analysis skips failing packages and continues. When `false`, stops on the first error. Default is `true`.
 * `batchMetadata` : When `true`, batch analysis includes metadata with per-package error details in the response. Default is `true`.
+
+## Workspace Trust
+
+This extension supports [VS Code Workspace Trust](https://code.visualstudio.com/docs/editor/workspace-trust). When you open a workspace that is not trusted, the extension operates in a restricted mode:
+
+- Automatic dependency analysis on file open and save is **disabled**.
+- Security-sensitive settings (executable paths, backend URL, report file path, OIDC configuration) use their default or user-level values and cannot be overridden by workspace settings.
+
+Once you grant trust to the workspace, the extension enables all features automatically.
 
 ## Features
 

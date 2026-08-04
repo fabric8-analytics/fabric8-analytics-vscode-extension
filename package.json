@@ -39,6 +39,41 @@
   "engines": {
     "vscode": "^1.76.0"
   },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "restrictedConfigurations": [
+        "redHatDependencyAnalytics.mvn.executable.path",
+        "redHatDependencyAnalytics.gradle.executable.path",
+        "redHatDependencyAnalytics.npm.executable.path",
+        "redHatDependencyAnalytics.pnpm.executable.path",
+        "redHatDependencyAnalytics.yarn.executable.path",
+        "redHatDependencyAnalytics.go.executable.path",
+        "redHatDependencyAnalytics.cargo.executable.path",
+        "redHatDependencyAnalytics.uv.executable.path",
+        "redHatDependencyAnalytics.poetry.executable.path",
+        "redHatDependencyAnalytics.python3.executable.path",
+        "redHatDependencyAnalytics.pip3.executable.path",
+        "redHatDependencyAnalytics.python.executable.path",
+        "redHatDependencyAnalytics.pip.executable.path",
+        "redHatDependencyAnalytics.syft.executable.path",
+        "redHatDependencyAnalytics.skopeo.executable.path",
+        "redHatDependencyAnalytics.docker.executable.path",
+        "redHatDependencyAnalytics.podman.executable.path",
+        "redHatDependencyAnalytics.syft.config.path",
+        "redHatDependencyAnalytics.skopeo.config.path",
+        "redHatDependencyAnalytics.backendUrl",
+        "redHatDependencyAnalytics.reportFilePath",
+        "redHatDependencyAnalytics.imagePlatform",
+        "redHatDependencyAnalytics.mvn.preferWrapper",
+        "redHatDependencyAnalytics.gradle.preferWrapper",
+        "redHatDependencyAnalytics.mvn.additionalArgs",
+        "redHatDependencyAnalytics.oidc.endpoint",
+        "redHatDependencyAnalytics.oidc.clientId",
+        "redHatDependencyAnalytics.oidc.allowInsecure"
+      ]
+    }
+  },
   "activationEvents": [
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",
@@ -261,7 +296,7 @@
           "type": "string",
           "default": "https://rhda.rhcloud.com",
           "markdownDescription": "Red Hat Dependency Analytics backend URL to use for stack, component & image analysis.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.matchManifestVersions": {
           "type": "boolean",
@@ -273,13 +308,13 @@
           "type": "string",
           "default": "/tmp/redhatDependencyAnalyticsReport.html",
           "description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.mvn.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of mvn executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.mvn.preferWrapper": {
           "type": "string",
@@ -289,20 +324,23 @@
             "fallback"
           ],
           "default": "fallback",
-          "markdownDescription": "Specifies whether to use the local maven wrapper. The 'fallback' option will default to the value of `#maven.executable.preferMavenWrapper#` from the `Maven for Java` extension, else defaulting to 'true'."
+          "markdownDescription": "Specifies whether to use the local maven wrapper. The 'fallback' option will default to the value of `#maven.executable.preferMavenWrapper#` from the `Maven for Java` extension, else defaulting to 'true'.",
+
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.mvn.additionalArgs": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "markdownDescription": "List of arguments to pass to maven invocations."
+          "markdownDescription": "List of arguments to pass to maven invocations.",
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.gradle.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of gradle executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.gradle.preferWrapper": {
           "type": "string",
@@ -312,73 +350,75 @@
             "fallback"
           ],
           "default": "fallback",
-          "markdownDescription": "Specifies whether to use the local gradle wrapper. The 'fallback' option will default to the value of `#java.import.gradle.wrapper.enabled` from the 'Language Support for Java(TM) by Red Hat' extension, else defaulting to 'true'."
+          "markdownDescription": "Specifies whether to use the local gradle wrapper. The 'fallback' option will default to the value of `#java.import.gradle.wrapper.enabled` from the 'Language Support for Java(TM) by Red Hat' extension, else defaulting to 'true'.",
+
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.npm.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of npm executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.pnpm.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of pnpm executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.yarn.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of yarn executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.go.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of go executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.cargo.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of cargo executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.uv.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of uv executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.poetry.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of poetry executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.python3.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of python3 executable, python3 takes precedence over python.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.pip3.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of pip3 executable, pip3 takes precedence over pip.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.python.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of python executable, python3 takes precedence over python.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.pip.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of pip executable, pip3 takes precedence over pip.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.vulnerabilityAlertSeverity": {
           "type": "string",
@@ -418,43 +458,43 @@
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of syft executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.syft.config.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path to the syft configuration file.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.skopeo.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of skopeo executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.skopeo.config.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path to the authentication file used by 'skopeo inspect'.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.docker.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of docker executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.podman.executable.path": {
           "type": "string",
           "default": "",
           "description": "Specifies absolute path of podman executable.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.imagePlatform": {
           "type": "string",
           "default": "",
           "description": "Specifies platform used for multi-arch images.",
-          "scope": "window"
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.recommendations.enabled": {
           "type": "boolean",
@@ -489,17 +529,23 @@
         "redHatDependencyAnalytics.oidc.endpoint": {
           "type": "string",
           "default": "https://sso.redhat.com/auth/realms/redhat-external",
-          "description": "URL used for OIDC auth server metadata discovery."
+          "description": "URL used for OIDC auth server metadata discovery.",
+
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.oidc.clientId": {
           "type": "string",
           "default": "rhda-vscode",
-          "description": "Specifies the OIDC client ID."
+          "description": "Specifies the OIDC client ID.",
+
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.oidc.allowInsecure": {
           "type": "boolean",
           "default": false,
-          "description": "Enables specifying HTTP-only endpoints."
+          "description": "Enables specifying HTTP-only endpoints.",
+
+          "scope": "machine"
         },
         "redHatDependencyAnalytics.licenseCheckEnabled": {
           "type": "boolean",

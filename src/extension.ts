@@ -265,9 +265,21 @@ async function enableExtensionFeatures(context: vscode.ExtensionContext, tokenPr
     }
   };
 
-  vscode.workspace.textDocuments.forEach(doLLMAnalysis);
-  vscode.workspace.onDidOpenTextDocument(doLLMAnalysis);
-  vscode.workspace.onDidChangeTextDocument((event) => doLLMAnalysis(event.document));
+  const registerLLMAnalysisHandlers = () => {
+    vscode.workspace.textDocuments.forEach(doLLMAnalysis);
+    context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(doLLMAnalysis));
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument((event) => doLLMAnalysis(event.document)));
+  };
+
+  if (vscode.workspace.isTrusted) {
+    registerLLMAnalysisHandlers();
+  } else {
+    outputChannelDep.info('Workspace is not trusted — deferring LLM analysis until trust is granted');
+    context.subscriptions.push(vscode.workspace.onDidGrantWorkspaceTrust(() => {
+      outputChannelDep.info('Workspace trust granted — enabling LLM analysis');
+      registerLLMAnalysisHandlers();
+    }));
+  }
 
   const disposableLLMAnalysisReportCommand = vscode.commands.registerCommand(
     commands.LLM_MODELS_ANALYSIS_REPORT,

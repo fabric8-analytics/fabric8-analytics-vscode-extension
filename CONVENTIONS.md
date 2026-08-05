@@ -89,3 +89,7 @@ test/
 - **Node built-ins**: Externalized (fs, path, os, crypto, child_process)
 - **Output**: `.vsix` packages for VS Code marketplace
 - **Key scoped packages**: `@trustify-da/*`, `@vscode/*`, `@typescript-eslint/*`, `@xml-tools/*`
+
+## External References
+
+- [VS Code Workspace Trust Extension Guide](https://code.visualstudio.com/api/extension-guides/workspace-trust) — how to handle setting scopes, `restrictedConfigurations`, and `isTrusted` checks

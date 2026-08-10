@@ -165,6 +165,15 @@ Specify glob patterns for manifests to be ignored for background analysis e.g. `
 * `continueOnError` : When `true`, batch analysis skips failing packages and continues. When `false`, stops on the first error. Default is `true`.
 * `batchMetadata` : When `true`, batch analysis includes metadata with per-package error details in the response. Default is `true`.
 
+## Workspace Trust
+
+This extension supports [VS Code Workspace Trust](https://code.visualstudio.com/docs/editor/workspace-trust). When you open a workspace that is not trusted, the extension operates in a restricted mode:
+
+- Automatic dependency analysis on file open and save is **disabled**.
+- Security-sensitive settings (executable paths, backend URL, report file path, OIDC configuration) use their default or user-level values and cannot be overridden by workspace settings.
+
+Once you grant trust to the workspace, the extension enables all features automatically.
+
 ## Features
 
 - **Component analysis**

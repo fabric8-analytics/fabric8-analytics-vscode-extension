@@ -39,6 +39,41 @@
   "engines": {
     "vscode": "^1.76.0"
   },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "restrictedConfigurations": [
+        "redHatDependencyAnalytics.mvn.executable.path",
+        "redHatDependencyAnalytics.gradle.executable.path",
+        "redHatDependencyAnalytics.npm.executable.path",
+        "redHatDependencyAnalytics.pnpm.executable.path",
+        "redHatDependencyAnalytics.yarn.executable.path",
+        "redHatDependencyAnalytics.go.executable.path",
+        "redHatDependencyAnalytics.cargo.executable.path",
+        "redHatDependencyAnalytics.uv.executable.path",
+        "redHatDependencyAnalytics.poetry.executable.path",
+        "redHatDependencyAnalytics.python3.executable.path",
+        "redHatDependencyAnalytics.pip3.executable.path",
+        "redHatDependencyAnalytics.python.executable.path",
+        "redHatDependencyAnalytics.pip.executable.path",
+        "redHatDependencyAnalytics.syft.executable.path",
+        "redHatDependencyAnalytics.skopeo.executable.path",
+        "redHatDependencyAnalytics.docker.executable.path",
+        "redHatDependencyAnalytics.podman.executable.path",
+        "redHatDependencyAnalytics.syft.config.path",
+        "redHatDependencyAnalytics.skopeo.config.path",
+        "redHatDependencyAnalytics.backendUrl",
+        "redHatDependencyAnalytics.reportFilePath",
+        "redHatDependencyAnalytics.imagePlatform",
+        "redHatDependencyAnalytics.mvn.preferWrapper",
+        "redHatDependencyAnalytics.gradle.preferWrapper",
+        "redHatDependencyAnalytics.mvn.additionalArgs",
+        "redHatDependencyAnalytics.oidc.endpoint",
+        "redHatDependencyAnalytics.oidc.clientId",
+        "redHatDependencyAnalytics.oidc.allowInsecure"
+      ]
+    }
+  },
   "activationEvents": [
     "workspaceContains:**/package.json",
     "workspaceContains:**/pom.xml",

@@ -39,6 +39,18 @@
   "engines": {
     "vscode": "^1.76.0"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "onFail": "warn",
+      "version": ">=24.0.0"
+    },
+    "packageManager": {
+      "name": "npm",
+      "onFail": "warn",
+      "version": ">=11.5.1"
+    }
+  },
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
@@ -612,5 +624,12 @@
   },
   "overrides": {
     "lodash": "4.18.1"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.11.1": true,
+    "tree-sitter@0.22.4": true,
+    "github:strum355/tree-sitter-go-mod#56326f2ad478892ace58ff247a97d492a3cbcdda": true,
+    "github:Strum355/tree-sitter-requirements#d0261ee76b84253997fe70d7d397e78c006c3801": true,
+    "tree-sitter-python@0.23.6": true
   }
 }

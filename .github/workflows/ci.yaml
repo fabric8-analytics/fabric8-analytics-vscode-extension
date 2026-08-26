@@ -46,7 +46,7 @@ jobs:
         run: npm run test-compile
 
       - name: VSCE prepublish
-        run: vsce package
+        run: vsce package --no-dependencies
 
       - name: Lint code
         run: npm run lint

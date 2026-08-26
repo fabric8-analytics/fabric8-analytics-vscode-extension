@@ -48,7 +48,7 @@ jobs:
           echo "version=v$new_version" >> "$GITHUB_OUTPUT"
 
       - name: VSCE package
-        run: vsce package --out fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
+        run: vsce package --out fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix --no-dependencies
 
       - name: Create SHA256 checksum
         run: |

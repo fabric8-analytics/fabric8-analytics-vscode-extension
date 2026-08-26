@@ -60,7 +60,7 @@ jobs:
 
       - name: VSCE package
         run: |
-          vsce package --out fabric8-analytics-${{ steps.ea_version.outputs.version }}.vsix
+          vsce package --out fabric8-analytics-${{ steps.ea_version.outputs.version }}.vsix --no-dependencies
 
       - name: Create SHA256 checksum
         run: |

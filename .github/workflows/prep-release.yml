@@ -57,7 +57,7 @@ jobs:
         run: npm run test-compile
 
       - name: VSCE package
-        run: vsce package --out fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix
+        run: vsce package --out fabric8-analytics-${{ steps.bump.outputs.version }}-${{ github.run_number }}.vsix --no-dependencies
 
       - name: Create SHA256 checksum
         run: |

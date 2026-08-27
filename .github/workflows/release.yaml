@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: 'https://npm.pkg.github.com'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +48,7 @@ jobs:
           echo "version=v$new_version" >> "$GITHUB_OUTPUT"
 
       - name: VSCE package
-        run: vsce package --out fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
+        run: vsce package --out fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix --no-dependencies
 
       - name: Create SHA256 checksum
         run: |

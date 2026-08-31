@@ -220,6 +220,7 @@ Once you grant trust to the workspace, the extension enables all features automa
 	Any recommendations for an alternative image do not replace the current image.
 
 	<br >You must have the [`syft`](https://github.com/anchore/syft#installation) and [`skopeo`](https://www.redhat.com/en/topics/containers/what-is-skopeo) binaries installed on your workstation to use the Docker scanning feature.
+	Docker scanning is not supported on Windows, because `skopeo` provides no native Windows binary.
 	You can specify a specific path to these binaries, and others by setting the following parameters:
 
 	* `syft.executable.path`: Specify the absolute path of `syft` executable

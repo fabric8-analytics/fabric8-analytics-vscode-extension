@@ -607,7 +607,7 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.8.0",
     "@trustify-da/trustify-da-api-model": "^2.0.12",
-    "@trustify-da/trustify-da-javascript-client": "^0.3.0-ea.b0e2843",
+    "@trustify-da/trustify-da-javascript-client": "0.3.0-ea.071e51e",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/parser": "^1.0.11",
     "cli-table3": "^0.6.5",
@@ -630,6 +630,7 @@
     "tree-sitter@0.22.4": true,
     "github:strum355/tree-sitter-go-mod#56326f2ad478892ace58ff247a97d492a3cbcdda": true,
     "github:Strum355/tree-sitter-requirements#d0261ee76b84253997fe70d7d397e78c006c3801": true,
-    "tree-sitter-python@0.23.6": true
+    "tree-sitter-python@0.23.6": true,
+    "tree-sitter-containerfile@0.8.1": true
   }
 }

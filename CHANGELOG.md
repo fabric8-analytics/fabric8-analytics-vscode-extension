@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.1.0 (September 1st 2026)
+
+### Enhancements
+
+- Added full remediation UX with fix versions, advisory information, and vendor ordering for vulnerability recommendations. See [PR#923](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/923) for details.
+- Added quick-fix action to replace Dockerfile image references with hardened recommendations. See [PR#919](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/919) for details.
+- Added display of hardened image recommendations and fixed recommendation toggle functionality. See [PR#918](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/918) for details.
+- Added unknown severity handling across all analysis paths. See [PR#915](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/915) for details.
+- Added provider-level recommendations map support in diagnostics. See [PR#911](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/911) for details.
+- Removed UBI branding from recommendation messages. See [PR#921](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/921) for details.
+
+### Fixes
+
+- Hardened setting scopes and added Workspace Trust support (CVE-2026-18389). See [PR#926](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/926) for details.
+- Fixed image analysis to use tag qualifier as version fallback for OCI PURLs. See [PR#920](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/920) for details.
+
+### Documentation
+
+- Noted that image analysis is unsupported on Windows. See [PR#931](https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/pull/931) for details.
+
 ## 1.0.0 (June 11th 2026)
 
 ### Enhancements

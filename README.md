@@ -217,7 +217,7 @@ Once you grant trust to the workspace, the extension enables all features automa
 - **Docker scanning**
     <br >Upon opening a Dockerfile, a vulnerability scan starts analyzing the images within the Dockerfile.
     After the analysis finishes, you can view any recommendations and remediation by clicking the _Quick Fix..._ menu from the highlighted image name.
-	Any recommendations for an alternative image do not replace the current image.
+	When a more secure alternative is available (for example, a Red Hat Hardened Image with fewer or zero known CVEs), the Quick Fix offers to replace the base image in the `FROM` statement with the recommended equivalent.
 
 	<br >You must have the [`syft`](https://github.com/anchore/syft#installation) and [`skopeo`](https://www.redhat.com/en/topics/containers/what-is-skopeo) binaries installed on your workstation to use the Docker scanning feature.
 	Dockerfile analysis is not supported on Windows, because `skopeo` provides no native Windows binary.

@@ -485,6 +485,10 @@ This discrepancy occurs because the dependency is not packaged within the applic
 
 <br >Ensure your runtime environment includes the correct versions of these dependencies to avoid such issues.
 
+### OCI Image analysis may block file edits
+
+<br>When performing OCI image component analysis, file edits may be blocked in the editor until analysis completes. If analysis takes a long time, it is recommended to add the OCI manifest paths to `redHatDependencyAnalytics.exclude` and use stack analysis instead.
+
 ## Learn more about the Red Hat Dependency Analytics platform
 
 The goal of this project is to significantly enhance a developer's experience by providing helpful vulnerability insights for their applications.

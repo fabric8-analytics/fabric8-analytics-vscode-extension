@@ -5,7 +5,6 @@
   "version": "1.1.0",
   "author": "Red Hat",
   "publisher": "redhat",
-  "preview": true,
   "type": "commonjs",
   "contributors": [
     {

@@ -24,7 +24,18 @@ module.exports = () => {
     },
     resolve: {
       // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-      extensions: ['.ts', '.js']
+      extensions: ['.ts', '.js'],
+      alias: {
+        // The JavaScript client is ESM, so webpack resolves web-tree-sitter through
+        // its `import` export condition and bundles the ESM build. That build's Node
+        // loader calls createRequire(import.meta.url); webpack inlines the build
+        // machine's file URL, which is invalid on Windows. The package's
+        // CommonJS build derives its location from the runtime module (__dirname)
+        // instead, so pin both the extension and the client to it. Resolving through
+        // require picks the package's `require` export condition (web-tree-sitter.cjs).
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'web-tree-sitter$': require.resolve('web-tree-sitter')
+      }
     },
     module: {
       rules: [{
@@ -49,6 +60,13 @@ module.exports = () => {
         }, {
           from: 'node_modules/web-tree-sitter/web-tree-sitter.wasm',
           to: 'web-tree-sitter/[name][ext]'
+        }, {
+          // The CommonJS web-tree-sitter build resolves its runtime WASM relative to
+          // the emitted bundle (__dirname) when Parser.init() is called without an
+          // explicit locateFile, which is what the JavaScript client does. Keep a
+          // copy next to the bundle so that path resolves inside the installed VSIX.
+          from: 'node_modules/web-tree-sitter/web-tree-sitter.wasm',
+          to: '[name][ext]'
         }, {
           from: 'node_modules/tree-sitter-python/tree-sitter-python.wasm',
           to: 'tree-sitter-python/[name][ext]'

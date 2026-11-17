@@ -10,9 +10,11 @@ on:
   
 jobs:
   release:
-    permissions: write-all
+    permissions:
+      contents: write
+      id-token: write
     runs-on: ubuntu-latest
-    if: "github.repository_owner == 'fabric8-analytics' && contains(github.event.head_commit.message, 'chore(release):')"
+    if: "github.repository_owner == 'fabric8-analytics' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'chore(release):'))"
     name: Create & publish a release
     environment: production
 
@@ -83,9 +85,9 @@ jobs:
 
       - name: Publish to VSCode Marketplace
         run: |
-          vsce publish --pat ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
+          vsce publish --oidc --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
 
       - name: Publish to Open VSX Registry
         run: |
-          npx ovsx publish --pat ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
+          npx ovsx publish --trusted-publishing --packagePath fabric8-analytics-${{ steps.release_version.outputs.version }}-${{ github.run_number }}.vsix
 
